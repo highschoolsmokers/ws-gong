@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SubstackIcon, InstagramIcon, EmailIcon } from "./SocialIcons";
 
 export const metadata: Metadata = {
   title: "About — W.S. Gong",
@@ -6,16 +7,15 @@ export const metadata: Metadata = {
 };
 
 const socials = [
-  { label: "Twitter / X", url: "https://twitter.com/" },
-  { label: "Instagram", url: "https://instagram.com/" },
-  { label: "Substack", url: "https://substack.com/" },
-  { label: "Email", url: "mailto:hello@example.com" },
+  { label: "Substack", icon: <SubstackIcon />, url: "https://substack.com/" },
+  { label: "Instagram", icon: <InstagramIcon />, url: "https://instagram.com/" },
+  { label: "Email", icon: <EmailIcon />, url: "mailto:hello@example.com" },
 ];
 
 export default function About() {
   return (
     <div>
-<section className="mb-12">
+      <section className="mb-12">
         <h2 className="text-xs uppercase tracking-widest text-neutral-400 mb-4">Statement</h2>
         <div className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed space-y-4">
           <p>
@@ -30,16 +30,17 @@ export default function About() {
 
       <section>
         <h2 className="text-xs uppercase tracking-widest text-neutral-400 mb-4">Find Me</h2>
-        <ul className="space-y-2">
+        <ul className="flex gap-5">
           {socials.map((s) => (
             <li key={s.label}>
               <a
                 href={s.url}
                 target={s.url.startsWith("mailto") ? undefined : "_blank"}
                 rel="noopener noreferrer"
-                className="text-sm underline underline-offset-4 hover:opacity-70 transition-opacity"
+                className="block hover:opacity-50 transition-opacity"
+                aria-label={s.label}
               >
-                {s.label}
+                {s.icon}
               </a>
             </li>
           ))}
