@@ -11,9 +11,6 @@ export default function Home() {
         priority
         className="mb-4"
       />
-      <p className="text-neutral-600 text-lg leading-relaxed">
-        Writer. Based in [City].
-      </p>
     </div>
   );
 }
