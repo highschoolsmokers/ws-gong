@@ -29,6 +29,7 @@ export default function RootLayout({
             <nav className="flex gap-6 text-sm">
               <Link href="/writing" className="hover:opacity-70 transition-opacity">Writing</Link>
               <Link href="/about" className="hover:opacity-70 transition-opacity">About</Link>
+              <Link href="/contact" className="hover:opacity-70 transition-opacity">Contact</Link>
             </nav>
           </header>
           <main className="flex-1 pb-16">

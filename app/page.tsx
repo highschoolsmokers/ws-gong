@@ -1,20 +1,19 @@
-import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   return (
     <div className="pt-16">
-      <h1 className="text-4xl font-semibold tracking-tight mb-4">W.S. Gong</h1>
-      <p className="text-neutral-600 text-lg leading-relaxed mb-10">
+      <Image
+        src="/header.png"
+        alt="W.S. Gong"
+        width={400}
+        height={120}
+        priority
+        className="mb-4"
+      />
+      <p className="text-neutral-600 text-lg leading-relaxed">
         Writer. Based in [City].
       </p>
-      <div className="flex gap-6 text-sm">
-        <Link href="/writing" className="underline underline-offset-4 hover:opacity-70 transition-opacity">
-          Writing
-        </Link>
-        <Link href="/about" className="underline underline-offset-4 hover:opacity-70 transition-opacity">
-          About
-        </Link>
-      </div>
     </div>
   );
 }
