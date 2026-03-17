@@ -6,9 +6,7 @@ export const metadata: Metadata = {
 
 export default function TechPage() {
   return (
-    <div>
-      <h1 className="text-2xl font-semibold tracking-tight mb-2">W.S. Gong</h1>
-      <p className="text-neutral-500 text-sm mb-10">Software & Technology</p>
+    <div className="pt-16">
       <a
         href="/resume.pdf"
         target="_blank"
