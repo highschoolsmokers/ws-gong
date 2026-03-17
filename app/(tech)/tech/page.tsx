@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GitHubIcon, LinkedInIcon } from "../../(site)/about/SocialIcons";
+import ResumeLink from "./ResumeLink";
 
 export const metadata: Metadata = {
   title: "W.S. Gong — Tech",
@@ -13,14 +14,7 @@ const socials = [
 export default function TechPage() {
   return (
     <div className="pt-16">
-      <a
-        href="/resume.pdf"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-sm underline underline-offset-4 hover:opacity-70 transition-opacity"
-      >
-        Resume (PDF)
-      </a>
+      <ResumeLink />
 
       <section className="mt-8">
         <ul className="flex gap-5">
