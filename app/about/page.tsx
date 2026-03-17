@@ -15,9 +15,7 @@ const socials = [
 export default function About() {
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight mb-10">About</h1>
-
-      <section className="mb-12">
+<section className="mb-12">
         <h2 className="text-xs uppercase tracking-widest text-neutral-400 mb-4">Statement</h2>
         <div className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed space-y-4">
           <p>

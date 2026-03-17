@@ -36,8 +36,7 @@ const publications: Publication[] = [
 export default function Writing() {
   return (
     <div>
-      <h1 className="text-2xl font-semibold tracking-tight mb-10">Writing</h1>
-      <ul className="space-y-6">
+<ul className="space-y-6">
         {publications.map((pub) => (
           <li key={pub.url + pub.title} className="group">
             <a
