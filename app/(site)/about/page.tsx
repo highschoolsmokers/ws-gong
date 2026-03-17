@@ -7,8 +7,8 @@ export const metadata: Metadata = {
 };
 
 const socials = [
-  { label: "Substack", icon: <SubstackIcon />, url: "https://substack.com/" },
-  { label: "Instagram", icon: <InstagramIcon />, url: "https://instagram.com/" },
+  { label: "Substack", icon: <SubstackIcon />, url: "https://substack.com/@highschoolsmokers" },
+  { label: "Instagram", icon: <InstagramIcon />, url: "https://www.instagram.com/born.deleuze" },
   { label: "Email", icon: <EmailIcon />, url: "mailto:hello@example.com" },
 ];
 

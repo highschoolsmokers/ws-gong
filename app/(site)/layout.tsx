@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { EmailIcon } from "./about/SocialIcons";
 
 export default function SiteLayout({
   children,
@@ -11,10 +12,12 @@ export default function SiteLayout({
         <Link href="/" className="text-lg font-semibold tracking-tight hover:opacity-70 transition-opacity">
           W.S. Gong
         </Link>
-        <nav className="flex gap-6 text-sm">
+        <nav className="flex gap-6 text-sm items-center">
           <Link href="/writing" className="hover:opacity-70 transition-opacity">Writing</Link>
           <Link href="/about" className="hover:opacity-70 transition-opacity">About</Link>
-          <Link href="/contact" className="hover:opacity-70 transition-opacity">Contact</Link>
+          <Link href="/contact" className="hover:opacity-50 transition-opacity" aria-label="Contact">
+            <EmailIcon />
+          </Link>
         </nav>
       </header>
       <main className="flex-1 pb-16">
