@@ -9,7 +9,7 @@ export default function Home() {
         width={400}
         height={120}
         priority
-        className="mb-4"
+        className="mb-4 border border-black"
       />
     </div>
   );

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SubstackIcon, InstagramIcon, EmailIcon } from "./SocialIcons";
+import { SubstackIcon, InstagramIcon } from "./SocialIcons";
 
 export const metadata: Metadata = {
   title: "About — W.S. Gong",
@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 const socials = [
   { label: "Substack", icon: <SubstackIcon />, url: "https://substack.com/@highschoolsmokers" },
   { label: "Instagram", icon: <InstagramIcon />, url: "https://www.instagram.com/born.deleuze" },
-  { label: "Email", icon: <EmailIcon />, url: "mailto:hello@example.com" },
 ];
 
 export default function About() {
