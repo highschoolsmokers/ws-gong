@@ -20,7 +20,7 @@ export default function SiteLayout({
           </Link>
         </nav>
       </header>
-      <main className="flex-1 pb-16">
+      <main className="flex-1 pb-6">
         {children}
       </main>
       <footer className="py-8 text-xs text-neutral-400 border-t border-neutral-200">
