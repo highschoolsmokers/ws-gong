@@ -16,9 +16,9 @@ export default function ResumeLink() {
       href="/api/resume"
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm underline underline-offset-4 hover:opacity-70 transition-opacity"
+      className="text-[11px] tracking-[0.08em] uppercase border border-black px-5 py-2 hover:bg-black hover:text-white transition-colors inline-block"
     >
-      Resume (PDF)
+      Download PDF
     </a>
   );
 }

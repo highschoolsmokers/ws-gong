@@ -13,11 +13,15 @@ const socials = [
 
 export default function TechPage() {
   return (
-    <div className="pt-16">
-      <ResumeLink />
+    <div className="space-y-12">
+      <section className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Resume</span>
+        <ResumeLink />
+      </section>
 
-      <section className="mt-8">
-        <ul className="flex gap-5">
+      <section className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Links</span>
+        <ul className="flex gap-5 items-center">
           {socials.map((s) => (
             <li key={s.label}>
               <a

@@ -15,9 +15,9 @@ export default function ContactForm() {
   }
 
   return (
-    <form action={formAction} className="space-y-5">
-      <div>
-        <label htmlFor="name" className="block text-sm mb-1 text-neutral-600">
+    <form action={formAction} className="space-y-6">
+      <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+        <label htmlFor="name" className="text-[10px] tracking-[0.12em] uppercase pt-2.5">
           Name
         </label>
         <input
@@ -25,12 +25,12 @@ export default function ContactForm() {
           name="name"
           type="text"
           required
-          className="w-full border border-neutral-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-neutral-400"
+          className="w-full border-b border-neutral-300 py-2 text-sm bg-transparent focus:outline-none focus:border-black transition-colors"
         />
       </div>
 
-      <div>
-        <label htmlFor="email" className="block text-sm mb-1 text-neutral-600">
+      <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+        <label htmlFor="email" className="text-[10px] tracking-[0.12em] uppercase pt-2.5">
           Email
         </label>
         <input
@@ -38,12 +38,12 @@ export default function ContactForm() {
           name="email"
           type="email"
           required
-          className="w-full border border-neutral-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-neutral-400"
+          className="w-full border-b border-neutral-300 py-2 text-sm bg-transparent focus:outline-none focus:border-black transition-colors"
         />
       </div>
 
-      <div>
-        <label htmlFor="message" className="block text-sm mb-1 text-neutral-600">
+      <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+        <label htmlFor="message" className="text-[10px] tracking-[0.12em] uppercase pt-2.5">
           Message
         </label>
         <textarea
@@ -51,21 +51,27 @@ export default function ContactForm() {
           name="message"
           required
           rows={6}
-          className="w-full border border-neutral-200 rounded px-3 py-2 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-neutral-400 resize-none"
+          className="w-full border-b border-neutral-300 py-2 text-sm bg-transparent focus:outline-none focus:border-black transition-colors resize-none"
         />
       </div>
 
       {state.status === "error" && (
-        <p className="text-sm text-red-500">{state.message}</p>
+        <div className="grid grid-cols-[120px_1fr] gap-x-12">
+          <span />
+          <p className="text-xs text-red-500">{state.message}</p>
+        </div>
       )}
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="text-sm px-4 py-2 bg-neutral-900 text-white rounded hover:bg-neutral-700 transition-colors disabled:opacity-40"
-      >
-        {pending ? "Sending…" : "Send"}
-      </button>
+      <div className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span />
+        <button
+          type="submit"
+          disabled={pending}
+          className="text-[11px] tracking-[0.08em] uppercase border border-black px-5 py-2 hover:bg-black hover:text-white transition-colors disabled:opacity-40 w-fit"
+        >
+          {pending ? "Sending…" : "Send"}
+        </button>
+      </div>
     </form>
   );
 }
