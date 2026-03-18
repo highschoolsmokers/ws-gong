@@ -11,7 +11,7 @@ export default function SiteLayout({
       <header className="border-t border-black pt-5 pb-10 flex items-start justify-between">
         <Link
           href="/"
-          className="text-[22px] font-medium tracking-[0.08em] uppercase hover:opacity-50 transition-opacity"
+          className="text-[11px] font-medium tracking-[0.08em] uppercase hover:opacity-50 transition-opacity"
         >
           W.S. Gong
         </Link>
