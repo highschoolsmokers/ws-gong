@@ -31,7 +31,7 @@ export function proxy(request: NextRequest) {
     hostname.startsWith("tech.") ||
     hostname === "tech.ws-gong.com";
 
-  if (isTech && !request.nextUrl.pathname.startsWith("/tech")) {
+  if (isTech && !request.nextUrl.pathname.startsWith("/tech") && !request.nextUrl.pathname.startsWith("/api")) {
     const url = request.nextUrl.clone();
     url.pathname = "/tech" + request.nextUrl.pathname;
     return NextResponse.rewrite(url);
