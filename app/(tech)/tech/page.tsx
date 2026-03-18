@@ -20,7 +20,7 @@ export default function TechPage() {
       <section className="flex gap-4 items-center">
         <ResumeLink token={token} />
         <Link
-          href="https://ws-gong.com/contact"
+          href="https://ws-gong.com/contact?from=tech"
           className="text-[10px] tracking-[0.08em] uppercase border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors inline-block"
         >
           Contact
