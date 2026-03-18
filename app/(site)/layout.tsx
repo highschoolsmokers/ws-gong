@@ -7,7 +7,7 @@ export default function SiteLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col max-w-2xl mx-auto px-6">
+    <div className="flex flex-col max-w-2xl mx-auto px-6">
       <header className="py-10 flex items-baseline justify-between">
         <Link href="/" className="text-lg font-semibold tracking-tight hover:opacity-70 transition-opacity">
           W.S. Gong
