@@ -27,9 +27,7 @@ export function proxy(request: NextRequest) {
   }
 
   const hostname = request.headers.get("host") ?? "";
-  const isTech =
-    hostname.startsWith("tech.") ||
-    hostname === "tech.ws-gong.com";
+  const isTech = hostname.startsWith("tech.");
 
   if (isTech && !request.nextUrl.pathname.startsWith("/tech") && !request.nextUrl.pathname.startsWith("/api")) {
     const url = request.nextUrl.clone();
