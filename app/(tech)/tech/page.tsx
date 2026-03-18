@@ -9,8 +9,16 @@ export const metadata: Metadata = {
 };
 
 const socials = [
-  { label: "GitHub", icon: <GitHubIcon />, url: "https://github.com/highschoolsmokers" },
-  { label: "LinkedIn", icon: <LinkedInIcon />, url: "https://www.linkedin.com/in/billy-gong" },
+  {
+    label: "GitHub",
+    icon: <GitHubIcon />,
+    url: "https://github.com/highschoolsmokers",
+  },
+  {
+    label: "LinkedIn",
+    icon: <LinkedInIcon />,
+    url: "https://www.linkedin.com/in/billy-gong",
+  },
 ];
 
 export default function TechPage() {
@@ -28,7 +36,9 @@ export default function TechPage() {
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Links</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Links
+        </span>
         <ul className="flex gap-5 items-center">
           {socials.map((s) => (
             <li key={s.label}>

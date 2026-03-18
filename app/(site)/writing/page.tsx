@@ -44,10 +44,14 @@ export default function Writing() {
             rel="noopener noreferrer"
             className="grid grid-cols-[48px_1fr] gap-x-10 py-4 hover:opacity-50 transition-opacity"
           >
-            <span className="text-[11px] text-neutral-400 pt-px tabular-nums">{pub.year}</span>
+            <span className="text-[11px] text-neutral-400 pt-px tabular-nums">
+              {pub.year}
+            </span>
             <div>
               <span className="text-sm">{pub.title}</span>
-              <span className="text-[11px] text-neutral-400 block mt-0.5">{pub.venue}</span>
+              <span className="text-[11px] text-neutral-400 block mt-0.5">
+                {pub.venue}
+              </span>
             </div>
           </a>
         </li>

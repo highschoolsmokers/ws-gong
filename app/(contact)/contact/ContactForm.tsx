@@ -6,7 +6,10 @@ import { sendMessage, type FormState } from "./actions";
 const initialState: FormState = { status: "idle", message: "" };
 
 export default function ContactForm() {
-  const [state, formAction, pending] = useActionState(sendMessage, initialState);
+  const [state, formAction, pending] = useActionState(
+    sendMessage,
+    initialState,
+  );
   const [loadedAt, setLoadedAt] = useState<number>(0);
 
   useEffect(() => {
@@ -34,7 +37,10 @@ export default function ContactForm() {
       <input type="hidden" name="_t" value={loadedAt} />
 
       <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
-        <label htmlFor="name" className="text-[10px] tracking-[0.12em] uppercase pt-2.5">
+        <label
+          htmlFor="name"
+          className="text-[10px] tracking-[0.12em] uppercase pt-2.5"
+        >
           Name
         </label>
         <input
@@ -47,7 +53,10 @@ export default function ContactForm() {
       </div>
 
       <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
-        <label htmlFor="email" className="text-[10px] tracking-[0.12em] uppercase pt-2.5">
+        <label
+          htmlFor="email"
+          className="text-[10px] tracking-[0.12em] uppercase pt-2.5"
+        >
           Email
         </label>
         <input
@@ -60,7 +69,10 @@ export default function ContactForm() {
       </div>
 
       <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
-        <label htmlFor="message" className="text-[10px] tracking-[0.12em] uppercase pt-2.5">
+        <label
+          htmlFor="message"
+          className="text-[10px] tracking-[0.12em] uppercase pt-2.5"
+        >
           Message
         </label>
         <textarea

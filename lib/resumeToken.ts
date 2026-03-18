@@ -16,7 +16,8 @@ export function verifyToken(token: string): boolean {
 
   const expected = createHmac("sha256", SECRET).update(ts).digest("hex");
   try {
-    if (!timingSafeEqual(Buffer.from(sig, "hex"), Buffer.from(expected, "hex"))) return false;
+    if (!timingSafeEqual(Buffer.from(sig, "hex"), Buffer.from(expected, "hex")))
+      return false;
   } catch {
     return false;
   }
