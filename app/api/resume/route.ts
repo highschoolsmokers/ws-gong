@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   return new NextResponse(file, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": "inline; filename=\"gong_resume.pdf\"",
+      "Content-Disposition": 'inline; filename="gong_resume.pdf"',
       "X-Robots-Tag": "noindex, nofollow",
     },
   });

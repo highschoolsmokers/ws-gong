@@ -13,7 +13,7 @@ const MIN_TIME_MS = 3000; // reject submissions faster than 3 seconds
 
 export async function sendMessage(
   _prev: FormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormState> {
   // Honeypot — bots fill this, humans don't see it
   const trap = formData.get("website")?.toString();
@@ -49,6 +49,9 @@ export async function sendMessage(
 
     return { status: "success", message: "Message sent. Thank you." };
   } catch {
-    return { status: "error", message: "Something went wrong. Please try again." };
+    return {
+      status: "error",
+      message: "Something went wrong. Please try again.",
+    };
   }
 }

@@ -5,7 +5,8 @@ import { useSearchParams } from "next/navigation";
 export default function ContactHeader() {
   const params = useSearchParams();
   const from = params.get("from");
-  const href = from === "tech" ? "https://tech.ws-gong.com" : "https://ws-gong.com";
+  const href =
+    from === "tech" ? "https://tech.ws-gong.com" : "https://ws-gong.com";
 
   return (
     <a
