@@ -35,10 +35,7 @@ export default function TechPage() {
         </Link>
       </section>
 
-      <section className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
-          Links
-        </span>
+      <section>
         <ul className="flex gap-5 items-center">
           {socials.map((s) => (
             <li key={s.label}>
