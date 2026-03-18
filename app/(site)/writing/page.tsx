@@ -35,24 +35,23 @@ const publications: Publication[] = [
 
 export default function Writing() {
   return (
-    <div>
-<ul className="space-y-6">
-        {publications.map((pub) => (
-          <li key={pub.url + pub.title} className="group">
-            <a
-              href={pub.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block hover:opacity-70 transition-opacity"
-            >
-              <span className="font-medium">{pub.title}</span>
-              <span className="text-neutral-400 mx-2">—</span>
-              <span className="text-neutral-600 text-sm">{pub.venue}</span>
-              <span className="text-neutral-400 text-sm ml-2">({pub.year})</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="divide-y divide-neutral-100">
+      {publications.map((pub) => (
+        <li key={pub.url + pub.title}>
+          <a
+            href={pub.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="grid grid-cols-[48px_1fr] gap-x-10 py-4 hover:opacity-50 transition-opacity"
+          >
+            <span className="text-[11px] text-neutral-400 pt-px tabular-nums">{pub.year}</span>
+            <div>
+              <span className="text-sm">{pub.title}</span>
+              <span className="text-[11px] text-neutral-400 block mt-0.5">{pub.venue}</span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -13,10 +13,10 @@ const socials = [
 
 export default function About() {
   return (
-    <div>
-      <section className="mb-12">
-        <h2 className="text-xs uppercase tracking-widest text-neutral-400 mb-4">Statement</h2>
-        <div className="prose prose-neutral max-w-none text-neutral-700 leading-relaxed space-y-4">
+    <div className="space-y-16">
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Statement</span>
+        <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
           <p>
             [Artist statement placeholder. Write a few sentences about your work,
             interests, and what drives your writing here.]
@@ -27,14 +27,14 @@ export default function About() {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-xs uppercase tracking-widest text-neutral-400 mb-4">Find Me</h2>
-        <ul className="flex gap-5">
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Find Me</span>
+        <ul className="flex gap-5 items-center">
           {socials.map((s) => (
             <li key={s.label}>
               <a
                 href={s.url}
-                target={s.url.startsWith("mailto") ? undefined : "_blank"}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="block hover:opacity-50 transition-opacity"
                 aria-label={s.label}

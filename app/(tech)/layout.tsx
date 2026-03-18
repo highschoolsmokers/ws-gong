@@ -4,14 +4,13 @@ export default function TechLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col max-w-2xl mx-auto px-6">
-      <header className="py-10 flex items-baseline justify-between">
-        <span className="text-lg font-semibold tracking-tight">W.S. Gong</span>
-        <nav className="flex gap-6 text-sm" />
+    <div className="max-w-3xl mx-auto px-8">
+      <header className="border-t border-black pt-5 pb-10">
+        <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
+          W.S. Gong
+        </span>
       </header>
-      <main className="flex-1 pb-16">
-        {children}
-      </main>
+      <main className="pb-24">{children}</main>
     </div>
   );
 }
