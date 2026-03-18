@@ -9,10 +9,22 @@ export type FormState = {
   message: string;
 };
 
+const MIN_TIME_MS = 3000; // reject submissions faster than 3 seconds
+
 export async function sendMessage(
   _prev: FormState,
   formData: FormData
 ): Promise<FormState> {
+  // Honeypot — bots fill this, humans don't see it
+  const trap = formData.get("website")?.toString();
+  if (trap) return { status: "error", message: "Something went wrong." };
+
+  // Timing check — bots submit instantly
+  const loadedAt = parseInt(formData.get("_t")?.toString() ?? "0", 10);
+  if (!loadedAt || Date.now() - loadedAt < MIN_TIME_MS) {
+    return { status: "error", message: "Something went wrong." };
+  }
+
   const name = formData.get("name")?.toString().trim();
   const email = formData.get("email")?.toString().trim();
   const message = formData.get("message")?.toString().trim();
