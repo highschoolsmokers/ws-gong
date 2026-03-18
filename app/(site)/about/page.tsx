@@ -24,6 +24,15 @@ export default function About() {
     <div className="space-y-16">
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Bio
+        </span>
+        <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
+          <p>[Bio placeholder.]</p>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
           Statement
         </span>
         <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
@@ -38,10 +47,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
-          Find Me
-        </span>
+      <section>
         <ul className="flex gap-5 items-center">
           {socials.map((s) => (
             <li key={s.label}>
