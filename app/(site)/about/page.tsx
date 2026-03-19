@@ -27,7 +27,21 @@ export default function About() {
           Bio
         </span>
         <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
-          <p>[Bio placeholder.]</p>
+          <p>
+            W.S. Gong is a fiction editor at{" "}
+            <a href="https://therumpus.net" target="_blank" rel="noopener noreferrer" className="italic hover:opacity-50 transition-opacity">The Rumpus</a>{" "}
+            whose work appears in{" "}
+            <a href="https://www.14hills.net" target="_blank" rel="noopener noreferrer" className="italic hover:opacity-50 transition-opacity">14 Hills</a>.
+            He is an alumnus of{" "}
+            <a href="https://www.middlebury.edu/bread-loaf-conferences" target="_blank" rel="noopener noreferrer" className="hover:opacity-50 transition-opacity">Bread Loaf</a>,{" "}
+            <a href="https://sewaneewriters.org" target="_blank" rel="noopener noreferrer" className="hover:opacity-50 transition-opacity">Sewanee</a>,{" "}
+            <a href="https://tinhouse.com/writers-workshop" target="_blank" rel="noopener noreferrer" className="hover:opacity-50 transition-opacity">Tin House</a>,
+            and{" "}
+            <a href="https://www.kenyonreview.org/workshops" target="_blank" rel="noopener noreferrer" className="hover:opacity-50 transition-opacity">Kenyon</a>,
+            and a resident of the{" "}
+            <a href="https://vcca.com" target="_blank" rel="noopener noreferrer" className="hover:opacity-50 transition-opacity">Virginia Center for Creative Arts</a>.
+            He is at work on a novel about runaway kids in 1980s San Francisco.
+          </p>
         </div>
       </section>
 
@@ -36,14 +50,21 @@ export default function About() {
           Statement
         </span>
         <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
+          <hr className="border-neutral-300" />
           <p>
-            [Artist statement placeholder. Write a few sentences about your
-            work, interests, and what drives your writing here.]
+            I am interested in what the mind refuses to hold. My work is witness
+            literature. I am the queer child of a former refugee, born and raised
+            in the part of California that isn&apos;t talked about — the rural,
+            conservative tracts separated from the beach. That geography is where
+            my work begins.
           </p>
           <p>
-            [Continue with background, influences, or themes you return to in
-            your work.]
+            My novel, <em>The Imaginary World</em>, follows a Korean American boy
+            who, after a suicide attempt, runs away to Polk Street in the 1980s —
+            not the Castro, but the neighborhood history chooses to forget. It is
+            the story of the people who didn&apos;t matter.
           </p>
+          <hr className="border-neutral-300" />
         </div>
       </section>
 
