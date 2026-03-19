@@ -8,8 +8,20 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "W.S. Gong",
-  description: "Author website for W.S. Gong",
+  title: {
+    default: "W.S. Gong",
+    template: "%s — W.S. Gong",
+  },
+  description:
+    "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.",
+  openGraph: {
+    siteName: "W.S. Gong",
+    url: "https://ws-gong.com",
+    type: "website",
+    title: "W.S. Gong",
+    description:
+      "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.",
+  },
 };
 
 export default function RootLayout({
