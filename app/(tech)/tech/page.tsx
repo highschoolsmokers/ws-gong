@@ -95,12 +95,12 @@ const history = [
 ];
 
 const skills = [
-  { label: "Writing", value: "API docs, developer guides, runbooks, release notes, UX copy, style guides" },
-  { label: "AI / ML", value: "Anthropic SDK, LangChain / LangGraph, MCP integration, multi-agent systems" },
-  { label: "Dev", value: "Python, Node.js, Git / GitHub, Vercel, REST, OpenAPI / Swagger, JSON Schema, CI/CD" },
+  { label: "Writing",    value: "API docs, developer guides, runbooks, release notes, UX copy, style guides" },
+  { label: "AI / ML",   value: "Anthropic SDK, LangChain / LangGraph, MCP integration, multi-agent systems" },
+  { label: "Dev",        value: "Python, Node.js, Git / GitHub, Vercel, REST, OpenAPI / Swagger, JSON Schema, CI/CD" },
   { label: "Doc Tools", value: "Markdown, Confluence, Notion, Vale, Docs-as-Code, Postman" },
-  { label: "Editing", value: "Structural, developmental, copyediting; AI-assisted manuscript evaluation and feedback" },
-  { label: "Domains", value: "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries" },
+  { label: "Editing",   value: "Structural, developmental, copyediting; AI-assisted manuscript evaluation and feedback" },
+  { label: "Domains",   value: "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries" },
 ];
 
 const education = [
@@ -129,29 +129,27 @@ const education = [
 ];
 
 const socials = [
-  { label: "GitHub", icon: <GitHubIcon />, url: "https://github.com/highschoolsmokers" },
+  { label: "GitHub",   icon: <GitHubIcon />,   url: "https://github.com/highschoolsmokers" },
   { label: "LinkedIn", icon: <LinkedInIcon />, url: "https://www.linkedin.com/in/billy-gong" },
 ];
 
-function RoleList({ roles }: { roles: typeof current }) {
+type Role = { period: string; title: string; org: string; bullets: string[] };
+
+function RoleList({ roles }: { roles: Role[] }) {
   return (
     <div className="space-y-8">
       {roles.map((role) => (
-        <div key={role.period + role.title} className="grid grid-cols-[80px_1fr] gap-x-8">
-          <span className="text-[10px] text-neutral-400 tracking-[0.04em] tabular-nums pt-px">
-            {role.period}
-          </span>
-          <div>
-            <p className="text-sm font-medium">{role.title}</p>
-            <p className="text-[11px] text-neutral-400 mt-0.5 mb-3">{role.org}</p>
-            <ul className="space-y-2">
-              {role.bullets.map((b, i) => (
-                <li key={i} className="text-sm leading-relaxed text-neutral-700 pl-3 border-l border-neutral-200">
-                  {b}
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div key={role.period + role.title}>
+          <p className="text-[10px] text-neutral-400 tabular-nums mb-1">{role.period}</p>
+          <p className="text-sm font-medium">{role.title}</p>
+          <p className="text-[11px] text-neutral-400 mt-0.5 mb-3">{role.org}</p>
+          <ul className="space-y-2">
+            {role.bullets.map((b, i) => (
+              <li key={i} className="text-sm leading-relaxed text-neutral-600">
+                – {b}
+              </li>
+            ))}
+          </ul>
         </div>
       ))}
     </div>
@@ -181,7 +179,6 @@ export default function TechPage() {
         </ul>
       </div>
 
-      {/* Summary */}
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Summary</span>
         <p className="text-sm leading-relaxed text-neutral-700">
@@ -193,51 +190,43 @@ export default function TechPage() {
         </p>
       </section>
 
-      {/* Current */}
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Current</span>
         <RoleList roles={current} />
       </section>
 
-      {/* History */}
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">History</span>
         <RoleList roles={history} />
       </section>
 
-      {/* Skills */}
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Skills</span>
-        <dl className="space-y-3">
+        <dl className="divide-y divide-neutral-100 border-t border-neutral-100">
           {skills.map((s) => (
-            <div key={s.label} className="grid grid-cols-[80px_1fr] gap-x-8">
-              <dt className="text-[11px] font-medium pt-px">{s.label}</dt>
+            <div key={s.label} className="flex gap-6 py-2.5">
+              <dt className="text-[11px] font-medium w-20 shrink-0 pt-px">{s.label}</dt>
               <dd className="text-sm text-neutral-700">{s.value}</dd>
             </div>
           ))}
         </dl>
       </section>
 
-      {/* Education */}
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Education</span>
         <div className="space-y-6">
           {education.map((e) => (
-            <div key={e.year + e.degree} className="grid grid-cols-[80px_1fr] gap-x-8">
-              <span className="text-[10px] text-neutral-400 tracking-[0.04em] tabular-nums pt-px">
-                {e.year}
-              </span>
-              <div>
-                <p className="text-sm font-medium">{e.degree}</p>
-                <p className="text-[11px] text-neutral-400 mt-0.5">{e.institution}</p>
-                {e.notes.length > 0 && (
-                  <ul className="mt-2 space-y-0.5">
-                    {e.notes.map((n, i) => (
-                      <li key={i} className="text-[11px] text-neutral-500 italic">{n}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
+            <div key={e.year + e.degree}>
+              <p className="text-[10px] text-neutral-400 tabular-nums mb-1">{e.year}</p>
+              <p className="text-sm font-medium">{e.degree}</p>
+              <p className="text-[11px] text-neutral-400 mt-0.5">{e.institution}</p>
+              {e.notes.length > 0 && (
+                <ul className="mt-2 space-y-0.5">
+                  {e.notes.map((n, i) => (
+                    <li key={i} className="text-[11px] text-neutral-500 italic">{n}</li>
+                  ))}
+                </ul>
+              )}
             </div>
           ))}
         </div>
