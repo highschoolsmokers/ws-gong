@@ -7,20 +7,21 @@ const inter = Inter({
   variable: "--font-inter",
 });
 
+const description =
+  "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.";
+
 export const metadata: Metadata = {
   title: {
     default: "W.S. Gong",
     template: "%s — W.S. Gong",
   },
-  description:
-    "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.",
+  description,
   openGraph: {
     siteName: "W.S. Gong",
     url: "https://ws-gong.com",
     type: "website",
     title: "W.S. Gong",
-    description:
-      "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.",
+    description,
   },
 };
 
