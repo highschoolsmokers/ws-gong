@@ -5,14 +5,15 @@ import { generateToken } from "@/lib/resumeToken";
 
 export const dynamic = "force-dynamic";
 
+const description =
+  "Twenty-five years in tech writing test plans, runbooks, API specs, and developer tooling. Now building documentation systems backed by agentic workflows and docs-as-tests pipelines.";
+
 export const metadata: Metadata = {
-  title: "W.S. Gong — Technical Writer & Developer",
-  description:
-    "Twenty-five years in tech writing test plans, runbooks, API specs, and developer tooling. Now building documentation systems backed by agentic workflows and docs-as-tests pipelines.",
+  title: { absolute: "W.S. Gong — Technical Writer & Developer" },
+  description,
   openGraph: {
     title: "W.S. Gong — Technical Writer & Developer",
-    description:
-      "Twenty-five years in tech writing test plans, runbooks, API specs, and developer tooling. Now building documentation systems backed by agentic workflows and docs-as-tests pipelines.",
+    description,
     url: "https://tech.ws-gong.com",
   },
 };
@@ -103,12 +104,12 @@ const history = [
 ];
 
 const skills = [
-  { label: "Writing",    value: "API docs, developer guides, runbooks, release notes, UX copy, style guides" },
-  { label: "AI / ML",   value: "Anthropic SDK, LangChain / LangGraph, MCP integration, multi-agent systems" },
-  { label: "Dev",        value: "Python, Node.js, Git / GitHub, Vercel, REST, OpenAPI / Swagger, JSON Schema, CI/CD" },
+  { label: "Writing", value: "API docs, developer guides, runbooks, release notes, UX copy, style guides" },
+  { label: "AI / ML", value: "Anthropic SDK, LangChain / LangGraph, MCP integration, multi-agent systems" },
+  { label: "Dev", value: "Python, Node.js, Git / GitHub, Vercel, REST, OpenAPI / Swagger, JSON Schema, CI/CD" },
   { label: "Doc Tools", value: "Markdown, Confluence, Notion, Vale, Docs-as-Code, Postman" },
-  { label: "Editing",   value: "Structural, developmental, copyediting; AI-assisted manuscript evaluation and feedback" },
-  { label: "Domains",   value: "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries" },
+  { label: "Editing", value: "Structural, developmental, copyediting; AI-assisted manuscript evaluation and feedback" },
+  { label: "Domains", value: "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries" },
 ];
 
 const education = [
@@ -122,26 +123,17 @@ const education = [
       "Writer in Residence, Ruth Asawa School of the Arts (SFUSD)",
     ],
   },
-  {
-    year: "1995",
-    degree: "BA, English & Philosophy",
-    institution: "University of California, Santa Barbara",
-    notes: [],
-  },
-  {
-    year: "2020",
-    degree: "Certificate in Professional Editing",
-    institution: "UC Berkeley Extension",
-    notes: [],
-  },
+  { year: "1995", degree: "BA, English & Philosophy", institution: "University of California, Santa Barbara" },
+  { year: "2020", degree: "Certificate in Professional Editing", institution: "UC Berkeley Extension" },
 ];
 
 const socials = [
-  { label: "GitHub",   icon: <GitHubIcon />,   url: "https://github.com/highschoolsmokers" },
+  { label: "GitHub", icon: <GitHubIcon />, url: "https://github.com/highschoolsmokers" },
   { label: "LinkedIn", icon: <LinkedInIcon />, url: "https://www.linkedin.com/in/billy-gong" },
 ];
 
 type Role = { period: string; title: string; org: string; bullets: string[] };
+type Degree = { year: string; degree: string; institution: string; notes?: string[] };
 
 function RoleList({ roles }: { roles: Role[] }) {
   return (
@@ -221,12 +213,12 @@ export default function TechPage() {
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Education</span>
         <div className="space-y-6">
-          {education.map((e) => (
+          {(education as Degree[]).map((e) => (
             <div key={e.year + e.degree}>
               <p className="text-[10px] text-neutral-400 tabular-nums mb-1">{e.year}</p>
               <p className="text-sm font-medium">{e.degree}</p>
               <p className="text-[11px] text-neutral-400 mt-0.5">{e.institution}</p>
-              {e.notes.length > 0 && (
+              {e.notes && e.notes.length > 0 && (
                 <ul className="mt-2 space-y-0.5">
                   {e.notes.map((n, i) => (
                     <li key={i} className="text-[11px] text-neutral-500 italic">{n}</li>
