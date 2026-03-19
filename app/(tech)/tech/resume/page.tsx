@@ -147,6 +147,8 @@ export default function ResumePage() {
   const token = generateToken();
   return (
     <div className="space-y-16">
+      <ResumeLink token={token} />
+
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Current</span>
         <RoleList roles={current} />
@@ -189,7 +191,6 @@ export default function ResumePage() {
         </div>
       </section>
 
-      <ResumeLink token={token} />
     </div>
   );
 }
