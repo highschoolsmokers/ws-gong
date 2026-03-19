@@ -39,6 +39,7 @@ export default async function Writing() {
 
   return (
     <div className="space-y-16">
+      {/* placeholder publications — uncomment when ready
       <ul className="divide-y divide-neutral-100 border-t border-neutral-100">
         {publications.map((pub) => (
           <li key={pub.url + pub.title}>
@@ -61,6 +62,7 @@ export default async function Writing() {
           </li>
         ))}
       </ul>
+      */}
 
       {posts.length > 0 && (
         <section>
