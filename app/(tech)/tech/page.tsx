@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
-import Link from "next/link";
-import { GitHubIcon, LinkedInIcon } from "../../(site)/about/SocialIcons";
+import { GitHubIcon, LinkedInIcon, EmailIcon } from "../../(site)/about/SocialIcons";
 import ResumeLink from "./ResumeLink";
 import { generateToken } from "@/lib/resumeToken";
 
@@ -21,6 +20,11 @@ const socials = [
     icon: <LinkedInIcon />,
     url: "https://www.linkedin.com/in/billy-gong",
   },
+  {
+    label: "Contact",
+    icon: <EmailIcon />,
+    url: "https://ws-gong.com/contact?from=tech",
+  },
 ];
 
 export default function TechPage() {
@@ -29,12 +33,6 @@ export default function TechPage() {
     <div className="space-y-12">
       <section className="flex gap-4 items-center">
         <ResumeLink token={token} />
-        <Link
-          href="https://ws-gong.com/contact?from=tech"
-          className="text-[10px] tracking-[0.08em] uppercase border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors inline-block"
-        >
-          Contact
-        </Link>
       </section>
 
       <section>
