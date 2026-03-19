@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-
-export const dynamic = "force-dynamic";
-import { GitHubIcon, LinkedInIcon, EmailIcon } from "../../(site)/about/SocialIcons";
+import { GitHubIcon, LinkedInIcon } from "../../(site)/about/SocialIcons";
 import ResumeLink from "./ResumeLink";
 import { generateToken } from "@/lib/resumeToken";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "W.S. Gong — Tech",
@@ -20,38 +20,29 @@ const socials = [
     icon: <LinkedInIcon />,
     url: "https://www.linkedin.com/in/billy-gong",
   },
-  {
-    label: "Contact",
-    icon: <EmailIcon />,
-    url: "https://ws-gong.com/contact?from=tech",
-  },
 ];
 
 export default function TechPage() {
   const token = generateToken();
   return (
     <div className="space-y-12">
-      <section className="flex gap-4 items-center">
-        <ResumeLink token={token} />
-      </section>
+      <ResumeLink token={token} />
 
-      <section>
-        <ul className="flex gap-5 items-center">
-          {socials.map((s) => (
-            <li key={s.label}>
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block hover:opacity-50 transition-opacity"
-                aria-label={s.label}
-              >
-                {s.icon}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <ul className="flex gap-5 items-center">
+        {socials.map((s) => (
+          <li key={s.label}>
+            <a
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block hover:opacity-50 transition-opacity"
+              aria-label={s.label}
+            >
+              {s.icon}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

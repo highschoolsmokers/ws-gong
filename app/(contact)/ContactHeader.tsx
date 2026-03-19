@@ -11,12 +11,9 @@ export default function ContactHeader() {
 
   return (
     <div className="flex items-start justify-between">
-      <a
-        href={homeHref}
-        className="text-[11px] font-medium tracking-[0.08em] uppercase hover:opacity-50 transition-opacity"
-      >
+      <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
         W.S. Gong
-      </a>
+      </span>
       <nav>
         <a
           href={homeHref}

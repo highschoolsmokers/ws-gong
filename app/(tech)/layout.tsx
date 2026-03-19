@@ -1,4 +1,5 @@
 import PageShell from "../components/PageShell";
+import { EmailIcon } from "../(site)/about/SocialIcons";
 
 export default function TechLayout({
   children,
@@ -8,9 +9,20 @@ export default function TechLayout({
   return (
     <PageShell
       header={
-        <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
-          W.S. Gong
-        </span>
+        <div className="flex items-start justify-between">
+          <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
+            W.S. Gong
+          </span>
+          <nav>
+            <a
+              href="https://ws-gong.com/contact?from=tech"
+              className="hover:opacity-50 transition-opacity"
+              aria-label="Contact"
+            >
+              <EmailIcon />
+            </a>
+          </nav>
+        </div>
       }
     >
       {children}
