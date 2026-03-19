@@ -36,13 +36,7 @@ export default function Nav() {
             {label}
           </Link>
         ))}
-        <a
-          href="https://tech.ws-gong.com"
-          className="text-[11px] tracking-[0.08em] uppercase hover:opacity-50 transition-opacity"
-        >
-          Tech
-        </a>
-        <Link
+<Link
           href="/contact"
           className={`transition-opacity ${
             pathname === "/contact"
