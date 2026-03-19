@@ -1,20 +1,15 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-
-function getOrigin(fromParam: string | null): "tech" | null {
-  if (fromParam === "tech") return "tech";
-  if (typeof document !== "undefined" && document.referrer.includes("tech.ws-gong.com"))
-    return "tech";
-  return null;
-}
+import { HomeIcon } from "../(site)/about/SocialIcons";
 
 export default function ContactHeader() {
   const params = useSearchParams();
-  const origin = getOrigin(params.get("from"));
-
-  const homeHref = origin === "tech" ? "https://tech.ws-gong.com" : "https://ws-gong.com";
-  const homeLabel = origin === "tech" ? "Tech" : "Home";
+  const isTech =
+    params.get("from") === "tech" ||
+    (typeof document !== "undefined" &&
+      document.referrer.includes("tech.ws-gong.com"));
+  const homeHref = isTech ? "https://tech.ws-gong.com" : "https://ws-gong.com";
 
   return (
     <div className="flex items-start justify-between">
@@ -24,9 +19,10 @@ export default function ContactHeader() {
       <nav>
         <a
           href={homeHref}
-          className="text-[11px] tracking-[0.08em] uppercase hover:opacity-50 transition-opacity"
+          className="hover:opacity-50 transition-opacity"
+          aria-label="Home"
         >
-          {homeLabel}
+          <HomeIcon />
         </a>
       </nav>
     </div>
