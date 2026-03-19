@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import { getSubstackPosts } from "@/lib/substack";
 
 export const metadata: Metadata = {
-  title: "Writing — W.S. Gong",
-  description: "Published work by W.S. Gong",
+  title: "Writing",
+  description:
+    "Fiction by W.S. Gong. Work appears in 14 Hills and Sewanee Review.",
+  openGraph: {
+    title: "Writing — W.S. Gong",
+    description:
+      "Fiction by W.S. Gong. Work appears in 14 Hills and Sewanee Review.",
+  },
 };
 
 interface Publication {
@@ -13,23 +19,18 @@ interface Publication {
   url: string;
 }
 
+// Fill in title and url before uncommenting
 const publications: Publication[] = [
   {
-    title: "Example Essay Title",
-    venue: "Publication Name",
+    title: "[Title]",
+    venue: "Sewanee Review",
     year: 2024,
     url: "#",
   },
   {
-    title: "Another Piece",
-    venue: "Another Publication",
-    year: 2023,
-    url: "#",
-  },
-  {
-    title: "Short Story Title",
-    venue: "Literary Magazine",
-    year: 2023,
+    title: "[Title]",
+    venue: "14 Hills",
+    year: 2024,
     url: "#",
   },
 ];
@@ -39,7 +40,7 @@ export default async function Writing() {
 
   return (
     <div className="space-y-16">
-      {/* placeholder publications — uncomment when ready
+      {/* Uncomment and fill in title/url for each entry when ready
       <ul className="divide-y divide-neutral-100 border-t border-neutral-100">
         {publications.map((pub) => (
           <li key={pub.url + pub.title}>

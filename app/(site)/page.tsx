@@ -2,19 +2,24 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <figure className="mt-8 space-y-5">
-      <Image
-        src="/images/alberto featured_giacomettie_palaceat4am.svg"
-        alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
-        width={487}
-        height={426}
-        priority
-      />
-      <figcaption className="text-[10px] tracking-[0.06em] text-neutral-400 leading-relaxed">
-        Alberto Giacometti<br />
-        <em>The Palace at 4 a.m.</em><br />
-        1932
-      </figcaption>
-    </figure>
+    <div className="space-y-12">
+      <p className="text-sm text-neutral-500">
+        Fiction editor at The Rumpus. Author of <em>The Imaginary World</em>.
+      </p>
+      <figure className="space-y-5">
+        <Image
+          src="/images/alberto featured_giacomettie_palaceat4am.svg"
+          alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
+          width={487}
+          height={426}
+          priority
+        />
+        <figcaption className="text-[10px] tracking-[0.06em] text-neutral-400 leading-relaxed">
+          Alberto Giacometti<br />
+          <em>The Palace at 4 a.m.</em><br />
+          1932
+        </figcaption>
+      </figure>
+    </div>
   );
 }

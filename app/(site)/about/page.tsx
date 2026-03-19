@@ -2,8 +2,14 @@ import type { Metadata } from "next";
 import { SubstackIcon, InstagramIcon } from "./SocialIcons";
 
 export const metadata: Metadata = {
-  title: "About — W.S. Gong",
-  description: "About W.S. Gong",
+  title: "About",
+  description:
+    "W.S. Gong is a fiction editor at The Rumpus and alumnus of Bread Loaf, Sewanee, Tin House, and Kenyon. At work on a novel about runaway kids in 1980s San Francisco.",
+  openGraph: {
+    title: "About — W.S. Gong",
+    description:
+      "W.S. Gong is a fiction editor at The Rumpus and alumnus of Bread Loaf, Sewanee, Tin House, and Kenyon. At work on a novel about runaway kids in 1980s San Francisco.",
+  },
 };
 
 const socials = [
@@ -17,6 +23,11 @@ const socials = [
     icon: <InstagramIcon />,
     url: "https://www.instagram.com/born.deleuze",
   },
+];
+
+const publications = [
+  { label: "14 Hills", url: "https://www.14hills.net" },
+  { label: "Sewanee Review", url: "https://sewaneereview.org" },
 ];
 
 export default function About() {
@@ -64,6 +75,26 @@ export default function About() {
             the story of the people who didn&apos;t matter.
           </p>
         </div>
+      </section>
+
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Published
+        </span>
+        <ul className="space-y-1.5">
+          {publications.map((p) => (
+            <li key={p.label}>
+              <a
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm italic hover:opacity-50 transition-opacity"
+              >
+                {p.label}
+              </a>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">

@@ -6,7 +6,15 @@ import { generateToken } from "@/lib/resumeToken";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "W.S. Gong — Tech",
+  title: "W.S. Gong — Technical Writer & Developer",
+  description:
+    "Twenty-five years in tech writing test plans, runbooks, API specs, and developer tooling. Now building documentation systems backed by agentic workflows and docs-as-tests pipelines.",
+  openGraph: {
+    title: "W.S. Gong — Technical Writer & Developer",
+    description:
+      "Twenty-five years in tech writing test plans, runbooks, API specs, and developer tooling. Now building documentation systems backed by agentic workflows and docs-as-tests pipelines.",
+    url: "https://tech.ws-gong.com",
+  },
 };
 
 const current = [
@@ -160,35 +168,33 @@ export default function TechPage() {
   const token = generateToken();
   return (
     <div className="space-y-16">
-      <div className="flex gap-5 items-center">
-        <ResumeLink token={token} />
-        <ul className="flex gap-5 items-center">
-          {socials.map((s) => (
-            <li key={s.label}>
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block hover:opacity-50 transition-opacity"
-                aria-label={s.label}
-              >
-                {s.icon}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Summary</span>
-        <p className="text-sm leading-relaxed text-neutral-700">
+      <div className="space-y-6">
+        <p className="text-sm leading-relaxed text-neutral-700 max-w-xl">
           Twenty-five years in tech — writing test plans, runbooks, API specs, and developer
           tooling. Then an MFA. Clarity is a form of respect. Most technical documentation
           treats the reader like an inconvenience. Now building documentation systems backed
           by agentic workflows and docs-as-tests pipelines — accuracy isn&apos;t an editorial
           judgment, it&apos;s a test result.
         </p>
-      </section>
+        <div className="flex gap-5 items-center">
+          <ResumeLink token={token} />
+          <ul className="flex gap-5 items-center">
+            {socials.map((s) => (
+              <li key={s.label}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block hover:opacity-50 transition-opacity"
+                  aria-label={s.label}
+                >
+                  {s.icon}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Current</span>
