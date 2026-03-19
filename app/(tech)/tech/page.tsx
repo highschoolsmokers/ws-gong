@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { GitHubIcon, LinkedInIcon } from "../../(site)/about/SocialIcons";
 
 const description =
@@ -30,29 +29,21 @@ export default function TechPage() {
         by agentic workflows and docs-as-tests pipelines — accuracy isn&apos;t an editorial
         judgment, it&apos;s a test result.
       </p>
-      <div className="flex gap-5 items-center">
-        <Link
-          href="/resume"
-          className="text-[10px] tracking-[0.08em] uppercase border border-black px-3 py-1 hover:bg-black hover:text-white transition-colors"
-        >
-          Resume
-        </Link>
-        <ul className="flex gap-5 items-center">
-          {socials.map((s) => (
-            <li key={s.label}>
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block hover:opacity-50 transition-opacity"
-                aria-label={s.label}
-              >
-                {s.icon}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </div>
+      <ul className="flex gap-5 items-center">
+        {socials.map((s) => (
+          <li key={s.label}>
+            <a
+              href={s.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block hover:opacity-50 transition-opacity"
+              aria-label={s.label}
+            >
+              {s.icon}
+            </a>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
