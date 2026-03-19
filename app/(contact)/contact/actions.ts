@@ -38,10 +38,13 @@ export async function sendMessage(
     return { status: "error", message: "Please enter a valid email address." };
   }
 
+  const to = process.env.CONTACT_EMAIL;
+  if (!to) return { status: "error", message: "Something went wrong." };
+
   try {
     await resend.emails.send({
-      from: "Contact Form <onboarding@resend.dev>",
-      to: process.env.CONTACT_EMAIL ?? "",
+      from: process.env.RESEND_FROM_EMAIL ?? "Contact Form <onboarding@resend.dev>",
+      to,
       replyTo: email,
       subject: `Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\n${message}`,

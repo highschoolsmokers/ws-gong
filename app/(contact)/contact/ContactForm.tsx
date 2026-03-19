@@ -16,8 +16,6 @@ export default function ContactForm() {
     setLoadedAt(Date.now());
   }, []);
 
-  if (!loadedAt) return null;
-
   if (state.status === "success") {
     return <p className="text-sm text-neutral-600">{state.message}</p>;
   }
@@ -90,7 +88,7 @@ export default function ContactForm() {
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || !loadedAt}
         className="text-[11px] tracking-[0.08em] uppercase border border-black px-5 py-2 hover:bg-black hover:text-white transition-colors disabled:opacity-40"
       >
         {pending ? "Sending…" : "Send"}
