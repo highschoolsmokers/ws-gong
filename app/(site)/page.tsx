@@ -4,7 +4,7 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <p className="text-sm text-neutral-500">
-        Fiction editor at The Rumpus. Author of <em>The Imaginary World</em>.
+        Writing, Editing, and Education Professional
       </p>
       <figure className="space-y-5">
         <Image
