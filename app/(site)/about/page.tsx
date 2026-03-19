@@ -50,11 +50,10 @@ export default function About() {
           Statement
         </span>
         <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
-          <hr className="border-neutral-300" />
           <p>
             I am interested in what the mind refuses to hold. My work is witness
-            literature. I am the queer child of a former refugee, born and raised
-            in the part of California that isn&apos;t talked about — the rural,
+            literature. I am the queer child of a refugee, born and raised in the
+            part of California that isn&apos;t talked about — the rural,
             conservative tracts separated from the beach. That geography is where
             my work begins.
           </p>
@@ -64,7 +63,6 @@ export default function About() {
             not the Castro, but the neighborhood history chooses to forget. It is
             the story of the people who didn&apos;t matter.
           </p>
-          <hr className="border-neutral-300" />
         </div>
       </section>
 

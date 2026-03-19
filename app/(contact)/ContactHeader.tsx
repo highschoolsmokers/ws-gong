@@ -2,12 +2,19 @@
 
 import { useSearchParams } from "next/navigation";
 
+function getOrigin(fromParam: string | null): "tech" | null {
+  if (fromParam === "tech") return "tech";
+  if (typeof document !== "undefined" && document.referrer.includes("tech.ws-gong.com"))
+    return "tech";
+  return null;
+}
+
 export default function ContactHeader() {
   const params = useSearchParams();
-  const from = params.get("from");
-  const homeHref =
-    from === "tech" ? "https://tech.ws-gong.com" : "https://ws-gong.com";
-  const homeLabel = from === "tech" ? "Tech" : "Home";
+  const origin = getOrigin(params.get("from"));
+
+  const homeHref = origin === "tech" ? "https://tech.ws-gong.com" : "https://ws-gong.com";
+  const homeLabel = origin === "tech" ? "Tech" : "Home";
 
   return (
     <div className="flex items-start justify-between">
