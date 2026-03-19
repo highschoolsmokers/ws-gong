@@ -35,7 +35,7 @@ const publications: Publication[] = [
 
 export default function Writing() {
   return (
-    <ul className="divide-y divide-neutral-100">
+    <ul className="divide-y divide-neutral-100 border-t border-neutral-100">
       {publications.map((pub) => (
         <li key={pub.url + pub.title}>
           <a
@@ -44,7 +44,7 @@ export default function Writing() {
             rel="noopener noreferrer"
             className="grid grid-cols-[48px_1fr] gap-x-10 py-4 hover:opacity-50 transition-opacity"
           >
-            <span className="text-[11px] text-neutral-400 pt-px tabular-nums">
+            <span className="text-[11px] text-neutral-300 pt-px tabular-nums">
               {pub.year}
             </span>
             <div>

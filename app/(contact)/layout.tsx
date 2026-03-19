@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import ContactHeader from "./ContactHeader";
+import PageShell from "../components/PageShell";
 
 export default function ContactLayout({
   children,
@@ -7,8 +8,8 @@ export default function ContactLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="max-w-3xl mx-auto px-8">
-      <header className="border-t border-black pt-5 pb-10">
+    <PageShell
+      header={
         <Suspense
           fallback={
             <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
@@ -18,8 +19,9 @@ export default function ContactLayout({
         >
           <ContactHeader />
         </Suspense>
-      </header>
-      <main className="pb-24">{children}</main>
-    </div>
+      }
+    >
+      {children}
+    </PageShell>
   );
 }

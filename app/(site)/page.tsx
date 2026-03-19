@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <figure className="space-y-3">
+    <figure className="mt-8 space-y-5">
       <Image
         src="/images/alberto featured_giacomettie_palaceat4am.svg"
         alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
