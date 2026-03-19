@@ -10,8 +10,8 @@ export default function Home() {
         <Image
           src="/images/giacometti_palace_4am.jpg"
           alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
-          width={487}
-          height={426}
+          width={813}
+          height={600}
           className="w-full h-auto"
           priority
         />
