@@ -54,7 +54,7 @@ const BLOCKED_AGENTS = [
   "archive-it",
 ];
 
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const ua = request.headers.get("user-agent")?.toLowerCase() ?? "";
   const isBot = BLOCKED_AGENTS.some((agent) => ua.includes(agent));
 
@@ -68,7 +68,8 @@ export function proxy(request: NextRequest) {
   if (
     isTech &&
     !request.nextUrl.pathname.startsWith("/tech") &&
-    !request.nextUrl.pathname.startsWith("/api")
+    !request.nextUrl.pathname.startsWith("/api") &&
+    !request.nextUrl.pathname.startsWith("/contact")
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/tech" + request.nextUrl.pathname;
