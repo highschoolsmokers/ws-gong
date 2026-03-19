@@ -43,15 +43,14 @@ const BLOCKED_AGENTS = [
   "img2dataset",
   "omgili",
   "omgilibot",
-  "facebookexternalhit",
-  "twitterbot",
-  "linkedinbot",
   "rogerbot",
   "screaming frog",
   "dataforseobot",
   "piplbot",
   "archive.org_bot",
   "archive-it",
+  // Note: twitterbot, linkedinbot, facebookexternalhit intentionally NOT blocked
+  // — needed for social media link preview cards (OG metadata)
 ];
 
 export function middleware(request: NextRequest) {

@@ -65,6 +65,10 @@ export default async function Writing() {
       </ul>
       */}
 
+      {posts.length === 0 && (
+        <p className="text-sm text-neutral-500">Coming soon.</p>
+      )}
+
       {posts.length > 0 && (
         <section>
           <h2 className="text-[10px] tracking-[0.12em] uppercase mb-4">

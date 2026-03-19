@@ -1,3 +1,4 @@
+import Link from "next/link";
 import PageShell from "../components/PageShell";
 import { EmailIcon } from "../(site)/about/SocialIcons";
 
@@ -14,13 +15,13 @@ export default function TechLayout({
             W.S. Gong
           </span>
           <nav>
-            <a
+            <Link
               href="/contact"
               className="hover:opacity-50 transition-opacity"
               aria-label="Contact"
             >
               <EmailIcon />
-            </a>
+            </Link>
           </nav>
         </div>
       }
