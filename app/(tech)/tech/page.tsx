@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { GitHubIcon, LinkedInIcon } from "../../(site)/about/SocialIcons";
 
 const description =
-  "Twenty-five years in tech writing test plans, runbooks, API specs, and developer tooling. Now building documentation systems backed by agentic workflows and docs-as-tests pipelines.";
+  "Spec-to-prose pipelines, agentic workflows, and docs-as-tests systems that close the loop between live APIs and the documentation that describes them.";
 
 export const metadata: Metadata = {
   title: { absolute: "W.S. Gong — Technical Writer & Developer" },
@@ -23,11 +23,13 @@ export default function TechPage() {
   return (
     <div className="space-y-6">
       <p className="text-sm leading-relaxed text-neutral-700 max-w-xl">
-        Twenty-five years in tech — writing test plans, runbooks, API specs, and developer
-        tooling. Then an MFA. Clarity is a form of respect. Most technical documentation
-        treats the reader like an inconvenience. Now building documentation systems backed
-        by agentic workflows and docs-as-tests pipelines — accuracy isn&apos;t an editorial
-        judgment, it&apos;s a test result.
+        Every API is a graph with edges that change. Documentation is a map of that graph
+        drawn at a moment in time — accurate when written, brittle by definition, maintained
+        by memory instead of mechanism. Without infrastructure to track the delta, it decays.
+        Closing that loop is the work: spec-to-prose pipelines that generate documentation
+        from source, agentic workflows that exercise the live API and validate response
+        schemas, and docs-as-tests systems that fail loudly when the territory moves and the
+        map has yet to follow.
       </p>
       <ul className="flex gap-5 items-center">
         {socials.map((s) => (
