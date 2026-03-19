@@ -68,26 +68,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Statement</span>
-        <div className="space-y-4 text-sm leading-relaxed text-neutral-700">
-          <p>
-            I am interested in what the mind refuses to hold. My work is witness
-            literature. I am the queer child of a refugee, born and raised in the
-            part of California that isn&apos;t talked about — the rural,
-            conservative tracts separated from the beach. That geography is where
-            my work begins.
-          </p>
-          <p>
-            My novel, <em>The Imaginary World</em>, follows a Korean American boy
-            who, after a suicide attempt, runs away to Polk Street in the 1980s —
-            not the Castro, but the neighborhood history chooses to forget. It is
-            the story of the people who didn&apos;t matter.
-          </p>
-        </div>
-      </section>
-
-      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+<section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Published</span>
         <ul className="space-y-1.5">
           {publications.map((p) => (
