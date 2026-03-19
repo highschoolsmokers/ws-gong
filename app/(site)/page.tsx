@@ -8,7 +8,7 @@ export default function Home() {
       </p>
       <figure className="space-y-5">
         <Image
-          src="/images/giacometti_palace_4am.svg"
+          src="/images/giacometti_palace_4am.jpg"
           alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
           width={487}
           height={426}
