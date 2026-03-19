@@ -10,11 +10,11 @@ export async function GET(request: NextRequest) {
     return new NextResponse(null, { status: 403 });
   }
 
-  const file = readFileSync(join(process.cwd(), "private", "gong_resume.pdf"));
+  const file = readFileSync(join(process.cwd(), "private", "wsgong_tech_writer_resume.pdf"));
   return new NextResponse(file, {
     headers: {
       "Content-Type": "application/pdf",
-      "Content-Disposition": 'inline; filename="gong_resume.pdf"',
+      "Content-Disposition": 'inline; filename="wsgong_tech_writer_resume.pdf"',
       "X-Robots-Tag": "noindex, nofollow",
     },
   });
