@@ -15,7 +15,7 @@ export default function TechLayout({
           </span>
           <nav>
             <a
-              href="https://ws-gong.com/contact"
+              href="/contact"
               className="hover:opacity-50 transition-opacity"
               aria-label="Contact"
             >
