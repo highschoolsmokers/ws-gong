@@ -36,7 +36,7 @@ export default function ContactForm() {
       {/* Timestamp for timing check */}
       <input type="hidden" name="_t" value={loadedAt} />
 
-      <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+      <div className="grid grid-cols-[96px_1fr] gap-x-12 items-start">
         <label
           htmlFor="name"
           className="text-[10px] tracking-[0.12em] uppercase pt-2.5"
@@ -52,7 +52,7 @@ export default function ContactForm() {
         />
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+      <div className="grid grid-cols-[96px_1fr] gap-x-12 items-start">
         <label
           htmlFor="email"
           className="text-[10px] tracking-[0.12em] uppercase pt-2.5"
@@ -68,7 +68,7 @@ export default function ContactForm() {
         />
       </div>
 
-      <div className="grid grid-cols-[120px_1fr] gap-x-12 items-start">
+      <div className="grid grid-cols-[96px_1fr] gap-x-12 items-start">
         <label
           htmlFor="message"
           className="text-[10px] tracking-[0.12em] uppercase pt-2.5"
@@ -85,22 +85,16 @@ export default function ContactForm() {
       </div>
 
       {state.status === "error" && (
-        <div className="grid grid-cols-[120px_1fr] gap-x-12">
-          <span />
-          <p className="text-xs text-red-500">{state.message}</p>
-        </div>
+        <p className="text-xs text-red-500">{state.message}</p>
       )}
 
-      <div className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span />
-        <button
-          type="submit"
-          disabled={pending}
-          className="text-[11px] tracking-[0.08em] uppercase border border-black px-5 py-2 hover:bg-black hover:text-white transition-colors disabled:opacity-40 w-fit"
-        >
-          {pending ? "Sending…" : "Send"}
-        </button>
-      </div>
+      <button
+        type="submit"
+        disabled={pending}
+        className="text-[11px] tracking-[0.08em] uppercase border border-black px-5 py-2 hover:bg-black hover:text-white transition-colors disabled:opacity-40"
+      >
+        {pending ? "Sending…" : "Send"}
+      </button>
     </form>
   );
 }

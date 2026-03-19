@@ -21,7 +21,7 @@ const socials = [
 
 export default function About() {
   return (
-    <div className="space-y-16">
+    <div className="space-y-12">
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
           Bio
@@ -47,7 +47,10 @@ export default function About() {
         </div>
       </section>
 
-      <section>
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Links
+        </span>
         <ul className="flex gap-5 items-center">
           {socials.map((s) => (
             <li key={s.label}>
