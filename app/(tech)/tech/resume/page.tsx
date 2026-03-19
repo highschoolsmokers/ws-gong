@@ -4,13 +4,16 @@ import { generateToken } from "@/lib/resumeToken";
 
 export const dynamic = "force-dynamic";
 
+type Role = { period: string; title: string; org: string; bullets: string[] };
+type Degree = { year: string; degree: string; institution: string; notes?: string[] };
+
 export const metadata: Metadata = {
   title: { absolute: "Resume — W.S. Gong" },
   description: "Technical writing and engineering resume for W.S. Gong.",
   robots: { index: false },
 };
 
-const current = [
+const current: Role[] = [
   {
     period: "2022 – Present",
     title: "Technical Writer & Developer, AI Documentation",
@@ -40,7 +43,7 @@ const current = [
   },
 ];
 
-const history = [
+const history: Role[] = [
   {
     period: "2020 – 2024",
     title: "MFA Teaching Fellow",
@@ -104,7 +107,7 @@ const skills = [
   { label: "Domains", value: "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries" },
 ];
 
-const education = [
+const education: Degree[] = [
   {
     year: "2024",
     degree: "MFA, Creative Writing",
@@ -118,9 +121,6 @@ const education = [
   { year: "1995", degree: "BA, English & Philosophy", institution: "University of California, Santa Barbara" },
   { year: "2020", degree: "Certificate in Professional Editing", institution: "UC Berkeley Extension" },
 ];
-
-type Role = { period: string; title: string; org: string; bullets: string[] };
-type Degree = { year: string; degree: string; institution: string; notes?: string[] };
 
 function RoleList({ roles }: { roles: Role[] }) {
   return (
@@ -172,7 +172,7 @@ export default function ResumePage() {
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Education</span>
         <div className="space-y-6">
-          {(education as Degree[]).map((e) => (
+          {education.map((e) => (
             <div key={e.year + e.degree}>
               <p className="text-[10px] text-neutral-400 tabular-nums mb-1">{e.year}</p>
               <p className="text-sm font-medium">{e.degree}</p>

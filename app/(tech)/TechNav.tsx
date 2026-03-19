@@ -21,7 +21,7 @@ export default function TechNav() {
         <Link
           href="/resume"
           className={`text-[11px] tracking-[0.08em] uppercase transition-opacity ${
-            pathname === "/tech/resume"
+            pathname === "/resume"
               ? "underline underline-offset-2 pointer-events-none"
               : "hover:opacity-50"
           }`}
