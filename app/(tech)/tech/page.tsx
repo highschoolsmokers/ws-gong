@@ -22,6 +22,7 @@ const socials = [
 export default function TechPage() {
   return (
     <div className="space-y-6">
+      <p className="text-sm text-neutral-500">Technical Writer &amp; AI Documentation Engineer</p>
       <p className="text-base leading-relaxed text-neutral-700 max-w-xl">
         Every API is a graph with edges that change. Documentation is a map of that graph
         drawn at a moment in time — accurate when written, brittle by definition, maintained
