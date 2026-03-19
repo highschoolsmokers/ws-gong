@@ -19,8 +19,7 @@ const socials = [
 ];
 
 const publications = [
-  { label: "14 Hills", url: "https://www.14hills.net" },
-  { label: "Sewanee Review", url: "https://sewaneereview.org" },
+  { label: "14 Hills", url: "https://www.14hills.net/copy-of-29" },
 ];
 
 export default function About() {
