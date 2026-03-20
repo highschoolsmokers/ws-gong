@@ -150,12 +150,23 @@ export default function ResumePage() {
       <ResumeLink token={token} />
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Current</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Summary</span>
+        <p className="text-sm leading-relaxed text-neutral-700">
+          Technical writer, AI developer, and former software quality engineer with twenty-five
+          years of experience across API development, testing, and documentation. Specializes in
+          agentic AI systems for technical content: spec-to-prose pipelines, agentic QA workflows,
+          and docs-as-tests infrastructure that treats documentation accuracy as an engineering
+          problem rather than an editorial one.
+        </p>
+      </section>
+
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Current Roles</span>
         <RoleList roles={current} />
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">History</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Career History</span>
         <RoleList roles={history} />
       </section>
 
