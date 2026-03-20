@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { GitHubIcon, LinkedInIcon } from "../../(site)/about/SocialIcons";
 
 const description =
-  "Spec-to-prose pipelines, agentic workflows, and docs-as-tests systems that close the loop between live APIs and the documentation that describes them.";
+  "After twenty-five years in tech creating test plans, runbooks, API specs, and developer tooling, I completed an MFA in Creative Writing. Clarity is a form of respect — and with agentic workflows and docs-as-tests pipelines, quality isn't an editorial judgment: it's a test result.";
 
 export const metadata: Metadata = {
   title: { absolute: "W.S. Gong — Technical Writer & Developer" },
@@ -24,13 +24,11 @@ export default function TechPage() {
     <div className="space-y-6">
       <p className="text-sm font-medium text-neutral-500">Technical Writer &amp; AI Documentation Engineer</p>
       <p className="text-sm leading-relaxed text-neutral-700 max-w-xl">
-        Every API is a graph with edges that change. Documentation is a map of that graph
-        drawn at a moment in time — accurate when written, brittle by definition, maintained
-        by memory instead of mechanism. Without infrastructure to track the delta, it decays.
-        Closing that loop is the work: spec-to-prose pipelines that generate documentation
-        from source, agentic workflows that exercise the live API and validate response
-        schemas, and docs-as-tests systems that fail loudly when the territory moves and the
-        map has yet to follow.
+        After twenty-five years in tech creating test plans, runbooks, API specs, and developer
+        tooling, I completed an MFA in Creative Writing. The through-line? Clarity is a form
+        of respect. Great technical documentation respects the reader. Built on agentic
+        workflows and docs-as-tests pipelines, it can also enforce that respect. Quality
+        isn&apos;t an editorial judgment: it&apos;s a test result.
       </p>
       <ul className="flex gap-5 items-center">
         {socials.map((s) => (
