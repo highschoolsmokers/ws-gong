@@ -1,14 +1,11 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { HomeIcon } from "../(site)/about/SocialIcons";
 
 export default function ContactHeader() {
-  const params = useSearchParams();
   const isTech =
-    params.get("from") === "tech" ||
-    (typeof document !== "undefined" &&
-      document.referrer.includes("tech.ws-gong.com"));
+    typeof window !== "undefined" &&
+    window.location.hostname.startsWith("tech.");
   const homeHref = isTech ? "https://tech.ws-gong.com" : "https://ws-gong.com";
 
   return (
