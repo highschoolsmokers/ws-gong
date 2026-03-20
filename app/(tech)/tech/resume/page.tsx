@@ -190,7 +190,6 @@ export default function ResumePage() {
           ))}
         </div>
       </section>
-
     </div>
   );
 }

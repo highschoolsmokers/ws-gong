@@ -18,7 +18,6 @@ const socials = [
   { label: "Instagram", icon: <InstagramIcon />, url: "https://www.instagram.com/born.deleuze" },
 ];
 
-
 export default function About() {
   return (
     <div className="space-y-12">
