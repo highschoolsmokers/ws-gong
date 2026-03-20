@@ -3,9 +3,13 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div className="space-y-12">
-      <p className="text-sm text-neutral-500">
-        Writing, Editing, and Education Professional
-      </p>
+      <div className="space-y-4">
+        <p className="text-sm text-neutral-500">Writer. Editor. Educator.</p>
+        <p className="text-sm leading-relaxed text-neutral-700">
+          W.S. Gong is a fiction writer, editor, and educator based in San Francisco.
+          Fiction Editor at The Rumpus. Faculty, San Francisco State University.
+        </p>
+      </div>
       <figure className="space-y-5">
         <Image
           src="/images/giacometti_palace_4am.jpg"
