@@ -36,7 +36,7 @@ export default function Nav() {
             {label}
           </Link>
         ))}
-<Link
+        <Link
           href="/contact"
           className={`transition-opacity ${
             pathname === "/contact"
