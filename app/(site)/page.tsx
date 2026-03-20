@@ -7,7 +7,16 @@ export default function Home() {
         <p className="text-sm text-neutral-500">Writer. Editor. Educator.</p>
         <p className="text-sm leading-relaxed text-neutral-700">
           W.S. Gong is a fiction writer, editor, and educator based in San Francisco.
-          Fiction Editor at The Rumpus. Faculty, San Francisco State University.
+          Fiction Editor at{" "}
+          <a
+            href="http://therumpus.net"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:opacity-50 transition-opacity"
+          >
+            The Rumpus
+          </a>
+          . Faculty, San Francisco State University.
         </p>
       </div>
       <figure className="space-y-5">
