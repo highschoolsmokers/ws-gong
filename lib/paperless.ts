@@ -86,7 +86,7 @@ function headers(): HeadersInit {
   };
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(path: string, init?: RequestInit & { next?: { revalidate?: number } }): Promise<T> {
   const res = await fetch(`${BASE_URL}/api${path}`, {
     ...init,
     headers: { ...headers(), ...init?.headers },
@@ -121,7 +121,7 @@ export async function listDocuments(
   const qs = params.toString();
   return request<PaperlessList<PaperlessDocument>>(
     `/documents/${qs ? `?${qs}` : ""}`,
-    { next: { revalidate: options?.revalidate ?? 60 } } as RequestInit,
+    { next: { revalidate: options?.revalidate ?? 60 } },
   );
 }
 

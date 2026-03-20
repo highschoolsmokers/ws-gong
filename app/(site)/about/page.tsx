@@ -18,9 +18,6 @@ const socials = [
   { label: "Instagram", icon: <InstagramIcon />, url: "https://www.instagram.com/born.deleuze" },
 ];
 
-const publications = [
-  { label: "14 Hills", url: "https://www.14hills.net/copy-of-29" },
-];
 
 export default function About() {
   return (
@@ -67,22 +64,16 @@ export default function About() {
         </div>
       </section>
 
-<section className="grid grid-cols-[120px_1fr] gap-x-12">
+      <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Published</span>
-        <ul className="space-y-1.5">
-          {publications.map((p) => (
-            <li key={p.label}>
-              <a
-                href={p.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm italic hover:opacity-50 transition-opacity"
-              >
-                {p.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <a
+          href="https://www.14hills.net/copy-of-29"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm italic hover:opacity-50 transition-opacity"
+        >
+          14 Hills
+        </a>
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
