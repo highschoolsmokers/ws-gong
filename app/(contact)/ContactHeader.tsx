@@ -9,14 +9,15 @@ export default function ContactHeader() {
   const homeHref = isTech ? "https://tech.ws-gong.com" : "https://ws-gong.com";
 
   return (
-    <div className="flex items-start justify-between">
-      <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
-        W.S. Gong
+    <div className="flex items-center justify-between">
+      <span className="flex items-center gap-2.5">
+        <div className="w-5 h-5 bg-black" />
+        <span className="text-xl font-black tracking-tight">W.S. Gong</span>
       </span>
       <nav>
         <a
           href={homeHref}
-          className="hover:opacity-50 transition-opacity"
+          className="hover:opacity-70 transition-opacity"
           aria-label="Home"
         >
           <HomeIcon />
