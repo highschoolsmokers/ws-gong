@@ -8,22 +8,23 @@ export default function TechNav() {
   const pathname = usePathname();
 
   return (
-    <div className="flex items-start justify-between">
+    <div className="flex items-center justify-between">
       <Link
         href="/tech"
-        className={`text-[11px] font-medium tracking-[0.08em] uppercase transition-opacity ${
-          pathname === "/tech" ? "pointer-events-none" : "hover:opacity-50"
+        className={`flex items-center gap-2.5 transition-opacity ${
+          pathname === "/tech" ? "pointer-events-none" : "hover:opacity-70"
         }`}
       >
-        W.S. Gong
+        <div className="w-5 h-5 bg-black" />
+        <span className="text-xl font-black tracking-tight">W.S. Gong</span>
       </Link>
       <nav className="flex gap-8 items-center">
         <Link
           href="/resume"
-          className={`text-[11px] tracking-[0.08em] uppercase transition-opacity ${
+          className={`text-sm font-semibold transition-opacity ${
             pathname === "/resume"
               ? "underline underline-offset-2 pointer-events-none"
-              : "hover:opacity-50"
+              : "hover:opacity-70"
           }`}
         >
           Resume
@@ -33,7 +34,7 @@ export default function TechNav() {
           className={`transition-opacity ${
             pathname === "/contact"
               ? "opacity-40 pointer-events-none"
-              : "hover:opacity-50"
+              : "hover:opacity-70"
           }`}
           aria-label="Contact"
         >
