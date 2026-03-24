@@ -75,7 +75,8 @@ export default function Nav({ isTechHost }: { isTechHost: boolean }) {
 
   // On tech subdomain, usePathname() returns the visible URL (e.g. "/")
   // not the rewritten path ("/tech"), so map for title lookup
-  const titleKey = isTechHost ? `/tech${pathname}` : pathname;
+  const techPath = pathname === "/" ? "/tech" : `/tech${pathname}`;
+  const titleKey = isTechHost ? techPath : pathname;
   const title = titles[titleKey] ?? titles[pathname];
 
   const isActive = (href: string) => {
