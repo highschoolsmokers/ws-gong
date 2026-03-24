@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
+import PageShell from "./components/PageShell";
+import Nav from "./(site)/Nav";
 
-const inter = Inter({
+const geistSans = Geist({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist-sans",
 });
 
 const description =
@@ -32,8 +34,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
+      <body className={`${geistSans.variable} font-sans antialiased`}>
+        <PageShell header={<Nav />}>{children}</PageShell>
       </body>
     </html>
   );
