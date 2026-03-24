@@ -10,9 +10,9 @@ const siteLinks = [
 ];
 
 const techLinks = [
-  { href: "/resume", label: "Resume", techPrefixed: true },
-  { href: "/portfolio", label: "Portfolio", techPrefixed: true },
-  { href: "/contact", label: "Contact", techPrefixed: false },
+  { href: "/resume", label: "Resume" },
+  { href: "/portfolio", label: "Portfolio" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const titles: Record<string, React.ReactNode> = {
@@ -43,24 +43,56 @@ const titles: Record<string, React.ReactNode> = {
   "/tech/portfolio": "Portfolio",
 };
 
+function NavLink({
+  href,
+  className,
+  children,
+  useAnchor,
+}: {
+  href: string;
+  className: string;
+  children: React.ReactNode;
+  useAnchor: boolean;
+}) {
+  if (useAnchor) {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+  return (
+    <Link href={href} className={className}>
+      {children}
+    </Link>
+  );
+}
+
 export default function Nav() {
   const pathname = usePathname();
-  const isTech = pathname.startsWith("/tech");
+  const isTechHost =
+    typeof window !== "undefined" &&
+    window.location.hostname.startsWith("tech.");
+  const isTech = isTechHost || pathname.startsWith("/tech");
   const links = isTech ? techLinks : siteLinks;
-  const title = titles[pathname];
 
-  // On tech subdomain, links use paths without /tech prefix (middleware rewrites)
-  // but pathname includes /tech, so we need to match accordingly
+  // On tech subdomain, usePathname() returns the visible URL (e.g. "/")
+  // not the rewritten path ("/tech"), so map for title lookup
+  const techPathname = isTechHost ? `/tech${pathname}` : pathname;
+  const title = titles[techPathname] ?? titles[pathname];
+
   const isActive = (href: string) => {
+    if (isTechHost) return pathname === href;
     if (isTech) return pathname === `/tech${href}` || pathname === href;
     return pathname === href;
   };
 
-  const isTechHost =
-    typeof window !== "undefined" &&
-    window.location.hostname.startsWith("tech.");
-  const homeHref = isTechHost ? "/" : isTech ? "/tech" : "/";
-  const isHome = isTech ? pathname === "/tech" : pathname === "/";
+  const homeHref = "/";
+  const isHome = isTechHost
+    ? pathname === "/"
+    : isTech
+      ? pathname === "/tech"
+      : pathname === "/";
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
@@ -74,31 +106,33 @@ export default function Nav() {
       <nav className="text-xl font-black tracking-tight leading-tight">
         <ul>
           <li>
-            <Link
+            <NavLink
               href={homeHref}
+              useAnchor={isTechHost}
               className={`transition-opacity ${
                 isHome ? "pointer-events-none" : "hover:opacity-70"
               }`}
             >
               W.S. Gong
-            </Link>
+            </NavLink>
           </li>
           {links.map((link) => {
-            const techPrefixed = "techPrefixed" in link ? link.techPrefixed : false;
-            const linkHref = isTech && !isTechHost && techPrefixed ? `/tech${link.href}` : link.href;
+            const linkHref =
+              isTech && !isTechHost ? `/tech${link.href}` : link.href;
             return (
-            <li key={link.href}>
-              <Link
-                href={linkHref}
-                className={`transition-opacity ${
-                  isActive(link.href)
-                    ? "underline underline-offset-2 pointer-events-none"
-                    : "hover:opacity-70"
-                }`}
-              >
-                {link.label}
-              </Link>
-            </li>
+              <li key={link.href}>
+                <NavLink
+                  href={linkHref}
+                  useAnchor={isTechHost}
+                  className={`transition-opacity ${
+                    isActive(link.href)
+                      ? "underline underline-offset-2 pointer-events-none"
+                      : "hover:opacity-70"
+                  }`}
+                >
+                  {link.label}
+                </NavLink>
+              </li>
             );
           })}
         </ul>

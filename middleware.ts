@@ -72,10 +72,16 @@ export function middleware(request: NextRequest) {
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/tech" + request.nextUrl.pathname;
-    return NextResponse.rewrite(url);
+    const response = NextResponse.rewrite(url);
+    response.headers.set("x-subdomain", "tech");
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  if (isTech) {
+    response.headers.set("x-subdomain", "tech");
+  }
+  return response;
 }
 
 export const config = {

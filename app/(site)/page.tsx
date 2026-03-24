@@ -1,6 +1,14 @@
 import Image from "next/image";
+import { headers } from "next/headers";
 
-export default function Home() {
+export default async function Home() {
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "";
+  if (host.startsWith("tech.")) {
+    // Tech subdomain index is handled by middleware rewrite to /tech
+    return <div />;
+  }
+
   return (
     <div className="space-y-0">
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
