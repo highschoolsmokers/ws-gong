@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { headers } from "next/headers";
 import "./globals.css";
 import PageShell from "./components/PageShell";
 import Nav from "./(site)/Nav";
@@ -11,7 +10,7 @@ const geistSans = Geist({
 });
 
 const description =
-  "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.";
+  "W.S. Gong — writer, editor, and technical writer based in San Francisco. Fiction editor at The Rumpus. Twenty-five years in software and documentation.";
 
 export const metadata: Metadata = {
   title: {
@@ -28,21 +27,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headersList = await headers();
-  const host = headersList.get("host") ?? "";
-  const isTechHost = host.startsWith("tech.");
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} font-sans antialiased`}>
-        <PageShell header={<Nav isTechHost={isTechHost} />}>
-          {children}
-        </PageShell>
+        <PageShell header={<Nav />}>{children}</PageShell>
       </body>
     </html>
   );
