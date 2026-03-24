@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { headers } from "next/headers";
 import "./globals.css";
 import PageShell from "./components/PageShell";
 import Nav from "./(site)/Nav";
@@ -27,15 +28,19 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headersList = await headers();
+  const host = headersList.get("host") ?? "";
+  const isTechHost = host.startsWith("tech.");
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} font-sans antialiased`}>
-        <PageShell header={<Nav />}>
+        <PageShell header={<Nav isTechHost={isTechHost} />}>
           {children}
         </PageShell>
       </body>

@@ -68,23 +68,28 @@ function NavLink({
   );
 }
 
-export default function Nav() {
+export default function Nav({ isTechHost }: { isTechHost: boolean }) {
   const pathname = usePathname();
-  const isTechHost =
-    typeof window !== "undefined" &&
-    window.location.hostname.startsWith("tech.");
   const isTech = isTechHost || pathname.startsWith("/tech");
   const links = isTech ? techLinks : siteLinks;
 
   // On tech subdomain, usePathname() returns the visible URL (e.g. "/")
   // not the rewritten path ("/tech"), so map for title lookup
-  const techPathname = isTechHost ? `/tech${pathname}` : pathname;
-  const title = titles[techPathname] ?? titles[pathname];
+  const titleKey = isTechHost ? `/tech${pathname}` : pathname;
+  const title = titles[titleKey] ?? titles[pathname];
 
   const isActive = (href: string) => {
     if (isTechHost) return pathname === href;
     if (isTech) return pathname === `/tech${href}` || pathname === href;
     return pathname === href;
+  };
+
+  // On tech subdomain: use plain paths (middleware rewrites)
+  // On localhost /tech: prefix with /tech for file-system routing
+  const resolveHref = (href: string) => {
+    if (isTechHost) return href;
+    if (isTech) return `/tech${href}`;
+    return href;
   };
 
   const homeHref = "/";
@@ -116,25 +121,21 @@ export default function Nav() {
               W.S. Gong
             </NavLink>
           </li>
-          {links.map((link) => {
-            const linkHref =
-              isTech && !isTechHost ? `/tech${link.href}` : link.href;
-            return (
-              <li key={link.href}>
-                <NavLink
-                  href={linkHref}
-                  useAnchor={isTechHost}
-                  className={`transition-opacity ${
-                    isActive(link.href)
-                      ? "underline underline-offset-2 pointer-events-none"
-                      : "hover:opacity-70"
-                  }`}
-                >
-                  {link.label}
-                </NavLink>
-              </li>
-            );
-          })}
+          {links.map((link) => (
+            <li key={link.href}>
+              <NavLink
+                href={resolveHref(link.href)}
+                useAnchor={isTechHost}
+                className={`transition-opacity ${
+                  isActive(link.href)
+                    ? "underline underline-offset-2 pointer-events-none"
+                    : "hover:opacity-70"
+                }`}
+              >
+                {link.label}
+              </NavLink>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>
