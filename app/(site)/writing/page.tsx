@@ -21,9 +21,7 @@ export default async function Writing() {
 
   return (
     <section>
-      <h2 className="text-[10px] tracking-[0.12em] uppercase mb-4">
-        Substack
-      </h2>
+      <h2 className="text-[10px] tracking-[0.12em] uppercase mb-4">Substack</h2>
       <ul className="divide-y divide-neutral-100 border-t border-neutral-100">
         {posts.map((post) => (
           <li key={post.id}>

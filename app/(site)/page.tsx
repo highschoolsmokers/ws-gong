@@ -4,10 +4,14 @@ export default function Home() {
   return (
     <div className="space-y-12">
       <div className="space-y-4">
-        <p className="text-sm text-neutral-500">Writer. Editor. Educator.</p>
+        <p className="text-sm text-neutral-500">
+          Narratives,
+          <br />
+          Code.
+        </p>
         <p className="text-sm leading-relaxed text-neutral-700">
-          W.S. Gong is a fiction writer, editor, and educator based in San Francisco.
-          Fiction Editor at{" "}
+          W.S. Gong is a writer, editor, and technical writer based in San
+          Francisco. Fiction Editor at{" "}
           <a
             href="http://therumpus.net"
             target="_blank"
@@ -16,7 +20,7 @@ export default function Home() {
           >
             The Rumpus
           </a>
-          . Faculty, San Francisco State University.
+          . Twenty-five years in software and documentation.
         </p>
       </div>
       <figure className="space-y-5">
@@ -29,8 +33,10 @@ export default function Home() {
           priority
         />
         <figcaption className="text-[10px] tracking-[0.06em] text-neutral-400 leading-relaxed">
-          Alberto Giacometti<br />
-          <em>The Palace at 4 a.m.</em><br />
+          Alberto Giacometti
+          <br />
+          <em>The Palace at 4 a.m.</em>
+          <br />
           1932
         </figcaption>
       </figure>

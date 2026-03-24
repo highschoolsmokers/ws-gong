@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
-import ResumeLink from "../ResumeLink";
+import ResumeLink from "./ResumeLink";
 import { generateToken } from "@/lib/resumeToken";
 
 export const dynamic = "force-dynamic";
 
 type Role = { period: string; title: string; org: string; bullets: string[] };
-type Degree = { year: string; degree: string; institution: string; notes?: string[] };
+type Degree = {
+  year: string;
+  degree: string;
+  institution: string;
+  notes?: string[];
+};
 
 export const metadata: Metadata = {
-  title: { absolute: "Resume — W.S. Gong" },
+  title: "Resume",
   description: "Technical writing and engineering resume for W.S. Gong.",
   robots: { index: false },
 };
@@ -99,12 +104,35 @@ const history: Role[] = [
 ];
 
 const skills = [
-  { label: "Writing", value: "API docs, developer guides, runbooks, release notes, UX copy, style guides" },
-  { label: "AI / ML", value: "Anthropic SDK, LangChain / LangGraph, MCP integration, multi-agent systems" },
-  { label: "Dev", value: "Python, Node.js, Git / GitHub, Vercel, REST, OpenAPI / Swagger, JSON Schema, CI/CD" },
-  { label: "Doc Tools", value: "Markdown, Confluence, Notion, Vale, Docs-as-Code, Postman" },
-  { label: "Editing", value: "Structural, developmental, copyediting; AI-assisted manuscript evaluation and feedback" },
-  { label: "Domains", value: "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries" },
+  {
+    label: "Writing",
+    value:
+      "API docs, developer guides, runbooks, release notes, UX copy, style guides",
+  },
+  {
+    label: "AI / ML",
+    value:
+      "Anthropic SDK, LangChain / LangGraph, MCP integration, multi-agent systems",
+  },
+  {
+    label: "Dev",
+    value:
+      "Python, Node.js, Git / GitHub, Vercel, REST, OpenAPI / Swagger, JSON Schema, CI/CD",
+  },
+  {
+    label: "Doc Tools",
+    value: "Markdown, Confluence, Notion, Vale, Docs-as-Code, Postman",
+  },
+  {
+    label: "Editing",
+    value:
+      "Structural, developmental, copyediting; AI-assisted manuscript evaluation and feedback",
+  },
+  {
+    label: "Domains",
+    value:
+      "Developer platforms, AI / LLM tooling, SaaS, fintech, security, creative industries",
+  },
 ];
 
 const education: Degree[] = [
@@ -118,8 +146,16 @@ const education: Degree[] = [
       "Writer in Residence, Ruth Asawa School of the Arts (SFUSD)",
     ],
   },
-  { year: "1995", degree: "BA, English & Philosophy", institution: "University of California, Santa Barbara" },
-  { year: "2020", degree: "Certificate in Professional Editing", institution: "UC Berkeley Extension" },
+  {
+    year: "1995",
+    degree: "BA, English & Philosophy",
+    institution: "University of California, Santa Barbara",
+  },
+  {
+    year: "2020",
+    degree: "Certificate in Professional Editing",
+    institution: "UC Berkeley Extension",
+  },
 ];
 
 function RoleList({ roles }: { roles: Role[] }) {
@@ -127,7 +163,9 @@ function RoleList({ roles }: { roles: Role[] }) {
     <div className="space-y-8">
       {roles.map((role) => (
         <div key={role.period + role.title}>
-          <p className="text-[10px] text-neutral-400 tabular-nums mb-1">{role.period}</p>
+          <p className="text-[10px] text-neutral-400 tabular-nums mb-1">
+            {role.period}
+          </p>
           <p className="text-sm font-medium">{role.title}</p>
           <p className="text-[11px] text-neutral-400 mt-0.5 mb-3">{role.org}</p>
           <ul className="space-y-2">
@@ -150,32 +188,43 @@ export default function ResumePage() {
       <ResumeLink token={token} />
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Summary</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Summary
+        </span>
         <p className="text-sm leading-relaxed text-neutral-700">
-          Technical writer, AI developer, and former software quality engineer with twenty-five
-          years of experience across API development, testing, and documentation. Specializes in
-          agentic AI systems for technical content: spec-to-prose pipelines, agentic QA workflows,
-          and docs-as-tests infrastructure that treats documentation accuracy as an engineering
-          problem rather than an editorial one.
+          Technical writer, AI developer, and former software quality engineer
+          with twenty-five years of experience across API development, testing,
+          and documentation. Specializes in agentic AI systems for technical
+          content: spec-to-prose pipelines, agentic QA workflows, and
+          docs-as-tests infrastructure that treats documentation accuracy as an
+          engineering problem rather than an editorial one.
         </p>
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Current Roles</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Current Roles
+        </span>
         <RoleList roles={current} />
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Career History</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Career History
+        </span>
         <RoleList roles={history} />
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Skills</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Skills
+        </span>
         <dl className="divide-y divide-neutral-100 border-t border-neutral-100">
           {skills.map((s) => (
             <div key={s.label} className="flex gap-6 py-2.5">
-              <dt className="text-[11px] font-medium w-20 shrink-0 pt-px">{s.label}</dt>
+              <dt className="text-[11px] font-medium w-20 shrink-0 pt-px">
+                {s.label}
+              </dt>
               <dd className="text-sm text-neutral-700">{s.value}</dd>
             </div>
           ))}
@@ -183,17 +232,25 @@ export default function ResumePage() {
       </section>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
-        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Education</span>
+        <span className="text-[10px] tracking-[0.12em] uppercase pt-px">
+          Education
+        </span>
         <div className="space-y-6">
           {education.map((e) => (
             <div key={e.year + e.degree}>
-              <p className="text-[10px] text-neutral-400 tabular-nums mb-1">{e.year}</p>
+              <p className="text-[10px] text-neutral-400 tabular-nums mb-1">
+                {e.year}
+              </p>
               <p className="text-sm font-medium">{e.degree}</p>
-              <p className="text-[11px] text-neutral-400 mt-0.5">{e.institution}</p>
+              <p className="text-[11px] text-neutral-400 mt-0.5">
+                {e.institution}
+              </p>
               {e.notes && e.notes.length > 0 && (
                 <ul className="mt-2 space-y-0.5">
                   {e.notes.map((n, i) => (
-                    <li key={i} className="text-[11px] text-neutral-500 italic">{n}</li>
+                    <li key={i} className="text-[11px] text-neutral-500 italic">
+                      {n}
+                    </li>
                   ))}
                 </ul>
               )}

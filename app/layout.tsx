@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 const description =
-  "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.";
+  "W.S. Gong — writer, editor, and technical writer based in San Francisco. Fiction editor at The Rumpus. Twenty-five years in software and documentation.";
 
 export const metadata: Metadata = {
   title: {

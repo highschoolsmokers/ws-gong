@@ -6,6 +6,7 @@ import { EmailIcon } from "./about/SocialIcons";
 
 const links = [
   { href: "/writing", label: "Writing" },
+  { href: "/resume", label: "Resume" },
   { href: "/about", label: "About" },
 ];
 
