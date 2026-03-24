@@ -32,7 +32,7 @@ const titles: Record<string, React.ReactNode> = {
     <>
       Technical
       <br />
-      Writer &amp;
+      Writer,
       <br />
       AI Documentation
       <br />
