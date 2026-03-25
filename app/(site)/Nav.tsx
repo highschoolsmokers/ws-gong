@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/about", label: "About" },
   { href: "/projects", label: "Projects" },
-  { href: "/resume", label: "Resume" },
+  { href: "/laboratory", label: "Laboratory" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -18,9 +18,9 @@ const titles: Record<string, React.ReactNode> = {
       Gong
     </>
   ),
-  "/about": "About",
   "/projects": "Projects",
-  "/resume": "Resume",
+  "/laboratory": "Laboratory",
+  "/about": "About",
   "/contact": "Contact",
 };
 

@@ -6,6 +6,7 @@ const pages = [
   "/projects",
   "/contact",
   "/resume",
+  "/laboratory",
 ];
 
 const staticRoutes = [
@@ -32,9 +33,9 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const nav = page.locator("nav");
 
-    await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
     await expect(nav.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/projects");
-    await expect(nav.getByRole("link", { name: "Resume" })).toHaveAttribute("href", "/resume");
+    await expect(nav.getByRole("link", { name: "Laboratory" })).toHaveAttribute("href", "/laboratory");
+    await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
     await expect(nav.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
   });
 });
