@@ -6,6 +6,7 @@ const pages = [
   "/projects",
   "/contact",
   "/resume",
+  "/laboratory",
 ];
 
 const staticRoutes = [
