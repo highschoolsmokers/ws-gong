@@ -72,7 +72,7 @@ export interface DocumentQuery {
   document_type__id?: number;
   created__date__gt?: string; // ISO date
   created__date__lt?: string; // ISO date
-  ordering?: string;          // e.g. "-created", "title"
+  ordering?: string; // e.g. "-created", "title"
   page?: number;
   page_size?: number;
 }
@@ -86,7 +86,10 @@ function headers(): HeadersInit {
   };
 }
 
-async function request<T>(path: string, init?: RequestInit & { next?: { revalidate?: number } }): Promise<T> {
+async function request<T>(
+  path: string,
+  init?: RequestInit & { next?: { revalidate?: number } },
+): Promise<T> {
   const res = await fetch(`${BASE_URL}/api${path}`, {
     ...init,
     headers: { ...headers(), ...init?.headers },
@@ -108,15 +111,23 @@ export async function listDocuments(
   const params = new URLSearchParams();
 
   if (query.query) params.set("query", query.query);
-  if (query.correspondent__id) params.set("correspondent__id", String(query.correspondent__id));
-  if (query.document_type__id) params.set("document_type__id", String(query.document_type__id));
-  if (query.created__date__gt) params.set("created__date__gt", query.created__date__gt);
-  if (query.created__date__lt) params.set("created__date__lt", query.created__date__lt);
+  if (query.correspondent__id)
+    params.set("correspondent__id", String(query.correspondent__id));
+  if (query.document_type__id)
+    params.set("document_type__id", String(query.document_type__id));
+  if (query.created__date__gt)
+    params.set("created__date__gt", query.created__date__gt);
+  if (query.created__date__lt)
+    params.set("created__date__lt", query.created__date__lt);
   if (query.ordering) params.set("ordering", query.ordering);
   if (query.page) params.set("page", String(query.page));
   if (query.page_size) params.set("page_size", String(query.page_size));
-  query.tags__id__all?.forEach((id) => params.append("tags__id__all", String(id)));
-  query.tags__id__in?.forEach((id) => params.append("tags__id__in", String(id)));
+  query.tags__id__all?.forEach((id) =>
+    params.append("tags__id__all", String(id)),
+  );
+  query.tags__id__in?.forEach((id) =>
+    params.append("tags__id__in", String(id)),
+  );
 
   const qs = params.toString();
   return request<PaperlessList<PaperlessDocument>>(
@@ -131,7 +142,17 @@ export async function getDocument(id: number): Promise<PaperlessDocument> {
 
 export async function updateDocument(
   id: number,
-  fields: Partial<Pick<PaperlessDocument, "title" | "tags" | "document_type" | "correspondent" | "created" | "archive_serial_number">>,
+  fields: Partial<
+    Pick<
+      PaperlessDocument,
+      | "title"
+      | "tags"
+      | "document_type"
+      | "correspondent"
+      | "created"
+      | "archive_serial_number"
+    >
+  >,
 ): Promise<PaperlessDocument> {
   return request<PaperlessDocument>(`/documents/${id}/`, {
     method: "PATCH",
@@ -143,16 +164,26 @@ export async function updateDocument(
 export async function uploadDocument(
   file: File | Blob,
   filename: string,
-  meta?: { title?: string; correspondent?: number; document_type?: number; tags?: number[] },
+  meta?: {
+    title?: string;
+    correspondent?: number;
+    document_type?: number;
+    tags?: number[];
+  },
 ): Promise<void> {
   const form = new FormData();
   form.append("document", file, filename);
   if (meta?.title) form.append("title", meta.title);
-  if (meta?.correspondent) form.append("correspondent", String(meta.correspondent));
-  if (meta?.document_type) form.append("document_type", String(meta.document_type));
+  if (meta?.correspondent)
+    form.append("correspondent", String(meta.correspondent));
+  if (meta?.document_type)
+    form.append("document_type", String(meta.document_type));
   meta?.tags?.forEach((tag) => form.append("tags", String(tag)));
 
-  await request<void>("/documents/post_document/", { method: "POST", body: form });
+  await request<void>("/documents/post_document/", {
+    method: "POST",
+    body: form,
+  });
 }
 
 export async function deleteDocument(id: number): Promise<void> {
@@ -172,7 +203,9 @@ export function documentThumbUrl(id: number): string {
 // ─── Tags ─────────────────────────────────────────────────────────────────────
 
 export async function listTags(): Promise<PaperlessTag[]> {
-  const data = await request<PaperlessList<PaperlessTag>>("/tags/?page_size=500");
+  const data = await request<PaperlessList<PaperlessTag>>(
+    "/tags/?page_size=500",
+  );
   return data.results;
 }
 
@@ -183,20 +216,27 @@ export async function getTag(id: number): Promise<PaperlessTag> {
 // ─── Correspondents ───────────────────────────────────────────────────────────
 
 export async function listCorrespondents(): Promise<PaperlessCorrespondent[]> {
-  const data = await request<PaperlessList<PaperlessCorrespondent>>("/correspondents/?page_size=500");
+  const data = await request<PaperlessList<PaperlessCorrespondent>>(
+    "/correspondents/?page_size=500",
+  );
   return data.results;
 }
 
 // ─── Document Types ───────────────────────────────────────────────────────────
 
 export async function listDocumentTypes(): Promise<PaperlessDocumentType[]> {
-  const data = await request<PaperlessList<PaperlessDocumentType>>("/document_types/?page_size=500");
+  const data = await request<PaperlessList<PaperlessDocumentType>>(
+    "/document_types/?page_size=500",
+  );
   return data.results;
 }
 
 // ─── Search ───────────────────────────────────────────────────────────────────
 
-export async function autocomplete(term: string, limit = 10): Promise<string[]> {
+export async function autocomplete(
+  term: string,
+  limit = 10,
+): Promise<string[]> {
   return request<string[]>(
     `/search/autocomplete/?term=${encodeURIComponent(term)}&limit=${limit}`,
   );
