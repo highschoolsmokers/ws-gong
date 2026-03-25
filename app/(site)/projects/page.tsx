@@ -20,11 +20,14 @@ export default async function Projects() {
   }
 
   return (
+    <div className="space-y-0">
     <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
       <h2 className="text-xl md:text-2xl font-black leading-tight">
-        Substack
+        Writing
       </h2>
-      <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
+      <div>
+        <h3 className="text-sm font-semibold mb-4">Substack</h3>
+        <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
         {posts.map((post) => (
           <li key={post.id}>
             <a
@@ -47,7 +50,18 @@ export default async function Projects() {
             </a>
           </li>
         ))}
-      </ul>
+        </ul>
+      </div>
     </section>
+
+    <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <h2 className="text-xl md:text-2xl font-black leading-tight">
+        Code
+      </h2>
+      <div>
+        <h3 className="text-sm font-semibold mb-4">Repositories</h3>
+      </div>
+    </section>
+    </div>
   );
 }
