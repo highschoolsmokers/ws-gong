@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import ResumeLink from "../ResumeLink";
+import ResumeLink from "./ResumeLink";
 import { generateToken } from "@/lib/resumeToken";
+import { GitHubIcon, LinkedInIcon } from "../about/SocialIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -8,10 +9,15 @@ type Role = { period: string; title: string; org: string; bullets: string[] };
 type Degree = { year: string; degree: string; institution: string; notes?: string[] };
 
 export const metadata: Metadata = {
-  title: { absolute: "Resume — W.S. Gong" },
-  description: "Technical writing and engineering resume for W.S. Gong.",
+  title: "Resume",
+  description: "Resume for W.S. Gong.",
   robots: { index: false },
 };
+
+const socials = [
+  { label: "GitHub", icon: <GitHubIcon />, url: "https://github.com/highschoolsmokers" },
+  { label: "LinkedIn", icon: <LinkedInIcon />, url: "https://www.linkedin.com/in/billy-gong" },
+];
 
 const current: Role[] = [
   {
@@ -147,7 +153,21 @@ export default function ResumePage() {
   const token = generateToken();
   return (
     <div className="space-y-16">
-      <ResumeLink token={token} />
+      <div className="flex items-center gap-6">
+        <ResumeLink token={token} />
+        {socials.map((s) => (
+          <a
+            key={s.label}
+            href={s.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block hover:opacity-50 transition-opacity"
+            aria-label={s.label}
+          >
+            {s.icon}
+          </a>
+        ))}
+      </div>
 
       <section className="grid grid-cols-[120px_1fr] gap-x-12">
         <span className="text-[10px] tracking-[0.12em] uppercase pt-px">Summary</span>

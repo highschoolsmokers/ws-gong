@@ -61,20 +61,6 @@ export function middleware(request: NextRequest) {
     return new NextResponse(null, { status: 403 });
   }
 
-  const hostname = request.headers.get("host") ?? "";
-  const isTech = hostname.startsWith("tech.");
-
-  if (
-    isTech &&
-    !request.nextUrl.pathname.startsWith("/tech") &&
-    !request.nextUrl.pathname.startsWith("/api") &&
-    !request.nextUrl.pathname.startsWith("/contact")
-  ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/tech" + request.nextUrl.pathname;
-    return NextResponse.rewrite(url);
-  }
-
   return NextResponse.next();
 }
 

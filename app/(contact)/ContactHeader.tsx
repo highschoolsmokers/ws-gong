@@ -1,26 +1,48 @@
 "use client";
 
-import { HomeIcon } from "../(site)/about/SocialIcons";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const links = [
+  { href: "/about", label: "About" },
+  { href: "/projects", label: "Projects" },
+  { href: "/resume", label: "Resume" },
+  { href: "/contact", label: "Contact" },
+];
 
 export default function ContactHeader() {
-  const isTech =
-    typeof window !== "undefined" &&
-    window.location.hostname.startsWith("tech.");
-  const homeHref = isTech ? "https://tech.ws-gong.com" : "https://ws-gong.com";
+  const pathname = usePathname();
 
   return (
-    <div className="flex items-start justify-between">
-      <span className="text-[11px] font-medium tracking-[0.08em] uppercase">
-        W.S. Gong
-      </span>
-      <nav>
-        <a
-          href={homeHref}
-          className="hover:opacity-50 transition-opacity"
-          aria-label="Home"
-        >
-          <HomeIcon />
-        </a>
+    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
+      <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
+        W.S.
+        <br />
+        Gong
+      </h1>
+      <nav className="text-xl font-black tracking-tight leading-tight">
+        <ul>
+          <li>
+            <Link
+              href="/"
+              className="transition-opacity hover:opacity-70"
+            >
+              Narratives. Code.
+            </Link>
+          </li>
+          {links.map(({ href, label }) => (
+            <li key={href}>
+              <Link
+                href={href}
+                className={`transition-opacity ${
+                  pathname === href ? "pointer-events-none" : "hover:opacity-70"
+                }`}
+              >
+                {label}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </nav>
     </div>
   );
