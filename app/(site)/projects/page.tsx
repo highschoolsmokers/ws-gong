@@ -2,17 +2,17 @@ import type { Metadata } from "next";
 import { getSubstackPosts } from "@/lib/substack";
 
 export const metadata: Metadata = {
-  title: "Writing",
+  title: "Projects",
   description:
     "Fiction by W.S. Gong. Work appears in 14 Hills and Sewanee Review.",
   openGraph: {
-    title: "Writing — W.S. Gong",
+    title: "Projects — W.S. Gong",
     description:
       "Fiction by W.S. Gong. Work appears in 14 Hills and Sewanee Review.",
   },
 };
 
-export default async function Writing() {
+export default async function Projects() {
   const posts = await getSubstackPosts("highschoolsmokers");
 
   if (posts.length === 0) {
@@ -22,7 +22,7 @@ export default async function Writing() {
   return (
     <section>
       <h2 className="text-[10px] tracking-[0.12em] uppercase mb-4">
-        Substack
+        Projects
       </h2>
       <ul className="divide-y divide-neutral-100 border-t border-neutral-100">
         {posts.map((post) => (
