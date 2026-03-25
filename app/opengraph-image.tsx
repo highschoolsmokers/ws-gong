@@ -37,7 +37,7 @@ export default function Image() {
           letterSpacing: "0.02em",
         }}
       >
-        Writing, Editing, and Education Professional
+        Narratives. Code.
       </div>
     </div>,
     { ...size },
