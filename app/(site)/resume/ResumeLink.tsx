@@ -16,7 +16,7 @@ export default function ResumeLink({ token }: { token: string }) {
       href={`/api/resume?token=${token}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm font-black border border-black px-5 py-2 hover:bg-black hover:text-white transition-colors inline-block"
+      className="text-sm hover:opacity-50 transition-opacity"
     >
       Download Resume
     </a>

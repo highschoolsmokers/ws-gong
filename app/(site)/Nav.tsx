@@ -37,7 +37,7 @@ export default function Nav() {
       ) : (
         <div />
       )}
-      <nav className="text-xl font-black tracking-tight leading-tight">
+      <nav className="text-xl font-black tracking-tight leading-relaxed">
         <ul>
           <li>
             <Link
