@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ResumeLink from "./ResumeLink";
 import { generateToken } from "@/lib/resumeToken";
+import { GitHubIcon, LinkedInIcon } from "../about/SocialIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +15,14 @@ type Degree = {
 
 export const metadata: Metadata = {
   title: "Resume",
-  description: "Technical writing and engineering resume for W.S. Gong.",
+  description: "Resume for W.S. Gong.",
   robots: { index: false },
 };
+
+const socials = [
+  { label: "GitHub", icon: <GitHubIcon />, url: "https://github.com/highschoolsmokers" },
+  { label: "LinkedIn", icon: <LinkedInIcon />, url: "https://www.linkedin.com/in/billy-gong" },
+];
 
 const current: Role[] = [
   {
@@ -183,9 +189,28 @@ export default function ResumePage() {
   const token = generateToken();
   return (
     <div className="space-y-0">
-      <div className="border-t border-black pt-8 pb-10">
-        <ResumeLink token={token} />
-      </div>
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <div />
+        <div>
+          <div className="flex items-center gap-5">
+            {socials.map((s) => (
+              <a
+                key={s.label}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block hover:opacity-50 transition-opacity"
+                aria-label={s.label}
+              >
+                {s.icon}
+              </a>
+            ))}
+          </div>
+          <div className="mt-3">
+            <ResumeLink token={token} />
+          </div>
+        </div>
+      </section>
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-xl md:text-2xl font-black leading-tight">

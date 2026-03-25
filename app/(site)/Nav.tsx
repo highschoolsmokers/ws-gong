@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/about", label: "About" },
-  { href: "/writing", label: "Projects" },
+  { href: "/projects", label: "Projects" },
   { href: "/resume", label: "Resume" },
   { href: "/contact", label: "Contact" },
 ];
@@ -19,7 +19,7 @@ const titles: Record<string, React.ReactNode> = {
     </>
   ),
   "/about": "About",
-  "/writing": "Projects",
+  "/projects": "Projects",
   "/resume": "Resume",
   "/contact": "Contact",
 };
@@ -37,7 +37,7 @@ export default function Nav() {
       ) : (
         <div />
       )}
-      <nav className="text-xl font-black tracking-tight leading-tight">
+      <nav className="text-xl font-black tracking-tight leading-relaxed">
         <ul>
           <li>
             <Link
@@ -46,14 +46,7 @@ export default function Nav() {
                 pathname === "/" ? "pointer-events-none" : "hover:opacity-70"
               }`}
             >
-              <span className="inline-flex items-start gap-2">
-                <span className="inline-block w-3 h-3 bg-black mt-[0.35em] flex-shrink-0" />
-                <span>
-                  Narratives.
-                  <br />
-                  Code.
-                </span>
-              </span>
+              Narratives. Code.
             </Link>
           </li>
           {links.map((link) => (
