@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/projects", label: "Projects" },
+  { href: "/laboratory", label: "Laboratory" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -18,6 +19,7 @@ const titles: Record<string, React.ReactNode> = {
     </>
   ),
   "/projects": "Projects",
+  "/laboratory": "Laboratory",
   "/about": "About",
   "/contact": "Contact",
 };
