@@ -41,6 +41,27 @@ test.describe("Navigation", () => {
     await expect(header.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
     await expect(header.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
   });
+
+  test("backlink to home exists and is disabled on index", async ({ page }) => {
+    await page.goto("/");
+    const backlink = page.locator("header").getByRole("link", { name: /Narratives/i });
+    await expect(backlink).toHaveAttribute("href", "/");
+    await expect(backlink).toHaveClass(/pointer-events-none/);
+  });
+
+  test("backlink is active on sub-pages", async ({ page }) => {
+    await page.goto("/about");
+    const backlink = page.locator("header").getByRole("link", { name: /Narratives/i });
+    await expect(backlink).toHaveAttribute("href", "/");
+    await expect(backlink).not.toHaveClass(/pointer-events-none/);
+  });
+
+  test("nav appears on every main page", async ({ page }) => {
+    for (const route of ["/", "/about", "/projects", "/resume", "/contact"]) {
+      await page.goto(route);
+      await expect(page.locator("header").getByRole("link", { name: /Narratives/i })).toBeVisible();
+    }
+  });
 });
 
 test.describe("Contact form", () => {
