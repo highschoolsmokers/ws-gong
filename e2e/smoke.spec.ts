@@ -7,6 +7,9 @@ const pages = [
   "/contact",
   "/resume",
   "/laboratory",
+  "/laboratory/resume-generator",
+  "/laboratory/die-neue-grafik",
+  "/laboratory/contact",
 ];
 
 const staticRoutes = [
@@ -31,12 +34,12 @@ test.describe("Route smoke tests", () => {
 test.describe("Navigation", () => {
   test("home page has correct nav links", async ({ page }) => {
     await page.goto("/");
-    const nav = page.locator("nav");
+    const header = page.locator("header");
 
-    await expect(nav.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/projects");
-    await expect(nav.getByRole("link", { name: "Laboratory" })).toHaveAttribute("href", "/laboratory");
-    await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
-    await expect(nav.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
+    await expect(header.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/projects");
+    await expect(header.getByRole("link", { name: "Laboratory" })).toHaveAttribute("href", "/laboratory");
+    await expect(header.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
+    await expect(header.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
   });
 });
 
