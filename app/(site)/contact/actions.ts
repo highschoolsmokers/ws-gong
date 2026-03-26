@@ -43,7 +43,8 @@ export async function sendMessage(
 
   try {
     await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL ?? "Contact Form <onboarding@resend.dev>",
+      from:
+        process.env.RESEND_FROM_EMAIL ?? "Contact Form <onboarding@resend.dev>",
       to,
       replyTo: email,
       subject: `Message from ${name}`,

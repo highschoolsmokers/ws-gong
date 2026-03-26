@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
+import PageShell from "./components/PageShell";
+import Nav from "./(site)/Nav";
 
-const inter = Inter({
+const geistSans = Geist({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-geist-sans",
 });
 
 const description =
-  "W.S. Gong is a fiction editor at The Rumpus whose work appears in 14 Hills and Sewanee Review. At work on a novel about runaway kids in 1980s San Francisco.";
+  "W.S. Gong — writer, editor, and technical writer based in San Francisco. Fiction editor at The Rumpus. Twenty-five years in software and documentation.";
 
 export const metadata: Metadata = {
   title: {
@@ -32,8 +34,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        {children}
+      <body className={`${geistSans.variable} font-sans antialiased`}>
+        <PageShell header={<Nav />}>{children}</PageShell>
       </body>
     </html>
   );

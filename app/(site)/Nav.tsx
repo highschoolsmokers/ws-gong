@@ -2,52 +2,74 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { EmailIcon } from "./about/SocialIcons";
 
 const links = [
-  { href: "/writing", label: "Writing" },
+  { href: "/projects", label: "Projects" },
+  { href: "/laboratory", label: "Laboratory" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
+
+const titles: Record<string, React.ReactNode> = {
+  "/": (
+    <>
+      W.S.
+      <br />
+      Gong
+    </>
+  ),
+  "/projects": "Projects",
+  "/laboratory": "Laboratory",
+  "/about": "About",
+  "/contact": "Contact",
+};
 
 export default function Nav() {
   const pathname = usePathname();
+  const title =
+    titles[pathname] ??
+    Object.entries(titles).find(
+      ([k]) => k !== "/" && pathname.startsWith(k),
+    )?.[1];
 
   return (
-    <div className="flex items-start justify-between">
-      <Link
-        href="/"
-        className={`text-[11px] font-medium tracking-[0.08em] uppercase transition-opacity ${
-          pathname === "/" ? "pointer-events-none" : "hover:opacity-50"
-        }`}
-      >
-        W.S. Gong
-      </Link>
-      <nav className="flex gap-8 items-center">
-        {links.map(({ href, label }) => (
-          <Link
-            key={href}
-            href={href}
-            className={`text-[11px] tracking-[0.08em] uppercase transition-opacity ${
-              pathname === href
-                ? "underline underline-offset-2 pointer-events-none"
-                : "hover:opacity-50"
-            }`}
-          >
-            {label}
-          </Link>
-        ))}
+    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
+      {title ? (
+        <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
+          {title}
+        </h1>
+      ) : (
+        <div />
+      )}
+      <div className="flex flex-col gap-6">
         <Link
-          href="/contact"
-          className={`transition-opacity ${
-            pathname === "/contact"
-              ? "opacity-40 pointer-events-none"
-              : "hover:opacity-50"
+          href="/"
+          className={`flex items-center gap-2.5 transition-opacity ${
+            pathname === "/" ? "pointer-events-none" : "hover:opacity-70"
           }`}
-          aria-label="Contact"
         >
-          <EmailIcon />
+          <div className="w-5 h-5 bg-black" />
+          <span className="text-xl font-black tracking-tight">
+            Narratives. Code.
+          </span>
         </Link>
-      </nav>
+        <ul className="text-sm font-semibold leading-loose">
+          {links.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                className={`transition-opacity ${
+                  pathname === link.href
+                    ? "pointer-events-none"
+                    : "hover:opacity-70"
+                }`}
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
