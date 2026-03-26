@@ -11,7 +11,9 @@ export default function PageShell({
         Skip to content
       </a>
       <header className="pt-8 pb-12">{header}</header>
-      <main id="main" className="pb-16">{children}</main>
+      <main id="main" className="pb-16">
+        {children}
+      </main>
       <footer className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <div />
         <div className="text-sm">
