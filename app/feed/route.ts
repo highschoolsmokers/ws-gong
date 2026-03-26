@@ -27,7 +27,7 @@ export async function GET() {
     <link>${siteUrl}</link>
     <description>Writing by W.S. Gong</description>
     <language>en-us</language>
-    <atom:link href="${siteUrl}/feed.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${siteUrl}/feed" rel="self" type="application/rss+xml"/>
 ${items}
   </channel>
 </rss>`;
