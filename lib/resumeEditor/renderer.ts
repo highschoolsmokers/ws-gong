@@ -28,12 +28,22 @@ const LGRAY = "#999999";
 const RULE = "#CCCCCC";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-function textW(doc: InstanceType<typeof PDFDocument>, text: string, font: string, size: number): number {
+function textW(
+  doc: InstanceType<typeof PDFDocument>,
+  text: string,
+  font: string,
+  size: number,
+): number {
   doc.font(font).fontSize(size);
   return doc.widthOfString(text);
 }
 
-function wrapLines(doc: InstanceType<typeof PDFDocument>, text: string, font: string, maxW: number): string[] {
+function wrapLines(
+  doc: InstanceType<typeof PDFDocument>,
+  text: string,
+  font: string,
+  maxW: number,
+): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
   let cur = "";
@@ -58,7 +68,7 @@ function drawText(
   x: number,
   y: number,
   maxW: number,
-  lead: number = 10.5
+  lead: number = 10.5,
 ): number {
   const lines = wrapLines(doc, text, font, maxW);
   doc.font(font).fontSize(SZ_BODY).fillColor(color);
@@ -70,32 +80,81 @@ function drawText(
   return y;
 }
 
-function hrule(doc: InstanceType<typeof PDFDocument>, x: number, y: number, w: number, weight: number = 0.5, color: string = RULE) {
-  doc.save().strokeColor(color).lineWidth(weight).moveTo(x, y).lineTo(x + w, y).stroke().restore();
+function hrule(
+  doc: InstanceType<typeof PDFDocument>,
+  x: number,
+  y: number,
+  w: number,
+  weight: number = 0.5,
+  color: string = RULE,
+) {
+  doc
+    .save()
+    .strokeColor(color)
+    .lineWidth(weight)
+    .moveTo(x, y)
+    .lineTo(x + w, y)
+    .stroke()
+    .restore();
 }
 
 // ── Icons ───────────────────────────────────────────────────────────────────
-function drawGlobe(doc: InstanceType<typeof PDFDocument>, cx: number, cy: number) {
+function drawGlobe(
+  doc: InstanceType<typeof PDFDocument>,
+  cx: number,
+  cy: number,
+) {
   doc.save().strokeColor(GRAY).lineWidth(0.7);
   doc.circle(cx, cy, ICON_R).stroke();
-  doc.moveTo(cx, cy - ICON_R).lineTo(cx, cy + ICON_R).stroke();
-  doc.moveTo(cx - ICON_R, cy).lineTo(cx + ICON_R, cy).stroke();
-  doc.moveTo(cx - ICON_R, cy)
-    .bezierCurveTo(cx - ICON_R * 0.4, cy - ICON_R * 0.7, cx + ICON_R * 0.4, cy - ICON_R * 0.7, cx + ICON_R, cy)
+  doc
+    .moveTo(cx, cy - ICON_R)
+    .lineTo(cx, cy + ICON_R)
+    .stroke();
+  doc
+    .moveTo(cx - ICON_R, cy)
+    .lineTo(cx + ICON_R, cy)
+    .stroke();
+  doc
+    .moveTo(cx - ICON_R, cy)
+    .bezierCurveTo(
+      cx - ICON_R * 0.4,
+      cy - ICON_R * 0.7,
+      cx + ICON_R * 0.4,
+      cy - ICON_R * 0.7,
+      cx + ICON_R,
+      cy,
+    )
     .stroke();
   doc.restore();
 }
 
-function drawEnvelope(doc: InstanceType<typeof PDFDocument>, cx: number, cy: number) {
-  const ex = cx - ICON_R, ey = cy - ICON_R * 0.8, ew = ICON_R * 2, eh = ICON_R * 1.6;
+function drawEnvelope(
+  doc: InstanceType<typeof PDFDocument>,
+  cx: number,
+  cy: number,
+) {
+  const ex = cx - ICON_R,
+    ey = cy - ICON_R * 0.8,
+    ew = ICON_R * 2,
+    eh = ICON_R * 1.6;
   doc.save().strokeColor(GRAY).lineWidth(0.7);
   doc.rect(ex, ey, ew, eh).stroke();
-  doc.moveTo(ex, ey).lineTo(ex + ew / 2, ey + eh / 2).stroke();
-  doc.moveTo(ex + ew / 2, ey + eh / 2).lineTo(ex + ew, ey).stroke();
+  doc
+    .moveTo(ex, ey)
+    .lineTo(ex + ew / 2, ey + eh / 2)
+    .stroke();
+  doc
+    .moveTo(ex + ew / 2, ey + eh / 2)
+    .lineTo(ex + ew, ey)
+    .stroke();
   doc.restore();
 }
 
-function drawLinkedIn(doc: InstanceType<typeof PDFDocument>, cx: number, cy: number) {
+function drawLinkedIn(
+  doc: InstanceType<typeof PDFDocument>,
+  cx: number,
+  cy: number,
+) {
   doc.save().strokeColor(GRAY).lineWidth(0.7);
   doc.roundedRect(cx - ICON_R, cy - ICON_R, ICON_R * 2, ICON_R * 2, 1).stroke();
   doc.font("Helvetica-Bold").fontSize(4.5).fillColor(GRAY);
@@ -104,14 +163,21 @@ function drawLinkedIn(doc: InstanceType<typeof PDFDocument>, cx: number, cy: num
   doc.restore();
 }
 
-const ICON_FN: Record<string, (doc: InstanceType<typeof PDFDocument>, cx: number, cy: number) => void> = {
+const ICON_FN: Record<
+  string,
+  (doc: InstanceType<typeof PDFDocument>, cx: number, cy: number) => void
+> = {
   web: drawGlobe,
   email: drawEnvelope,
   linkedin: drawLinkedIn,
 };
 
 // ── Section headers ─────────────────────────────────────────────────────────
-function secLeft(doc: InstanceType<typeof PDFDocument>, title: string, y: number): number {
+function secLeft(
+  doc: InstanceType<typeof PDFDocument>,
+  title: string,
+  y: number,
+): number {
   doc.font("Helvetica-Bold").fontSize(SZ_SEC).fillColor(BLACK);
   doc.text(title, C1, y, { lineBreak: false });
   y += SZ_SEC + 4;
@@ -119,7 +185,11 @@ function secLeft(doc: InstanceType<typeof PDFDocument>, title: string, y: number
   return y + 10;
 }
 
-function secRight(doc: InstanceType<typeof PDFDocument>, title: string, y: number): number {
+function secRight(
+  doc: InstanceType<typeof PDFDocument>,
+  title: string,
+  y: number,
+): number {
   doc.font("Helvetica-Bold").fontSize(SZ_SEC).fillColor(BLACK);
   doc.text(title, C2, y, { lineBreak: false });
   y += SZ_SEC + 4;
@@ -130,8 +200,12 @@ function secRight(doc: InstanceType<typeof PDFDocument>, title: string, y: numbe
 // ── Job entry ───────────────────────────────────────────────────────────────
 function drawJob(
   doc: InstanceType<typeof PDFDocument>,
-  company: string, dates: string, loc: string | null | undefined,
-  title: string, desc: string, y: number
+  company: string,
+  dates: string,
+  loc: string | null | undefined,
+  title: string,
+  desc: string,
+  y: number,
 ): number {
   if (y > FLOOR_Y) return y;
   const top = y;
@@ -217,7 +291,15 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
       doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
       doc.text(edu.dates, C1, ly, { lineBreak: false });
       ly += 12;
-      ly = drawText(doc, edu.institution, "Helvetica-Bold", BLACK, C1, ly, C1_W);
+      ly = drawText(
+        doc,
+        edu.institution,
+        "Helvetica-Bold",
+        BLACK,
+        C1,
+        ly,
+        C1_W,
+      );
       doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
       doc.text(edu.degree, C1, ly, { lineBreak: false });
       ly += 11;
@@ -228,7 +310,15 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
     }
 
     if (profile.professional_development.length > 0) {
-      ly = drawText(doc, "Professional Development", "Helvetica-Bold", BLACK, C1, ly, C1_W);
+      ly = drawText(
+        doc,
+        "Professional Development",
+        "Helvetica-Bold",
+        BLACK,
+        C1,
+        ly,
+        C1_W,
+      );
       for (const item of profile.professional_development) {
         ly = drawText(doc, item, "Helvetica", GRAY, C1, ly, C1_W);
       }
@@ -243,7 +333,15 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
     ry = secRight(doc, "Experience", ry);
 
     for (const exp of profile.experience) {
-      ry = drawJob(doc, exp.company, exp.dates, exp.location, exp.title, exp.description, ry);
+      ry = drawJob(
+        doc,
+        exp.company,
+        exp.dates,
+        exp.location,
+        exp.title,
+        exp.description,
+        ry,
+      );
     }
 
     if (profile.earlier_experience.length > 0 && ry < FLOOR_Y) {
@@ -264,7 +362,6 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
         ry += 11;
 
         let etop = top;
-        doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
         doc.font("Helvetica").fontSize(SZ_BODY).fillColor(BLACK);
         for (const ln of wrapLines(doc, ee.title, "Helvetica", C3_W)) {
           doc.text(ln, C3, etop, { lineBreak: false });
