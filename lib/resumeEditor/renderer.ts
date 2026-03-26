@@ -44,7 +44,11 @@ function newPage(doc: Doc): number {
   return PAGE_TOP;
 }
 
-function ensureSpace(doc: Doc, y: number, needed: number = 3 * BASELINE): number {
+function ensureSpace(
+  doc: Doc,
+  y: number,
+  needed: number = 3 * BASELINE,
+): number {
   if (y + needed > FLOOR_Y) return newPage(doc);
   return y;
 }
@@ -54,7 +58,12 @@ function textW(doc: Doc, text: string, font: string, size: number): number {
   return doc.widthOfString(text);
 }
 
-function wrapLines(doc: Doc, text: string, font: string, maxW: number): string[] {
+function wrapLines(
+  doc: Doc,
+  text: string,
+  font: string,
+  maxW: number,
+): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
   let cur = "";
@@ -72,8 +81,13 @@ function wrapLines(doc: Doc, text: string, font: string, maxW: number): string[]
 }
 
 function drawText(
-  doc: Doc, text: string, font: string, color: string,
-  x: number, y: number, maxW: number,
+  doc: Doc,
+  text: string,
+  font: string,
+  color: string,
+  x: number,
+  y: number,
+  maxW: number,
 ): number {
   const lines = wrapLines(doc, text, font, maxW);
   doc.font(font).fontSize(SZ_BODY).fillColor(color);
@@ -86,13 +100,25 @@ function drawText(
 }
 
 function fullRule(doc: Doc, y: number) {
-  doc.save().strokeColor(BLACK).lineWidth(2)
-    .moveTo(MARGIN, y).lineTo(W - MARGIN, y).stroke().restore();
+  doc
+    .save()
+    .strokeColor(BLACK)
+    .lineWidth(2)
+    .moveTo(MARGIN, y)
+    .lineTo(W - MARGIN, y)
+    .stroke()
+    .restore();
 }
 
 function lightRule(doc: Doc, x: number, y: number, w: number) {
-  doc.save().strokeColor(LGRAY).lineWidth(0.5)
-    .moveTo(x, y).lineTo(x + w, y).stroke().restore();
+  doc
+    .save()
+    .strokeColor(LGRAY)
+    .lineWidth(0.5)
+    .moveTo(x, y)
+    .lineTo(x + w, y)
+    .stroke()
+    .restore();
 }
 
 // Section heading: full-width rule + UPPERCASE heading in left column
@@ -103,15 +129,24 @@ function sectionStart(doc: Doc, title: string, y: number): number {
   y += SEC_PAD;
   if (title) {
     doc.font("Helvetica-Bold").fontSize(SZ_HEADING).fillColor(BLACK);
-    doc.text(title.toUpperCase(), LEFT_X, y, { width: LEFT_W, lineBreak: true, characterSpacing: 1.5 });
+    doc.text(title.toUpperCase(), LEFT_X, y, {
+      width: LEFT_W,
+      lineBreak: true,
+      characterSpacing: 1.5,
+    });
   }
   return y;
 }
 
 // ── Job entry ───────────────────────────────────────────────────────────────
 function drawJob(
-  doc: Doc, company: string, dates: string,
-  loc: string | null | undefined, title: string, desc: string, y: number,
+  doc: Doc,
+  company: string,
+  dates: string,
+  loc: string | null | undefined,
+  title: string,
+  desc: string,
+  y: number,
   isLast: boolean = false,
 ): number {
   y = ensureSpace(doc, snap(y), 5 * BASELINE);
@@ -194,7 +229,15 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
     if (profile.about.length > 0) {
       ry += BASELINE;
       for (let i = 0; i < profile.about.length; i++) {
-        ry = drawText(doc, profile.about[i], "Helvetica", GRAY, RIGHT_X, ry, RIGHT_W);
+        ry = drawText(
+          doc,
+          profile.about[i],
+          "Helvetica",
+          GRAY,
+          RIGHT_X,
+          ry,
+          RIGHT_W,
+        );
         if (i < profile.about.length - 1) ry += BASELINE;
       }
     }
@@ -208,7 +251,16 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
       for (let i = 0; i < profile.experience.length; i++) {
         const exp = profile.experience[i];
         const last = i === profile.experience.length - 1;
-        ry = drawJob(doc, exp.company, exp.dates, exp.location, exp.title, exp.description, ry, last);
+        ry = drawJob(
+          doc,
+          exp.company,
+          exp.dates,
+          exp.location,
+          exp.title,
+          exp.description,
+          ry,
+          last,
+        );
       }
 
       if (profile.earlier_experience.length > 0) {
@@ -221,7 +273,15 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
           doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
           doc.text(ee.dates, RIGHT_X, ry, { lineBreak: false });
           ry += BASELINE;
-          ry = drawText(doc, ee.company, "Helvetica-Bold", BLACK, RIGHT_X, ry, RIGHT_W);
+          ry = drawText(
+            doc,
+            ee.company,
+            "Helvetica-Bold",
+            BLACK,
+            RIGHT_X,
+            ry,
+            RIGHT_W,
+          );
           doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
           doc.text(ee.title, RIGHT_X, ry, { lineBreak: false });
           ry += BASELINE;
@@ -246,12 +306,28 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
         doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
         doc.text(edu.dates, RIGHT_X, ry, { lineBreak: false });
         ry += BASELINE;
-        ry = drawText(doc, edu.institution, "Helvetica-Bold", BLACK, RIGHT_X, ry, RIGHT_W);
+        ry = drawText(
+          doc,
+          edu.institution,
+          "Helvetica-Bold",
+          BLACK,
+          RIGHT_X,
+          ry,
+          RIGHT_W,
+        );
         doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
         doc.text(edu.degree, RIGHT_X, ry, { lineBreak: false });
         ry += BASELINE;
         if (edu.details) {
-          ry = drawText(doc, edu.details, "Helvetica", LGRAY, RIGHT_X, ry, RIGHT_W);
+          ry = drawText(
+            doc,
+            edu.details,
+            "Helvetica",
+            LGRAY,
+            RIGHT_X,
+            ry,
+            RIGHT_W,
+          );
         }
         if (i < profile.education.length - 1) {
           ry += BASELINE / 2;
@@ -294,7 +370,15 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
       }
     } else if (profile.skills) {
       const skillsTop = sectionStart(doc, "Skills", y);
-      drawText(doc, profile.skills, "Helvetica", GRAY, RIGHT_X, skillsTop, RIGHT_W);
+      drawText(
+        doc,
+        profile.skills,
+        "Helvetica",
+        GRAY,
+        RIGHT_X,
+        skillsTop,
+        RIGHT_W,
+      );
     }
 
     doc.end();
