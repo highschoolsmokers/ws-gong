@@ -209,7 +209,7 @@ export default function ContactForm() {
         </section>
 
         {/* Actions */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 pt-8 pb-10">
+        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
           <div />
           <div className="flex items-baseline gap-3">
             <button
