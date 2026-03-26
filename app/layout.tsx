@@ -23,6 +23,14 @@ export const metadata: Metadata = {
     follow: false,
     googleBot: { index: false, follow: false },
   },
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": "/feed",
+    },
+  },
   openGraph: {
     siteName: "W.S. Gong",
     url: "https://ws-gong.com",
