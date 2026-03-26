@@ -1,49 +1,60 @@
 import PDFDocument from "pdfkit";
 import type { Profile } from "./schema";
 
-// ── Layout constants ────────────────────────────────────────────────────────
+// ── Swiss Modular Grid ───────────────────────────────────────────────────────
+// 6-column grid on US Letter (612 × 792pt)
 const W = 612;
 const H = 792;
-const PAD = 44;
-const C1 = PAD;
-const C2 = 240;
-const C3 = 368;
+const MARGIN = 44;
+const GUTTER = 12;
+const CONTENT_W = W - MARGIN * 2; // 524
+const MODULE = (CONTENT_W - 5 * GUTTER) / 6; // ≈77.3
 
-const C1_W = C2 - C1 - 14;
-const C2_W = C3 - C2 - 14;
-const C3_W = W - C3 - PAD;
+const col = (n: number) => MARGIN + n * (MODULE + GUTTER);
 
-const HDR_H = 120;
-const BODY_TOP = PAD + HDR_H + 32;
-const FLOOR_Y = H - PAD - 36; // max Y before we stop drawing
+// Primary split: 2 modules left (heading), 4 modules right (content) → 1:2
+const LEFT_X = col(0);
+const LEFT_W = 2 * MODULE + GUTTER;
+const RIGHT_X = col(2);
+const RIGHT_W = 4 * MODULE + 3 * GUTTER;
 
-const SZ_NAME = 36;
-const SZ_SEC = 26;
+// ── Vertical rhythm ─────────────────────────────────────────────────────────
+const BASELINE = 11;
+const snap = (y: number) => Math.ceil(y / BASELINE) * BASELINE;
+const SEC_PAD = 10;
+const SEC_GAP = 2 * BASELINE;
+const PAGE_TOP = MARGIN;
+const FLOOR_Y = H - MARGIN - BASELINE;
+
+// ── Typography ──────────────────────────────────────────────────────────────
+const SZ_NAME = 28;
+const SZ_TITLE = 11;
+const SZ_HEADING = 9;
 const SZ_BODY = 8;
-const ICON_R = 3.5;
 
-const BLACK = "#111111";
-const GRAY = "#666666";
+const BLACK = "#000000";
+const GRAY = "#555555";
 const LGRAY = "#999999";
-const RULE = "#CCCCCC";
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-function textW(
-  doc: InstanceType<typeof PDFDocument>,
-  text: string,
-  font: string,
-  size: number,
-): number {
+type Doc = InstanceType<typeof PDFDocument>;
+
+function newPage(doc: Doc): number {
+  doc.addPage({ size: "letter", margin: 0 });
+  return PAGE_TOP;
+}
+
+function ensureSpace(doc: Doc, y: number, needed: number = 3 * BASELINE): number {
+  if (y + needed > FLOOR_Y) return newPage(doc);
+  return y;
+}
+
+function textW(doc: Doc, text: string, font: string, size: number): number {
   doc.font(font).fontSize(size);
   return doc.widthOfString(text);
 }
 
-function wrapLines(
-  doc: InstanceType<typeof PDFDocument>,
-  text: string,
-  font: string,
-  maxW: number,
-): string[] {
+function wrapLines(doc: Doc, text: string, font: string, maxW: number): string[] {
   const words = text.split(" ");
   const lines: string[] = [];
   let cur = "";
@@ -61,186 +72,81 @@ function wrapLines(
 }
 
 function drawText(
-  doc: InstanceType<typeof PDFDocument>,
-  text: string,
-  font: string,
-  color: string,
-  x: number,
-  y: number,
-  maxW: number,
-  lead: number = 10.5,
+  doc: Doc, text: string, font: string, color: string,
+  x: number, y: number, maxW: number,
 ): number {
   const lines = wrapLines(doc, text, font, maxW);
   doc.font(font).fontSize(SZ_BODY).fillColor(color);
   for (const line of lines) {
-    if (y > FLOOR_Y) break;
+    y = ensureSpace(doc, y);
     doc.text(line, x, y, { lineBreak: false });
-    y += lead;
+    y += BASELINE;
   }
   return y;
 }
 
-function hrule(
-  doc: InstanceType<typeof PDFDocument>,
-  x: number,
-  y: number,
-  w: number,
-  weight: number = 0.5,
-  color: string = RULE,
-) {
-  doc
-    .save()
-    .strokeColor(color)
-    .lineWidth(weight)
-    .moveTo(x, y)
-    .lineTo(x + w, y)
-    .stroke()
-    .restore();
+function fullRule(doc: Doc, y: number) {
+  doc.save().strokeColor(BLACK).lineWidth(2)
+    .moveTo(MARGIN, y).lineTo(W - MARGIN, y).stroke().restore();
 }
 
-// ── Icons ───────────────────────────────────────────────────────────────────
-function drawGlobe(
-  doc: InstanceType<typeof PDFDocument>,
-  cx: number,
-  cy: number,
-) {
-  doc.save().strokeColor(GRAY).lineWidth(0.7);
-  doc.circle(cx, cy, ICON_R).stroke();
-  doc
-    .moveTo(cx, cy - ICON_R)
-    .lineTo(cx, cy + ICON_R)
-    .stroke();
-  doc
-    .moveTo(cx - ICON_R, cy)
-    .lineTo(cx + ICON_R, cy)
-    .stroke();
-  doc
-    .moveTo(cx - ICON_R, cy)
-    .bezierCurveTo(
-      cx - ICON_R * 0.4,
-      cy - ICON_R * 0.7,
-      cx + ICON_R * 0.4,
-      cy - ICON_R * 0.7,
-      cx + ICON_R,
-      cy,
-    )
-    .stroke();
-  doc.restore();
+function lightRule(doc: Doc, x: number, y: number, w: number) {
+  doc.save().strokeColor(LGRAY).lineWidth(0.5)
+    .moveTo(x, y).lineTo(x + w, y).stroke().restore();
 }
 
-function drawEnvelope(
-  doc: InstanceType<typeof PDFDocument>,
-  cx: number,
-  cy: number,
-) {
-  const ex = cx - ICON_R,
-    ey = cy - ICON_R * 0.8,
-    ew = ICON_R * 2,
-    eh = ICON_R * 1.6;
-  doc.save().strokeColor(GRAY).lineWidth(0.7);
-  doc.rect(ex, ey, ew, eh).stroke();
-  doc
-    .moveTo(ex, ey)
-    .lineTo(ex + ew / 2, ey + eh / 2)
-    .stroke();
-  doc
-    .moveTo(ex + ew / 2, ey + eh / 2)
-    .lineTo(ex + ew, ey)
-    .stroke();
-  doc.restore();
-}
-
-function drawLinkedIn(
-  doc: InstanceType<typeof PDFDocument>,
-  cx: number,
-  cy: number,
-) {
-  doc.save().strokeColor(GRAY).lineWidth(0.7);
-  doc.roundedRect(cx - ICON_R, cy - ICON_R, ICON_R * 2, ICON_R * 2, 1).stroke();
-  doc.font("Helvetica-Bold").fontSize(4.5).fillColor(GRAY);
-  const inW = doc.widthOfString("in");
-  doc.text("in", cx - inW / 2, cy - 2.5, { lineBreak: false });
-  doc.restore();
-}
-
-const ICON_FN: Record<
-  string,
-  (doc: InstanceType<typeof PDFDocument>, cx: number, cy: number) => void
-> = {
-  web: drawGlobe,
-  email: drawEnvelope,
-  linkedin: drawLinkedIn,
-};
-
-// ── Section headers ─────────────────────────────────────────────────────────
-function secLeft(
-  doc: InstanceType<typeof PDFDocument>,
-  title: string,
-  y: number,
-): number {
-  doc.font("Helvetica-Bold").fontSize(SZ_SEC).fillColor(BLACK);
-  doc.text(title, C1, y, { lineBreak: false });
-  y += SZ_SEC + 4;
-  hrule(doc, C1, y, C1_W, 3, BLACK);
-  return y + 10;
-}
-
-function secRight(
-  doc: InstanceType<typeof PDFDocument>,
-  title: string,
-  y: number,
-): number {
-  doc.font("Helvetica-Bold").fontSize(SZ_SEC).fillColor(BLACK);
-  doc.text(title, C2, y, { lineBreak: false });
-  y += SZ_SEC + 4;
-  hrule(doc, C2, y, W - C2 - PAD, 3, BLACK);
-  return y + 10;
+// Section heading: full-width rule + UPPERCASE heading in left column
+function sectionStart(doc: Doc, title: string, y: number): number {
+  y = ensureSpace(doc, snap(y), SZ_HEADING + SEC_PAD + 4 * BASELINE);
+  y = snap(y);
+  fullRule(doc, y);
+  y += SEC_PAD;
+  if (title) {
+    doc.font("Helvetica-Bold").fontSize(SZ_HEADING).fillColor(BLACK);
+    doc.text(title.toUpperCase(), LEFT_X, y, { width: LEFT_W, lineBreak: true, characterSpacing: 1.5 });
+  }
+  return y;
 }
 
 // ── Job entry ───────────────────────────────────────────────────────────────
 function drawJob(
-  doc: InstanceType<typeof PDFDocument>,
-  company: string,
-  dates: string,
-  loc: string | null | undefined,
-  title: string,
-  desc: string,
-  y: number,
+  doc: Doc, company: string, dates: string,
+  loc: string | null | undefined, title: string, desc: string, y: number,
+  isLast: boolean = false,
 ): number {
-  if (y > FLOOR_Y) return y;
+  y = ensureSpace(doc, snap(y), 5 * BASELINE);
   const top = y;
 
-  // C2 column: company, dates, location
-  const coLines = wrapLines(doc, company, "Helvetica-Bold", C2_W);
+  // LEFT column: company, dates, location
   doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
-  for (const ln of coLines) {
-    doc.text(ln, C2, y, { lineBreak: false });
-    y += 11;
+  for (const ln of wrapLines(doc, company, "Helvetica-Bold", LEFT_W)) {
+    doc.text(ln, LEFT_X, y, { lineBreak: false });
+    y += BASELINE;
   }
   doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
   for (const part of [dates, loc]) {
     if (!part) continue;
-    for (const ln of wrapLines(doc, part, "Helvetica", C2_W)) {
-      doc.text(ln, C2, y, { lineBreak: false });
-      y += 11;
+    for (const ln of wrapLines(doc, part, "Helvetica", LEFT_W)) {
+      doc.text(ln, LEFT_X, y, { lineBreak: false });
+      y += BASELINE;
     }
   }
 
-  // C3 column: title, description
+  // RIGHT column: title + description
   let dy = top;
+  const titleParts = title.split(/\s*[—–]\s*/);
   doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
-  const tlines = wrapLines(doc, title, "Helvetica-Bold", C3_W);
-  for (const tl of tlines) {
-    doc.text(tl, C3, dy, { lineBreak: false });
-    dy += 11;
+  for (const part of titleParts) {
+    for (const tl of wrapLines(doc, part, "Helvetica-Bold", RIGHT_W)) {
+      doc.text(tl, RIGHT_X, dy, { lineBreak: false });
+      dy += BASELINE;
+    }
   }
-  dy = drawText(doc, desc, "Helvetica", GRAY, C3, dy, C3_W);
+  dy = drawText(doc, desc, "Helvetica", GRAY, RIGHT_X, dy, RIGHT_W);
 
-  const bottom = Math.max(y, dy) + 5;
-  if (bottom < FLOOR_Y) {
-    hrule(doc, C2, bottom, W - C2 - PAD);
-  }
-  return bottom + 7;
+  const bottom = snap(Math.max(y, dy)) + BASELINE / 2;
+  if (!isLast) lightRule(doc, LEFT_X, bottom, CONTENT_W);
+  return bottom + BASELINE;
 }
 
 // ── Main render ─────────────────────────────────────────────────────────────
@@ -255,120 +161,140 @@ export async function renderResume(profile: Profile): Promise<Buffer> {
     const fullName = `${profile.name.first} ${profile.name.last}`;
     doc.info.Title = `${fullName} \u2014 Resume`;
 
-    // ── HEADER ────────────────────────────────────────────────────────
+    let y = MARGIN;
+    let ry: number;
+
+    // ── NAME + ABOUT ──────────────────────────────────────────────────
+    const secY = snap(y) + SEC_PAD;
+
+    // Name — large, bold, stacked
+    let ny = secY;
     doc.font("Helvetica-Bold").fontSize(SZ_NAME).fillColor(BLACK);
-    doc.text(profile.name.first, C1, PAD + 14, { lineBreak: false });
-    doc.text(profile.name.last, C1, PAD + 14 + 40, { lineBreak: false });
+    doc.text(profile.name.first, LEFT_X, ny, { lineBreak: false });
+    ny += SZ_NAME + 4;
+    doc.text(profile.name.last, LEFT_X, ny, { lineBreak: false });
+    ny += SZ_NAME + 8;
 
-    doc.font("Helvetica-Bold").fontSize(SZ_SEC).fillColor(BLACK);
-    doc.text(profile.title, C1, PAD + 14 + 92, { lineBreak: false });
+    // Title — smaller, tracked, uppercase
+    doc.font("Helvetica-Bold").fontSize(SZ_TITLE).fillColor(GRAY);
+    doc.text(profile.title, LEFT_X, ny, { width: LEFT_W, lineBreak: true });
+    ny += Math.ceil(doc.heightOfString(profile.title, { width: LEFT_W }));
 
-    // Contact
-    for (let i = 0; i < profile.contact.length; i++) {
-      const entry = profile.contact[i];
-      const iy = PAD + 10 + i * 14;
-      const iconFn = ICON_FN[entry.type] || drawGlobe;
-      iconFn(doc, C3 + ICON_R, iy + 3);
-      const tx = C3 + ICON_R * 2 + 4;
+    // Contact — clean text, no icons
+    ry = secY;
+    for (const entry of profile.contact) {
       doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
-      doc.text(entry.label, tx, iy, { lineBreak: false });
+      doc.text(entry.label, RIGHT_X, ry, { lineBreak: false });
       const labelW = doc.widthOfString(entry.label);
-      doc.link(tx, iy, labelW, SZ_BODY, entry.url);
+      doc.link(RIGHT_X, ry, labelW, SZ_BODY, entry.url);
+      ry += BASELINE;
     }
 
-    // ── LEFT COLUMN ───────────────────────────────────────────────────
-    let ly = BODY_TOP;
-
-    ly = secLeft(doc, "About", ly);
-    for (let i = 0; i < profile.about.length; i++) {
-      ly = drawText(doc, profile.about[i], "Helvetica", GRAY, C1, ly, C1_W);
-      if (i < profile.about.length - 1) ly += 8;
-    }
-    ly += 20;
-
-    ly = secLeft(doc, "Education", ly);
-    for (const edu of profile.education) {
-      doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
-      doc.text(edu.dates, C1, ly, { lineBreak: false });
-      ly += 12;
-      ly = drawText(
-        doc,
-        edu.institution,
-        "Helvetica-Bold",
-        BLACK,
-        C1,
-        ly,
-        C1_W,
-      );
-      doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
-      doc.text(edu.degree, C1, ly, { lineBreak: false });
-      ly += 11;
-      if (edu.details) {
-        ly = drawText(doc, edu.details, "Helvetica", LGRAY, C1, ly, C1_W);
+    // About
+    if (profile.about.length > 0) {
+      ry += BASELINE;
+      for (let i = 0; i < profile.about.length; i++) {
+        ry = drawText(doc, profile.about[i], "Helvetica", GRAY, RIGHT_X, ry, RIGHT_W);
+        if (i < profile.about.length - 1) ry += BASELINE;
       }
-      ly += 9;
     }
 
-    if (profile.professional_development.length > 0) {
-      ly = drawText(
-        doc,
-        "Professional Development",
-        "Helvetica-Bold",
-        BLACK,
-        C1,
-        ly,
-        C1_W,
-      );
-      for (const item of profile.professional_development) {
-        ly = drawText(doc, item, "Helvetica", GRAY, C1, ly, C1_W);
+    y = Math.max(ny, ry) + SEC_GAP;
+
+    // ── EXPERIENCE ────────────────────────────────────────────────────
+    if (profile.experience.length > 0) {
+      const expTop = sectionStart(doc, "Experience", y);
+      ry = expTop + SZ_HEADING + SEC_PAD;
+      for (let i = 0; i < profile.experience.length; i++) {
+        const exp = profile.experience[i];
+        const last = i === profile.experience.length - 1;
+        ry = drawJob(doc, exp.company, exp.dates, exp.location, exp.title, exp.description, ry, last);
       }
-      ly += 20;
-    }
 
-    ly = secLeft(doc, "Skills", ly);
-    drawText(doc, profile.skills, "Helvetica", GRAY, C1, ly, C1_W);
-
-    // ── RIGHT COLUMN ──────────────────────────────────────────────────
-    let ry = BODY_TOP;
-    ry = secRight(doc, "Experience", ry);
-
-    for (const exp of profile.experience) {
-      ry = drawJob(
-        doc,
-        exp.company,
-        exp.dates,
-        exp.location,
-        exp.title,
-        exp.description,
-        ry,
-      );
-    }
-
-    if (profile.earlier_experience.length > 0 && ry < FLOOR_Y) {
-      doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
-      doc.text("Previous Experience", C2, ry, { lineBreak: false });
-      ry += 12;
-
-      for (const ee of profile.earlier_experience) {
-        if (ry > FLOOR_Y) break;
-        const top = ry;
-        doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
-        for (const ln of wrapLines(doc, ee.company, "Helvetica-Bold", C2_W)) {
-          doc.text(ln, C2, ry, { lineBreak: false });
-          ry += 11;
+      if (profile.earlier_experience.length > 0) {
+        ry = snap(ry) + SEC_GAP;
+        const prevTop = sectionStart(doc, "Previous\nExperience", ry);
+        ry = prevTop;
+        for (let i = 0; i < profile.earlier_experience.length; i++) {
+          const ee = profile.earlier_experience[i];
+          ry = ensureSpace(doc, ry, 3 * BASELINE);
+          doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
+          doc.text(ee.dates, RIGHT_X, ry, { lineBreak: false });
+          ry += BASELINE;
+          ry = drawText(doc, ee.company, "Helvetica-Bold", BLACK, RIGHT_X, ry, RIGHT_W);
+          doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
+          doc.text(ee.title, RIGHT_X, ry, { lineBreak: false });
+          ry += BASELINE;
+          if (i < profile.earlier_experience.length - 1) {
+            ry += BASELINE / 2;
+            lightRule(doc, RIGHT_X, ry, RIGHT_W);
+            ry += BASELINE / 2;
+          }
         }
+      }
+
+      y = ry + SEC_GAP;
+    }
+
+    // ── EDUCATION ─────────────────────────────────────────────────────
+    if (profile.education.length > 0) {
+      const eduTop = sectionStart(doc, "Education", y);
+      ry = eduTop;
+      for (let i = 0; i < profile.education.length; i++) {
+        const edu = profile.education[i];
+        ry = ensureSpace(doc, ry, 3 * BASELINE);
         doc.font("Helvetica").fontSize(SZ_BODY).fillColor(LGRAY);
-        doc.text(ee.dates, C2, ry, { lineBreak: false });
-        ry += 11;
-
-        let etop = top;
-        doc.font("Helvetica").fontSize(SZ_BODY).fillColor(BLACK);
-        for (const ln of wrapLines(doc, ee.title, "Helvetica", C3_W)) {
-          doc.text(ln, C3, etop, { lineBreak: false });
-          etop += 11;
+        doc.text(edu.dates, RIGHT_X, ry, { lineBreak: false });
+        ry += BASELINE;
+        ry = drawText(doc, edu.institution, "Helvetica-Bold", BLACK, RIGHT_X, ry, RIGHT_W);
+        doc.font("Helvetica").fontSize(SZ_BODY).fillColor(GRAY);
+        doc.text(edu.degree, RIGHT_X, ry, { lineBreak: false });
+        ry += BASELINE;
+        if (edu.details) {
+          ry = drawText(doc, edu.details, "Helvetica", LGRAY, RIGHT_X, ry, RIGHT_W);
         }
-        ry += 8;
+        if (i < profile.education.length - 1) {
+          ry += BASELINE / 2;
+          lightRule(doc, RIGHT_X, ry, RIGHT_W);
+          ry += BASELINE / 2;
+        }
       }
+
+      if (profile.professional_development.length > 0) {
+        ry += BASELINE / 2;
+        lightRule(doc, RIGHT_X, ry, RIGHT_W);
+        ry += BASELINE / 2;
+        doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
+        doc.text("Professional Development", RIGHT_X, ry, { lineBreak: false });
+        ry += BASELINE;
+        for (const item of profile.professional_development) {
+          ry = drawText(doc, item, "Helvetica", GRAY, RIGHT_X, ry, RIGHT_W);
+        }
+      }
+
+      y = ry + SEC_GAP;
+    }
+
+    // ── SKILLS ────────────────────────────────────────────────────────
+    if (profile.skill_categories.length > 0) {
+      const skillsTop = sectionStart(doc, "Skills", y);
+      ry = skillsTop;
+      for (let i = 0; i < profile.skill_categories.length; i++) {
+        const cat = profile.skill_categories[i];
+        ry = ensureSpace(doc, ry, 2 * BASELINE);
+        doc.font("Helvetica-Bold").fontSize(SZ_BODY).fillColor(BLACK);
+        doc.text(cat.heading, RIGHT_X, ry, { lineBreak: false });
+        ry += BASELINE;
+        ry = drawText(doc, cat.items, "Helvetica", GRAY, RIGHT_X, ry, RIGHT_W);
+        if (i < profile.skill_categories.length - 1) {
+          ry += BASELINE / 2;
+          lightRule(doc, RIGHT_X, ry, RIGHT_W);
+          ry += BASELINE / 2;
+        }
+      }
+    } else if (profile.skills) {
+      const skillsTop = sectionStart(doc, "Skills", y);
+      drawText(doc, profile.skills, "Helvetica", GRAY, RIGHT_X, skillsTop, RIGHT_W);
     }
 
     doc.end();

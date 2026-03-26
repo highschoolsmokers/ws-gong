@@ -28,7 +28,15 @@
     "Certificate in Professional Editing, UC Berkeley Extension (2023)",
     "Application Development with Ruby on Rails, General Assembly (2012)"
   ],
-  "skills": "Manual & automated testing, E2E, regression, smoke, exploratory, performance. Shift-left QA, ATDD, BDD, Agile/Scrum. Cypress.io, Selenium, Cucumber, RSpec, Appium, JMeter, SauceLabs, Charles Proxy, Postman, JIRA, TestRail, CI/CD. Ruby, Node.js, JavaScript, Python, Hack/HHVM, React/Redux, REST APIs. LLM output evaluation, agentic workflow validation, Anthropic SDK, docs-as-tests. Team building, headcount planning, technical interviewing, QA advocacy.",
+  "skills": "",
+  "skill_categories": [
+    { "heading": "Testing", "items": "Manual & automated testing, E2E, regression, smoke, exploratory, performance" },
+    { "heading": "Methodologies", "items": "Shift-left QA, ATDD, BDD, Agile/Scrum" },
+    { "heading": "Tools", "items": "Cypress.io, Selenium, Cucumber, RSpec, Appium, JMeter, SauceLabs, Charles Proxy, Postman, JIRA, TestRail, CI/CD" },
+    { "heading": "Languages", "items": "Ruby, Node.js, JavaScript, Python, Hack/HHVM, React/Redux, REST APIs" },
+    { "heading": "AI/ML", "items": "LLM output evaluation, agentic workflow validation, Anthropic SDK, docs-as-tests" },
+    { "heading": "Leadership", "items": "Team building, headcount planning, technical interviewing, QA advocacy" }
+  ],
   "experience": [
     {
       "company": "Self-employed",
@@ -41,7 +49,7 @@
       "company": "Slack Technologies",
       "dates": "2017 \u2013 2020",
       "location": "San Francisco, CA",
-      "title": "Technical Lead Manager and Staff Engineer \u2014 QA",
+      "title": "Technical Lead Manager and Staff Quality Assurance Engineer",
       "description": "Quality authority across eight concurrent feature teams in engineering, developer relations, and product. Launched Block Kit and Workflows on Hack/HHVM, React/Redux, Electron, WebSockets. Scaled QA 3x across SF, Vancouver, and Pune. Drove test coverage to 90% with Cypress.io shift-left strategy. Directed four engineers; promoted three to senior roles."
     },
     {
