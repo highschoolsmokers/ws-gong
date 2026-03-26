@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState, useCallback, useRef } from "react";
+import { useActionState, useEffect, useState, useCallback, useRef, type ChangeEvent } from "react";
 import { sendMessage, type FormState } from "./actions";
 
 const initialState: FormState = { status: "idle", message: "" };
@@ -20,6 +20,7 @@ export default function ContactForm() {
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [dragging, setDragging] = useState(false);
   const dragCounter = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setLoadedAt(Date.now());
@@ -66,6 +67,15 @@ export default function ContactForm() {
 
   const removeAttachment = (index: number) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAttachments((prev) => [
+      ...prev,
+      ...files.map((f) => ({ name: f.name, size: f.size })),
+    ]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   if (state.status === "success") {
@@ -135,6 +145,23 @@ export default function ContactForm() {
               className="border border-neutral-700 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full"
               placeholder="Message"
             />
+            <div className="flex items-center gap-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-sm text-neutral-400 hover:text-black transition-colors"
+              >
+                + Attach file
+              </button>
+              <span className="text-xs text-neutral-400">or drag and drop</span>
+            </div>
             {attachments.length > 0 && (
               <div className="space-y-1">
                 {attachments.map((a, i) => (

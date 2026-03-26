@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, type ChangeEvent } from "react";
 import { useSearchParams } from "next/navigation";
 
 interface Attachment {
@@ -27,6 +27,7 @@ export default function ContactForm() {
   const [dragging, setDragging] = useState(false);
   const [status, setStatus] = useState("");
   const dragCounter = useRef(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
 
   // Fetch CSRF token on mount
@@ -92,6 +93,15 @@ export default function ContactForm() {
 
   const removeAttachment = (index: number) => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    setAttachments((prev) => [
+      ...prev,
+      ...files.map((f) => ({ name: f.name, size: f.size })),
+    ]);
+    if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
@@ -217,7 +227,7 @@ export default function ContactForm() {
             </div>
             <div>
               <textarea
-                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors resize-y min-h-32 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
+                className={`border bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
                 placeholder="Message"
                 value={form.message}
                 onChange={(e) => {
@@ -230,6 +240,23 @@ export default function ContactForm() {
                   {errors.message}
                 </span>
               )}
+            </div>
+            <div className="flex items-center gap-4">
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-sm text-neutral-400 hover:text-black transition-colors"
+              >
+                + Attach file
+              </button>
+              <span className="text-xs text-neutral-400">or drag and drop</span>
             </div>
             {attachments.length > 0 && (
               <div className="space-y-1">
