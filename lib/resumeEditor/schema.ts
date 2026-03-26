@@ -25,6 +25,11 @@ export interface EarlierExperienceEntry {
   dates: string;
 }
 
+export interface SkillCategory {
+  heading: string;
+  items: string;
+}
+
 export interface Profile {
   name: { first: string; last: string };
   title: string;
@@ -33,6 +38,7 @@ export interface Profile {
   education: EducationEntry[];
   professional_development: string[];
   skills: string;
+  skill_categories: SkillCategory[];
   experience: ExperienceEntry[];
   earlier_experience: EarlierExperienceEntry[];
 }
@@ -50,6 +56,7 @@ export function validateProfile(data: unknown): Profile {
     education: (d.education as EducationEntry[]) || [],
     professional_development: (d.professional_development as string[]) || [],
     skills: (d.skills as string) || "",
+    skill_categories: (d.skill_categories as SkillCategory[]) || [],
     experience: (d.experience as ExperienceEntry[]) || [],
     earlier_experience:
       (d.earlier_experience as EarlierExperienceEntry[]) || [],
@@ -65,6 +72,7 @@ export function emptyProfile(): Profile {
     education: [],
     professional_development: [],
     skills: "",
+    skill_categories: [],
     experience: [],
     earlier_experience: [],
   };

@@ -14,6 +14,7 @@ import {
   type EducationEntry,
   type ExperienceEntry,
   type EarlierExperienceEntry,
+  type SkillCategory,
 } from "@/lib/resumeEditor/schema";
 
 function emptyContact(): ContactEntry {
@@ -463,15 +464,58 @@ export default function ProfileEditor() {
       </Section>
 
       {/* Skills */}
-      <Section title="Skills">
-        <textarea
-          className="w-full border border-neutral-300 rounded-none px-2 py-1.5 text-sm resize-y min-h-24 placeholder:text-neutral-400"
-          placeholder="Skills"
-          value={profile.skills}
-          onChange={(e) =>
-            setProfile((p) => ({ ...p, skills: e.target.value }))
-          }
-        />
+      <Section
+        title="Skills"
+        onAdd={() =>
+          setProfile((p) => ({
+            ...p,
+            skill_categories: [
+              ...p.skill_categories,
+              { heading: "", items: "" },
+            ],
+          }))
+        }
+        isEmpty={profile.skill_categories.length === 0 && !profile.skills}
+      >
+        {profile.skill_categories.map((cat, i) => (
+          <div key={i} className="relative space-y-2 pb-4 border-b border-neutral-200 last:border-0 last:pb-0">
+            <button
+              onClick={() => removeItem("skill_categories", i)}
+              className="absolute top-0 right-0 text-neutral-400 hover:text-black text-lg leading-none"
+            >
+              {"\u00D7"}
+            </button>
+            <Field
+              label="Heading"
+              value={cat.heading}
+              onChange={(v) => {
+                const cats = [...profile.skill_categories];
+                cats[i] = { ...cats[i], heading: v };
+                setProfile((p) => ({ ...p, skill_categories: cats }));
+              }}
+            />
+            <input
+              className="w-full border border-neutral-300 rounded-none px-2 py-1.5 text-sm placeholder:text-neutral-400"
+              placeholder="Skills (comma-separated)"
+              value={cat.items}
+              onChange={(e) => {
+                const cats = [...profile.skill_categories];
+                cats[i] = { ...cats[i], items: e.target.value };
+                setProfile((p) => ({ ...p, skill_categories: cats }));
+              }}
+            />
+          </div>
+        ))}
+        {profile.skills && profile.skill_categories.length === 0 && (
+          <textarea
+            className="w-full border border-neutral-300 rounded-none px-2 py-1.5 text-sm resize-y min-h-24 placeholder:text-neutral-400"
+            placeholder="Skills (legacy plain text)"
+            value={profile.skills}
+            onChange={(e) =>
+              setProfile((p) => ({ ...p, skills: e.target.value }))
+            }
+          />
+        )}
       </Section>
 
       {/* Experience */}
