@@ -37,25 +37,24 @@ export default function Nav() {
       ) : (
         <div />
       )}
-      <nav className="text-xl font-black tracking-tight leading-relaxed">
-        <ul>
-          <li>
-            <Link
-              href="/"
-              className={`transition-opacity ${
-                pathname === "/" ? "pointer-events-none" : "hover:opacity-70"
-              }`}
-            >
-              Narratives. Code.
-            </Link>
-          </li>
+      <div className="flex flex-col gap-6">
+        <Link
+          href="/"
+          className={`flex items-center gap-2.5 transition-opacity ${
+            pathname === "/" ? "pointer-events-none" : "hover:opacity-70"
+          }`}
+        >
+          <div className="w-5 h-5 bg-black" />
+          <span className="text-xl font-black tracking-tight">Narratives. Code.</span>
+        </Link>
+        <ul className="text-sm font-semibold leading-loose">
           {links.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
                 className={`transition-opacity ${
                   pathname === link.href
-                    ? "underline underline-offset-2 pointer-events-none"
+                    ? "pointer-events-none"
                     : "hover:opacity-70"
                 }`}
               >
@@ -64,7 +63,7 @@ export default function Nav() {
             </li>
           ))}
         </ul>
-      </nav>
+      </div>
     </div>
   );
 }
