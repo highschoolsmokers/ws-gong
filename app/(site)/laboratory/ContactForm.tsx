@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 interface Attachment {
@@ -134,7 +133,7 @@ export default function ContactForm() {
 
   return (
     <div
-      className="min-h-screen bg-black text-white capitalize"
+      className="text-black capitalize"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -142,37 +141,15 @@ export default function ContactForm() {
     >
       {/* Drop overlay */}
       {dragging && (
-        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center border-4 border-dashed border-white">
+        <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center border-4 border-dashed border-black">
           <span className="text-4xl font-black tracking-tight">
             Drop to Attach
           </span>
         </div>
       )}
 
-      <div className="max-w-5xl mx-auto px-8 py-12 md:px-12 md:py-16">
-        {/* Header */}
-        <header className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12 mb-16">
-          <h1
-            className="text-5xl md:text-6xl lg:text-7xl font-black leading-[0.95] tracking-tight"
-            style={titleStyle}
-          >
-            Contact
-          </h1>
-          <div>
-            <Link
-              href="/laboratory"
-              className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
-            >
-              <div className="w-5 h-5 bg-white" />
-              <span className="text-xl font-black tracking-tight">
-                Laboratory
-              </span>
-            </Link>
-          </div>
-        </header>
-
         {/* Form */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-white pt-8 pb-10">
+        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
           <h2 className="text-xl md:text-2xl font-black leading-tight">
             Inquiry
           </h2>
@@ -191,7 +168,7 @@ export default function ContactForm() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <input
-                  className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-white transition-colors w-full ${errors.name ? "border-red-400" : "border-neutral-700"}`}
+                  className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.name ? "border-red-400" : "border-neutral-700"}`}
                   placeholder="Name"
                   value={form.name}
                   onChange={(e) => {
@@ -207,7 +184,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <input
-                  className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-white transition-colors w-full ${errors.email ? "border-red-400" : "border-neutral-700"}`}
+                  className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.email ? "border-red-400" : "border-neutral-700"}`}
                   placeholder="Email"
                   value={form.email}
                   onChange={(e) => {
@@ -224,7 +201,7 @@ export default function ContactForm() {
             </div>
             <div>
               <input
-                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-white transition-colors w-full ${errors.subject ? "border-red-400" : "border-neutral-700"}`}
+                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.subject ? "border-red-400" : "border-neutral-700"}`}
                 placeholder="Subject"
                 value={form.subject}
                 onChange={(e) => {
@@ -240,7 +217,7 @@ export default function ContactForm() {
             </div>
             <div>
               <textarea
-                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-white transition-colors resize-y min-h-32 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
+                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors resize-y min-h-32 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
                 placeholder="Message"
                 value={form.message}
                 onChange={(e) => {
@@ -279,12 +256,12 @@ export default function ContactForm() {
         </section>
 
         {/* Actions */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-white pt-8 pb-10">
+        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
           <div />
           <div className="flex flex-wrap items-baseline gap-0 text-xl tracking-tight">
             <button
               onClick={handleSend}
-              className="font-semibold text-neutral-400 hover:text-white hover:underline transition-colors"
+              className="font-semibold text-neutral-400 hover:text-black hover:underline transition-colors"
             >
               Send
             </button>
@@ -293,7 +270,6 @@ export default function ContactForm() {
             )}
           </div>
         </section>
-      </div>
     </div>
   );
 }
