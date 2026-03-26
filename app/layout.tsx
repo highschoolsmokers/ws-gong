@@ -18,6 +18,11 @@ export const metadata: Metadata = {
     template: "%s — W.S. Gong",
   },
   description,
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
   openGraph: {
     siteName: "W.S. Gong",
     url: "https://ws-gong.com",
@@ -35,6 +40,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} font-sans antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('dragstart',e=>e.preventDefault());`,
+          }}
+        />
         <PageShell header={<Nav />}>{children}</PageShell>
       </body>
     </html>
