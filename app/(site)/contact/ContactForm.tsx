@@ -12,10 +12,8 @@ import { sendMessage, type FormState } from "./actions";
 
 const initialState: FormState = { status: "idle", message: "" };
 
-interface Attachment {
-  name: string;
-  size: number;
-}
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per file
+const MAX_FILES = 5;
 
 export default function ContactForm() {
   const [state, formAction, pending] = useActionState(
@@ -24,10 +22,11 @@ export default function ContactForm() {
   );
   const [loadedAt, setLoadedAt] = useState<number>(0);
   const [messageLen, setMessageLen] = useState(0);
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const dragCounter = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     setLoadedAt(Date.now());
@@ -43,6 +42,13 @@ export default function ContactForm() {
       transition: "font-weight 0.5s ease, letter-spacing 0.5s ease",
     };
   })();
+
+  const addFiles = useCallback((incoming: File[]) => {
+    setFiles((prev) => {
+      const combined = [...prev, ...incoming].slice(0, MAX_FILES);
+      return combined.filter((f) => f.size <= MAX_FILE_SIZE);
+    });
+  }, []);
 
   // Drag and drop handlers
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -61,28 +67,31 @@ export default function ContactForm() {
     e.preventDefault();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    dragCounter.current = 0;
-    setDragging(false);
-    const files = Array.from(e.dataTransfer.files);
-    setAttachments((prev) => [
-      ...prev,
-      ...files.map((f) => ({ name: f.name, size: f.size })),
-    ]);
-  }, []);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      dragCounter.current = 0;
+      setDragging(false);
+      addFiles(Array.from(e.dataTransfer.files));
+    },
+    [addFiles],
+  );
 
-  const removeAttachment = (index: number) => {
-    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    setAttachments((prev) => [
-      ...prev,
-      ...files.map((f) => ({ name: f.name, size: f.size })),
-    ]);
+    addFiles(Array.from(e.target.files || []));
     if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // Inject files into FormData before submission
+  const handleSubmit = (formData: FormData) => {
+    for (const file of files) {
+      formData.append("attachments", file);
+    }
+    formAction(formData);
   };
 
   if (state.status === "success") {
@@ -106,7 +115,7 @@ export default function ContactForm() {
         </div>
       )}
 
-      <form action={formAction}>
+      <form ref={formRef} action={handleSubmit}>
         {/* Honeypot */}
         <input
           type="text"
@@ -170,22 +179,24 @@ export default function ContactForm() {
               >
                 + Attach file
               </button>
-              <span className="text-xs text-neutral-400">or drag and drop</span>
+              <span className="text-xs text-neutral-400">
+                or drag and drop (max {MAX_FILES} files, 5 MB each)
+              </span>
             </div>
-            {attachments.length > 0 && (
+            {files.length > 0 && (
               <div className="space-y-1">
-                {attachments.map((a, i) => (
+                {files.map((f, i) => (
                   <div
                     key={i}
                     className="flex items-baseline gap-2 text-sm text-neutral-500"
                   >
-                    <span>{a.name}</span>
+                    <span>{f.name}</span>
                     <span className="text-neutral-400">
-                      ({(a.size / 1024).toFixed(1)}kb)
+                      ({(f.size / 1024).toFixed(1)}kb)
                     </span>
                     <button
                       type="button"
-                      onClick={() => removeAttachment(i)}
+                      onClick={() => removeFile(i)}
                       className="text-neutral-400 hover:text-red-500 text-xs"
                     >
                       {"\u00D7"}
