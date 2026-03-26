@@ -609,7 +609,7 @@ function Section({
 }) {
   if (onAdd && isEmpty) {
     return (
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-6 pb-6">
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-sm font-black leading-tight text-neutral-400">
           {title}
         </h2>
