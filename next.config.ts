@@ -4,6 +4,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/resume": ["./private/**"],
   },
+  serverExternalPackages: ["pdfkit"],
 };
 
 export default nextConfig;
