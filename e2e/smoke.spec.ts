@@ -7,6 +7,9 @@ const pages = [
   "/contact",
   "/resume",
   "/laboratory",
+  "/laboratory/resume-generator",
+  "/laboratory/die-neue-grafik",
+  "/laboratory/contact",
 ];
 
 const staticRoutes = [
@@ -31,12 +34,33 @@ test.describe("Route smoke tests", () => {
 test.describe("Navigation", () => {
   test("home page has correct nav links", async ({ page }) => {
     await page.goto("/");
-    const nav = page.locator("nav");
+    const header = page.locator("header");
 
-    await expect(nav.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/projects");
-    await expect(nav.getByRole("link", { name: "Laboratory" })).toHaveAttribute("href", "/laboratory");
-    await expect(nav.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
-    await expect(nav.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
+    await expect(header.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/projects");
+    await expect(header.getByRole("link", { name: "Laboratory" })).toHaveAttribute("href", "/laboratory");
+    await expect(header.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
+    await expect(header.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
+  });
+
+  test("backlink to home exists and is disabled on index", async ({ page }) => {
+    await page.goto("/");
+    const backlink = page.locator("header").getByRole("link", { name: /Narratives/i });
+    await expect(backlink).toHaveAttribute("href", "/");
+    await expect(backlink).toHaveClass(/pointer-events-none/);
+  });
+
+  test("backlink is active on sub-pages", async ({ page }) => {
+    await page.goto("/about");
+    const backlink = page.locator("header").getByRole("link", { name: /Narratives/i });
+    await expect(backlink).toHaveAttribute("href", "/");
+    await expect(backlink).not.toHaveClass(/pointer-events-none/);
+  });
+
+  test("nav appears on every main page", async ({ page }) => {
+    for (const route of ["/", "/about", "/projects", "/resume", "/contact"]) {
+      await page.goto(route);
+      await expect(page.locator("header").getByRole("link", { name: /Narratives/i })).toBeVisible();
+    }
   });
 });
 
