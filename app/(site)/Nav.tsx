@@ -26,7 +26,9 @@ const titles: Record<string, React.ReactNode> = {
 
 export default function Nav() {
   const pathname = usePathname();
-  const title = titles[pathname];
+  const title =
+    titles[pathname] ??
+    Object.entries(titles).find(([k]) => k !== "/" && pathname.startsWith(k))?.[1];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
