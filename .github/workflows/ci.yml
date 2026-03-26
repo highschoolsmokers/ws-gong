@@ -7,8 +7,12 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
 
       - uses: actions/setup-node@v4
         with:
@@ -16,6 +20,15 @@ jobs:
           cache: npm
 
       - run: npm ci
+
+      - name: Auto-fix audit vulnerabilities
+        run: |
+          npm audit fix || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git diff --staged --quiet || git commit -m "fix: auto-fix npm audit vulnerabilities"
+          git push
 
       - run: npm audit --audit-level=high
 
