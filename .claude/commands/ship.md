@@ -1,0 +1,1 @@
+Add all changes, commit with a descriptive message, push to a new branch (or the current branch if not on main), and create a pull request. If on main, create a new branch first. Use the git diff to write a good commit message. Do all steps without asking for confirmation.
