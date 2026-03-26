@@ -5,7 +5,7 @@ const pages = [
   "/about",
   "/projects",
   "/contact",
-  "/resume",
+  "/terms",
   "/laboratory",
   "/laboratory/resume-generator",
   "/laboratory/die-neue-grafik",
