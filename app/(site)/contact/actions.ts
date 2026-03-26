@@ -47,8 +47,9 @@ export async function sendMessage(
         process.env.RESEND_FROM_EMAIL ?? "Contact Form <onboarding@resend.dev>",
       to,
       replyTo: email,
-      subject: `Message from ${name}`,
+      subject: `[Contact Form] Message from ${name}`,
       text: `Name: ${name}\nEmail: ${email}\n\n${message}`,
+      headers: { "X-Source": "contact-form" },
     });
 
     return { status: "success", message: "Message sent. Thank you." };
