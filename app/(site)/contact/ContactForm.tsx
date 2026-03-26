@@ -86,7 +86,7 @@ export default function ContactForm() {
   };
 
   if (state.status === "success") {
-    return <p className="text-sm leading-relaxed">{state.message}</p>;
+    return <p className="text-xl leading-relaxed">{state.message}</p>;
   }
 
   return (
