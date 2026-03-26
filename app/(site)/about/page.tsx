@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -125,37 +124,13 @@ export default function About() {
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Published
-        </h2>
-        <a
-          href="https://www.14hills.net/copy-of-29"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm hover:opacity-70 transition-opacity"
-        >
-          14 Hills
-        </a>
+        <h2 className="text-xl md:text-2xl font-black leading-tight">Resume</h2>
+        <ResumeLink token={token} />
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Resume</h2>
-        <div>
-          <Link
-            href="/resume"
-            className="text-sm hover:opacity-70 transition-opacity"
-          >
-            Resume
-          </Link>
-          <div className="mt-2">
-            <ResumeLink token={token} />
-          </div>
-        </div>
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8">
         <h2 className="text-xl md:text-2xl font-black leading-tight">Links</h2>
-        <ul className="flex gap-5 items-center">
+        <ul className="flex gap-5 items-start">
           {socials.map((s) => (
             <li key={s.label}>
               <a
