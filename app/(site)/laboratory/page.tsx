@@ -8,44 +8,30 @@ export const metadata: Metadata = {
 };
 
 const projects = [
-  { href: "/laboratory/resume-generator", label: "Resume Generator" },
-  { href: "/laboratory/die-neue-grafik", label: "Die Neue Grafik" },
-  { href: "/laboratory/contact", label: "Contact Form" },
+  { href: "/laboratory/resume-generator", label: "Resume Generator", description: "Interactive resume editor with profile management and PDF export." },
+  { href: "/laboratory/die-neue-grafik", label: "Die Neue Grafik", description: "A study in Swiss International Typographic Style — Bauhaus, modernism, and grid-based design." },
+  { href: "/laboratory/contact", label: "Contact Form", description: "Reactive contact form with real-time typography scaling and drag-and-drop attachments." },
 ];
 
 export default function LaboratoryIndex() {
   return (
-    <div className="min-h-screen bg-[#F2EDE4] text-black">
-      <div className="max-w-5xl mx-auto px-8 py-12 md:px-12 md:py-16">
-        <header className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12 mb-12">
-          <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
-            Laboratory
-          </h1>
-          <div className="flex flex-col gap-6">
+    <div className="space-y-0">
+      {projects.map((p) => (
+        <section
+          key={p.href}
+          className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10"
+        >
+          <h2 className="text-xl md:text-2xl font-black leading-tight">
             <Link
-              href="/"
-              className="flex items-center gap-2.5 hover:opacity-70 transition-opacity"
+              href={p.href}
+              className="hover:opacity-70 transition-opacity"
             >
-              <div className="w-5 h-5 bg-black" />
-              <span className="text-xl font-black tracking-tight">
-                Narratives. Code.
-              </span>
+              {p.label}
             </Link>
-            <ul className="text-sm font-semibold leading-loose">
-              {projects.map((p) => (
-                <li key={p.href}>
-                  <Link
-                    href={p.href}
-                    className="hover:opacity-70 transition-opacity"
-                  >
-                    {p.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </header>
-      </div>
+          </h2>
+          <p className="text-sm leading-relaxed">{p.description}</p>
+        </section>
+      ))}
     </div>
   );
 }
