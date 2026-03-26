@@ -8,9 +8,24 @@ export const metadata: Metadata = {
 };
 
 const projects = [
-  { href: "/laboratory/resume-generator", label: "Resume Generator", description: "Interactive resume editor with profile management and PDF export." },
-  { href: "/laboratory/die-neue-grafik", label: "Die Neue Grafik", description: "A study in Swiss International Typographic Style — Bauhaus, modernism, and grid-based design." },
-  { href: "/laboratory/contact", label: "Contact Form", description: "Reactive contact form with real-time typography scaling and drag-and-drop attachments." },
+  {
+    href: "/laboratory/resume-generator",
+    label: "Resume Generator",
+    description:
+      "Interactive resume editor with profile management and PDF export.",
+  },
+  {
+    href: "/laboratory/die-neue-grafik",
+    label: "Die Neue Grafik",
+    description:
+      "A study in Swiss International Typographic Style — Bauhaus, modernism, and grid-based design.",
+  },
+  {
+    href: "/laboratory/contact",
+    label: "Contact Form",
+    description:
+      "Reactive contact form with real-time typography scaling and drag-and-drop attachments.",
+  },
 ];
 
 export default function LaboratoryIndex() {
@@ -22,10 +37,7 @@ export default function LaboratoryIndex() {
           className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10"
         >
           <h2 className="text-xl md:text-2xl font-black leading-tight">
-            <Link
-              href={p.href}
-              className="hover:opacity-70 transition-opacity"
-            >
+            <Link href={p.href} className="hover:opacity-70 transition-opacity">
               {p.label}
             </Link>
           </h2>

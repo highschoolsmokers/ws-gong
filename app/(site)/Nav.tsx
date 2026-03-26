@@ -28,7 +28,9 @@ export default function Nav() {
   const pathname = usePathname();
   const title =
     titles[pathname] ??
-    Object.entries(titles).find(([k]) => k !== "/" && pathname.startsWith(k))?.[1];
+    Object.entries(titles).find(
+      ([k]) => k !== "/" && pathname.startsWith(k),
+    )?.[1];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
@@ -47,7 +49,9 @@ export default function Nav() {
           }`}
         >
           <div className="w-5 h-5 bg-black" />
-          <span className="text-xl font-black tracking-tight">Narratives. Code.</span>
+          <span className="text-xl font-black tracking-tight">
+            Narratives. Code.
+          </span>
         </Link>
         <ul className="text-sm font-semibold leading-loose">
           {links.map((link) => (
