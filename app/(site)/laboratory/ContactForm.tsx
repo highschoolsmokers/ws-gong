@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, type ChangeEvent } from "react";
+import {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  type ChangeEvent,
+} from "react";
 import { useSearchParams } from "next/navigation";
 
 interface Attachment {
@@ -158,145 +164,145 @@ export default function ContactForm() {
         </div>
       )}
 
-        {/* Form */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-          <h2 className="text-xl md:text-2xl font-black leading-tight">
-            Inquiry
-          </h2>
-          <div className="space-y-6">
-            {/* Honeypot — hidden from real users, bots will fill it */}
+      {/* Form */}
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <h2 className="text-xl md:text-2xl font-black leading-tight">
+          Inquiry
+        </h2>
+        <div className="space-y-6">
+          {/* Honeypot — hidden from real users, bots will fill it */}
+          <input
+            type="text"
+            name="website_url"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
+            className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
+            aria-hidden="true"
+          />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <input
+                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.name ? "border-red-400" : "border-neutral-700"}`}
+                placeholder="Name"
+                value={form.name}
+                onChange={(e) => {
+                  update("name", e.target.value);
+                  clearError("name");
+                }}
+              />
+              {errors.name && (
+                <span className="text-xs text-red-400 mt-1 block normal-case">
+                  {errors.name}
+                </span>
+              )}
+            </div>
+            <div>
+              <input
+                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.email ? "border-red-400" : "border-neutral-700"}`}
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => {
+                  update("email", e.target.value);
+                  clearError("email");
+                }}
+              />
+              {errors.email && (
+                <span className="text-xs text-red-400 mt-1 block normal-case">
+                  {errors.email}
+                </span>
+              )}
+            </div>
+          </div>
+          <div>
             <input
-              type="text"
-              name="website_url"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-              tabIndex={-1}
-              autoComplete="off"
-              className="absolute opacity-0 h-0 w-0 overflow-hidden pointer-events-none"
-              aria-hidden="true"
+              className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.subject ? "border-red-400" : "border-neutral-700"}`}
+              placeholder="Subject"
+              value={form.subject}
+              onChange={(e) => {
+                update("subject", e.target.value);
+                clearError("subject");
+              }}
             />
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <input
-                  className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.name ? "border-red-400" : "border-neutral-700"}`}
-                  placeholder="Name"
-                  value={form.name}
-                  onChange={(e) => {
-                    update("name", e.target.value);
-                    clearError("name");
-                  }}
-                />
-                {errors.name && (
-                  <span className="text-xs text-red-400 mt-1 block normal-case">
-                    {errors.name}
-                  </span>
-                )}
-              </div>
-              <div>
-                <input
-                  className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.email ? "border-red-400" : "border-neutral-700"}`}
-                  placeholder="Email"
-                  value={form.email}
-                  onChange={(e) => {
-                    update("email", e.target.value);
-                    clearError("email");
-                  }}
-                />
-                {errors.email && (
-                  <span className="text-xs text-red-400 mt-1 block normal-case">
-                    {errors.email}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div>
-              <input
-                className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.subject ? "border-red-400" : "border-neutral-700"}`}
-                placeholder="Subject"
-                value={form.subject}
-                onChange={(e) => {
-                  update("subject", e.target.value);
-                  clearError("subject");
-                }}
-              />
-              {errors.subject && (
-                <span className="text-xs text-red-400 mt-1 block normal-case">
-                  {errors.subject}
-                </span>
-              )}
-            </div>
-            <div>
-              <textarea
-                className={`border bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
-                placeholder="Message"
-                value={form.message}
-                onChange={(e) => {
-                  update("message", e.target.value);
-                  clearError("message");
-                }}
-              />
-              {errors.message && (
-                <span className="text-xs text-red-400 mt-1 block normal-case">
-                  {errors.message}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-4">
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="text-sm text-neutral-400 hover:text-black transition-colors"
-              >
-                + Attach file
-              </button>
-              <span className="text-xs text-neutral-400">or drag and drop</span>
-            </div>
-            {attachments.length > 0 && (
-              <div className="space-y-1">
-                {attachments.map((a, i) => (
-                  <div
-                    key={i}
-                    className="flex items-baseline gap-2 text-sm text-neutral-500"
-                  >
-                    <span>{a.name}</span>
-                    <span className="text-neutral-400">
-                      ({(a.size / 1024).toFixed(1)}kb)
-                    </span>
-                    <button
-                      onClick={() => removeAttachment(i)}
-                      className="text-neutral-300 hover:text-red-500 text-xs"
-                    >
-                      {"\u00D7"}
-                    </button>
-                  </div>
-                ))}
-              </div>
+            {errors.subject && (
+              <span className="text-xs text-red-400 mt-1 block normal-case">
+                {errors.subject}
+              </span>
             )}
           </div>
-        </section>
-
-        {/* Actions */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-          <div />
-          <div className="flex flex-wrap items-baseline gap-0 text-xl tracking-tight">
+          <div>
+            <textarea
+              className={`border bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
+              placeholder="Message"
+              value={form.message}
+              onChange={(e) => {
+                update("message", e.target.value);
+                clearError("message");
+              }}
+            />
+            {errors.message && (
+              <span className="text-xs text-red-400 mt-1 block normal-case">
+                {errors.message}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-4">
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              onChange={handleFileSelect}
+              className="hidden"
+            />
             <button
-              onClick={handleSend}
-              className="font-semibold text-neutral-400 hover:text-black hover:underline transition-colors"
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-sm text-neutral-400 hover:text-black transition-colors"
             >
-              Send
+              + Attach file
             </button>
-            {status && (
-              <span className="text-xs text-neutral-400 ml-3">{status}</span>
-            )}
+            <span className="text-xs text-neutral-400">or drag and drop</span>
           </div>
-        </section>
+          {attachments.length > 0 && (
+            <div className="space-y-1">
+              {attachments.map((a, i) => (
+                <div
+                  key={i}
+                  className="flex items-baseline gap-2 text-sm text-neutral-500"
+                >
+                  <span>{a.name}</span>
+                  <span className="text-neutral-400">
+                    ({(a.size / 1024).toFixed(1)}kb)
+                  </span>
+                  <button
+                    onClick={() => removeAttachment(i)}
+                    className="text-neutral-300 hover:text-red-500 text-xs"
+                  >
+                    {"\u00D7"}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Actions */}
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <div />
+        <div className="flex flex-wrap items-baseline gap-0 text-xl tracking-tight">
+          <button
+            onClick={handleSend}
+            className="font-semibold text-neutral-400 hover:text-black hover:underline transition-colors"
+          >
+            Send
+          </button>
+          {status && (
+            <span className="text-xs text-neutral-400 ml-3">{status}</span>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

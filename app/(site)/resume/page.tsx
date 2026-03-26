@@ -20,8 +20,16 @@ export const metadata: Metadata = {
 };
 
 const socials = [
-  { label: "GitHub", icon: <GitHubIcon />, url: "https://github.com/highschoolsmokers" },
-  { label: "LinkedIn", icon: <LinkedInIcon />, url: "https://www.linkedin.com/in/billy-gong" },
+  {
+    label: "GitHub",
+    icon: <GitHubIcon />,
+    url: "https://github.com/highschoolsmokers",
+  },
+  {
+    label: "LinkedIn",
+    icon: <LinkedInIcon />,
+    url: "https://www.linkedin.com/in/billy-gong",
+  },
 ];
 
 const current: Role[] = [
@@ -241,15 +249,11 @@ export default function ResumePage() {
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Skills
-        </h2>
+        <h2 className="text-xl md:text-2xl font-black leading-tight">Skills</h2>
         <dl className="divide-y divide-neutral-200 border-t border-neutral-200">
           {skills.map((s) => (
             <div key={s.label} className="flex gap-6 py-2.5">
-              <dt className="text-sm font-semibold w-20 shrink-0">
-                {s.label}
-              </dt>
+              <dt className="text-sm font-semibold w-20 shrink-0">{s.label}</dt>
               <dd className="text-sm">{s.value}</dd>
             </div>
           ))}

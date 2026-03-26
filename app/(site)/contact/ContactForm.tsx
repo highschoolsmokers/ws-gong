@@ -1,6 +1,13 @@
 "use client";
 
-import { useActionState, useEffect, useState, useCallback, useRef, type ChangeEvent } from "react";
+import {
+  useActionState,
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  type ChangeEvent,
+} from "react";
 import { sendMessage, type FormState } from "./actions";
 
 const initialState: FormState = { status: "idle", message: "" };
@@ -79,9 +86,7 @@ export default function ContactForm() {
   };
 
   if (state.status === "success") {
-    return (
-      <p className="text-sm leading-relaxed">{state.message}</p>
-    );
+    return <p className="text-sm leading-relaxed">{state.message}</p>;
   }
 
   return (
@@ -108,7 +113,12 @@ export default function ContactForm() {
           name="website"
           tabIndex={-1}
           autoComplete="off"
-          style={{ position: "absolute", left: "-9999px", opacity: 0, height: 0 }}
+          style={{
+            position: "absolute",
+            left: "-9999px",
+            opacity: 0,
+            height: 0,
+          }}
           aria-hidden="true"
         />
         <input type="hidden" name="_t" value={loadedAt} />

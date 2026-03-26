@@ -6,7 +6,7 @@ const PROFILES_DIR = path.join(process.cwd(), "profiles");
 
 export async function GET(
   _request: Request,
-  { params }: { params: Promise<{ name: string }> }
+  { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
   const filePath = path.join(PROFILES_DIR, `${name}.json`);
@@ -19,7 +19,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: Promise<{ name: string }> }
+  { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
   const data = await request.json();
@@ -31,7 +31,7 @@ export async function PUT(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: Promise<{ name: string }> }
+  { params }: { params: Promise<{ name: string }> },
 ) {
   const { name } = await params;
   const filePath = path.join(PROFILES_DIR, `${name}.json`);

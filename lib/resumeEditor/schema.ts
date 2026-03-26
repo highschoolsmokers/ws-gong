@@ -51,7 +51,8 @@ export function validateProfile(data: unknown): Profile {
     professional_development: (d.professional_development as string[]) || [],
     skills: (d.skills as string) || "",
     experience: (d.experience as ExperienceEntry[]) || [],
-    earlier_experience: (d.earlier_experience as EarlierExperienceEntry[]) || [],
+    earlier_experience:
+      (d.earlier_experience as EarlierExperienceEntry[]) || [],
   };
 }
 

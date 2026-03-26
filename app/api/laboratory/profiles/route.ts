@@ -19,7 +19,10 @@ export async function GET() {
 export async function POST(request: Request) {
   const { name, data } = await request.json();
   if (!name || !data) {
-    return NextResponse.json({ error: "Missing name or data" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing name or data" },
+      { status: 400 },
+    );
   }
   fs.mkdirSync(PROFILES_DIR, { recursive: true });
   const filePath = path.join(PROFILES_DIR, `${name}.json`);
