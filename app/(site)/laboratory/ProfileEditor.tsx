@@ -478,7 +478,10 @@ export default function ProfileEditor() {
         isEmpty={profile.skill_categories.length === 0 && !profile.skills}
       >
         {profile.skill_categories.map((cat, i) => (
-          <div key={i} className="relative space-y-2 pb-4 border-b border-neutral-200 last:border-0 last:pb-0">
+          <div
+            key={i}
+            className="relative space-y-2 pb-4 border-b border-neutral-200 last:border-0 last:pb-0"
+          >
             <button
               onClick={() => removeItem("skill_categories", i)}
               className="absolute top-0 right-0 text-neutral-400 hover:text-black text-lg leading-none"
