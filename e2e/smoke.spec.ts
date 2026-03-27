@@ -113,14 +113,19 @@ test.describe("Contact form", () => {
     await page.fill("input[name='name']", "E2E Test");
     await page.fill("input[name='email']", "e2e@test.local");
     await page.fill("input[name='subject']", "[E2E] Smoke test");
-    await page.fill("textarea[name='message']", "Automated smoke test — please ignore.");
+    await page.fill(
+      "textarea[name='message']",
+      "Automated smoke test — please ignore.",
+    );
 
     // Wait for the 3-second anti-spam timer
     await page.waitForTimeout(3500);
 
     await page.getByRole("button", { name: /send/i }).click();
 
-    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test("successful submission without subject (optional)", async ({ page }) => {
@@ -128,13 +133,18 @@ test.describe("Contact form", () => {
 
     await page.fill("input[name='name']", "E2E No Subject");
     await page.fill("input[name='email']", "e2e@test.local");
-    await page.fill("textarea[name='message']", "Automated smoke test without subject — please ignore.");
+    await page.fill(
+      "textarea[name='message']",
+      "Automated smoke test without subject — please ignore.",
+    );
 
     await page.waitForTimeout(3500);
 
     await page.getByRole("button", { name: /send/i }).click();
 
-    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({
+      timeout: 15000,
+    });
   });
 
   test("send button shows pending state while submitting", async ({ page }) => {
@@ -142,7 +152,10 @@ test.describe("Contact form", () => {
 
     await page.fill("input[name='name']", "E2E Pending");
     await page.fill("input[name='email']", "e2e@test.local");
-    await page.fill("textarea[name='message']", "Testing pending state — please ignore.");
+    await page.fill(
+      "textarea[name='message']",
+      "Testing pending state — please ignore.",
+    );
 
     await page.waitForTimeout(3500);
 
@@ -152,15 +165,22 @@ test.describe("Contact form", () => {
     await expect(page.getByRole("button", { name: /sending/i })).toBeVisible();
 
     // Then resolve to success
-    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({
+      timeout: 15000,
+    });
   });
 
-  test("confirmation message is styled as heading in col2", async ({ page }) => {
+  test("confirmation message is styled as heading in col2", async ({
+    page,
+  }) => {
     await page.goto("/contact");
 
     await page.fill("input[name='name']", "E2E Style");
     await page.fill("input[name='email']", "e2e@test.local");
-    await page.fill("textarea[name='message']", "Testing confirmation styling — please ignore.");
+    await page.fill(
+      "textarea[name='message']",
+      "Testing confirmation styling — please ignore.",
+    );
 
     await page.waitForTimeout(3500);
 
@@ -171,7 +191,10 @@ test.describe("Contact form", () => {
   });
 
   test("email delivery verification", async ({ page }) => {
-    test.skip(!process.env.IMAP_PASS, "IMAP_PASS not set — skipping delivery check");
+    test.skip(
+      !process.env.IMAP_PASS,
+      "IMAP_PASS not set — skipping delivery check",
+    );
     test.setTimeout(60000);
 
     const token = `e2e-${Date.now()}`;
@@ -180,16 +203,24 @@ test.describe("Contact form", () => {
     await page.fill("input[name='name']", "E2E Delivery");
     await page.fill("input[name='email']", "e2e@test.local");
     await page.fill("input[name='subject']", token);
-    await page.fill("textarea[name='message']", `Delivery verification token: ${token}`);
+    await page.fill(
+      "textarea[name='message']",
+      `Delivery verification token: ${token}`,
+    );
 
     await page.waitForTimeout(3500);
 
     await page.getByRole("button", { name: /send/i }).click();
-    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({ timeout: 15000 });
+    await expect(page.getByText("Message sent. Thank you.")).toBeVisible({
+      timeout: 15000,
+    });
 
     // Verify the email actually arrived via IMAP
     const email = await waitForEmail(token, { maxRetries: 8, delayMs: 5000 });
-    expect(email, `Email with subject containing "${token}" should arrive`).not.toBeNull();
+    expect(
+      email,
+      `Email with subject containing "${token}" should arrive`,
+    ).not.toBeNull();
     expect(email!.subject).toContain("[Contact Form]");
     expect(email!.subject).toContain(token);
 
