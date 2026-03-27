@@ -148,6 +148,10 @@ test.describe("Contact form", () => {
   });
 
   test("send button shows pending state while submitting", async ({ page }) => {
+    test.skip(
+      !process.env.SMTP_HOST,
+      "SMTP_HOST not set — skipping submission test",
+    );
     await page.goto("/contact");
 
     await page.fill("input[name='name']", "E2E Pending");
@@ -173,6 +177,10 @@ test.describe("Contact form", () => {
   test("confirmation message is styled as heading in col2", async ({
     page,
   }) => {
+    test.skip(
+      !process.env.SMTP_HOST,
+      "SMTP_HOST not set — skipping submission test",
+    );
     await page.goto("/contact");
 
     await page.fill("input[name='name']", "E2E Style");
@@ -293,7 +301,7 @@ test.describe("Links page", () => {
 
   test("displays author name and tagline", async ({ page }) => {
     await page.goto("/links");
-    await expect(page.getByText("W.S. Gong")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "W.S. Gong" })).toBeVisible();
     await expect(page.getByText("Fiction editor · Writer")).toBeVisible();
   });
 });
