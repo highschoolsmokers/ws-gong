@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import PageShell from "./components/PageShell";
 import Nav from "./(site)/Nav";
@@ -54,6 +55,7 @@ export default function RootLayout({
           }}
         />
         <PageShell header={<Nav />}>{children}</PageShell>
+        <Analytics />
       </body>
     </html>
   );
