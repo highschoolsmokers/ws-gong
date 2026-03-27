@@ -95,7 +95,12 @@ export default function ContactForm() {
   };
 
   if (state.status === "success") {
-    return <p className="text-xl leading-relaxed">{state.message}</p>;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8">
+        <div />
+        <p className="text-2xl font-black tracking-tight">{state.message}</p>
+      </div>
+    );
   }
 
   return (
