@@ -31,11 +31,13 @@ export async function waitForEmail(
           const msg = await client.fetchOne(uids[uids.length - 1], {
             envelope: true,
           });
-          return {
-            subject: msg.envelope.subject,
-            from: msg.envelope.from?.[0]?.address ?? "",
-            date: msg.envelope.date,
-          };
+          if (msg && msg.envelope) {
+            return {
+              subject: msg.envelope.subject,
+              from: msg.envelope.from?.[0]?.address ?? "",
+              date: msg.envelope.date,
+            };
+          }
         }
       } finally {
         lock.release();
