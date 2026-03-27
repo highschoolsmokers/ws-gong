@@ -5,6 +5,64 @@
   --foreground: #000000;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #141414;
+    --foreground: #e5e5e5;
+  }
+
+  /* Invert hardcoded Tailwind black/white for dark mode */
+  .border-black {
+    border-color: #e5e5e5;
+  }
+  .text-black {
+    color: #e5e5e5;
+  }
+  .bg-black {
+    background-color: #e5e5e5;
+  }
+  .divide-neutral-200 > :not(:last-child) {
+    border-color: #404040;
+  }
+  .border-neutral-200 {
+    border-color: #404040;
+  }
+  .border-neutral-700 {
+    border-color: #525252;
+  }
+  .text-neutral-400 {
+    color: #737373;
+  }
+  .text-neutral-500 {
+    color: #a3a3a3;
+  }
+  .placeholder\:text-neutral-500::placeholder {
+    color: #737373;
+  }
+  .placeholder\:text-neutral-600::placeholder {
+    color: #737373;
+  }
+  .focus\:border-black:focus {
+    border-color: #e5e5e5;
+  }
+  .hover\:text-black:hover {
+    color: #e5e5e5;
+  }
+
+  /* SVG icons — invert fill */
+  main svg {
+    fill: #e5e5e5;
+  }
+
+  /* Nav logo square */
+  nav .bg-black,
+  header .bg-black {
+    background-color: #e5e5e5;
+  }
+
+  /* OG image stays light — no change needed */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -51,4 +109,85 @@ select:focus-visible {
 }
 .skip-to-content:focus {
   left: 0.5rem;
+}
+
+/* Page transition — subtle fade-in on navigation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  main {
+    animation: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+    -webkit-user-select: text;
+    user-select: text;
+    font-size: 11pt;
+  }
+
+  /* Hide nav, footer, skip link, and interactive elements */
+  header,
+  footer,
+  .skip-to-content,
+  button {
+    display: none !important;
+  }
+
+  /* Flatten grid to single column */
+  main section {
+    display: block !important;
+    border: none !important;
+    padding: 0.5em 0 !important;
+  }
+
+  /* Section headings */
+  main section h2 {
+    font-size: 14pt;
+    margin-bottom: 0.25em;
+  }
+
+  /* Show link URLs inline */
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    font-weight: normal;
+    color: #555;
+  }
+
+  /* Hide icon-only links (social icons) */
+  main ul svg {
+    display: none;
+  }
+
+  /* Replace social icon links with text labels */
+  main a[aria-label]::before {
+    content: attr(aria-label) ": ";
+    font-weight: 600;
+  }
+  main a[aria-label] svg {
+    display: none;
+  }
+
+  /* No page breaks inside sections */
+  section {
+    break-inside: avoid;
+  }
 }
