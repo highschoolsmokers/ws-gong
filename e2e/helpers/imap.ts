@@ -27,7 +27,7 @@ export async function waitForEmail(
       const lock = await client.getMailboxLock("INBOX");
       try {
         const uids = await client.search({ subject: subjectQuery });
-        if (uids.length > 0) {
+        if (Array.isArray(uids) && uids.length > 0) {
           const msg = await client.fetchOne(uids[uids.length - 1], {
             envelope: true,
           });
@@ -64,7 +64,7 @@ export async function deleteEmails(subjectQuery: string): Promise<number> {
     const lock = await client.getMailboxLock("INBOX");
     try {
       const uids = await client.search({ subject: subjectQuery });
-      if (uids.length > 0) {
+      if (Array.isArray(uids) && uids.length > 0) {
         await client.messageDelete(uids);
         deleted = uids.length;
       }
