@@ -33,9 +33,9 @@ export async function waitForEmail(
           });
           if (msg && msg.envelope) {
             return {
-              subject: msg.envelope.subject,
+              subject: msg.envelope.subject ?? "",
               from: msg.envelope.from?.[0]?.address ?? "",
-              date: msg.envelope.date,
+              date: msg.envelope.date ?? new Date(),
             };
           }
         }
