@@ -127,7 +127,9 @@ test.describe("Sitemap", () => {
 test.describe("Colophon page", () => {
   test("renders all sections", async ({ page }) => {
     await page.goto("/colophon");
-    await expect(page.getByRole("heading", { name: "Typography" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Typography" }),
+    ).toBeVisible();
     await expect(page.getByRole("heading", { name: "Design" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Stack" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Tools" })).toBeVisible();
