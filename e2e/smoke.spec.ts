@@ -6,6 +6,8 @@ const pages = [
   "/projects",
   "/contact",
   "/terms",
+  "/colophon",
+  "/links",
   "/laboratory",
   "/laboratory/resume-generator",
   "/laboratory/die-neue-grafik",
@@ -119,6 +121,69 @@ test.describe("Sitemap", () => {
       const r = await request.get(path);
       expect(r.status(), `${path} should return 200`).toBe(200);
     }
+  });
+});
+
+test.describe("Colophon page", () => {
+  test("renders all sections", async ({ page }) => {
+    await page.goto("/colophon");
+    await expect(page.getByRole("heading", { name: "Typography" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Design" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Stack" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Tools" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Source" })).toBeVisible();
+  });
+
+  test("has link to Geist font", async ({ page }) => {
+    await page.goto("/colophon");
+    await expect(page.getByRole("link", { name: "Geist" })).toHaveAttribute(
+      "href",
+      "https://vercel.com/font",
+    );
+  });
+
+  test("has link to GitHub repo", async ({ page }) => {
+    await page.goto("/colophon");
+    await expect(
+      page.getByRole("link", { name: /github\.com/ }),
+    ).toHaveAttribute("href", "https://github.com/highschoolsmokers/ws-gong");
+  });
+});
+
+test.describe("Links page", () => {
+  test("renders all link cards", async ({ page }) => {
+    await page.goto("/links");
+    await expect(page.getByRole("link", { name: "The Rumpus" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Substack" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "GitHub" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "LinkedIn" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Instagram" })).toBeVisible();
+  });
+
+  test("links open in new tab", async ({ page }) => {
+    await page.goto("/links");
+    const links = page.locator("main a[target='_blank']");
+    expect(await links.count()).toBeGreaterThanOrEqual(5);
+  });
+
+  test("displays author name and tagline", async ({ page }) => {
+    await page.goto("/links");
+    await expect(page.getByText("W.S. Gong")).toBeVisible();
+    await expect(page.getByText("Fiction editor · Writer")).toBeVisible();
+  });
+});
+
+test.describe("Footer", () => {
+  test("shows Terms and Colophon links", async ({ page }) => {
+    await page.goto("/");
+    const footer = page.locator("footer");
+    await expect(footer.getByRole("link", { name: "Terms" })).toHaveAttribute(
+      "href",
+      "/terms",
+    );
+    await expect(
+      footer.getByRole("link", { name: "Colophon" }),
+    ).toHaveAttribute("href", "/colophon");
   });
 });
 
