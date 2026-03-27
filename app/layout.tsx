@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import PageShell from "./components/PageShell";
 import Nav from "./(site)/Nav";
@@ -18,6 +19,19 @@ export const metadata: Metadata = {
     template: "%s — W.S. Gong",
   },
   description,
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false },
+  },
+  icons: {
+    apple: "/apple-touch-icon.png",
+  },
+  alternates: {
+    types: {
+      "application/rss+xml": "/feed",
+    },
+  },
   openGraph: {
     siteName: "W.S. Gong",
     url: "https://ws-gong.com",
@@ -35,7 +49,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} font-sans antialiased`}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('dragstart',e=>e.preventDefault());`,
+          }}
+        />
         <PageShell header={<Nav />}>{children}</PageShell>
+        <Analytics />
       </body>
     </html>
   );
