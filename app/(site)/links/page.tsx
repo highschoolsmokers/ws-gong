@@ -6,6 +6,14 @@ import {
   LinkedInIcon,
 } from "../about/SocialIcons";
 
+function BookIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
+      <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+    </svg>
+  );
+}
+
 export const metadata: Metadata = {
   title: "Links",
   description: "W.S. Gong — links and profiles.",
@@ -20,6 +28,12 @@ const links = [
     label: "The Rumpus",
     description: "Fiction editor",
     url: "https://therumpus.net",
+  },
+  {
+    label: "Fabulosa Books",
+    description: "Independent publisher",
+    url: "https://www.fabulosabooks.com/",
+    icon: <BookIcon />,
   },
   {
     label: "Substack",
@@ -48,10 +62,9 @@ export default function Links() {
   return (
     <div className="max-w-md mx-auto py-8 space-y-6">
       <div className="text-center space-y-2">
-        <div className="w-8 h-8 bg-black mx-auto" />
         <h2 className="text-2xl font-black tracking-tight">W.S. Gong</h2>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Fiction editor · Writer
+          Narratives. Code.
         </p>
       </div>
 
