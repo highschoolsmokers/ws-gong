@@ -301,7 +301,9 @@ test.describe("Links page", () => {
 
   test("displays author name and tagline", async ({ page }) => {
     await page.goto("/links");
-    await expect(page.getByRole("heading", { name: "W.S. Gong" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "W.S. Gong" }),
+    ).toBeVisible();
     await expect(page.getByText("Fiction editor · Writer")).toBeVisible();
   });
 });
