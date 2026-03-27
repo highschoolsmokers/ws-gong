@@ -22,6 +22,8 @@ const titles: Record<string, React.ReactNode> = {
   "/laboratory": "Laboratory",
   "/about": "About",
   "/contact": "Contact",
+  "/colophon": "Colophon",
+  "/terms": "Terms",
 };
 
 export default function Nav() {

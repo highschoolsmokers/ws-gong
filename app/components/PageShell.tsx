@@ -20,6 +20,10 @@ export default function PageShell({
           © {new Date().getFullYear()} W.S. Gong ·{" "}
           <a href="/terms" className="hover:opacity-70 transition-opacity">
             Terms
+          </a>{" "}
+          ·{" "}
+          <a href="/colophon" className="hover:opacity-70 transition-opacity">
+            Colophon
           </a>
         </div>
       </footer>
