@@ -12,10 +12,7 @@ const pages = [
   "/laboratory/contact",
 ];
 
-const staticRoutes = [
-  "/sitemap.xml",
-  "/robots.txt",
-];
+const staticRoutes = ["/sitemap.xml", "/robots.txt"];
 
 test.describe("Route smoke tests", () => {
   for (const route of [...pages, ...staticRoutes]) {
@@ -36,22 +33,36 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const header = page.locator("header");
 
-    await expect(header.getByRole("link", { name: "Projects" })).toHaveAttribute("href", "/projects");
-    await expect(header.getByRole("link", { name: "Laboratory" })).toHaveAttribute("href", "/laboratory");
-    await expect(header.getByRole("link", { name: "About" })).toHaveAttribute("href", "/about");
-    await expect(header.getByRole("link", { name: "Contact" })).toHaveAttribute("href", "/contact");
+    await expect(
+      header.getByRole("link", { name: "Projects" }),
+    ).toHaveAttribute("href", "/projects");
+    await expect(
+      header.getByRole("link", { name: "Laboratory" }),
+    ).toHaveAttribute("href", "/laboratory");
+    await expect(header.getByRole("link", { name: "About" })).toHaveAttribute(
+      "href",
+      "/about",
+    );
+    await expect(header.getByRole("link", { name: "Contact" })).toHaveAttribute(
+      "href",
+      "/contact",
+    );
   });
 
   test("backlink to home exists and is disabled on index", async ({ page }) => {
     await page.goto("/");
-    const backlink = page.locator("header").getByRole("link", { name: /Narratives/i });
+    const backlink = page
+      .locator("header")
+      .getByRole("link", { name: /Narratives/i });
     await expect(backlink).toHaveAttribute("href", "/");
     await expect(backlink).toHaveClass(/pointer-events-none/);
   });
 
   test("backlink is active on sub-pages", async ({ page }) => {
     await page.goto("/about");
-    const backlink = page.locator("header").getByRole("link", { name: /Narratives/i });
+    const backlink = page
+      .locator("header")
+      .getByRole("link", { name: /Narratives/i });
     await expect(backlink).toHaveAttribute("href", "/");
     await expect(backlink).not.toHaveClass(/pointer-events-none/);
   });
@@ -59,7 +70,9 @@ test.describe("Navigation", () => {
   test("nav appears on every main page", async ({ page }) => {
     for (const route of ["/", "/about", "/projects", "/resume", "/contact"]) {
       await page.goto(route);
-      await expect(page.locator("header").getByRole("link", { name: /Narratives/i })).toBeVisible();
+      await expect(
+        page.locator("header").getByRole("link", { name: /Narratives/i }),
+      ).toBeVisible();
     }
   });
 });
@@ -77,9 +90,18 @@ test.describe("Contact form", () => {
   test("fields are required", async ({ page }) => {
     await page.goto("/contact");
 
-    await expect(page.locator("input[name='name']")).toHaveAttribute("required", "");
-    await expect(page.locator("input[name='email']")).toHaveAttribute("required", "");
-    await expect(page.locator("textarea[name='message']")).toHaveAttribute("required", "");
+    await expect(page.locator("input[name='name']")).toHaveAttribute(
+      "required",
+      "",
+    );
+    await expect(page.locator("input[name='email']")).toHaveAttribute(
+      "required",
+      "",
+    );
+    await expect(page.locator("textarea[name='message']")).toHaveAttribute(
+      "required",
+      "",
+    );
   });
 });
 
