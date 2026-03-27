@@ -2,9 +2,21 @@
   "name": { "first": "W.S.", "last": "Gong" },
   "title": "AI Documentation & Quality Engineering",
   "contact": [
-    { "label": "tech.ws-gong.com", "url": "https://tech.ws-gong.com", "type": "web" },
-    { "label": "ws@ws-gong.com", "url": "mailto:ws@ws-gong.com", "type": "email" },
-    { "label": "linkedin.com/in/billy-gong", "url": "https://linkedin.com/in/billy-gong", "type": "linkedin" }
+    {
+      "label": "tech.ws-gong.com",
+      "url": "https://tech.ws-gong.com",
+      "type": "web"
+    },
+    {
+      "label": "ws@ws-gong.com",
+      "url": "mailto:ws@ws-gong.com",
+      "type": "email"
+    },
+    {
+      "label": "linkedin.com/in/billy-gong",
+      "url": "https://linkedin.com/in/billy-gong",
+      "type": "linkedin"
+    }
   ],
   "about": [
     "Software QA engineer and technical lead with 25+ years across enterprise SaaS, developer platforms, mobile, and consumer hardware. Built and scaled QA teams from the ground up and embedded quality as a development-phase discipline.",
@@ -30,12 +42,30 @@
   ],
   "skills": "",
   "skill_categories": [
-    { "heading": "Testing", "items": "Manual & automated testing, E2E, regression, smoke, exploratory, performance" },
-    { "heading": "Methodologies", "items": "Shift-left QA, ATDD, BDD, Agile/Scrum" },
-    { "heading": "Tools", "items": "Cypress.io, Selenium, Cucumber, RSpec, Appium, JMeter, SauceLabs, Charles Proxy, Postman, JIRA, TestRail, CI/CD" },
-    { "heading": "Languages", "items": "Ruby, Node.js, JavaScript, Python, Hack/HHVM, React/Redux, REST APIs" },
-    { "heading": "AI/ML", "items": "LLM output evaluation, agentic workflow validation, Anthropic SDK, docs-as-tests" },
-    { "heading": "Leadership", "items": "Team building, headcount planning, technical interviewing, QA advocacy" }
+    {
+      "heading": "Testing",
+      "items": "Manual & automated testing, E2E, regression, smoke, exploratory, performance"
+    },
+    {
+      "heading": "Methodologies",
+      "items": "Shift-left QA, ATDD, BDD, Agile/Scrum"
+    },
+    {
+      "heading": "Tools",
+      "items": "Cypress.io, Selenium, Cucumber, RSpec, Appium, JMeter, SauceLabs, Charles Proxy, Postman, JIRA, TestRail, CI/CD"
+    },
+    {
+      "heading": "Languages",
+      "items": "Ruby, Node.js, JavaScript, Python, Hack/HHVM, React/Redux, REST APIs"
+    },
+    {
+      "heading": "AI/ML",
+      "items": "LLM output evaluation, agentic workflow validation, Anthropic SDK, docs-as-tests"
+    },
+    {
+      "heading": "Leadership",
+      "items": "Team building, headcount planning, technical interviewing, QA advocacy"
+    }
   ],
   "experience": [
     {
@@ -68,11 +98,35 @@
     }
   ],
   "earlier_experience": [
-    { "company": "Kyte", "title": "Quality Engineering Manager", "dates": "2010 \u2013 2012" },
-    { "company": "Coincident TV", "title": "Senior QA Engineer", "dates": "2008 \u2013 2010" },
-    { "company": "Adobe Systems", "title": "Flex Builder Software QE III", "dates": "2006 \u2013 2008" },
-    { "company": "Keepmedia, Inc.", "title": "Senior QA Engineer", "dates": "2003 \u2013 2006" },
-    { "company": "FutureTrade Technologies", "title": "Sales Engineer", "dates": "2001 \u2013 2003" },
-    { "company": "Pixel Translations", "title": "SQA Engineering Lead", "dates": "1997 \u2013 2001" }
+    {
+      "company": "Kyte",
+      "title": "Quality Engineering Manager",
+      "dates": "2010 \u2013 2012"
+    },
+    {
+      "company": "Coincident TV",
+      "title": "Senior QA Engineer",
+      "dates": "2008 \u2013 2010"
+    },
+    {
+      "company": "Adobe Systems",
+      "title": "Flex Builder Software QE III",
+      "dates": "2006 \u2013 2008"
+    },
+    {
+      "company": "Keepmedia, Inc.",
+      "title": "Senior QA Engineer",
+      "dates": "2003 \u2013 2006"
+    },
+    {
+      "company": "FutureTrade Technologies",
+      "title": "Sales Engineer",
+      "dates": "2001 \u2013 2003"
+    },
+    {
+      "company": "Pixel Translations",
+      "title": "SQA Engineering Lead",
+      "dates": "1997 \u2013 2001"
+    }
   ]
 }
