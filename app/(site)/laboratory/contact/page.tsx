@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
 import ContactForm from "../ContactForm";
 
@@ -15,7 +16,12 @@ export default function LabContactPage() {
         <h2 className="text-xl md:text-2xl font-black leading-tight">
           Contact Form
         </h2>
-        <div />
+        <Link
+          href="/laboratory"
+          className="text-sm hover:opacity-70 transition-opacity"
+        >
+          ← Laboratory
+        </Link>
       </section>
       <Suspense>
         <ContactForm />
