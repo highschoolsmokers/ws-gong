@@ -84,9 +84,10 @@ test.describe("Contact form", () => {
       await expect(field).toHaveAttribute("required", "");
     }
     await expect(page.locator("textarea[name='message']")).toBeAttached();
-    await expect(
-      page.locator("textarea[name='message']"),
-    ).toHaveAttribute("required", "");
+    await expect(page.locator("textarea[name='message']")).toHaveAttribute(
+      "required",
+      "",
+    );
     await expect(page.getByRole("button", { name: /send/i })).toBeAttached();
   });
 
@@ -111,9 +112,7 @@ test.describe("Contact form", () => {
     await sendBtn.click();
 
     // Button briefly shows pending state
-    await expect(
-      page.getByRole("button", { name: /sending/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: /sending/i })).toBeVisible();
 
     // Then confirmation appears
     await expect(page.getByText(/message sent/i)).toBeVisible({
@@ -248,11 +247,11 @@ test.describe("Links page", () => {
     expect(await links.count()).toBeGreaterThanOrEqual(5);
   });
 
-  test("displays author name", async ({ page }) => {
+  test("author name links to home", async ({ page }) => {
     await page.goto("/links");
     await expect(
-      page.getByRole("heading", { name: /gong/i }),
-    ).toBeVisible();
+      page.getByRole("link", { name: /gong/i }),
+    ).toHaveAttribute("href", "/");
   });
 
   test("has no header or footer (bare layout)", async ({ page }) => {

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -76,7 +77,9 @@ export default function Links() {
   return (
     <div className="max-w-md mx-auto py-8 space-y-6">
       <div className="text-center space-y-2">
-        <h2 className="text-2xl font-black tracking-tight">W.S. Gong</h2>
+        <Link href="/" className="text-2xl font-black tracking-tight hover:opacity-70 transition-opacity">
+          W.S. Gong
+        </Link>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           Narratives. Code.
         </p>
