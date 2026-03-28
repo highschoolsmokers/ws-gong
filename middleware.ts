@@ -55,7 +55,7 @@ const BLOCKED_AGENTS = [
 
 // Simple in-memory rate limiter (per edge invocation lifetime)
 const rateMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 60; // requests per window
+const RATE_LIMIT = 500; // requests per window
 const RATE_WINDOW_MS = 60_000; // 1 minute
 
 function isRateLimited(ip: string): boolean {
