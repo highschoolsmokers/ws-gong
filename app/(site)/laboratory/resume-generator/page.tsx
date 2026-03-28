@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import ProfileEditor from "../ProfileEditor";
 
 export const metadata: Metadata = {
@@ -14,7 +15,12 @@ export default function ResumeGeneratorPage() {
         <h2 className="text-xl md:text-2xl font-black leading-tight">
           Resume Generator
         </h2>
-        <div />
+        <Link
+          href="/laboratory"
+          className="text-sm hover:opacity-70 transition-opacity"
+        >
+          ← Laboratory
+        </Link>
       </section>
       <ProfileEditor />
     </>
