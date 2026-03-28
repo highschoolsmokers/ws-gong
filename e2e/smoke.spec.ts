@@ -249,9 +249,10 @@ test.describe("Links page", () => {
 
   test("author name links to home", async ({ page }) => {
     await page.goto("/links");
-    await expect(
-      page.getByRole("link", { name: /gong/i }),
-    ).toHaveAttribute("href", "/");
+    await expect(page.getByRole("link", { name: /gong/i })).toHaveAttribute(
+      "href",
+      "/",
+    );
   });
 
   test("has no header or footer (bare layout)", async ({ page }) => {
