@@ -98,11 +98,6 @@ export default function Links() {
                 <span className="w-5 h-5 flex-shrink-0">{link.icon}</span>
               )}
               <span className="flex-1">{link.label}</span>
-              {link.description && (
-                <span className="text-xs font-normal text-neutral-500">
-                  {link.description}
-                </span>
-              )}
             </a>
           </li>
         ))}
