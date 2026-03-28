@@ -95,7 +95,12 @@ export default function ContactForm() {
   };
 
   if (state.status === "success") {
-    return <p className="text-xl leading-relaxed">{state.message}</p>;
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8">
+        <div />
+        <p className="text-2xl font-black tracking-tight">{state.message}</p>
+      </div>
+    );
   }
 
   return (
@@ -140,6 +145,7 @@ export default function ContactForm() {
               <input
                 name="name"
                 required
+                aria-label="Name"
                 className="border-b border-neutral-700 bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors w-full"
                 placeholder="Name"
               />
@@ -147,18 +153,21 @@ export default function ContactForm() {
                 name="email"
                 type="email"
                 required
+                aria-label="Email"
                 className="border-b border-neutral-700 bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors w-full"
                 placeholder="Email"
               />
             </div>
             <input
               name="subject"
+              aria-label="Subject"
               className="border-b border-neutral-700 bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors w-full"
               placeholder="Subject"
             />
             <textarea
               name="message"
               required
+              aria-label="Message"
               rows={6}
               onChange={(e) => setMessageLen(e.target.value.length)}
               className="border border-neutral-700 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full"
@@ -198,6 +207,7 @@ export default function ContactForm() {
                       type="button"
                       onClick={() => removeFile(i)}
                       className="text-neutral-400 hover:text-red-500 text-xs"
+                      aria-label={`Remove ${f.name}`}
                     >
                       {"\u00D7"}
                     </button>
@@ -209,7 +219,7 @@ export default function ContactForm() {
         </section>
 
         {/* Actions */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 pt-8 pb-10">
+        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
           <div />
           <div className="flex items-baseline gap-3">
             <button

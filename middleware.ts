@@ -53,15 +53,50 @@ const BLOCKED_AGENTS = [
   // — needed for social media link preview cards (OG metadata)
 ];
 
+// Simple in-memory rate limiter (per edge invocation lifetime)
+const rateMap = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT = 60; // requests per window
+const RATE_WINDOW_MS = 60_000; // 1 minute
+
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
+    return false;
+  }
+  entry.count++;
+  return entry.count > RATE_LIMIT;
+}
+
 export function middleware(request: NextRequest) {
   const ua = request.headers.get("user-agent")?.toLowerCase() ?? "";
-  const isBot = BLOCKED_AGENTS.some((agent) => ua.includes(agent));
 
-  if (isBot) {
+  // Block known bots
+  if (BLOCKED_AGENTS.some((agent) => ua.includes(agent))) {
     return new NextResponse(null, { status: 403 });
   }
 
-  return NextResponse.next();
+  // Block empty user agents (likely automated)
+  if (!ua || ua.length < 10) {
+    return new NextResponse(null, { status: 403 });
+  }
+
+  // Rate limit by IP
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
+  if (isRateLimited(ip)) {
+    return new NextResponse("Too Many Requests", { status: 429 });
+  }
+
+  const response = NextResponse.next();
+
+  // Anti-indexing headers
+  response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+
+  return response;
 }
 
 export const config = {
