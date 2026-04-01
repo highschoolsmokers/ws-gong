@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 
 const links = [
   { href: "/projects", label: "Projects" },
-  { href: "/laboratory", label: "Laboratory" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];
@@ -19,7 +18,12 @@ const titles: Record<string, React.ReactNode> = {
     </>
   ),
   "/projects": "Projects",
-  "/laboratory": "Laboratory",
+  "/projects/paperless-mcp": "Paperless MCP",
+  "/projects/submission-cli": "Submission CLI",
+  "/projects/writer-utilities": "Writer Utilities",
+  "/projects/resume-generator": "Resume Generator",
+  "/projects/die-neue-grafik": "Die Neue Grafik",
+  "/projects/contact-form": "Contact Form",
   "/about": "About",
   "/contact": "Contact",
   "/links": "Links",

@@ -9,10 +9,9 @@ const pages = [
   "/terms",
   "/colophon",
   "/links",
-  "/laboratory",
-  "/laboratory/resume-generator",
-  "/laboratory/die-neue-grafik",
-  "/laboratory/contact",
+  "/projects/resume-generator",
+  "/projects/die-neue-grafik",
+  "/projects/contact-form",
 ];
 
 const staticRoutes = ["/sitemap.xml", "/robots.txt"];
@@ -42,8 +41,8 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const header = page.locator("header");
     const navLinks = header.getByRole("link");
-    // At least Projects, Laboratory, About, Contact + home backlink
-    expect(await navLinks.count()).toBeGreaterThanOrEqual(4);
+    // At least Projects, About, Contact + home backlink
+    expect(await navLinks.count()).toBeGreaterThanOrEqual(3);
   });
 
   test("backlink is disabled on index, active on sub-pages", async ({
@@ -209,29 +208,21 @@ test.describe("Page content", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Laboratory — index links and sub-page back navigation
+// Project sub-pages — back navigation
 // ---------------------------------------------------------------------------
-test.describe("Laboratory", () => {
-  test("index lists projects with internal links", async ({ page }) => {
-    await page.goto("/laboratory");
-    const headings = page.getByRole("heading");
-    expect(await headings.count()).toBeGreaterThanOrEqual(3);
-    const links = page.locator("a[href^='/laboratory/']");
-    expect(await links.count()).toBeGreaterThanOrEqual(3);
-  });
-
+test.describe("Project sub-pages", () => {
   const subPages = [
-    "/laboratory/resume-generator",
-    "/laboratory/die-neue-grafik",
-    "/laboratory/contact",
+    "/projects/resume-generator",
+    "/projects/die-neue-grafik",
+    "/projects/contact-form",
   ];
 
   for (const route of subPages) {
-    test(`${route} has back link to /laboratory`, async ({ page }) => {
+    test(`${route} has back link to /projects`, async ({ page }) => {
       await page.goto(route);
       await expect(
-        page.getByRole("link", { name: /laboratory/i }).first(),
-      ).toHaveAttribute("href", "/laboratory");
+        page.getByRole("link", { name: /all projects/i }).first(),
+      ).toHaveAttribute("href", "/projects");
     });
   }
 });

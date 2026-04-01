@@ -16,10 +16,10 @@ export default function ResumeGeneratorPage() {
           Resume Generator
         </h2>
         <Link
-          href="/laboratory"
+          href="/projects"
           className="text-sm hover:opacity-70 transition-opacity"
         >
-          ← Laboratory
+          ← All projects
         </Link>
       </section>
       <ProfileEditor />
