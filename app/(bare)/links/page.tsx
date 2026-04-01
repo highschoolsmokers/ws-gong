@@ -77,7 +77,10 @@ export default function Links() {
   return (
     <div className="max-w-md mx-auto py-8 space-y-6">
       <div className="text-center space-y-2">
-        <Link href="/" className="text-2xl font-black tracking-tight hover:opacity-70 transition-opacity">
+        <Link
+          href="/"
+          className="text-2xl font-black tracking-tight hover:opacity-70 transition-opacity"
+        >
           W.S. Gong
         </Link>
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
