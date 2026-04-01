@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -11,7 +12,7 @@ import { generateToken } from "@/lib/resumeToken";
 export const dynamic = "force-dynamic";
 
 const description =
-  "W.S. Gong is a fiction editor at The Rumpus and alumnus of Bread Loaf, Sewanee, Tin House, and Kenyon. At work on a novel about runaway kids in 1980s San Francisco.";
+  "W.S. Gong is a fiction editor at The Rumpus and a technical writer focused on AI tooling and developer documentation. Twenty-five years in software. At work on a novel about runaway kids in 1980s San Francisco.";
 
 export const metadata: Metadata = {
   title: "About",
@@ -119,6 +120,26 @@ export default function About() {
             </a>
             . He is at work on a novel about runaway kids in 1980s San
             Francisco.
+          </p>
+          <p>
+            By day, he is a technical writer with twenty-five years in software
+            — most recently focused on AI tooling, developer documentation, and
+            the Model Context Protocol. He builds tools at the intersection of
+            language models and the writing craft, including an{" "}
+            <Link
+              href="/projects/paperless-mcp"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              MCP server
+            </Link>{" "}
+            for document management and a{" "}
+            <Link
+              href="/projects/submission-cli"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              CLI
+            </Link>{" "}
+            that uses Claude to streamline fiction submissions.
           </p>
         </div>
       </section>

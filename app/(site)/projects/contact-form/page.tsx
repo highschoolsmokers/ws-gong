@@ -4,8 +4,8 @@ import { Suspense } from "react";
 import ContactForm from "../ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact — Laboratory",
-  description: "Get in touch.",
+  title: "Contact Form",
+  description: "Reactive contact form with real-time typography scaling and drag-and-drop attachments.",
   robots: { index: false },
 };
 
@@ -17,10 +17,10 @@ export default function LabContactPage() {
           Contact Form
         </h2>
         <Link
-          href="/laboratory"
+          href="/projects"
           className="text-sm hover:opacity-70 transition-opacity"
         >
-          ← Laboratory
+          ← All projects
         </Link>
       </section>
       <Suspense>
