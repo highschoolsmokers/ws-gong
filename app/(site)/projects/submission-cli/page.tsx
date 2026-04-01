@@ -58,9 +58,9 @@ export default function SubmissionCli() {
               files via Mammoth
             </li>
             <li>
-              <span className="font-semibold">Shunn formatting:</span>{" "}
-              Generates a properly formatted PDF with contact block, headers,
-              word count, and standard manuscript typography
+              <span className="font-semibold">Shunn formatting:</span> Generates
+              a properly formatted PDF with contact block, headers, word count,
+              and standard manuscript typography
             </li>
             <li>
               <span className="font-semibold">Cover letters:</span> Claude
