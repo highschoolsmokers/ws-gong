@@ -12,10 +12,10 @@ export default function DieNeueGrafik() {
     <div className="bg-[#EDAB00] text-black -mx-8 md:-mx-12 px-8 md:px-12 -mb-16 py-12 md:py-16">
       <div className="max-w-5xl mx-auto">
         <Link
-          href="/laboratory"
+          href="/projects"
           className="text-sm font-semibold hover:opacity-70 transition-opacity"
         >
-          ← Laboratory
+          ← All projects
         </Link>
         <header className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12 mb-12 mt-6">
           <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
