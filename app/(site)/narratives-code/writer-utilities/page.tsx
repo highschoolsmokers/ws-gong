@@ -47,7 +47,7 @@ export default function WriterUtilities() {
             </li>
             <li>
               <Link
-                href="/projects/submission-cli"
+                href="/narratives-code/submission-cli"
                 className="font-semibold hover:opacity-70 transition-opacity"
               >
                 submission-cli
@@ -79,7 +79,7 @@ export default function WriterUtilities() {
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <div />
         <Link
-          href="/projects"
+          href="/narratives-code"
           className="text-sm font-semibold hover:opacity-70 transition-opacity"
         >
           ← All projects

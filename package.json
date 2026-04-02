@@ -7,7 +7,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,css,md,json}": "prettier --write",
+    "*.{js,jsx,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
     "@sentry/nextjs": "^10.46.0",
@@ -18,7 +23,16 @@
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "sharp",
+      "unrs-resolver"
+    ]
+  },
   "devDependencies": {
+    "husky": "^9",
+    "lint-staged": "^15",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
