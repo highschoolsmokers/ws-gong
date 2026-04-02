@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import { getSubstackPosts } from "@/lib/substack";
 
 export default async function Home() {
@@ -24,20 +23,6 @@ export default async function Home() {
             . Technical writer with twenty-five years in software. Building
             tools at the intersection of language models and the writing craft.
           </p>
-          <div className="flex gap-4 text-sm font-semibold">
-            <Link
-              href="/writing"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Writing →
-            </Link>
-            <Link
-              href="/narratives-code"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Projects →
-            </Link>
-          </div>
         </div>
       </section>
 

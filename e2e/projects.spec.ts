@@ -10,11 +10,11 @@ const projectSubPages = [
 ];
 
 test.describe("Narratives-code listing", () => {
-  test("page title is Narratives. Code.", async ({ page }) => {
+  test("masthead shows W.S. Gong", async ({ page }) => {
     await page.goto("/narratives-code");
     const h1 = page.getByRole("heading", { level: 1 });
-    await expect(h1).toContainText("Narratives.");
-    await expect(h1).toContainText("Code.");
+    await expect(h1).toContainText("W.S.");
+    await expect(h1).toContainText("Gong");
   });
 
   test("renders all project cards with working links", async ({ page }) => {
@@ -32,9 +32,7 @@ test.describe("Narratives-code listing", () => {
     await expect(
       page.getByRole("heading", { name: /^Narratives$/i }),
     ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /^Code$/i }),
-    ).toBeVisible();
+    await expect(page.getByRole("heading", { name: /^Code$/i })).toBeVisible();
   });
 
   test("Narratives section appears before Code section", async ({ page }) => {
@@ -107,9 +105,7 @@ test.describe("Project cross-navigation", () => {
     await page.goto("/narratives-code");
 
     // Click through to a project
-    await page
-      .getByRole("link", { name: /Paperless MCP Server/ })
-      .click();
+    await page.getByRole("link", { name: /Paperless MCP Server/ }).click();
     await expect(page).toHaveURL(/\/narratives-code\/paperless-mcp/);
 
     // Navigate back
