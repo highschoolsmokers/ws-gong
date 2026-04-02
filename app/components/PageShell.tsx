@@ -1,3 +1,5 @@
+import ThemeToggle from "./ThemeToggle";
+
 export default function PageShell({
   header,
   children,
@@ -16,15 +18,34 @@ export default function PageShell({
       </main>
       <footer className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <div />
-        <div className="text-sm">
-          © {new Date().getFullYear()} W.S. Gong ·{" "}
-          <a href="/terms" className="hover:opacity-70 transition-opacity">
-            Terms
-          </a>{" "}
-          ·{" "}
-          <a href="/colophon" className="hover:opacity-70 transition-opacity">
-            Colophon
-          </a>
+        <div className="space-y-3">
+          <div className="text-sm">
+            <a
+              href="https://highschoolsmokers.substack.com/subscribe"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold hover:opacity-70 transition-opacity"
+            >
+              Subscribe to the newsletter →
+            </a>
+          </div>
+          <div className="text-sm flex items-center gap-1">
+            <span>
+              © {new Date().getFullYear()} W.S. Gong ·{" "}
+              <a href="/terms" className="hover:opacity-70 transition-opacity">
+                Terms
+              </a>{" "}
+              ·{" "}
+              <a
+                href="/colophon"
+                className="hover:opacity-70 transition-opacity"
+              >
+                Colophon
+              </a>
+              {" · "}
+            </span>
+            <ThemeToggle />
+          </div>
         </div>
       </footer>
     </div>
