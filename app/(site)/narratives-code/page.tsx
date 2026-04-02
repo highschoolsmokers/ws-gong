@@ -79,21 +79,16 @@ export default async function NarrativesCode() {
                     href={post.canonical_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="grid grid-cols-[48px_1fr] gap-x-10 py-4 hover:opacity-70 transition-opacity"
+                    className="block py-4 hover:opacity-70 transition-opacity"
                   >
-                    <span className="text-sm tabular-nums">
-                      {new Date(post.post_date).getFullYear()}
+                    <span className="text-sm font-semibold">
+                      {post.title}
                     </span>
-                    <div>
-                      <span className="text-sm font-semibold">
-                        {post.title}
+                    {post.subtitle && (
+                      <span className="text-sm block mt-0.5">
+                        {post.subtitle}
                       </span>
-                      {post.subtitle && (
-                        <span className="text-sm block mt-0.5">
-                          {post.subtitle}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </a>
                 </li>
               ))}

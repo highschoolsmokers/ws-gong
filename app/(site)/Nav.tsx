@@ -54,16 +54,16 @@ export default function Nav() {
         <div />
       )}
       <div className="flex flex-col gap-6">
-        <Link
-          href="/"
-          className={`transition-opacity ${
-            pathname === "/" ? "pointer-events-none" : "hover:opacity-70"
-          }`}
-        >
-          <span className="text-xl font-black tracking-tight">
-            W.S. Gong
-          </span>
-        </Link>
+        {pathname !== "/" && (
+          <Link
+            href="/"
+            className="transition-opacity hover:opacity-70"
+          >
+            <span className="text-xl font-black tracking-tight">
+              W.S. Gong
+            </span>
+          </Link>
+        )}
         <ul className="text-sm font-semibold leading-loose">
           {links.map((link) => (
             <li key={link.href}>
