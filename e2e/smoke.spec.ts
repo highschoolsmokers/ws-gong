@@ -4,14 +4,14 @@ import { waitForEmail, deleteEmails } from "./helpers/imap";
 const pages = [
   "/",
   "/about",
-  "/projects",
+  "/narratives-code",
   "/contact",
   "/terms",
   "/colophon",
   "/links",
-  "/projects/resume-generator",
-  "/projects/die-neue-grafik",
-  "/projects/contact-form",
+  "/narratives-code/resume-generator",
+  "/narratives-code/die-neue-grafik",
+  "/narratives-code/contact-form",
 ];
 
 const staticRoutes = ["/sitemap.xml", "/robots.txt"];
@@ -41,29 +41,63 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const header = page.locator("header");
     const navLinks = header.getByRole("link");
-    // At least Projects, About, Contact + home backlink
+    // W.S. Gong home link + Narratives. Code. + About
     expect(await navLinks.count()).toBeGreaterThanOrEqual(3);
   });
 
-  test("backlink is disabled on index, active on sub-pages", async ({
+  test("nav has W.S. Gong home link without icon", async ({ page }) => {
+    await page.goto("/about");
+    const header = page.locator("header");
+    const homeLink = header.getByRole("link", { name: /W\.S\. Gong/i });
+    await expect(homeLink).toHaveAttribute("href", "/");
+    // No icon (the old 5x5 black square)
+    await expect(homeLink.locator("div")).not.toBeAttached();
+  });
+
+  test("nav has Narratives. Code. link to /narratives-code", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const header = page.locator("header");
+    const ncLink = header.getByRole("link", { name: "Narratives. Code." });
+    await expect(ncLink).toHaveAttribute("href", "/narratives-code");
+  });
+
+  test("nav does not have a Projects link", async ({ page }) => {
+    await page.goto("/");
+    const header = page.locator("header");
+    const projectsLink = header.getByRole("link", { name: /^Projects$/i });
+    await expect(projectsLink).not.toBeAttached();
+  });
+
+  test("W.S. Gong backlink is disabled on index, active on sub-pages", async ({
     page,
   }) => {
     await page.goto("/");
     const backlink = page
       .locator("header")
-      .getByRole("link", { name: /Narratives/i });
+      .getByRole("link", { name: /W\.S\. Gong/i });
     await expect(backlink).toHaveAttribute("href", "/");
     await expect(backlink).toHaveClass(/pointer-events-none/);
 
     await page.goto("/about");
     const activeBacklink = page
       .locator("header")
-      .getByRole("link", { name: /Narratives/i });
+      .getByRole("link", { name: /W\.S\. Gong/i });
     await expect(activeBacklink).not.toHaveClass(/pointer-events-none/);
   });
 
+  test("Narratives. Code. link is disabled on its own page", async ({
+    page,
+  }) => {
+    await page.goto("/narratives-code");
+    const header = page.locator("header");
+    const ncLink = header.getByRole("link", { name: "Narratives. Code." });
+    await expect(ncLink).toHaveClass(/pointer-events-none/);
+  });
+
   test("nav appears on site pages", async ({ page }) => {
-    for (const route of ["/", "/about", "/projects", "/contact"]) {
+    for (const route of ["/", "/about", "/narratives-code", "/contact"]) {
       await page.goto(route);
       await expect(page.locator("header")).toBeVisible();
     }
@@ -187,8 +221,24 @@ test.describe("Page content", () => {
     expect(await extLinks.count()).toBeGreaterThanOrEqual(2);
   });
 
-  test("projects page has content", async ({ page }) => {
-    await page.goto("/projects");
+  test("about page project links point to /narratives-code", async ({
+    page,
+  }) => {
+    await page.goto("/about");
+    const mcpLink = page.getByRole("link", { name: /MCP server/i });
+    await expect(mcpLink).toHaveAttribute(
+      "href",
+      "/narratives-code/paperless-mcp",
+    );
+    const cliLink = page.getByRole("link", { name: /CLI/i });
+    await expect(cliLink).toHaveAttribute(
+      "href",
+      "/narratives-code/submission-cli",
+    );
+  });
+
+  test("narratives-code page has content", async ({ page }) => {
+    await page.goto("/narratives-code");
     await expect(page.getByRole("heading").first()).toBeVisible();
   });
 
@@ -212,17 +262,17 @@ test.describe("Page content", () => {
 // ---------------------------------------------------------------------------
 test.describe("Project sub-pages", () => {
   const subPages = [
-    "/projects/resume-generator",
-    "/projects/die-neue-grafik",
-    "/projects/contact-form",
+    "/narratives-code/resume-generator",
+    "/narratives-code/die-neue-grafik",
+    "/narratives-code/contact-form",
   ];
 
   for (const route of subPages) {
-    test(`${route} has back link to /projects`, async ({ page }) => {
+    test(`${route} has back link to /narratives-code`, async ({ page }) => {
       await page.goto(route);
       await expect(
         page.getByRole("link", { name: /all projects/i }).first(),
-      ).toHaveAttribute("href", "/projects");
+      ).toHaveAttribute("href", "/narratives-code");
     });
   }
 });
@@ -264,6 +314,11 @@ test.describe("Not found page", () => {
       "href",
       "/",
     );
+  });
+
+  test("old /projects route returns 404", async ({ page }) => {
+    const response = await page.goto("/projects");
+    expect(response?.status()).toBe(404);
   });
 });
 
