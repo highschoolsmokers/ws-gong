@@ -1,0 +1,16 @@
+# Enforce conventional commit format
+# Allowed prefixes: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
+msg=$(head -1 "$1")
+
+if ! echo "$msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+'; then
+  echo "Invalid commit message: \"$msg\""
+  echo ""
+  echo "Must match: <type>(<optional scope>): <description>"
+  echo "Types: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert"
+  echo ""
+  echo "Examples:"
+  echo "  feat: add dark mode toggle"
+  echo "  fix(nav): correct home link href"
+  echo "  chore: update dependencies"
+  exit 1
+fi
