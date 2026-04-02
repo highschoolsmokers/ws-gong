@@ -4,6 +4,7 @@ import { waitForEmail, deleteEmails } from "./helpers/imap";
 const pages = [
   "/",
   "/about",
+  "/writing",
   "/narratives-code",
   "/contact",
   "/terms",
@@ -41,8 +42,8 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const header = page.locator("header");
     const navLinks = header.getByRole("link");
-    // W.S. Gong home link + Narratives. Code. + About
-    expect(await navLinks.count()).toBeGreaterThanOrEqual(3);
+    // W.S. Gong home link + Writing + Narratives. Code. + About
+    expect(await navLinks.count()).toBeGreaterThanOrEqual(4);
   });
 
   test("nav has W.S. Gong home link without icon", async ({ page }) => {
@@ -390,6 +391,101 @@ test.describe("OG metadata", () => {
       });
     });
   }
+});
+
+// ---------------------------------------------------------------------------
+// Writing page
+// ---------------------------------------------------------------------------
+test.describe("Writing page", () => {
+  test("has publications and conferences sections", async ({ page }) => {
+    await page.goto("/writing");
+    await expect(
+      page.getByRole("heading", { name: /publications/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /conferences/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: /newsletter/i }),
+    ).toBeVisible();
+  });
+
+  test("has Substack subscribe link", async ({ page }) => {
+    await page.goto("/writing");
+    const subscribe = page.getByRole("link", {
+      name: /subscribe on substack/i,
+    });
+    await expect(subscribe).toBeAttached();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Dark mode toggle
+// ---------------------------------------------------------------------------
+test.describe("Dark mode toggle", () => {
+  test("toggle is present in footer", async ({ page }) => {
+    await page.goto("/about");
+    const toggle = page.getByRole("button", { name: /color theme/i });
+    await expect(toggle).toBeVisible();
+  });
+
+  test("cycles through themes on click", async ({ page }) => {
+    await page.goto("/about");
+    const toggle = page.getByRole("button", { name: /color theme/i });
+    await expect(toggle).toContainText("Auto");
+    await toggle.click();
+    await expect(toggle).toContainText("Light");
+    await toggle.click();
+    await expect(toggle).toContainText("Dark");
+    // Verify data-theme attribute is set
+    const theme = await page.locator("html").getAttribute("data-theme");
+    expect(theme).toBe("dark");
+    await toggle.click();
+    await expect(toggle).toContainText("Auto");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Newsletter in footer
+// ---------------------------------------------------------------------------
+test.describe("Newsletter in footer", () => {
+  test("footer has newsletter subscribe link", async ({ page }) => {
+    await page.goto("/about");
+    const footer = page.locator("footer");
+    const subscribe = footer.getByRole("link", {
+      name: /subscribe to the newsletter/i,
+    });
+    await expect(subscribe).toBeAttached();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// JSON-LD structured data
+// ---------------------------------------------------------------------------
+test.describe("JSON-LD", () => {
+  test("home page has Person structured data", async ({ page }) => {
+    await page.goto("/");
+    const jsonLd = page.locator('script[type="application/ld+json"]');
+    await expect(jsonLd).toBeAttached();
+    const content = await jsonLd.textContent();
+    const data = JSON.parse(content!);
+    expect(data["@type"]).toBe("Person");
+    expect(data.name).toBe("W.S. Gong");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Home page content
+// ---------------------------------------------------------------------------
+test.describe("Home page", () => {
+  test("has intro text and navigation links", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByText(/fiction editor/i)).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: /writing/i }).first(),
+    ).toBeAttached();
+    await expect(page.getByRole("link", { name: /projects/i })).toBeAttached();
+  });
 });
 
 // ---------------------------------------------------------------------------

@@ -13,13 +13,22 @@ export const metadata: Metadata = {
   },
 };
 
-const codeProjects = [
+type Tag = "AI" | "Writing" | "MCP" | "Design" | "Web";
+
+const codeProjects: {
+  href: string;
+  title: string;
+  description: string;
+  stack: string[];
+  tags: Tag[];
+}[] = [
   {
     href: "/narratives-code/paperless-mcp",
     title: "Paperless MCP Server",
     description:
       "A Model Context Protocol server that connects Claude to Paperless-ngx document management. Exposes document search, tagging, and metadata operations as MCP tools.",
     stack: ["TypeScript", "MCP SDK", "Express"],
+    tags: ["AI", "MCP"],
   },
   {
     href: "/narratives-code/submission-cli",
@@ -27,6 +36,7 @@ const codeProjects = [
     description:
       "A command-line tool for fiction writers. Formats manuscripts to Shunn standard, generates cover letters with Claude, and manages a submission queue.",
     stack: ["TypeScript", "Anthropic SDK", "PDFKit"],
+    tags: ["AI", "Writing"],
   },
   {
     href: "/narratives-code/writer-utilities",
@@ -34,6 +44,7 @@ const codeProjects = [
     description:
       "A growing collection of scripts and small apps for fiction writers — including a Google Docs to Scrivener converter and the submission CLI.",
     stack: ["TypeScript", "Python", "Node.js"],
+    tags: ["Writing"],
   },
   {
     href: "/narratives-code/resume-generator",
@@ -41,6 +52,7 @@ const codeProjects = [
     description:
       "Interactive resume editor with profile management and PDF export.",
     stack: ["Next.js", "React", "PDFKit"],
+    tags: ["Web"],
   },
   {
     href: "/narratives-code/die-neue-grafik",
@@ -48,6 +60,7 @@ const codeProjects = [
     description:
       "A study in Swiss International Typographic Style — Bauhaus, modernism, and grid-based design.",
     stack: ["Next.js", "React", "Tailwind CSS"],
+    tags: ["Design"],
   },
   {
     href: "/narratives-code/contact-form",
@@ -55,6 +68,7 @@ const codeProjects = [
     description:
       "Reactive contact form with real-time typography scaling and drag-and-drop attachments.",
     stack: ["Next.js", "React", "Server Actions"],
+    tags: ["Web", "Design"],
   },
 ];
 
@@ -79,21 +93,14 @@ export default async function NarrativesCode() {
                     href={post.canonical_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="grid grid-cols-[48px_1fr] gap-x-10 py-4 hover:opacity-70 transition-opacity"
+                    className="block py-4 hover:opacity-70 transition-opacity"
                   >
-                    <span className="text-sm tabular-nums">
-                      {new Date(post.post_date).getFullYear()}
-                    </span>
-                    <div>
-                      <span className="text-sm font-semibold">
-                        {post.title}
+                    <span className="text-sm font-semibold">{post.title}</span>
+                    {post.subtitle && (
+                      <span className="text-sm block mt-0.5">
+                        {post.subtitle}
                       </span>
-                      {post.subtitle && (
-                        <span className="text-sm block mt-0.5">
-                          {post.subtitle}
-                        </span>
-                      )}
-                    </div>
+                    )}
                   </a>
                 </li>
               ))}
@@ -115,8 +122,16 @@ export default async function NarrativesCode() {
                 <span className="text-sm block mt-1 leading-relaxed">
                   {p.description}
                 </span>
-                <span className="text-xs mt-2 block text-neutral-500">
-                  {p.stack.join(" · ")}
+                <span className="text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500">
+                  <span>{p.stack.join(" · ")}</span>
+                  {p.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                    >
+                      {tag}
+                    </span>
+                  ))}
                 </span>
               </Link>
             </li>

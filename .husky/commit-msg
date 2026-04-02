@@ -2,6 +2,9 @@
 # Allowed prefixes: feat, fix, docs, style, refactor, test, chore, perf, ci, build, revert
 msg=$(head -1 "$1")
 
+# Allow merge commits
+if echo "$msg" | grep -qE '^Merge '; then exit 0; fi
+
 if ! echo "$msg" | grep -qE '^(feat|fix|docs|style|refactor|test|chore|perf|ci|build|revert)(\(.+\))?: .+'; then
   echo "Invalid commit message: \"$msg\""
   echo ""
