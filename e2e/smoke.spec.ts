@@ -4,7 +4,6 @@ import { waitForEmail, deleteEmails } from "./helpers/imap";
 const pages = [
   "/",
   "/about",
-  "/writing",
   "/narratives-code",
   "/contact",
   "/terms",
@@ -42,17 +41,28 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const header = page.locator("header");
     const navLinks = header.getByRole("link");
-    // W.S. Gong home link + Writing + Narratives. Code. + About
-    expect(await navLinks.count()).toBeGreaterThanOrEqual(4);
+    // Narratives. Code. + About (no home link on index)
+    expect(await navLinks.count()).toBeGreaterThanOrEqual(2);
   });
 
-  test("nav has W.S. Gong home link without icon", async ({ page }) => {
+  test("masthead is static text on index, link on sub-pages", async ({
+    page,
+  }) => {
+    // On index: h1 contains "W.S. Gong" but is NOT a link
+    await page.goto("/");
+    const h1 = page.locator("header h1");
+    await expect(h1).toContainText("W.S.");
+    const homeLink = page
+      .locator("header h1")
+      .getByRole("link", { name: /W\.S\./i });
+    await expect(homeLink).not.toBeAttached();
+
+    // On sub-pages: h1 wraps a link to /
     await page.goto("/about");
-    const header = page.locator("header");
-    const homeLink = header.getByRole("link", { name: /W\.S\. Gong/i });
-    await expect(homeLink).toHaveAttribute("href", "/");
-    // No icon (the old 5x5 black square)
-    await expect(homeLink.locator("div")).not.toBeAttached();
+    const aboutH1Link = page
+      .locator("header h1")
+      .getByRole("link", { name: /W\.S\./i });
+    await expect(aboutH1Link).toHaveAttribute("href", "/");
   });
 
   test("nav has Narratives. Code. link to /narratives-code", async ({
@@ -62,30 +72,6 @@ test.describe("Navigation", () => {
     const header = page.locator("header");
     const ncLink = header.getByRole("link", { name: "Narratives. Code." });
     await expect(ncLink).toHaveAttribute("href", "/narratives-code");
-  });
-
-  test("nav does not have a Projects link", async ({ page }) => {
-    await page.goto("/");
-    const header = page.locator("header");
-    const projectsLink = header.getByRole("link", { name: /^Projects$/i });
-    await expect(projectsLink).not.toBeAttached();
-  });
-
-  test("W.S. Gong backlink is disabled on index, active on sub-pages", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const backlink = page
-      .locator("header")
-      .getByRole("link", { name: /W\.S\. Gong/i });
-    await expect(backlink).toHaveAttribute("href", "/");
-    await expect(backlink).toHaveClass(/pointer-events-none/);
-
-    await page.goto("/about");
-    const activeBacklink = page
-      .locator("header")
-      .getByRole("link", { name: /W\.S\. Gong/i });
-    await expect(activeBacklink).not.toHaveClass(/pointer-events-none/);
   });
 
   test("Narratives. Code. link is disabled on its own page", async ({
@@ -394,32 +380,6 @@ test.describe("OG metadata", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Writing page
-// ---------------------------------------------------------------------------
-test.describe("Writing page", () => {
-  test("has publications and conferences sections", async ({ page }) => {
-    await page.goto("/writing");
-    await expect(
-      page.getByRole("heading", { name: /publications/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /conferences/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: /newsletter/i }),
-    ).toBeVisible();
-  });
-
-  test("has Substack subscribe link", async ({ page }) => {
-    await page.goto("/writing");
-    const subscribe = page.getByRole("link", {
-      name: /subscribe on substack/i,
-    });
-    await expect(subscribe).toBeAttached();
-  });
-});
-
-// ---------------------------------------------------------------------------
 // Dark mode toggle
 // ---------------------------------------------------------------------------
 test.describe("Dark mode toggle", () => {
@@ -478,13 +438,9 @@ test.describe("JSON-LD", () => {
 // Home page content
 // ---------------------------------------------------------------------------
 test.describe("Home page", () => {
-  test("has intro text and navigation links", async ({ page }) => {
+  test("has intro text", async ({ page }) => {
     await page.goto("/");
     await expect(page.getByText(/fiction editor/i)).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: /writing/i }).first(),
-    ).toBeAttached();
-    await expect(page.getByRole("link", { name: /projects/i })).toBeAttached();
   });
 });
 

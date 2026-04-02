@@ -4,64 +4,35 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/writing", label: "Writing" },
   { href: "/narratives-code", label: "Narratives. Code." },
   { href: "/about", label: "About" },
 ];
 
-const titles: Record<string, React.ReactNode> = {
-  "/": (
-    <>
+export default function Nav() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
+  const masthead = (
+    <span className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
       W.S.
       <br />
       Gong
-    </>
-  ),
-  "/writing": "Writing",
-  "/narratives-code": (
-    <>
-      Narratives.
-      <br />
-      Code.
-    </>
-  ),
-  "/narratives-code/paperless-mcp": "Paperless MCP",
-  "/narratives-code/submission-cli": "Submission CLI",
-  "/narratives-code/writer-utilities": "Writer Utilities",
-  "/narratives-code/resume-generator": "Resume Generator",
-  "/narratives-code/die-neue-grafik": "Die Neue Grafik",
-  "/narratives-code/contact-form": "Contact Form",
-  "/about": "About",
-  "/contact": "Contact",
-  "/links": "Links",
-  "/colophon": "Colophon",
-  "/terms": "Terms",
-};
-
-export default function Nav() {
-  const pathname = usePathname();
-  const title =
-    titles[pathname] ??
-    Object.entries(titles).find(
-      ([k]) => k !== "/" && pathname.startsWith(k),
-    )?.[1];
+    </span>
+  );
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
-      {title ? (
-        <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
-          {title}
-        </h1>
-      ) : (
-        <div />
-      )}
-      <div className="flex flex-col gap-6">
-        {pathname !== "/" && (
+      <h1>
+        {isHome ? (
+          masthead
+        ) : (
           <Link href="/" className="transition-opacity hover:opacity-70">
-            <span className="text-xl font-black tracking-tight">W.S. Gong</span>
+            {masthead}
           </Link>
         )}
-        <ul className="text-sm font-semibold leading-loose">
+      </h1>
+      <div className="flex flex-col justify-end">
+        <ul className="text-xl md:text-2xl font-black leading-snug">
           {links.map((link) => (
             <li key={link.href}>
               <Link
