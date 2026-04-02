@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/projects", label: "Projects" },
+  { href: "/narratives-code", label: "Narratives. Code." },
   { href: "/about", label: "About" },
 ];
 
@@ -16,13 +16,19 @@ const titles: Record<string, React.ReactNode> = {
       Gong
     </>
   ),
-  "/projects": "Projects",
-  "/projects/paperless-mcp": "Paperless MCP",
-  "/projects/submission-cli": "Submission CLI",
-  "/projects/writer-utilities": "Writer Utilities",
-  "/projects/resume-generator": "Resume Generator",
-  "/projects/die-neue-grafik": "Die Neue Grafik",
-  "/projects/contact-form": "Contact Form",
+  "/narratives-code": (
+    <>
+      Narratives.
+      <br />
+      Code.
+    </>
+  ),
+  "/narratives-code/paperless-mcp": "Paperless MCP",
+  "/narratives-code/submission-cli": "Submission CLI",
+  "/narratives-code/writer-utilities": "Writer Utilities",
+  "/narratives-code/resume-generator": "Resume Generator",
+  "/narratives-code/die-neue-grafik": "Die Neue Grafik",
+  "/narratives-code/contact-form": "Contact Form",
   "/about": "About",
   "/contact": "Contact",
   "/links": "Links",
@@ -50,13 +56,12 @@ export default function Nav() {
       <div className="flex flex-col gap-6">
         <Link
           href="/"
-          className={`flex items-center gap-2.5 transition-opacity ${
+          className={`transition-opacity ${
             pathname === "/" ? "pointer-events-none" : "hover:opacity-70"
           }`}
         >
-          <div className="w-5 h-5 bg-black" />
           <span className="text-xl font-black tracking-tight">
-            Narratives. Code.
+            W.S. Gong
           </span>
         </Link>
         <ul className="text-sm font-semibold leading-loose">

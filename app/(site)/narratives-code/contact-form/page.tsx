@@ -18,7 +18,7 @@ export default function LabContactPage() {
           Contact Form
         </h2>
         <Link
-          href="/projects"
+          href="/narratives-code"
           className="text-sm hover:opacity-70 transition-opacity"
         >
           ← All projects
