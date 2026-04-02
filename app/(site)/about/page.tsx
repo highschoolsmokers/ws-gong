@@ -145,6 +145,25 @@ export default function About() {
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <h2 className="text-xl md:text-2xl font-black leading-tight">
+          Readings &amp; Events
+        </h2>
+        <div className="text-sm leading-relaxed space-y-2">
+          <p className="text-neutral-500">No upcoming events.</p>
+          <p>
+            For readings, panels, or workshop inquiries —{" "}
+            <Link
+              href="/contact"
+              className="font-semibold hover:opacity-70 transition-opacity"
+            >
+              get in touch
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
+
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-xl md:text-2xl font-black leading-tight">Resume</h2>
         <ResumeLink token={token} />
       </section>

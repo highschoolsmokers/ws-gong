@@ -1,12 +1,33 @@
 import { getSubstackPosts } from "@/lib/substack";
 
+const siteUrl = "https://ws-gong.com";
+
+const projectItems = [
+  {
+    title: "Paperless MCP Server",
+    link: `${siteUrl}/narratives-code/paperless-mcp`,
+    description:
+      "A Model Context Protocol server that connects Claude to Paperless-ngx document management.",
+  },
+  {
+    title: "Submission CLI",
+    link: `${siteUrl}/narratives-code/submission-cli`,
+    description:
+      "A command-line tool for fiction writers. Formats manuscripts, generates cover letters with Claude, and manages submissions.",
+  },
+  {
+    title: "Writer Utilities",
+    link: `${siteUrl}/narratives-code/writer-utilities`,
+    description:
+      "Scripts and small apps for fiction writers — including a Google Docs to Scrivener converter.",
+  },
+];
+
 export async function GET() {
   const posts = await getSubstackPosts("highschoolsmokers");
-  const siteUrl = "https://ws-gong.com";
 
-  const items = posts
-    .map(
-      (post) => `    <item>
+  const postItems = posts.map(
+    (post) => `    <item>
       <title><![CDATA[${post.title}]]></title>
       <link>${post.canonical_url}</link>
       <guid isPermaLink="true">${post.canonical_url}</guid>
@@ -16,16 +37,28 @@ export async function GET() {
       <description><![CDATA[${post.subtitle}]]></description>`
           : ""
       }
+      <category>Newsletter</category>
     </item>`,
-    )
-    .join("\n");
+  );
+
+  const projectXml = projectItems.map(
+    (p) => `    <item>
+      <title><![CDATA[${p.title}]]></title>
+      <link>${p.link}</link>
+      <guid isPermaLink="true">${p.link}</guid>
+      <description><![CDATA[${p.description}]]></description>
+      <category>Project</category>
+    </item>`,
+  );
+
+  const items = [...postItems, ...projectXml].join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>W.S. Gong</title>
     <link>${siteUrl}</link>
-    <description>Writing by W.S. Gong</description>
+    <description>Writing and code by W.S. Gong — fiction, AI integrations, and developer tools.</description>
     <language>en-us</language>
     <atom:link href="${siteUrl}/feed" rel="self" type="application/rss+xml"/>
 ${items}

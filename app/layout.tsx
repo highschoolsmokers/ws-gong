@@ -39,6 +39,32 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "W.S. Gong",
+  url: "https://ws-gong.com",
+  jobTitle: "Fiction Editor & Technical Writer",
+  worksFor: {
+    "@type": "Organization",
+    name: "The Rumpus",
+    url: "https://therumpus.net",
+  },
+  sameAs: [
+    "https://github.com/highschoolsmokers",
+    "https://www.linkedin.com/in/billy-gong",
+    "https://substack.com/@highschoolsmokers",
+    "https://www.instagram.com/born.deleuze",
+  ],
+  knowsAbout: [
+    "Fiction Writing",
+    "Technical Writing",
+    "AI Tooling",
+    "Model Context Protocol",
+    "Developer Documentation",
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -46,6 +72,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className={`${geistSans.variable} font-sans antialiased`}>
         <script
           dangerouslySetInnerHTML={{

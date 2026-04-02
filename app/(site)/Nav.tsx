@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
+  { href: "/writing", label: "Writing" },
   { href: "/narratives-code", label: "Narratives. Code." },
   { href: "/about", label: "About" },
 ];
@@ -16,6 +17,7 @@ const titles: Record<string, React.ReactNode> = {
       Gong
     </>
   ),
+  "/writing": "Writing",
   "/narratives-code": (
     <>
       Narratives.
@@ -55,13 +57,8 @@ export default function Nav() {
       )}
       <div className="flex flex-col gap-6">
         {pathname !== "/" && (
-          <Link
-            href="/"
-            className="transition-opacity hover:opacity-70"
-          >
-            <span className="text-xl font-black tracking-tight">
-              W.S. Gong
-            </span>
+          <Link href="/" className="transition-opacity hover:opacity-70">
+            <span className="text-xl font-black tracking-tight">W.S. Gong</span>
           </Link>
         )}
         <ul className="text-sm font-semibold leading-loose">
