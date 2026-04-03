@@ -28,7 +28,7 @@ function emptyForm(): FormData {
 export default function ContactForm() {
   const [form, setForm] = useState<FormData>(emptyForm());
   const [honeypot, setHoneypot] = useState("");
-  const [csrfToken, setCsrfToken] = useState("");
+  const [, setCsrfToken] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [dragging, setDragging] = useState(false);
   const [status, setStatus] = useState("");
@@ -48,6 +48,7 @@ export default function ContactForm() {
   useEffect(() => {
     const from = searchParams.get("from");
     if (from) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- derived initial value from URL params
       setForm((f) => ({
         ...f,
         subject:
@@ -56,18 +57,6 @@ export default function ContactForm() {
       }));
     }
   }, [searchParams]);
-
-  // Typography that reacts: scale title based on message length
-  const titleStyle = (() => {
-    const len = form.message.length;
-    const weight = Math.max(400, 900 - Math.min(len, 500));
-    const spacing = Math.min(len * 0.005, 3);
-    return {
-      fontWeight: weight,
-      letterSpacing: `${spacing}px`,
-      transition: "font-weight 0.5s ease, letter-spacing 0.5s ease",
-    };
-  })();
 
   // Drag and drop handlers
   const handleDragEnter = useCallback((e: React.DragEvent) => {

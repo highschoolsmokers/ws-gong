@@ -32,28 +32,36 @@ test.describe("Navigation", () => {
     await expect(aboutH1Link).toHaveAttribute("href", "/");
   });
 
-  test("has Narratives. Code. link pointing to /narratives-code", async ({
-    page,
-  }) => {
+  test("has Narratives link pointing to /narratives", async ({ page }) => {
     await page.goto("/");
-    const ncLink = page
+    const link = page
       .locator("header")
-      .getByRole("link", { name: "Narratives. Code." });
-    await expect(ncLink).toHaveAttribute("href", "/narratives-code");
+      .getByRole("link", { name: "Narratives" });
+    await expect(link).toHaveAttribute("href", "/narratives");
   });
 
-  test("Narratives. Code. link is disabled on its own page", async ({
-    page,
-  }) => {
-    await page.goto("/narratives-code");
-    const ncLink = page
+  test("has Code link pointing to /code", async ({ page }) => {
+    await page.goto("/");
+    const link = page.locator("header").getByRole("link", { name: "Code" });
+    await expect(link).toHaveAttribute("href", "/code");
+  });
+
+  test("Narratives link is disabled on its own page", async ({ page }) => {
+    await page.goto("/narratives");
+    const link = page
       .locator("header")
-      .getByRole("link", { name: "Narratives. Code." });
-    await expect(ncLink).toHaveClass(/pointer-events-none/);
+      .getByRole("link", { name: "Narratives" });
+    await expect(link).toHaveClass(/pointer-events-none/);
+  });
+
+  test("Code link is disabled on its own page", async ({ page }) => {
+    await page.goto("/code");
+    const link = page.locator("header").getByRole("link", { name: "Code" });
+    await expect(link).toHaveClass(/pointer-events-none/);
   });
 
   test("nav appears on site pages", async ({ page }) => {
-    for (const route of ["/", "/about", "/narratives-code", "/contact"]) {
+    for (const route of ["/", "/about", "/narratives", "/code", "/contact"]) {
       await page.goto(route);
       await expect(
         page.locator("header"),

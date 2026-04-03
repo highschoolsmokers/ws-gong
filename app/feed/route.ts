@@ -5,19 +5,19 @@ const siteUrl = "https://ws-gong.com";
 const projectItems = [
   {
     title: "Paperless MCP Server",
-    link: `${siteUrl}/narratives-code/paperless-mcp`,
+    link: `${siteUrl}/code/paperless-mcp`,
     description:
       "A Model Context Protocol server that connects Claude to Paperless-ngx document management.",
   },
   {
     title: "Submission CLI",
-    link: `${siteUrl}/narratives-code/submission-cli`,
+    link: `${siteUrl}/code/submission-cli`,
     description:
       "A command-line tool for fiction writers. Formats manuscripts, generates cover letters with Claude, and manages submissions.",
   },
   {
     title: "Writer Utilities",
-    link: `${siteUrl}/narratives-code/writer-utilities`,
+    link: `${siteUrl}/code/writer-utilities`,
     description:
       "Scripts and small apps for fiction writers — including a Google Docs to Scrivener converter.",
   },

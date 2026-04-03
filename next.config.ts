@@ -6,6 +6,20 @@ const nextConfig: NextConfig = {
     "/api/resume": ["./private/**"],
   },
   serverExternalPackages: ["pdfkit"],
+  async redirects() {
+    return [
+      {
+        source: "/narratives-code",
+        destination: "/code",
+        permanent: true,
+      },
+      {
+        source: "/narratives-code/:slug",
+        destination: "/code/:slug",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

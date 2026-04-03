@@ -14,12 +14,8 @@ import {
   type EducationEntry,
   type ExperienceEntry,
   type EarlierExperienceEntry,
-  type SkillCategory,
 } from "@/lib/resumeEditor/schema";
 
-function emptyContact(): ContactEntry {
-  return { label: "", url: "", type: "web" };
-}
 function emptyEducation(): EducationEntry {
   return { dates: "", institution: "", degree: "", details: "" };
 }
@@ -35,7 +31,7 @@ export default function ProfileEditor() {
   const [savedSnapshot, setSavedSnapshot] = useState<Profile>(emptyProfile());
   const [profileName, setProfileName] = useState("");
   const [profiles, setProfiles] = useState<string[]>([]);
-  const [selectedProfile, setSelectedProfile] = useState("");
+  const [, setSelectedProfile] = useState("");
   const [status, setStatus] = useState("");
   const statusTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -52,6 +48,7 @@ export default function ProfileEditor() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- data fetch on mount
     refreshList();
   }, [refreshList]);
 
@@ -164,18 +161,6 @@ export default function ProfileEditor() {
   // ── Update helpers ──────────────────────────────────────────────────
   const updateName = (key: "first" | "last", value: string) => {
     setProfile((p) => ({ ...p, name: { ...p.name, [key]: value } }));
-  };
-
-  const updateContact = (
-    index: number,
-    field: keyof ContactEntry,
-    value: string,
-  ) => {
-    setProfile((p) => {
-      const contact = [...p.contact];
-      contact[index] = { ...contact[index], [field]: value } as ContactEntry;
-      return { ...p, contact };
-    });
   };
 
   const getContactUrl = (label: string) => {

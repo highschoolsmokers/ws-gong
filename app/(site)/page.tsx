@@ -7,7 +7,7 @@ export default async function Home() {
 
   return (
     <div className="space-y-0">
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-4 pb-10">
         <div />
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
@@ -20,8 +20,12 @@ export default async function Home() {
             >
               The Rumpus
             </a>
-            . Technical writer with twenty-five years in software. Building
-            tools at the intersection of language models and the writing craft.
+            .
+            <br />
+            Technical writer with twenty-five years in software.
+            <br />
+            Building tools at the intersection of language models and the craft
+            of writing.
           </p>
         </div>
       </section>

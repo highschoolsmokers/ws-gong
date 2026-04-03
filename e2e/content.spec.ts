@@ -21,21 +21,24 @@ test.describe("Page content", () => {
     ).toBeGreaterThanOrEqual(2);
   });
 
-  test("about page project links point to /narratives-code", async ({
-    page,
-  }) => {
+  test("about page project links point to /code", async ({ page }) => {
     await page.goto("/about");
     await expect(
       page.getByRole("link", { name: /MCP server/i }),
-    ).toHaveAttribute("href", "/narratives-code/paperless-mcp");
+    ).toHaveAttribute("href", "/code/paperless-mcp");
     await expect(page.getByRole("link", { name: /CLI/i })).toHaveAttribute(
       "href",
-      "/narratives-code/submission-cli",
+      "/code/submission-cli",
     );
   });
 
-  test("narratives-code page has content", async ({ page }) => {
-    await page.goto("/narratives-code");
+  test("narratives page has content", async ({ page }) => {
+    await page.goto("/narratives");
+    await expect(page.getByRole("heading").first()).toBeVisible();
+  });
+
+  test("code page has content", async ({ page }) => {
+    await page.goto("/code");
     await expect(page.getByRole("heading").first()).toBeVisible();
   });
 

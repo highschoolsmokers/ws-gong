@@ -16,7 +16,7 @@ export default function ResumeGeneratorPage() {
           Resume Generator
         </h2>
         <Link
-          href="/narratives-code"
+          href="/code"
           className="text-sm hover:opacity-70 transition-opacity"
         >
           ← All projects
