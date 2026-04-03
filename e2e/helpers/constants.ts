@@ -31,14 +31,15 @@ export const MAX_TAB_STEPS_FORM = 20;
 export const SITE_PAGES = [
   "/",
   "/about",
-  "/narratives-code",
+  "/narratives",
+  "/code",
   "/contact",
   "/terms",
   "/colophon",
   "/links",
-  "/narratives-code/resume-generator",
-  "/narratives-code/die-neue-grafik",
-  "/narratives-code/contact-form",
+  "/code/resume-generator",
+  "/code/die-neue-grafik",
+  "/code/contact-form",
 ] as const;
 
 export const STATIC_ROUTES = ["/sitemap.xml", "/robots.txt"] as const;

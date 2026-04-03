@@ -9,6 +9,16 @@
             "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; case \"$f\" in */e2e/*.ts) HITS=$(grep -nE 'waitForTimeout\\([0-9]|\\.nth\\(|\\.catch\\(\\(\\) =>|locator\\(\"(input|textarea)\\[name=|page\\.fill\\(\"(input|textarea)\\[' \"$f\" 2>/dev/null); if [ -n \"$HITS\" ]; then echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostToolUse\\\",\\\"additionalContext\\\":\\\"E2E lint warning in $f:\\n$HITS\\nConsider: use constants from helpers/constants.ts for timeouts, getByLabel() instead of CSS name selectors, getByRole('img') instead of .nth(), and avoid silent .catch() swallows.\\\"}}\"; fi ;; esac; }",
             "timeout": 10,
             "statusMessage": "Checking e2e test quality..."
+          },
+          {
+            "type": "command",
+            "command": "/Users/Gong/workspace/ws-gong/.claude/swiss-design-lint.sh",
+            "timeout": 5,
+            "statusMessage": "Swiss Design lint..."
+          },
+          {
+            "type": "prompt",
+            "prompt": "You are a Swiss International Typographic Style design reviewer. The file $FILE_PATH was just edited. Review ONLY the changed content for adherence to these principles:\n\n1. GRID: Strict modular grid (1:2 ratio). Content must align to the grid system.\n2. WHITESPACE: Generous, purposeful whitespace. No cramming. Let content breathe.\n3. HIERARCHY: Clear visual hierarchy through size and weight contrast, not decoration.\n4. RESTRAINT: No ornamentation, no gradients, no shadows, no rounded corners.\n5. TYPOGRAPHY: Limited weights (black for headings, semibold for emphasis, normal for body). No decorative fonts.\n6. ASYMMETRY: Prefer asymmetric layouts over centered ones.\n\nIf the edit is fine, say nothing. Only flag clear violations with a brief, specific note. Ignore non-layout files."
           }
         ]
       }

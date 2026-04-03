@@ -127,14 +127,14 @@ export default function About() {
             the Model Context Protocol. He builds tools at the intersection of
             language models and the writing craft, including an{" "}
             <Link
-              href="/narratives-code/paperless-mcp"
+              href="/code/paperless-mcp"
               className="hover:opacity-70 transition-opacity font-semibold"
             >
               MCP server
             </Link>{" "}
             for document management and a{" "}
             <Link
-              href="/narratives-code/submission-cli"
+              href="/code/submission-cli"
               className="hover:opacity-70 transition-opacity font-semibold"
             >
               CLI
