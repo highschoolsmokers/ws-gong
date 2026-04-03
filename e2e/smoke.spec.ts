@@ -167,7 +167,7 @@ test.describe("Contact form", () => {
       !process.env.IMAP_PASS,
       "IMAP_PASS not set — skipping delivery check",
     );
-    test.setTimeout(60000);
+    test.setTimeout(90000);
 
     const token = `e2e-${Date.now()}`;
     await page.goto("/contact");
@@ -186,7 +186,7 @@ test.describe("Contact form", () => {
       timeout: 15000,
     });
 
-    const email = await waitForEmail(token, { maxRetries: 8, delayMs: 5000 });
+    const email = await waitForEmail(token, { maxRetries: 12, delayMs: 5000 });
     expect(email, `Email with "${token}" should arrive`).not.toBeNull();
     expect(email!.subject).toContain(token);
 
