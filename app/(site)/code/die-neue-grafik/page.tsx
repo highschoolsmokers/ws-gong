@@ -12,7 +12,7 @@ export default function DieNeueGrafik() {
     <div className="bg-[#EDAB00] text-black -mx-8 md:-mx-12 px-8 md:px-12 -mb-16 py-12 md:py-16">
       <div className="max-w-5xl mx-auto">
         <Link
-          href="/narratives-code"
+          href="/code"
           className="text-sm font-semibold hover:opacity-70 transition-opacity"
         >
           ← All projects
