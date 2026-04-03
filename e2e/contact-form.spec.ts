@@ -43,9 +43,7 @@ test.describe("Contact form validation", () => {
     });
   });
 
-  test("missing message is blocked by browser validation", async ({
-    page,
-  }) => {
+  test("missing message is blocked by browser validation", async ({ page }) => {
     await page.fill("input[name='name']", "Test User");
     await page.fill("input[name='email']", "test@example.com");
     // Leave message empty

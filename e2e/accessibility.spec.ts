@@ -61,12 +61,12 @@ test.describe("Keyboard navigation", () => {
     let foundNavLink = false;
     for (let i = 0; i < 10; i++) {
       const focused = page.locator(":focus");
-      const tagName = await focused.evaluate((el) =>
-        el.tagName.toLowerCase(),
-      ).catch(() => "");
-      const isInHeader = await focused.evaluate(
-        (el) => !!el.closest("header"),
-      ).catch(() => false);
+      const tagName = await focused
+        .evaluate((el) => el.tagName.toLowerCase())
+        .catch(() => "");
+      const isInHeader = await focused
+        .evaluate((el) => !!el.closest("header"))
+        .catch(() => false);
 
       if (tagName === "a" && isInHeader) {
         foundNavLink = true;
