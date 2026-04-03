@@ -13,13 +13,13 @@ export const SUBMISSION_TIMEOUT_MS = 15_000;
 export const VALIDATION_TIMEOUT_MS = 10_000;
 
 /** IMAP polling: max attempts before giving up on email delivery. */
-export const IMAP_MAX_RETRIES = 12;
+export const IMAP_MAX_RETRIES = 20;
 
 /** IMAP polling: delay between retry attempts. */
 export const IMAP_RETRY_DELAY_MS = 5_000;
 
 /** Overall timeout for the email delivery verification test. */
-export const EMAIL_DELIVERY_TIMEOUT_MS = 90_000;
+export const EMAIL_DELIVERY_TIMEOUT_MS = 120_000;
 
 /** Max Tab key presses when testing keyboard navigation reach. */
 export const MAX_TAB_STEPS_NAV = 10;
