@@ -4,7 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const links = [
-  { href: "/narratives-code", label: "Narratives. Code." },
+  { href: "/narratives", label: "Narratives" },
+  { href: "/code", label: "Code" },
   { href: "/about", label: "About" },
 ];
 
@@ -38,7 +39,8 @@ export default function Nav() {
               <Link
                 href={link.href}
                 className={`transition-opacity ${
-                  pathname === link.href
+                  pathname === link.href ||
+                  (link.href !== "/" && pathname.startsWith(link.href))
                     ? "pointer-events-none"
                     : "hover:opacity-70"
                 }`}
