@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath' | { read -r f; case \"$f\" in */e2e/*.ts) HITS=$(grep -nE 'waitForTimeout\\([0-9]|\\.nth\\(|\\.catch\\(\\(\\) =>|locator\\(\"(input|textarea)\\[name=|page\\.fill\\(\"(input|textarea)\\[' \"$f\" 2>/dev/null); if [ -n \"$HITS\" ]; then echo \"{\\\"hookSpecificOutput\\\":{\\\"hookEventName\\\":\\\"PostToolUse\\\",\\\"additionalContext\\\":\\\"E2E lint warning in $f:\\n$HITS\\nConsider: use constants from helpers/constants.ts for timeouts, getByLabel() instead of CSS name selectors, getByRole('img') instead of .nth(), and avoid silent .catch() swallows.\\\"}}\"; fi ;; esac; }",
+            "timeout": 10,
+            "statusMessage": "Checking e2e test quality..."
+          }
+        ]
+      }
+    ]
+  }
+}

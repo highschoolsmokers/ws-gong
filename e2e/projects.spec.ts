@@ -9,6 +9,9 @@ const projectSubPages = [
   { href: "/narratives-code/contact-form", title: "Contact Form" },
 ];
 
+// ---------------------------------------------------------------------------
+// Listing page
+// ---------------------------------------------------------------------------
 test.describe("Narratives-code listing", () => {
   test("masthead shows W.S. Gong", async ({ page }) => {
     await page.goto("/narratives-code");
@@ -22,7 +25,7 @@ test.describe("Narratives-code listing", () => {
 
     for (const project of projectSubPages) {
       const link = page.getByRole("link", { name: new RegExp(project.title) });
-      await expect(link).toBeAttached();
+      await expect(link, `${project.title} card should exist`).toBeAttached();
       await expect(link).toHaveAttribute("href", project.href);
     }
   });
@@ -37,17 +40,22 @@ test.describe("Narratives-code listing", () => {
 
   test("Narratives section appears before Code section", async ({ page }) => {
     await page.goto("/narratives-code");
-    const narrativesHeading = page.getByRole("heading", {
-      name: /^Narratives$/i,
-    });
-    const codeHeading = page.getByRole("heading", { name: /^Code$/i });
+    const narrativesBox = await page
+      .getByRole("heading", { name: /^Narratives$/i })
+      .boundingBox();
+    const codeBox = await page
+      .getByRole("heading", { name: /^Code$/i })
+      .boundingBox();
 
-    const narrativesBox = await narrativesHeading.boundingBox();
-    const codeBox = await codeHeading.boundingBox();
-
-    expect(narrativesBox).not.toBeNull();
-    expect(codeBox).not.toBeNull();
-    expect(narrativesBox!.y).toBeLessThan(codeBox!.y);
+    expect(
+      narrativesBox,
+      "Narratives heading should have a bounding box",
+    ).not.toBeNull();
+    expect(codeBox, "Code heading should have a bounding box").not.toBeNull();
+    expect(
+      narrativesBox!.y,
+      "Narratives should appear above Code",
+    ).toBeLessThan(codeBox!.y);
   });
 
   test("Narratives section shows Substack posts or fallback", async ({
@@ -55,35 +63,44 @@ test.describe("Narratives-code listing", () => {
   }) => {
     await page.goto("/narratives-code");
 
-    // Either Substack posts load or "Coming soon." fallback appears
-    const substackLinks = page.locator(
-      "section:has(h2:text('Narratives')) a[target='_blank']",
-    );
+    // Look for external links within the Narratives heading's parent section,
+    // or the "Coming soon." fallback text.
+    const narrativesHeading = page.getByRole("heading", {
+      name: /^Narratives$/i,
+    });
+    const section = narrativesHeading.locator("..");
+    const extLinks = section.locator("a[target='_blank']");
     const fallback = page.getByText("Coming soon.");
 
-    const hasLinks = (await substackLinks.count()) > 0;
-    const hasFallback = await fallback.isVisible().catch(() => false);
+    const linkCount = await extLinks.count();
+    const hasFallback = await fallback.isVisible();
 
-    expect(hasLinks || hasFallback).toBe(true);
+    expect(
+      linkCount > 0 || hasFallback,
+      "Narratives should show Substack posts or a 'Coming soon.' fallback",
+    ).toBe(true);
   });
 });
 
+// ---------------------------------------------------------------------------
+// Sub-pages
+// ---------------------------------------------------------------------------
 test.describe("Project sub-pages", () => {
   for (const project of projectSubPages) {
     test(`${project.title} has heading and back link`, async ({ page }) => {
       await page.goto(project.href);
 
-      // Has at least one heading
-      await expect(page.getByRole("heading").first()).toBeVisible();
+      await expect(
+        page.getByRole("heading").first(),
+        `${project.title} should have a heading`,
+      ).toBeVisible();
 
-      // Has back link to /narratives-code
       await expect(
         page.getByRole("link", { name: /all projects/i }).first(),
       ).toHaveAttribute("href", "/narratives-code");
     });
   }
 
-  // GitHub links on the three main project pages
   const projectsWithGitHub = [
     "/narratives-code/paperless-mcp",
     "/narratives-code/submission-cli",
@@ -93,22 +110,26 @@ test.describe("Project sub-pages", () => {
   for (const route of projectsWithGitHub) {
     test(`${route} has GitHub link`, async ({ page }) => {
       await page.goto(route);
-      const githubLink = page.locator("a[href*='github.com']");
-      await expect(githubLink.first()).toBeAttached();
+      const githubLink = page.getByRole("link", { name: /github/i });
+      await expect(
+        githubLink.first(),
+        `${route} should have a GitHub link`,
+      ).toBeAttached();
       await expect(githubLink.first()).toHaveAttribute("target", "_blank");
     });
   }
 });
 
+// ---------------------------------------------------------------------------
+// Cross-navigation
+// ---------------------------------------------------------------------------
 test.describe("Project cross-navigation", () => {
   test("can navigate from listing to sub-page and back", async ({ page }) => {
     await page.goto("/narratives-code");
 
-    // Click through to a project
     await page.getByRole("link", { name: /Paperless MCP Server/ }).click();
     await expect(page).toHaveURL(/\/narratives-code\/paperless-mcp/);
 
-    // Navigate back
     await page
       .getByRole("link", { name: /all projects/i })
       .first()

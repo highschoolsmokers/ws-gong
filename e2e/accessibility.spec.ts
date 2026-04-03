@@ -1,5 +1,9 @@
 import { test, expect } from "@playwright/test";
+import { MAX_TAB_STEPS_NAV, MAX_TAB_STEPS_FORM } from "./helpers/constants";
 
+// ---------------------------------------------------------------------------
+// Skip-to-content link
+// ---------------------------------------------------------------------------
 test.describe("Skip-to-content link", () => {
   test("exists and targets #main on site pages", async ({ page }) => {
     await page.goto("/about");
@@ -7,37 +11,38 @@ test.describe("Skip-to-content link", () => {
     const skipLink = page.getByRole("link", { name: /skip to content/i });
     await expect(skipLink).toBeAttached();
     await expect(skipLink).toHaveAttribute("href", "#main");
-
-    // The target element exists
     await expect(page.locator("main#main")).toBeAttached();
   });
 });
 
+// ---------------------------------------------------------------------------
+// Image alt text
+// ---------------------------------------------------------------------------
 test.describe("Image alt text", () => {
-  test("home page image has alt text", async ({ page }) => {
+  test("all home page images have alt text", async ({ page }) => {
     await page.goto("/");
 
-    const images = page.locator("img");
+    const images = page.getByRole("img");
     const count = await images.count();
 
     for (let i = 0; i < count; i++) {
       const alt = await images.nth(i).getAttribute("alt");
-      expect(alt, `Image ${i} should have alt text`).toBeTruthy();
+      expect(alt, `Image ${i} should have non-empty alt text`).toBeTruthy();
     }
   });
 });
 
+// ---------------------------------------------------------------------------
+// Form accessibility
+// ---------------------------------------------------------------------------
 test.describe("Form accessibility", () => {
   test("contact form inputs have accessible names", async ({ page }) => {
     await page.goto("/contact");
 
-    // All form inputs should be findable by their accessible name
     await expect(page.getByLabel("Name")).toBeAttached();
     await expect(page.getByLabel("Email")).toBeAttached();
     await expect(page.getByLabel("Subject")).toBeAttached();
     await expect(page.getByLabel("Message")).toBeAttached();
-
-    // Submit button is accessible
     await expect(page.getByRole("button", { name: /send/i })).toBeAttached();
   });
 
@@ -50,32 +55,35 @@ test.describe("Form accessibility", () => {
   });
 });
 
+// ---------------------------------------------------------------------------
+// Keyboard navigation
+// ---------------------------------------------------------------------------
 test.describe("Keyboard navigation", () => {
-  test("can tab through nav links", async ({ page }) => {
+  test("can tab to a nav link in the header", async ({ page }) => {
     await page.goto("/about");
-
-    // Tab into the page — first interactive element should receive focus
     await page.keyboard.press("Tab");
 
-    // Keep tabbing — at some point a link in the header should be focused
     let foundNavLink = false;
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < MAX_TAB_STEPS_NAV; i++) {
       const focused = page.locator(":focus");
-      const tagName = await focused
+      const tag = await focused
         .evaluate((el) => el.tagName.toLowerCase())
         .catch(() => "");
-      const isInHeader = await focused
+      const inHeader = await focused
         .evaluate((el) => !!el.closest("header"))
         .catch(() => false);
 
-      if (tagName === "a" && isInHeader) {
+      if (tag === "a" && inHeader) {
         foundNavLink = true;
         break;
       }
       await page.keyboard.press("Tab");
     }
 
-    expect(foundNavLink).toBe(true);
+    expect(
+      foundNavLink,
+      `Should reach a header nav link within ${MAX_TAB_STEPS_NAV} Tab presses`,
+    ).toBe(true);
   });
 
   test("send button is keyboard-reachable on contact form", async ({
@@ -83,18 +91,24 @@ test.describe("Keyboard navigation", () => {
   }) => {
     await page.goto("/contact");
 
-    // Tab until we reach the Send button
     let foundSendBtn = false;
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < MAX_TAB_STEPS_FORM; i++) {
       await page.keyboard.press("Tab");
       const focused = page.locator(":focus");
+      const role = await focused
+        .evaluate((el) => el.getAttribute("role") ?? el.tagName.toLowerCase())
+        .catch(() => "");
       const text = await focused.textContent().catch(() => "");
-      if (text?.match(/send/i)) {
+
+      if ((role === "button" || role === "BUTTON") && text?.match(/send/i)) {
         foundSendBtn = true;
         break;
       }
     }
 
-    expect(foundSendBtn).toBe(true);
+    expect(
+      foundSendBtn,
+      `Should reach Send button within ${MAX_TAB_STEPS_FORM} Tab presses`,
+    ).toBe(true);
   });
 });
