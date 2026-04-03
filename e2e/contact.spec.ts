@@ -130,7 +130,7 @@ test.describe("Contact form submission", () => {
 // Email delivery (requires SMTP + IMAP)
 // ---------------------------------------------------------------------------
 test.describe("Contact form email delivery", () => {
-  test("email delivery verification", async ({ page }) => {
+  test("email delivery verification @infra", async ({ page }) => {
     test.skip(!process.env.IMAP_PASS, "IMAP_PASS not set");
     test.setTimeout(EMAIL_DELIVERY_TIMEOUT_MS);
 
