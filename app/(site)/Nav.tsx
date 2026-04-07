@@ -33,16 +33,7 @@ export default function Nav() {
         )}
       </h1>
       <div className="flex flex-col justify-end">
-        <span className="flex items-center gap-2 text-xl md:text-2xl font-black leading-snug mb-1">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="currentColor"
-            aria-hidden="true"
-          >
-            <rect width="18" height="18" />
-          </svg>
+        <span className="text-xl md:text-2xl font-black leading-snug mb-1 underline">
           Stories &amp; Systems
         </span>
         <ul className="text-xl md:text-2xl font-black leading-snug">
