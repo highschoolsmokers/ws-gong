@@ -33,6 +33,9 @@ export default function Nav() {
         )}
       </h1>
       <div className="flex flex-col justify-end">
+        <span className="text-xl md:text-2xl font-black leading-snug mb-1 underline">
+          Stories &amp; Systems
+        </span>
         <ul className="text-xl md:text-2xl font-black leading-snug">
           {links.map((link) => (
             <li key={link.href}>
