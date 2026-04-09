@@ -1,0 +1,68 @@
+<svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="500" fill="#FFF8F0"/>
+  <text x="350" y="35" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">The Orchestrator Pattern</text>
+  <text x="350" y="55" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">"Schedule next week" — how the coordinator delegates</text>
+
+  <defs>
+    <marker id="af" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#5B8A8A"/>
+    </marker>
+    <marker id="ab" markerWidth="8" markerHeight="8" refX="1" refY="3" orient="auto">
+      <polygon points="8 0, 0 3, 8 6" fill="#D4A574"/>
+    </marker>
+  </defs>
+
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Step 1 -->
+    <rect x="200" y="75" width="300" height="35" fill="white" stroke="#8B6F5C" stroke-width="2" rx="6"/>
+    <text x="220" y="97" font-size="11" font-weight="bold" fill="#8B6F5C">1</text>
+    <text x="240" y="97" font-size="11" fill="#6B2D3E">User: "Schedule next week"</text>
+    <line x1="350" y1="110" x2="350" y2="128" stroke="#5B8A8A" stroke-width="2" marker-end="url(#af)"/>
+
+    <!-- Step 2 -->
+    <rect x="200" y="132" width="300" height="35" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="2" rx="6"/>
+    <text x="220" y="154" font-size="11" font-weight="bold" fill="white">2</text>
+    <text x="240" y="154" font-size="11" fill="white">Coordinator: "Check availability first"</text>
+    <line x1="350" y1="167" x2="350" y2="185" stroke="#5B8A8A" stroke-width="2" marker-end="url(#af)"/>
+
+    <!-- Step 3: Call Availability Agent -->
+    <rect x="200" y="189" width="300" height="45" fill="#D4A574" stroke="#8B6F5C" stroke-width="2" rx="6"/>
+    <text x="220" y="211" font-size="11" font-weight="bold" fill="white">3</text>
+    <text x="240" y="207" font-size="10" fill="white">Calls Availability Agent</text>
+    <text x="240" y="224" font-size="10" fill="#FFF0DD">"Here's who's available each day..."</text>
+    <line x1="350" y1="234" x2="350" y2="252" stroke="#5B8A8A" stroke-width="2" marker-end="url(#af)"/>
+
+    <!-- Step 4: Call Fairness Agent -->
+    <rect x="200" y="256" width="300" height="45" fill="#D4A574" stroke="#8B6F5C" stroke-width="2" rx="6"/>
+    <text x="220" y="278" font-size="11" font-weight="bold" fill="white">4</text>
+    <text x="240" y="274" font-size="10" fill="white">Calls Fairness Agent</text>
+    <text x="240" y="291" font-size="10" fill="#FFF0DD">"Marcus has 3 closing shifts — rotate"</text>
+    <line x1="350" y1="301" x2="350" y2="319" stroke="#5B8A8A" stroke-width="2" marker-end="url(#af)"/>
+
+    <!-- Step 5: Call Coverage Agent -->
+    <rect x="200" y="323" width="300" height="45" fill="#D4A574" stroke="#8B6F5C" stroke-width="2" rx="6"/>
+    <text x="220" y="345" font-size="11" font-weight="bold" fill="white">5</text>
+    <text x="240" y="341" font-size="10" fill="white">Calls Coverage Agent</text>
+    <text x="240" y="358" font-size="10" fill="#FFF0DD">"All 21 shifts covered. Looks good."</text>
+    <line x1="350" y1="368" x2="350" y2="386" stroke="#5B8A8A" stroke-width="2" marker-end="url(#af)"/>
+
+    <!-- Step 6: Assigns shifts -->
+    <rect x="200" y="390" width="300" height="35" fill="#8B6F5C" stroke="#5C4538" stroke-width="2" rx="6"/>
+    <text x="220" y="412" font-size="11" font-weight="bold" fill="white">6</text>
+    <text x="240" y="412" font-size="11" fill="white">Assigns shifts to database</text>
+    <line x1="350" y1="425" x2="350" y2="443" stroke="#5B8A8A" stroke-width="2" marker-end="url(#af)"/>
+
+    <!-- Step 7: Response -->
+    <rect x="200" y="447" width="300" height="35" fill="white" stroke="#5B8A8A" stroke-width="2" rx="6"/>
+    <text x="220" y="469" font-size="11" font-weight="bold" fill="#5B8A8A">7</text>
+    <text x="240" y="469" font-size="11" fill="#6B2D3E">"Here's next week's schedule..."</text>
+
+    <!-- Side labels -->
+    <text x="140" y="165" font-size="9" text-anchor="end" fill="#5B8A8A" font-style="italic">thinks</text>
+    <text x="140" y="215" font-size="9" text-anchor="end" fill="#D4A574" font-style="italic">delegates</text>
+    <text x="140" y="280" font-size="9" text-anchor="end" fill="#D4A574" font-style="italic">delegates</text>
+    <text x="140" y="345" font-size="9" text-anchor="end" fill="#D4A574" font-style="italic">validates</text>
+    <text x="140" y="412" font-size="9" text-anchor="end" fill="#8B6F5C" font-style="italic">acts</text>
+    <text x="140" y="469" font-size="9" text-anchor="end" fill="#5B8A8A" font-style="italic">responds</text>
+  </g>
+</svg>

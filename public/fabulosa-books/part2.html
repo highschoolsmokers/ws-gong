@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Part 2: How Agents Think</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/fabulosa-books/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+<body>
+  <div class="page-wrap">
+    <a href="#main" class="skip-to-content">Skip to content</a>
+    <nav class="site-nav">
+      <a href="/code">&larr; W.S. Gong / Code</a>
+    </nav>
+    <nav class="page-nav">
+      <a href="/fabulosa-books/part1.html">&larr; Previous</a>
+      <a href="/fabulosa-books/part3.html">Next &rarr;</a>
+    </nav>
+    <header>
+      <div class="part-label">Part 2</div>
+      <h1>How Agents Think</h1>
+    </header>
+    <main id="main">
+
+      <div class="section">
+        <h2>From Paper to Web App</h2>
+        <div class="section-content">
+          <p>Before we talk about agents, let's cover the basics: what is a web app?</p>
+          <p>You've used web apps without thinking about it. Google Docs. Gmail. Your online banking. These aren't regular websites&mdash;they're applications that run in your browser. You can click buttons, type things, save information, and see changes happen instantly. The key difference: a regular website shows you information. A web app lets you <em>do</em> things.</p>
+          <p>That's what we're building for Fabulosa Books: something everyone can access from their phone or laptop, no installation required. But unlike a typical web app where all the logic is hand-coded, ours will have AI agents that <em>reason</em> about the schedule.</p>
+          <img src="/fabulosa-books/images/web-app-explained.svg" alt="What is a web app — works on any device, no installation required">
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>What Is an AI Agent?</h2>
+        <div class="section-content">
+          <div class="step">Step 3: Understand the difference between a chatbot and an agent</div>
+          <p>You've probably used ChatGPT or a similar chatbot. You type a question, you get an answer. That's useful, but it's reactive&mdash;the AI waits for you to ask and then responds. It doesn't <em>do</em> anything in the world.</p>
+          <p>An agent is different. An agent has a <em>goal</em> and <em>tools</em>. When you give it a task, it doesn't just respond&mdash;it figures out what steps to take, uses its tools to gather information or make changes, evaluates the results, and keeps going until the task is done.</p>
+          <ul>
+            <li><strong>Chatbot:</strong> You ask "Who's available Thursday?" and it says "I don't have access to your schedule."</li>
+            <li><strong>Agent:</strong> You ask "Who's available Thursday?" and it queries the database, checks existing assignments, cross-references time-off requests, and tells you "Dylan, Joel, and Carly are available."</li>
+          </ul>
+          <p>The difference is the tools. An agent without tools is just a chatbot. An agent <em>with</em> tools can look things up, validate data, and take actions.</p>
+          <img src="/fabulosa-books/images/chatbot-vs-agent.svg" alt="Chatbot vs Agent comparison diagram">
+<pre><code>Chatbot:
+  User: "Who's free Thursday?"
+  AI: "I'd need to check your schedule system."
+
+Agent:
+  User: "Who's free Thursday?"
+  AI thinks: "I need to check the schedule database."
+  AI calls tool: getSchedule(thursday)
+  AI observes: Marcus=opening, Billy=mid, unassigned=closing
+  AI thinks: "Now I need the full employee list to find who's NOT scheduled."
+  AI calls tool: getEmployees()
+  AI observes: [Alvin, Melissa, Marcus, Dylan, Joel, Billy, Johnny Ray, Carly]
+  AI responds: "Dylan, Joel, Alvin, Melissa, Johnny Ray, and Carly are
+               available Thursday. Marcus has opening and Billy has mid."</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Why Multiple Agents?</h2>
+        <div class="section-content">
+          <div class="step">Step 4: Understand why one agent isn't enough</div>
+          <p>You might wonder: why not build one super-agent that does everything? The same reason Alvin doesn't run the entire bookstore alone.</p>
+          <p>One agent trying to handle availability, fairness, coverage rules, notifications, and schedule generation all at once would be like asking one employee to staff the register, shelve returns, answer the phone, make coffee, host an event, AND figure out next week's schedule&mdash;simultaneously. The results would be mediocre at best.</p>
+          <p>Specialization works. When you split responsibilities across multiple agents, each one can be:</p>
+          <ul>
+            <li><strong>Focused:</strong> It has a clear, narrow job. The Fairness Agent doesn't worry about store coverage&mdash;it only thinks about whether shifts are distributed equitably.</li>
+            <li><strong>Expert:</strong> Its instructions and tools are tailored to its domain.</li>
+            <li><strong>Testable:</strong> You can verify each agent independently.</li>
+            <li><strong>Improvable:</strong> You can upgrade one agent without touching the others.</li>
+          </ul>
+          <img src="/fabulosa-books/images/specialization-vs-monolith.svg" alt="Specialization beats monolithic design">
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>The Orchestrator Pattern</h2>
+        <div class="section-content">
+          <div class="step">Step 5: Understand how agents coordinate</div>
+          <p>If you have multiple specialized agents, someone has to coordinate them. That's the orchestrator.</p>
+          <p>Think about how Alvin manages the bookstore. He doesn't shelve books, run the register, AND decide the schedule simultaneously. He <em>delegates</em>. He might say: "Melissa, can you check who's available next week? Marcus, does the event schedule conflict with anything? Joel, make sure we have coverage for Saturday." Then he takes their answers and makes the final decision.</p>
+          <p>That's exactly what our Schedule Coordinator agent does:</p>
+          <ol>
+            <li>It receives a request from the user: "Schedule next week"</li>
+            <li>It breaks the request into subtasks</li>
+            <li>It delegates each subtask to the right specialist agent</li>
+            <li>It collects the results</li>
+            <li>It synthesizes a final answer</li>
+          </ol>
+          <p>In the Vercel AI SDK, this pattern is implemented naturally: the coordinator is an agent whose <em>tools</em> are the other agents.</p>
+<pre><code>User: "Schedule next week"
+
+Coordinator thinks: "I need to build a schedule. Let me check availability first."
+  → calls Availability Agent
+  ← "Here's who's available each day: ..."
+
+Coordinator thinks: "Now let me check if the current distribution is fair."
+  → calls Fairness Agent
+  ← "Marcus has had 3 closing shifts in a row. Dylan hasn't worked Saturday in a month."
+
+Coordinator thinks: "Let me draft a schedule accounting for fairness, then validate coverage."
+  → calls Coverage Agent with proposed schedule
+  ← "All shifts covered. Saturday closing correctly set to 2pm-9pm."
+
+Coordinator: "Here's the proposed schedule for next week: ..."</code></pre>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Tools: How Agents Act</h2>
+        <div class="section-content">
+          <div class="step">Step 6: Understand what tools are</div>
+          <p>A tool is a specific capability you give to an agent. Without tools, an agent can only talk. With tools, it can <em>do things</em>.</p>
+          <p>In the Vercel AI SDK, a tool has three parts:</p>
+          <ol>
+            <li><strong>A description</strong> &mdash; what the tool does (in plain English, so the AI understands when to use it)</li>
+            <li><strong>An input schema</strong> &mdash; what information the tool needs (defined with Zod)</li>
+            <li><strong>An execute function</strong> &mdash; what happens when the tool is called (your actual code)</li>
+          </ol>
+<pre><code>const getEmployees = tool({
+  description: 'Get all employees at Fabulosa Books with their role (regular or on-call)',
+  inputSchema: z.object({}),
+  execute: async () => {
+    const employees = await getAllEmployees()
+    return employees
+  },
+})</code></pre>
+          <p>The AI model never sees your code. It sees the description and the input schema. Based on those, it decides <em>when</em> to call the tool and <em>what inputs to provide</em>. Your execute function does the actual work.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Our Stack</h2>
+        <div class="section-content">
+          <div class="step">Step 7: Know the tools we'll use to build this</div>
+          <table>
+            <thead>
+              <tr><th>Tool</th><th>What It Does</th><th>Why We Need It</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Next.js</strong></td><td>Full-stack web framework</td><td>Builds the UI and API routes in one project</td></tr>
+              <tr><td><strong>Vercel AI SDK</strong></td><td>Agent and tool framework</td><td>Creates agents, manages tool loops, streams responses</td></tr>
+              <tr><td><strong>Vercel AI Gateway</strong></td><td>Model access API</td><td>One API key for Claude, GPT, Gemini, and more</td></tr>
+              <tr><td><strong>Neon</strong></td><td>Serverless Postgres database</td><td>Stores employees, schedules, and shift history</td></tr>
+              <tr><td><strong>Vercel</strong></td><td>Hosting platform</td><td>Deploys the app with zero configuration</td></tr>
+              <tr><td><strong>Zod</strong></td><td>Schema validation</td><td>Defines tool input/output shapes with type safety</td></tr>
+            </tbody>
+          </table>
+          <img src="/fabulosa-books/images/tech-stack.svg" alt="Tech stack: Next.js, Vercel, and Neon">
+          <p>These tools work together naturally. Next.js provides the web framework. The AI SDK provides the agent primitives. The AI Gateway provides model access without managing individual provider accounts. Neon stores the data. Vercel hosts it all. You write TypeScript everywhere.</p>
+          <p>Let's set it up.</p>
+        </div>
+      </div>
+
+    </main>
+    <nav class="bottom-nav">
+      <a href="/fabulosa-books/part1.html">&larr; Welcome to Fabulosa Books</a>
+      <a href="/fabulosa-books/part3.html">Setting Up Shop &rarr;</a>
+    </nav>
+    <footer>
+      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
+    </footer>
+  </div>
+</body>
+</html>

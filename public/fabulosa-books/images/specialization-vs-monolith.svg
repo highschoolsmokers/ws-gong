@@ -1,0 +1,58 @@
+<svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="320" fill="#FFF8F0"/>
+  <text x="350" y="30" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">Specialization Beats Monolithic Design</text>
+
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Left: Monolithic -->
+    <rect x="30" y="55" width="280" height="240" fill="#F5E6D3" stroke="#D4A574" stroke-width="2" rx="8"/>
+    <text x="170" y="80" font-size="14" font-weight="bold" text-anchor="middle" fill="#8B6F5C">One "Super Agent"</text>
+
+    <!-- Tangled mess -->
+    <circle cx="170" cy="170" r="65" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+    <text x="170" y="155" font-size="9" text-anchor="middle" fill="white">availability</text>
+    <text x="170" y="168" font-size="9" text-anchor="middle" fill="white">+ fairness</text>
+    <text x="170" y="181" font-size="9" text-anchor="middle" fill="white">+ coverage</text>
+    <text x="170" y="194" font-size="9" text-anchor="middle" fill="white">+ notifications</text>
+
+    <!-- Chaos lines -->
+    <line x1="120" y1="130" x2="220" y2="200" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="130" y1="210" x2="210" y2="140" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="110" y1="170" x2="230" y2="170" stroke="white" stroke-width="1" opacity="0.4"/>
+    <line x1="140" y1="120" x2="200" y2="220" stroke="white" stroke-width="1" opacity="0.4"/>
+
+    <text x="170" y="265" font-size="11" text-anchor="middle" fill="#8B6F5C">Overwhelmed. Unfocused.</text>
+    <text x="170" y="280" font-size="11" text-anchor="middle" fill="#8B6F5C">Hard to test or improve.</text>
+
+    <!-- VS -->
+    <text x="350" y="180" font-size="18" font-weight="bold" text-anchor="middle" fill="#5B5B5B">VS</text>
+
+    <!-- Right: Specialized -->
+    <rect x="390" y="55" width="280" height="240" fill="#E8EDE8" stroke="#5B8A8A" stroke-width="2" rx="8"/>
+    <text x="530" y="80" font-size="14" font-weight="bold" text-anchor="middle" fill="#3D6B6B">Specialized Agents</text>
+
+    <!-- Three clean agents -->
+    <rect x="410" y="100" width="80" height="45" fill="#D4A574" stroke="#8B6F5C" stroke-width="1.5" rx="6"/>
+    <text x="450" y="122" font-size="9" font-weight="bold" text-anchor="middle" fill="white">Availability</text>
+    <text x="450" y="135" font-size="7" text-anchor="middle" fill="#FFF0DD">3 tools</text>
+
+    <rect x="500" y="100" width="80" height="45" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="1.5" rx="6"/>
+    <text x="540" y="122" font-size="9" font-weight="bold" text-anchor="middle" fill="white">Fairness</text>
+    <text x="540" y="135" font-size="7" text-anchor="middle" fill="#C8E0E0">2 tools</text>
+
+    <rect x="590" y="100" width="70" height="45" fill="#8B6F5C" stroke="#5C4538" stroke-width="1.5" rx="6"/>
+    <text x="625" y="122" font-size="9" font-weight="bold" text-anchor="middle" fill="white">Coverage</text>
+    <text x="625" y="135" font-size="7" text-anchor="middle" fill="#E0D4C8">1 tool</text>
+
+    <!-- Clean arrows to coordinator -->
+    <line x1="450" y1="145" x2="530" y2="175" stroke="#5B8A8A" stroke-width="1.5"/>
+    <line x1="540" y1="145" x2="530" y2="175" stroke="#5B8A8A" stroke-width="1.5"/>
+    <line x1="625" y1="145" x2="530" y2="175" stroke="#5B8A8A" stroke-width="1.5"/>
+
+    <!-- Coordinator -->
+    <rect x="470" y="175" width="120" height="40" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="2" rx="6"/>
+    <text x="530" y="200" font-size="10" font-weight="bold" text-anchor="middle" fill="white">Coordinator</text>
+
+    <text x="530" y="245" font-size="11" text-anchor="middle" fill="#3D6B6B">Focused. Testable.</text>
+    <text x="530" y="260" font-size="11" text-anchor="middle" fill="#3D6B6B">Each agent does one thing well.</text>
+  </g>
+</svg>

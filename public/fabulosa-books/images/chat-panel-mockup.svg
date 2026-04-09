@@ -1,0 +1,61 @@
+<svg viewBox="0 0 350 500" xmlns="http://www.w3.org/2000/svg">
+  <rect width="350" height="500" fill="#FFF8F0"/>
+
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Chat panel container -->
+    <rect x="15" y="15" width="320" height="470" fill="white" stroke="#e5e5e5" stroke-width="2" rx="8"/>
+
+    <!-- Header -->
+    <rect x="15" y="15" width="320" height="50" fill="#292524" rx="8"/>
+    <rect x="15" y="45" width="320" height="20" fill="#292524"/>
+    <text x="35" y="40" font-size="13" font-weight="bold" fill="white">Schedule Coordinator</text>
+    <text x="35" y="55" font-size="9" fill="#a3a3a3">Multi-agent scheduling assistant</text>
+
+    <!-- User message -->
+    <g transform="translate(0, 85)">
+      <rect x="120" y="0" width="200" height="30" fill="#D4A574" rx="12"/>
+      <text x="220" y="20" font-size="10" text-anchor="middle" fill="white">Who's available Thursday?</text>
+    </g>
+
+    <!-- Agent response -->
+    <g transform="translate(0, 130)">
+      <rect x="25" y="0" width="250" height="190" fill="#f5f5f4" rx="12"/>
+
+      <!-- Tool indicators -->
+      <text x="40" y="22" font-size="9" fill="#5B8A8A">✓ Availability Agent</text>
+      <text x="40" y="38" font-size="9" fill="#5B8A8A">✓ Fairness Agent</text>
+
+      <!-- Response text -->
+      <text x="40" y="62" font-size="10" fill="#292524" font-weight="bold">Available Thursday:</text>
+
+      <text x="40" y="82" font-size="9" fill="#292524">Regular staff:</text>
+      <text x="40" y="96" font-size="9" fill="#5B5B5B">• Dylan (no shifts yet this week)</text>
+      <text x="40" y="110" font-size="9" fill="#5B5B5B">• Joel (1 shift so far)</text>
+      <text x="40" y="124" font-size="9" fill="#5B5B5B">• Melissa (2 shifts so far)</text>
+
+      <text x="40" y="148" font-size="9" fill="#292524">On-call backup:</text>
+      <text x="40" y="162" font-size="9" fill="#5B5B5B">• Johnny Ray, Carly</text>
+
+      <text x="40" y="182" font-size="9" fill="#5B8A8A" font-style="italic">Dylan is the best pick for fairness.</text>
+    </g>
+
+    <!-- Second user message -->
+    <g transform="translate(0, 340)">
+      <rect x="90" y="0" width="230" height="30" fill="#D4A574" rx="12"/>
+      <text x="205" y="20" font-size="10" text-anchor="middle" fill="white">Assign Dylan to opening Thursday</text>
+    </g>
+
+    <!-- Agent assigning -->
+    <g transform="translate(0, 385)">
+      <rect x="25" y="0" width="220" height="45" fill="#f5f5f4" rx="12"/>
+      <text x="40" y="18" font-size="9" fill="#8B6F5C">✓ Assigning Shift</text>
+      <text x="40" y="35" font-size="10" fill="#292524">Done! Dylan → Opening, Thursday.</text>
+    </g>
+
+    <!-- Input area -->
+    <rect x="25" y="445" width="240" height="28" fill="white" stroke="#e5e5e5" stroke-width="1" rx="14"/>
+    <text x="40" y="463" font-size="9" fill="#a3a3a3">Ask the coordinator...</text>
+    <rect x="272" y="445" width="48" height="28" fill="#D4A574" rx="14"/>
+    <text x="296" y="463" font-size="9" text-anchor="middle" fill="white" font-weight="bold">Ask</text>
+  </g>
+</svg>
