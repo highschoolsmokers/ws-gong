@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/fabulosa-books/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
@@ -19,8 +19,8 @@
       <a href="/code">&larr; W.S. Gong / Code</a>
     </nav>
     <nav class="page-nav">
-      <a href="part5.html">&larr; Previous</a>
-      <a href="part7.html">Next &rarr;</a>
+      <a href="/fabulosa-books/part5.html">&larr; Previous</a>
+      <a href="/fabulosa-books/part7.html">Next &rarr;</a>
     </nav>
     <header>
       <div class="part-label">Part 6</div>
@@ -200,7 +200,7 @@ When reporting issues, explain the impact.`,
     validateCoverage: validateCoverageTool,
   },
 })</code></pre>
-          <img src="images/three-agents.svg" alt="Three specialist agents: Availability, Fairness, Coverage">
+          <img src="/fabulosa-books/images/three-agents.svg" alt="Three specialist agents: Availability, Fairness, Coverage">
         </div>
       </div>
 
@@ -305,7 +305,7 @@ Important guidelines:
   },
 })</code></pre>
           <p><strong>This is the key pattern.</strong> The coordinator's tools are the other agents. When it calls <code>checkAvailability</code>, it's actually running the Availability Agent as a subagent&mdash;a full agent with its own tools and reasoning loop. The coordinator receives a text summary back, reasons about it, and decides what to do next.</p>
-          <img src="images/orchestrator-flow.svg" alt="The orchestrator pattern: how the coordinator delegates to specialists">
+          <img src="/fabulosa-books/images/orchestrator-flow.svg" alt="The orchestrator pattern: how the coordinator delegates to specialists">
         </div>
       </div>
 
@@ -371,14 +371,14 @@ git push</code></pre>
             <li>The schedule grid updates automatically when shifts are assigned</li>
           </ol>
           <p>That's multi-agent orchestration. Not one monolithic AI trying to do everything, but a team of specialists coordinating through a leader&mdash;just like Alvin delegates to his team at the bookstore.</p>
-          <img src="images/complete-architecture.svg" alt="Complete multi-agent system architecture deployed on Vercel">
+          <img src="/fabulosa-books/images/complete-architecture.svg" alt="Complete multi-agent system architecture deployed on Vercel">
         </div>
       </div>
 
     </main>
     <nav class="bottom-nav">
-      <a href="part5.html">&larr; Your First Agent</a>
-      <a href="part7.html">Making It Real &rarr;</a>
+      <a href="/fabulosa-books/part5.html">&larr; Your First Agent</a>
+      <a href="/fabulosa-books/part7.html">Making It Real &rarr;</a>
     </nav>
     <footer>
       Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.

@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/fabulosa-books/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
@@ -19,8 +19,8 @@
       <a href="/code">&larr; W.S. Gong / Code</a>
     </nav>
     <nav class="page-nav">
-      <a href="part4.html">&larr; Previous</a>
-      <a href="part6.html">Next &rarr;</a>
+      <a href="/fabulosa-books/part4.html">&larr; Previous</a>
+      <a href="/fabulosa-books/part6.html">Next &rarr;</a>
     </nav>
     <header>
       <div class="part-label">Part 5</div>
@@ -117,7 +117,7 @@ export const checkAvailabilityTool = tool({
             <li><code>checkAvailabilityTool</code> &mdash; cross-references the roster against the schedule to find who's free on a given day</li>
           </ul>
           <p>Each tool has a description (so the AI knows when to use it), an input schema (so the AI knows what to provide), and an execute function (your actual code).</p>
-          <img src="images/tool-anatomy.svg" alt="Anatomy of an AI SDK tool: description, inputSchema, and execute">
+          <img src="/fabulosa-books/images/tool-anatomy.svg" alt="Anatomy of an AI SDK tool: description, inputSchema, and execute">
         </div>
       </div>
 
@@ -193,7 +193,7 @@ export async function POST(request: Request) {
   })
 }</code></pre>
           <p>That's it. Three lines of meaningful code. <code>createAgentUIStreamResponse</code> takes the agent and the conversation history, runs the agent's tool loop, and streams the response back to the browser in a format that <code>useChat</code> understands.</p>
-          <img src="images/how-it-works.svg" alt="How the agent streams responses from server to browser">
+          <img src="/fabulosa-books/images/how-it-works.svg" alt="How the agent streams responses from server to browser">
         </div>
       </div>
 
@@ -277,7 +277,7 @@ export default function ChatPanel() {
   )
 }</code></pre>
           <p>Notice how the tool parts render: when the agent calls a tool, the UI shows "Checking..." while it runs, then "Checked" when it completes. The user can see the agent <em>working</em>&mdash;not just waiting for a final answer.</p>
-          <img src="images/chat-panel-mockup.svg" alt="Chat panel showing agent interaction with tool activity indicators">
+          <img src="/fabulosa-books/images/chat-panel-mockup.svg" alt="Chat panel showing agent interaction with tool activity indicators">
 
           <div class="step">Step 37: Add the ChatPanel to the main page</div>
           <p>Update <code>app/page.tsx</code> to include the chat panel alongside the schedule grid:</p>
@@ -339,8 +339,8 @@ git push</code></pre>
 
     </main>
     <nav class="bottom-nav">
-      <a href="part4.html">&larr; The Foundation</a>
-      <a href="part6.html">The Specialist Team &rarr;</a>
+      <a href="/fabulosa-books/part4.html">&larr; The Foundation</a>
+      <a href="/fabulosa-books/part6.html">The Specialist Team &rarr;</a>
     </nav>
     <footer>
       Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.

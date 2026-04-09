@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/fabulosa-books/style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
   <script>hljs.highlightAll();</script>
@@ -19,8 +19,8 @@
       <a href="/code">&larr; W.S. Gong / Code</a>
     </nav>
     <nav class="page-nav">
-      <a href="part1.html">&larr; Previous</a>
-      <a href="part3.html">Next &rarr;</a>
+      <a href="/fabulosa-books/part1.html">&larr; Previous</a>
+      <a href="/fabulosa-books/part3.html">Next &rarr;</a>
     </nav>
     <header>
       <div class="part-label">Part 2</div>
@@ -34,7 +34,7 @@
           <p>Before we talk about agents, let's cover the basics: what is a web app?</p>
           <p>You've used web apps without thinking about it. Google Docs. Gmail. Your online banking. These aren't regular websites&mdash;they're applications that run in your browser. You can click buttons, type things, save information, and see changes happen instantly. The key difference: a regular website shows you information. A web app lets you <em>do</em> things.</p>
           <p>That's what we're building for Fabulosa Books: something everyone can access from their phone or laptop, no installation required. But unlike a typical web app where all the logic is hand-coded, ours will have AI agents that <em>reason</em> about the schedule.</p>
-          <img src="images/web-app-explained.svg" alt="What is a web app — works on any device, no installation required">
+          <img src="/fabulosa-books/images/web-app-explained.svg" alt="What is a web app — works on any device, no installation required">
         </div>
       </div>
 
@@ -49,7 +49,7 @@
             <li><strong>Agent:</strong> You ask "Who's available Thursday?" and it queries the database, checks existing assignments, cross-references time-off requests, and tells you "Dylan, Joel, and Carly are available."</li>
           </ul>
           <p>The difference is the tools. An agent without tools is just a chatbot. An agent <em>with</em> tools can look things up, validate data, and take actions.</p>
-          <img src="images/chatbot-vs-agent.svg" alt="Chatbot vs Agent comparison diagram">
+          <img src="/fabulosa-books/images/chatbot-vs-agent.svg" alt="Chatbot vs Agent comparison diagram">
 <pre><code>Chatbot:
   User: "Who's free Thursday?"
   AI: "I'd need to check your schedule system."
@@ -80,7 +80,7 @@ Agent:
             <li><strong>Testable:</strong> You can verify each agent independently.</li>
             <li><strong>Improvable:</strong> You can upgrade one agent without touching the others.</li>
           </ul>
-          <img src="images/specialization-vs-monolith.svg" alt="Specialization beats monolithic design">
+          <img src="/fabulosa-books/images/specialization-vs-monolith.svg" alt="Specialization beats monolithic design">
         </div>
       </div>
 
@@ -157,7 +157,7 @@ Coordinator: "Here's the proposed schedule for next week: ..."</code></pre>
               <tr><td><strong>Zod</strong></td><td>Schema validation</td><td>Defines tool input/output shapes with type safety</td></tr>
             </tbody>
           </table>
-          <img src="images/tech-stack.svg" alt="Tech stack: Next.js, Vercel, and Neon">
+          <img src="/fabulosa-books/images/tech-stack.svg" alt="Tech stack: Next.js, Vercel, and Neon">
           <p>These tools work together naturally. Next.js provides the web framework. The AI SDK provides the agent primitives. The AI Gateway provides model access without managing individual provider accounts. Neon stores the data. Vercel hosts it all. You write TypeScript everywhere.</p>
           <p>Let's set it up.</p>
         </div>
@@ -165,8 +165,8 @@ Coordinator: "Here's the proposed schedule for next week: ..."</code></pre>
 
     </main>
     <nav class="bottom-nav">
-      <a href="part1.html">&larr; Welcome to Fabulosa Books</a>
-      <a href="part3.html">Setting Up Shop &rarr;</a>
+      <a href="/fabulosa-books/part1.html">&larr; Welcome to Fabulosa Books</a>
+      <a href="/fabulosa-books/part3.html">Setting Up Shop &rarr;</a>
     </nav>
     <footer>
       Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
