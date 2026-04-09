@@ -1,0 +1,45 @@
+<svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="260" fill="#FFF8F0"/>
+  <text x="350" y="35" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">Three Specialists, Three Perspectives</text>
+
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Availability Agent -->
+    <rect x="30" y="65" width="200" height="170" fill="#D4A574" stroke="#8B6F5C" stroke-width="2" rx="10"/>
+    <!-- Icon: magnifying glass -->
+    <circle cx="130" cy="108" r="18" fill="none" stroke="white" stroke-width="2.5"/>
+    <line x1="143" y1="121" x2="155" y2="133" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="130" y="155" font-size="15" font-weight="bold" text-anchor="middle" fill="white">Availability</text>
+    <text x="130" y="175" font-size="11" text-anchor="middle" fill="#FFF0DD">"Who's free?"</text>
+    <text x="130" y="195" font-size="9" text-anchor="middle" fill="#FFF0DD">Checks the schedule</text>
+    <text x="130" y="208" font-size="9" text-anchor="middle" fill="#FFF0DD">and employee roster</text>
+    <text x="130" y="225" font-size="9" text-anchor="middle" fill="white" font-weight="bold">3 tools</text>
+
+    <!-- Fairness Agent -->
+    <rect x="250" y="65" width="200" height="170" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="2" rx="10"/>
+    <!-- Icon: balance scale -->
+    <line x1="350" y1="90" x2="350" y2="105" stroke="white" stroke-width="2.5"/>
+    <line x1="325" y1="105" x2="375" y2="105" stroke="white" stroke-width="2.5"/>
+    <line x1="325" y1="105" x2="320" y2="120" stroke="white" stroke-width="2"/>
+    <line x1="375" y1="105" x2="380" y2="120" stroke="white" stroke-width="2"/>
+    <path d="M 310 120 Q 320 130 330 120" fill="none" stroke="white" stroke-width="2"/>
+    <path d="M 370 120 Q 380 130 390 120" fill="none" stroke="white" stroke-width="2"/>
+    <text x="350" y="155" font-size="15" font-weight="bold" text-anchor="middle" fill="white">Fairness</text>
+    <text x="350" y="175" font-size="11" text-anchor="middle" fill="#C8E0E0">"Is it equitable?"</text>
+    <text x="350" y="195" font-size="9" text-anchor="middle" fill="#C8E0E0">Analyzes shift distribution</text>
+    <text x="350" y="208" font-size="9" text-anchor="middle" fill="#C8E0E0">across weeks</text>
+    <text x="350" y="225" font-size="9" text-anchor="middle" fill="white" font-weight="bold">2 tools</text>
+
+    <!-- Coverage Agent -->
+    <rect x="470" y="65" width="200" height="170" fill="#8B6F5C" stroke="#5C4538" stroke-width="2" rx="10"/>
+    <!-- Icon: checklist -->
+    <rect x="558" y="88" width="24" height="30" fill="none" stroke="white" stroke-width="2" rx="2"/>
+    <line x1="563" y1="96" x2="568" y2="101" stroke="white" stroke-width="2"/>
+    <line x1="568" y1="101" x2="577" y2="91" stroke="white" stroke-width="2"/>
+    <line x1="563" y1="108" x2="577" y2="108" stroke="white" stroke-width="1.5"/>
+    <text x="570" y="155" font-size="15" font-weight="bold" text-anchor="middle" fill="white">Coverage</text>
+    <text x="570" y="175" font-size="11" text-anchor="middle" fill="#E0D4C8">"Fully staffed?"</text>
+    <text x="570" y="195" font-size="9" text-anchor="middle" fill="#E0D4C8">Validates gaps and</text>
+    <text x="570" y="208" font-size="9" text-anchor="middle" fill="#E0D4C8">double-bookings</text>
+    <text x="570" y="225" font-size="9" text-anchor="middle" fill="white" font-weight="bold">1 tool</text>
+  </g>
+</svg>

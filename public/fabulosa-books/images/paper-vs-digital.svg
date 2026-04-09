@@ -1,0 +1,190 @@
+<svg viewBox="0 0 700 450" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="700" height="450" fill="#FFF8F0"/>
+
+  <!-- Title -->
+  <text x="350" y="35" font-size="28" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+    Paper vs. Web App
+  </text>
+
+  <!-- Left side: Paper Schedule -->
+  <g>
+    <text x="175" y="65" font-size="16" font-weight="bold" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      Paper Schedule
+    </text>
+
+    <!-- Paper base -->
+    <rect x="50" y="90" width="250" height="300" fill="#F5F0E8" stroke="#D4A574" stroke-width="2" rx="4"/>
+
+    <!-- Torn/taped effect edges -->
+    <line x1="55" y1="100" x2="290" y2="95" stroke="#D4A574" stroke-width="1" opacity="0.5"/>
+
+    <!-- Title on paper -->
+    <text x="175" y="130" font-size="14" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      SHIFT SCHEDULE
+    </text>
+
+    <!-- Days and shifts with crossed-out names -->
+    <!-- Monday -->
+    <text x="70" y="160" font-size="11" font-weight="bold" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      MON
+    </text>
+    <text x="120" y="160" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      ALVIN
+    </text>
+    <line x1="120" y1="155" x2="160" y2="155" stroke="#D4A574" stroke-width="2"/>
+
+    <!-- Sticky note 1: "Call Alvin??" -->
+    <rect x="210" y="145" width="65" height="35" fill="#FFE4B5" stroke="#D4A574" stroke-width="1"/>
+    <text x="242" y="160" font-size="9" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      Call Alvin??
+    </text>
+    <text x="242" y="172" font-size="9" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      Confirm?
+    </text>
+
+    <!-- Tuesday -->
+    <text x="70" y="205" font-size="11" font-weight="bold" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      TUE
+    </text>
+    <text x="120" y="205" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      MAYA
+    </text>
+    <!-- Strikethrough -->
+    <line x1="120" y1="200" x2="150" y2="200" stroke="#D4A574" stroke-width="2"/>
+    <text x="120" y="220" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      JORDAN
+    </text>
+
+    <!-- Sticky note 2: confusion mark -->
+    <rect x="210" y="190" width="65" height="35" fill="#FFD9B5" stroke="#D4A574" stroke-width="1"/>
+    <text x="242" y="215" font-size="20" text-anchor="middle" fill="#D4A574" font-family="system-ui, -apple-system, sans-serif">
+      ???
+    </text>
+
+    <!-- Wednesday -->
+    <text x="70" y="250" font-size="11" font-weight="bold" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      WED
+    </text>
+    <text x="120" y="250" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      DIANA
+    </text>
+    <text x="120" y="265" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      ???
+    </text>
+    <text x="120" y="280" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      ???
+    </text>
+
+    <!-- Sticky note 3: mess -->
+    <rect x="210" y="235" width="65" height="50" fill="#FFC9A5" stroke="#D4A574" stroke-width="1"/>
+    <text x="242" y="252" font-size="8" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      NEED TO
+    </text>
+    <text x="242" y="263" font-size="8" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      ASK PEOPLE
+    </text>
+    <text x="242" y="274" font-size="8" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      AGAIN??
+    </text>
+
+    <!-- Red "MESS" label on side -->
+    <text x="295" y="270" font-size="14" font-weight="bold" fill="#D4A574" font-family="system-ui, -apple-system, sans-serif" opacity="0.7">
+      Messy!
+    </text>
+  </g>
+
+  <!-- Arrow in middle -->
+  <g>
+    <text x="350" y="280" font-size="16" font-weight="bold" text-anchor="middle" fill="#5B8A8A" font-family="system-ui, -apple-system, sans-serif">
+      VS
+    </text>
+  </g>
+
+  <!-- Right side: Digital Schedule -->
+  <g>
+    <text x="575" y="65" font-size="16" font-weight="bold" text-anchor="middle" fill="#5B8A8A" font-family="system-ui, -apple-system, sans-serif">
+      Web App Schedule
+    </text>
+
+    <!-- Phone frame -->
+    <rect x="450" y="90" width="250" height="300" fill="white" stroke="#5B8A8A" stroke-width="3" rx="12"/>
+
+    <!-- Phone notch -->
+    <rect x="530" y="92" width="90" height="18" fill="#1a1a1a" rx="0"/>
+
+    <!-- Status bar -->
+    <rect x="452" y="110" width="246" height="20" fill="#F5E6D3" stroke="none"/>
+    <text x="462" y="123" font-size="9" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      9:41
+    </text>
+
+    <!-- App content -->
+    <rect x="458" y="135" width="234" height="25" fill="#5B8A8A" rx="4"/>
+    <text x="575" y="154" font-size="12" font-weight="bold" text-anchor="middle" fill="white" font-family="system-ui, -apple-system, sans-serif">
+      SCHEDULE
+    </text>
+
+    <!-- Shift entries - clean -->
+    <!-- Monday -->
+    <text x="472" y="180" font-size="10" font-weight="bold" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      MON 3/27
+    </text>
+    <rect x="460" y="185" width="200" height="24" fill="#F5E6D3" rx="3"/>
+    <text x="475" y="202" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      ALVIN
+    </text>
+    <text x="590" y="202" font-size="9" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      10am–4pm
+    </text>
+
+    <!-- Tuesday -->
+    <text x="472" y="230" font-size="10" font-weight="bold" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      TUE 3/28
+    </text>
+    <rect x="460" y="235" width="200" height="24" fill="#E8D9CB" rx="3"/>
+    <text x="475" y="252" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      MAYA
+    </text>
+    <text x="590" y="252" font-size="9" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      12pm–6pm
+    </text>
+
+    <!-- Wednesday -->
+    <text x="472" y="280" font-size="10" font-weight="bold" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      WED 3/29
+    </text>
+    <rect x="460" y="285" width="200" height="24" fill="#E8D9CB" rx="3"/>
+    <text x="475" y="302" font-size="10" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      DIANA
+    </text>
+    <text x="590" y="302" font-size="9" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">
+      2pm–8pm
+    </text>
+
+    <!-- Home indicator -->
+    <rect x="520" y="375" width="60" height="3" fill="#5B5B5B" rx="2"/>
+
+    <!-- Green "CLEAR!" label on side -->
+    <text x="405" y="270" font-size="14" font-weight="bold" fill="#5B8A8A" font-family="system-ui, -apple-system, sans-serif" opacity="0.7">
+      Clear!
+    </text>
+  </g>
+
+  <!-- Bottom benefit statements -->
+  <g>
+    <text x="175" y="420" font-size="12" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Errors, confusion
+    </text>
+    <text x="175" y="437" font-size="12" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Hard to update
+    </text>
+
+    <text x="575" y="420" font-size="12" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Everyone sees it
+    </text>
+    <text x="575" y="437" font-size="12" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Instant updates
+    </text>
+  </g>
+</svg>

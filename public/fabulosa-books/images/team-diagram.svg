@@ -1,0 +1,56 @@
+<svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="280" fill="#FFF8F0"/>
+  <text x="350" y="35" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">The Fabulosa Books Team</text>
+
+  <!-- Regular Staff -->
+  <text x="220" y="70" font-size="12" font-weight="bold" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">REGULAR STAFF</text>
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <g transform="translate(60,100)">
+      <circle cx="0" cy="0" r="28" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+      <text x="0" y="4" font-size="16" text-anchor="middle" fill="white">A</text>
+      <text x="0" y="45" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Alvin</text>
+      <text x="0" y="58" font-size="9" text-anchor="middle" fill="#5B5B5B">Owner</text>
+    </g>
+    <g transform="translate(170,100)">
+      <circle cx="0" cy="0" r="28" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+      <text x="0" y="4" font-size="16" text-anchor="middle" fill="white">M</text>
+      <text x="0" y="45" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Melissa</text>
+      <text x="0" y="58" font-size="9" text-anchor="middle" fill="#5B5B5B">Senior Staff</text>
+    </g>
+    <g transform="translate(280,100)">
+      <circle cx="0" cy="0" r="28" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+      <text x="0" y="4" font-size="16" text-anchor="middle" fill="white">M</text>
+      <text x="0" y="45" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Marcus</text>
+    </g>
+    <g transform="translate(390,100)">
+      <circle cx="0" cy="0" r="28" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+      <text x="0" y="4" font-size="16" text-anchor="middle" fill="white">D</text>
+      <text x="0" y="45" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Dylan</text>
+    </g>
+    <g transform="translate(500,100)">
+      <circle cx="0" cy="0" r="28" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+      <text x="0" y="4" font-size="16" text-anchor="middle" fill="white">J</text>
+      <text x="0" y="45" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Joel</text>
+    </g>
+    <g transform="translate(610,100)">
+      <circle cx="0" cy="0" r="28" fill="#D4A574" stroke="#8B6F5C" stroke-width="2"/>
+      <text x="0" y="4" font-size="16" text-anchor="middle" fill="white">B</text>
+      <text x="0" y="45" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Billy</text>
+    </g>
+  </g>
+
+  <!-- On-Call Staff -->
+  <text x="350" y="210" font-size="12" font-weight="bold" text-anchor="middle" fill="#5B8A8A" font-family="system-ui, -apple-system, sans-serif">ON-CALL STAFF</text>
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <g transform="translate(280,240)">
+      <circle cx="0" cy="0" r="24" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="2"/>
+      <text x="0" y="4" font-size="14" text-anchor="middle" fill="white">JR</text>
+      <text x="0" y="38" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Johnny Ray</text>
+    </g>
+    <g transform="translate(420,240)">
+      <circle cx="0" cy="0" r="24" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="2"/>
+      <text x="0" y="4" font-size="14" text-anchor="middle" fill="white">C</text>
+      <text x="0" y="38" font-size="11" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Carly</text>
+    </g>
+  </g>
+</svg>
