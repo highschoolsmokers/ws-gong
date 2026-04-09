@@ -4,6 +4,12 @@ const siteUrl = "https://ws-gong.com";
 
 const projectItems = [
   {
+    title: "The Fabulosa Books Scheduler: Multi-Agent Orchestration",
+    link: `${siteUrl}/fabulosa-books/`,
+    description:
+      "A tutorial walking through a multi-agent system that coordinates book scheduling across inventory, calendar, and notification services.",
+  },
+  {
     title: "Paperless MCP Server",
     link: `${siteUrl}/code/paperless-mcp`,
     description:
@@ -20,6 +26,24 @@ const projectItems = [
     link: `${siteUrl}/code/writer-utilities`,
     description:
       "Scripts and small apps for fiction writers — including a Google Docs to Scrivener converter.",
+  },
+  {
+    title: "Resume Generator",
+    link: `${siteUrl}/code/resume-generator`,
+    description:
+      "Interactive resume editor with profile management and PDF export.",
+  },
+  {
+    title: "Die Neue Grafik",
+    link: `${siteUrl}/code/die-neue-grafik`,
+    description:
+      "A study in Swiss International Typographic Style — Bauhaus, modernism, and grid-based design.",
+  },
+  {
+    title: "Contact Form",
+    link: `${siteUrl}/code/contact-form`,
+    description:
+      "Reactive contact form with real-time typography scaling and drag-and-drop attachments.",
   },
 ];
 
