@@ -28,11 +28,12 @@
       "@sentry/cli",
       "sharp",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "nodemailer@<=8.0.4": ">=8.0.5"
+    }
   },
   "devDependencies": {
-    "husky": "^9",
-    "lint-staged": "^15",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
@@ -42,7 +43,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.7",
+    "husky": "^9",
     "imapflow": "^1.2.18",
+    "lint-staged": "^15",
     "prettier": "^3.8.1",
     "tailwindcss": "^4",
     "typescript": "^5"
