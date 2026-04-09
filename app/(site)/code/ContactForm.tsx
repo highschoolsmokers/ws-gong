@@ -28,21 +28,12 @@ function emptyForm(): FormData {
 export default function ContactForm() {
   const [form, setForm] = useState<FormData>(emptyForm());
   const [honeypot, setHoneypot] = useState("");
-  const [, setCsrfToken] = useState("");
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [dragging, setDragging] = useState(false);
   const [status, setStatus] = useState("");
   const dragCounter = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const searchParams = useSearchParams();
-
-  // Fetch CSRF token on mount
-  useEffect(() => {
-    fetch("/api/laboratory/csrf")
-      .then((r) => r.json())
-      .then((d) => setCsrfToken(d.token))
-      .catch(() => {});
-  }, []);
 
   // Context-aware: pre-fill subject from URL param
   useEffect(() => {
@@ -105,7 +96,9 @@ export default function ContactForm() {
     const e: Partial<FormData> = {};
     if (!form.name.trim()) e.name = "Required";
     if (!form.email.trim()) e.email = "Required";
-    else if (!/^[\w.-]+@[\w.-]+\.\w+$/.test(form.email))
+    else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(form.email)
+    )
       e.email = "Invalid email";
     if (!form.subject.trim()) e.subject = "Required";
     if (!form.message.trim()) e.message = "Required";
@@ -125,8 +118,6 @@ export default function ContactForm() {
       return;
     }
     if (!validate()) return;
-    // TODO: when backend is wired, send csrfToken with the request
-    // await fetch("/api/contact", { method: "POST", headers: { "x-csrf-token": csrfToken }, body: ... })
     setStatus("Message sent (demo)");
     setErrors({});
     setTimeout(() => setStatus(""), 3000);
@@ -173,6 +164,7 @@ export default function ContactForm() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <input
+                aria-label="Name"
                 className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.name ? "border-red-400" : "border-neutral-700"}`}
                 placeholder="Name"
                 value={form.name}
@@ -189,6 +181,7 @@ export default function ContactForm() {
             </div>
             <div>
               <input
+                aria-label="Email"
                 className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.email ? "border-red-400" : "border-neutral-700"}`}
                 placeholder="Email"
                 value={form.email}
@@ -206,6 +199,7 @@ export default function ContactForm() {
           </div>
           <div>
             <input
+              aria-label="Subject"
               className={`border-b bg-transparent px-0 py-2 text-sm outline-none placeholder:text-neutral-600 focus:border-neutral-900 transition-colors w-full ${errors.subject ? "border-red-400" : "border-neutral-700"}`}
               placeholder="Subject"
               value={form.subject}
@@ -222,6 +216,7 @@ export default function ContactForm() {
           </div>
           <div>
             <textarea
+              aria-label="Message"
               className={`border bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full ${errors.message ? "border-red-400" : "border-neutral-700"}`}
               placeholder="Message"
               value={form.message}
@@ -251,7 +246,7 @@ export default function ContactForm() {
             >
               + Attach file
             </button>
-            <span className="text-xs text-neutral-400">or drag and drop</span>
+            <span className="text-xs text-neutral-500">or drag and drop</span>
           </div>
           {attachments.length > 0 && (
             <div className="space-y-1">
@@ -261,7 +256,7 @@ export default function ContactForm() {
                   className="flex items-baseline gap-2 text-sm text-neutral-500"
                 >
                   <span>{a.name}</span>
-                  <span className="text-neutral-400">
+                  <span className="text-neutral-500">
                     ({(a.size / 1024).toFixed(1)}kb)
                   </span>
                   <button
@@ -288,7 +283,7 @@ export default function ContactForm() {
             Send
           </button>
           {status && (
-            <span className="text-xs text-neutral-400 ml-3">{status}</span>
+            <span className="text-xs text-neutral-500 ml-3">{status}</span>
           )}
         </div>
       </section>

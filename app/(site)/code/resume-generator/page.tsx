@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import ProfileEditor from "../ProfileEditor";
+
+const ProfileEditor = dynamic(() => import("../ProfileEditor"), {
+  ssr: false,
+});
 
 export const metadata: Metadata = {
   title: "Resume Generator",

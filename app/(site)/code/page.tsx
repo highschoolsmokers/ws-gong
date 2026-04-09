@@ -39,6 +39,14 @@ const codeProjects: {
   tags: Tag[];
 }[] = [
   {
+    href: "/code/colophon-mcp",
+    title: "Colophon",
+    description:
+      "A book search engine and MCP server. Searches across Open Library and Google Books, compares prices, checks library availability, and finds ebooks — from Claude Code or a web browser. Dockerized for both entry points.",
+    stack: ["TypeScript", "MCP SDK", "Express"],
+    tags: ["AI", "MCP", "Web"],
+  },
+  {
     href: "/code/paperless-mcp",
     title: "Paperless MCP Server",
     description:
@@ -88,9 +96,33 @@ const codeProjects: {
   },
 ];
 
+const allProjects = [...docEngineeringProjects, ...codeProjects];
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Code Projects by W.S. Gong",
+  itemListElement: allProjects.map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "CreativeWork",
+      name: p.title,
+      description: p.description,
+      url: `https://ws-gong.com${p.href}`,
+      author: { "@type": "Person", name: "W.S. Gong" },
+      keywords: [...p.stack, ...p.tags],
+    },
+  })),
+};
+
 export default function Code() {
   return (
     <div className="space-y-0">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-xl md:text-2xl font-black leading-tight">
           Documentation Engineering
@@ -100,7 +132,7 @@ export default function Code() {
             <li key={p.href} className="py-6">
               <Link
                 href={p.href}
-                className="group block hover:opacity-80 transition-opacity"
+                className="group block hover:opacity-70 transition-opacity"
               >
                 <span className="text-sm font-semibold">{p.title}</span>
                 <span className="text-sm block mt-1 leading-relaxed">
@@ -111,7 +143,7 @@ export default function Code() {
                   {p.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                      className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
                     >
                       {tag}
                     </span>
@@ -130,7 +162,7 @@ export default function Code() {
             <li key={p.href} className="py-6">
               <Link
                 href={p.href}
-                className="group block hover:opacity-80 transition-opacity"
+                className="group block hover:opacity-70 transition-opacity"
               >
                 <span className="text-sm font-semibold">{p.title}</span>
                 <span className="text-sm block mt-1 leading-relaxed">
@@ -141,7 +173,7 @@ export default function Code() {
                   {p.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                      className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
                     >
                       {tag}
                     </span>

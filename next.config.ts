@@ -30,7 +30,15 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "no-referrer" },
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'none'",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: https:",
+              "font-src 'self'",
+              "connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io",
+              "frame-ancestors 'none'",
+            ].join("; "),
           },
         ],
       },

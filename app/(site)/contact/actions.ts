@@ -17,9 +17,9 @@ export type FormState = {
   message: string;
 };
 
+import { MAX_FILE_SIZE, MAX_FILES } from "@/lib/upload";
+
 const MIN_TIME_MS = 3000; // reject submissions faster than 3 seconds
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per file
-const MAX_FILES = 5;
 
 export async function sendMessage(
   _prev: FormState,
@@ -44,7 +44,7 @@ export async function sendMessage(
     return { status: "error", message: "All fields are required." };
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!emailRegex.test(email)) {
     return { status: "error", message: "Please enter a valid email address." };
   }
@@ -85,7 +85,8 @@ export async function sendMessage(
     });
 
     return { status: "success", message: "Message sent. Thank you." };
-  } catch {
+  } catch (err) {
+    console.error("Contact form send failed:", err);
     return {
       status: "error",
       message: "Something went wrong. Please try again.",
