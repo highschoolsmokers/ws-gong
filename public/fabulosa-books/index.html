@@ -1,83 +1,132 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Building a Multi-Agent Scheduling System for Fabulosa Books</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/fabulosa-books/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</head>
-<body>
-  <div class="page-wrap">
-    <a href="#main" class="skip-to-content">Skip to content</a>
-    <nav class="site-nav">
-      <a href="/code">&larr; W.S. Gong / Code</a>
-    </nav>
-    <header>
-      <h1>Building a Multi-Agent Scheduling System for Fabulosa Books</h1>
-      <p class="subtitle">A step-by-step tutorial on multi-agent orchestration with Next.js, Vercel AI SDK, and Neon.</p>
-    </header>
-    <main id="main">
-      <ul class="toc">
-        <li>
-          <a href="/fabulosa-books/part1.html">
-            <span class="part-num">01</span>
-            <span class="part-title">Welcome to Fabulosa Books</span>
-            <span class="part-desc">Meet the bookstore, its people, and the scheduling problem we'll solve.</span>
-          </a>
-        </li>
-        <li>
-          <a href="/fabulosa-books/part2.html">
-            <span class="part-num">02</span>
-            <span class="part-title">How Agents Think</span>
-            <span class="part-desc">Chatbots vs. agents, the orchestrator pattern, tools, and our tech stack.</span>
-          </a>
-        </li>
-        <li>
-          <a href="/fabulosa-books/part3.html">
-            <span class="part-num">03</span>
-            <span class="part-title">Setting Up Shop</span>
-            <span class="part-desc">Node.js, Next.js, GitHub, Vercel, Neon, and the AI Gateway.</span>
-          </a>
-        </li>
-        <li>
-          <a href="/fabulosa-books/part4.html">
-            <span class="part-num">04</span>
-            <span class="part-title">The Foundation &mdash; Data and Database</span>
-            <span class="part-desc">Types, utilities, database layer, API routes, and the schedule UI.</span>
-          </a>
-        </li>
-        <li>
-          <a href="/fabulosa-books/part5.html">
-            <span class="part-num">05</span>
-            <span class="part-title">Your First Agent &mdash; The Availability Agent</span>
-            <span class="part-desc">Building tools, creating an agent, wiring it to the chat UI.</span>
-          </a>
-        </li>
-        <li>
-          <a href="/fabulosa-books/part6.html">
-            <span class="part-num">06</span>
-            <span class="part-title">The Specialist Team &mdash; Multi-Agent Orchestration</span>
-            <span class="part-desc">Fairness Agent, Coverage Agent, and the Coordinator that ties it all together.</span>
-          </a>
-        </li>
-        <li>
-          <a href="/fabulosa-books/part7.html">
-            <span class="part-num">07</span>
-            <span class="part-title">Making It Real</span>
-            <span class="part-desc">The Communication Agent, error handling, cost management, and what's next.</span>
-          </a>
-        </li>
-      </ul>
-    </main>
-    <footer>
-      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
-    </footer>
-  </div>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Building a Multi-Agent Scheduling System for Fabulosa Books</title>
+    <meta name="description" content="A step-by-step tutorial on multi-agent orchestration with Next.js, Vercel AI SDK, and Neon." />
+    <meta property="og:title" content="The Fabulosa Books Scheduler: Multi-Agent Orchestration" />
+    <meta property="og:description" content="A step-by-step tutorial on multi-agent orchestration with Next.js, Vercel AI SDK, and Neon." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="W.S. Gong" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/fabulosa-books/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+    />
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
+    </script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <a href="#main" class="skip-to-content">Skip to content</a>
+      <nav class="site-nav">
+        <a href="/code">&larr; W.S. Gong / Code</a>
+      </nav>
+      <header>
+        <h1>Building a Multi-Agent Scheduling System for Fabulosa Books</h1>
+        <p class="subtitle">
+          A step-by-step tutorial on multi-agent orchestration with Next.js,
+          Vercel AI SDK, and Neon.
+        </p>
+      </header>
+      <main id="main">
+        <ul class="toc">
+          <li>
+            <a href="/fabulosa-books/part1.html">
+              <span class="part-num">01</span>
+              <span class="part-title">Welcome to Fabulosa Books</span>
+              <span class="part-desc"
+                >Meet the bookstore, its people, and the scheduling problem
+                we'll solve.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/fabulosa-books/part2.html">
+              <span class="part-num">02</span>
+              <span class="part-title">How Agents Think</span>
+              <span class="part-desc"
+                >Chatbots vs. agents, the orchestrator pattern, tools, and our
+                tech stack.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/fabulosa-books/part3.html">
+              <span class="part-num">03</span>
+              <span class="part-title">Setting Up Shop</span>
+              <span class="part-desc"
+                >Node.js, Next.js, GitHub, Vercel, Neon, and the AI
+                Gateway.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/fabulosa-books/part4.html">
+              <span class="part-num">04</span>
+              <span class="part-title"
+                >The Foundation &mdash; Data and Database</span
+              >
+              <span class="part-desc"
+                >Types, utilities, database layer, API routes, and the schedule
+                UI.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/fabulosa-books/part5.html">
+              <span class="part-num">05</span>
+              <span class="part-title"
+                >Your First Agent &mdash; The Availability Agent</span
+              >
+              <span class="part-desc"
+                >Building tools, creating an agent, wiring it to the chat
+                UI.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/fabulosa-books/part6.html">
+              <span class="part-num">06</span>
+              <span class="part-title"
+                >The Specialist Team &mdash; Multi-Agent Orchestration</span
+              >
+              <span class="part-desc"
+                >Fairness Agent, Coverage Agent, and the Coordinator that ties
+                it all together.</span
+              >
+            </a>
+          </li>
+          <li>
+            <a href="/fabulosa-books/part7.html">
+              <span class="part-num">07</span>
+              <span class="part-title">Making It Real</span>
+              <span class="part-desc"
+                >The Communication Agent, error handling, cost management, and
+                what's next.</span
+              >
+            </a>
+          </li>
+        </ul>
+      </main>
+      <footer>
+        Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the
+        real Fabulosa Books in San Francisco's Castro neighborhood.
+      </footer>
+    </div>
+  </body>
 </html>

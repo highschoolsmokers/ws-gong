@@ -19,9 +19,8 @@ export const metadata: Metadata = {
   },
   description,
   robots: {
-    index: false,
-    follow: false,
-    googleBot: { index: false, follow: false },
+    index: true,
+    follow: true,
   },
   icons: {
     apple: "/apple-touch-icon.png",

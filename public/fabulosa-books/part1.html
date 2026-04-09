@@ -1,124 +1,297 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Part 1: Welcome to Fabulosa Books</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/fabulosa-books/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</head>
-<body>
-  <div class="page-wrap">
-    <a href="#main" class="skip-to-content">Skip to content</a>
-    <nav class="site-nav">
-      <a href="/code">&larr; W.S. Gong / Code</a>
-    </nav>
-    <nav class="page-nav">
-      <a href="/fabulosa-books/index.html">&larr; Contents</a>
-      <a href="/fabulosa-books/part2.html">Next &rarr;</a>
-    </nav>
-    <header>
-      <div class="part-label">Part 1</div>
-      <h1>Welcome to Fabulosa Books</h1>
-    </header>
-    <main id="main">
-
-      <div class="section">
-        <h2>A Bookstore with Heart</h2>
-        <div class="section-content">
-          <img class="photo" src="/fabulosa-books/images/fabulosa-storefront.jpg" alt="Fabulosa Books storefront on a sunny afternoon in the Castro">
-          <figcaption>Fabulosa Books, San Francisco's Castro neighborhood</figcaption>
-          <p>Fabulosa Books is an LGBTQIA+ bookstore&mdash;and that identity shapes everything about it. The shelves hold an extensive selection of queer literature: fiction, poetry, essays, memoirs, history, theory, erotica, graphic novels, children's books for queer kids and queer families. But that's just the beginning. The store also carries ephemera&mdash;stickers, postcards, zines, posters&mdash;and beyond the LGBTQIA+ titles, there's a huge general collection, too: literary fiction, art books, local history, essays on food and politics and culture.</p>
-          <p>Located in San Francisco's Castro neighborhood, Fabulosa Books has become a community institution. People find rare books here. They attend readings and literary events. They come to talk to staff about what they should read next, and they listen because these aren't just employees&mdash;they're readers, writers, poets, librarians, curators. They have opinions and taste and genuine passion for literature.</p>
-          <p>This is a small, independent business in an age of mega-chains and algorithms. Every detail matters because the team that runs it chooses to make it matter.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Part 1: Welcome to Fabulosa Books</title>
+    <meta name="description" content="Meet the bookstore, its people, and the scheduling problem we'll solve." />
+    <meta property="og:title" content="Part 1: Welcome to Fabulosa Books" />
+    <meta property="og:description" content="Meet the bookstore, its people, and the scheduling problem we'll solve." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="W.S. Gong" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/fabulosa-books/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+    />
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
+    </script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <a href="#main" class="skip-to-content">Skip to content</a>
+      <nav class="site-nav">
+        <a href="/code">&larr; W.S. Gong / Code</a>
+      </nav>
+      <nav class="page-nav">
+        <a href="/fabulosa-books/index.html">&larr; Contents</a>
+        <a href="/fabulosa-books/part2.html">Next &rarr;</a>
+      </nav>
+      <header>
+        <div class="part-label">Part 1</div>
+        <h1>Welcome to Fabulosa Books</h1>
+      </header>
+      <main id="main">
+        <div class="section">
+          <h2>A Bookstore with Heart</h2>
+          <div class="section-content">
+            <img loading="lazy"
+              class="photo"
+              src="/fabulosa-books/images/fabulosa-storefront.jpg"
+              alt="Fabulosa Books storefront on a sunny afternoon in the Castro"
+            />
+            <figcaption>
+              Fabulosa Books, San Francisco's Castro neighborhood
+            </figcaption>
+            <p>
+              Fabulosa Books is an LGBTQIA+ bookstore&mdash;and that identity
+              shapes everything about it. The shelves hold an extensive
+              selection of queer literature: fiction, poetry, essays, memoirs,
+              history, theory, erotica, graphic novels, children's books for
+              queer kids and queer families. But that's just the beginning. The
+              store also carries ephemera&mdash;stickers, postcards, zines,
+              posters&mdash;and beyond the LGBTQIA+ titles, there's a huge
+              general collection, too: literary fiction, art books, local
+              history, essays on food and politics and culture.
+            </p>
+            <p>
+              Located in San Francisco's Castro neighborhood, Fabulosa Books has
+              become a community institution. People find rare books here. They
+              attend readings and literary events. They come to talk to staff
+              about what they should read next, and they listen because these
+              aren't just employees&mdash;they're readers, writers, poets,
+              librarians, curators. They have opinions and taste and genuine
+              passion for literature.
+            </p>
+            <p>
+              This is a small, independent business in an age of mega-chains and
+              algorithms. Every detail matters because the team that runs it
+              chooses to make it matter.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Store and Its People</h2>
-        <div class="section-content">
-          <p>Alvin founded Fabulosa Books after managing the location for Dogeared. When the opportunity came to buy it, he did&mdash;because the store was worth preserving. Today, he runs it with the same care he brought to curation and customer connections, but now as the owner, making decisions about the store's future, carefully choosing the team that keeps it running.</p>
-          <p>The team is small but dedicated: eight people total, six who work regular shifts and two who come in on-call. It's the kind of crew where everyone knows the store's inventory by heart, where someone can recommend the perfect book for a customer they've never met, where shift changes feel like transitions between chapters rather than just clocking in and out.</p>
-          <img src="/fabulosa-books/images/team-diagram.svg" alt="The Fabulosa Books team: 6 regular employees and 2 on-call staff">
-          <p>They host readings and events. They put together staff pick displays that actually move inventory&mdash;customers trust their recommendations because their picks are personal and thoughtful, not algorithm-driven. Many of them have deep roots in San Francisco's literary and bookselling world.</p>
-          <p>But managing all this&mdash;especially the scheduling&mdash;has been a mess.</p>
+        <div class="section">
+          <h2>The Store and Its People</h2>
+          <div class="section-content">
+            <p>
+              Alvin founded Fabulosa Books after managing the location for
+              Dogeared. When the opportunity came to buy it, he
+              did&mdash;because the store was worth preserving. Today, he runs
+              it with the same care he brought to curation and customer
+              connections, but now as the owner, making decisions about the
+              store's future, carefully choosing the team that keeps it running.
+            </p>
+            <p>
+              The team is small but dedicated: eight people total, six who work
+              regular shifts and two who come in on-call. It's the kind of crew
+              where everyone knows the store's inventory by heart, where someone
+              can recommend the perfect book for a customer they've never met,
+              where shift changes feel like transitions between chapters rather
+              than just clocking in and out.
+            </p>
+            <img loading="lazy"
+              src="/fabulosa-books/images/team-diagram.svg"
+              alt="The Fabulosa Books team: 6 regular employees and 2 on-call staff"
+            />
+            <p>
+              They host readings and events. They put together staff pick
+              displays that actually move inventory&mdash;customers trust their
+              recommendations because their picks are personal and thoughtful,
+              not algorithm-driven. Many of them have deep roots in San
+              Francisco's literary and bookselling world.
+            </p>
+            <p>
+              But managing all this&mdash;especially the scheduling&mdash;has
+              been a mess.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Problem</h2>
-        <div class="section-content">
-          <p>For years, Fabulosa Books managed its schedule the old-fashioned way: a handwritten schedule pinned to the breakroom wall, updated with markers and corrections, sometimes with sticky notes covering up conflicting scribbles.</p>
-          <img src="/fabulosa-books/images/paper-vs-digital.svg" alt="Paper schedule vs. web app schedule comparison">
-          <p>In theory, it worked. In practice? It was chaos.</p>
-          <div class="step">Step 1: Understand why a paper schedule fails at scale</div>
-          <ul>
-            <li>Employees couldn't check the schedule from home. They had to come in or call the store.</li>
-            <li>Last-minute changes were a nightmare. An erased shift and a hastily scrawled note caused confusion and frustration.</li>
-            <li>Swaps and requests were informal&mdash;a conversation in the break room, a text message, or a note left on the schedule itself.</li>
-            <li>Nobody knew weeks in advance who was working what. Planning personal time was guesswork.</li>
-            <li>Management spent an embarrassing amount of time just answering "When am I working?" questions.</li>
-            <li>If the schedule got damaged or lost, there was no backup. It was pure anxiety.</li>
-          </ul>
-          <p>But the biggest problem wasn't access or logistics&mdash;it was the <em>thinking</em>. Every week, Alvin sat down and tried to solve a puzzle with too many pieces: Who's available? Who worked closing last week? Is Marcus already at five shifts? Can we cover Saturday with one on-call staff, or do we need two? Is this fair to everyone?</p>
-          <p>That mental load&mdash;the reasoning, the balancing, the judgment&mdash;is what takes the most time. And it's exactly the kind of work that AI agents are built to handle.</p>
+        <div class="section">
+          <h2>The Problem</h2>
+          <div class="section-content">
+            <p>
+              For years, Fabulosa Books managed its schedule the old-fashioned
+              way: a handwritten schedule pinned to the breakroom wall, updated
+              with markers and corrections, sometimes with sticky notes covering
+              up conflicting scribbles.
+            </p>
+            <img loading="lazy"
+              src="/fabulosa-books/images/paper-vs-digital.svg"
+              alt="Paper schedule vs. web app schedule comparison"
+            />
+            <p>In theory, it worked. In practice? It was chaos.</p>
+            <div class="step">
+              Step 1: Understand why a paper schedule fails at scale
+            </div>
+            <ul>
+              <li>
+                Employees couldn't check the schedule from home. They had to
+                come in or call the store.
+              </li>
+              <li>
+                Last-minute changes were a nightmare. An erased shift and a
+                hastily scrawled note caused confusion and frustration.
+              </li>
+              <li>
+                Swaps and requests were informal&mdash;a conversation in the
+                break room, a text message, or a note left on the schedule
+                itself.
+              </li>
+              <li>
+                Nobody knew weeks in advance who was working what. Planning
+                personal time was guesswork.
+              </li>
+              <li>
+                Management spent an embarrassing amount of time just answering
+                "When am I working?" questions.
+              </li>
+              <li>
+                If the schedule got damaged or lost, there was no backup. It was
+                pure anxiety.
+              </li>
+            </ul>
+            <p>
+              But the biggest problem wasn't access or logistics&mdash;it was
+              the <em>thinking</em>. Every week, Alvin sat down and tried to
+              solve a puzzle with too many pieces: Who's available? Who worked
+              closing last week? Is Marcus already at five shifts? Can we cover
+              Saturday with one on-call staff, or do we need two? Is this fair
+              to everyone?
+            </p>
+            <p>
+              That mental load&mdash;the reasoning, the balancing, the
+              judgment&mdash;is what takes the most time. And it's exactly the
+              kind of work that AI agents are built to handle.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>What We'll Build</h2>
-        <div class="section-content">
-          <div class="step">Step 2: Understand the vision</div>
-          <p>Billy, the newest member of the team and a struggling writer with a passion for literary fiction, volunteered to build this. But Billy didn't want to just replace the paper schedule with a grid on a screen. He wanted to replace the <em>thinking</em>&mdash;the hours Alvin spends every week balancing availability, fairness, coverage, and special requests.</p>
-          <p>His idea: build a system where you can say "Schedule next week" and multiple specialized AI agents coordinate to produce a fair, complete schedule. One agent checks who's available. Another ensures the shifts are distributed fairly. A third validates that the store is properly covered. And a coordinator agent orchestrates the whole thing.</p>
-          <img src="/fabulosa-books/images/agent-architecture.svg" alt="High-level multi-agent architecture diagram">
+        <div class="section">
+          <h2>What We'll Build</h2>
+          <div class="section-content">
+            <div class="step">Step 2: Understand the vision</div>
+            <p>
+              Billy, the newest member of the team and a struggling writer with
+              a passion for literary fiction, volunteered to build this. But
+              Billy didn't want to just replace the paper schedule with a grid
+              on a screen. He wanted to replace the <em>thinking</em>&mdash;the
+              hours Alvin spends every week balancing availability, fairness,
+              coverage, and special requests.
+            </p>
+            <p>
+              His idea: build a system where you can say "Schedule next week"
+              and multiple specialized AI agents coordinate to produce a fair,
+              complete schedule. One agent checks who's available. Another
+              ensures the shifts are distributed fairly. A third validates that
+              the store is properly covered. And a coordinator agent
+              orchestrates the whole thing.
+            </p>
+            <img loading="lazy"
+              src="/fabulosa-books/images/agent-architecture.svg"
+              alt="High-level multi-agent architecture diagram"
+            />
 
-          <h3>The Stack</h3>
-          <ul>
-            <li><strong>Frontend:</strong> A responsive web interface built with React and Next.js</li>
-            <li><strong>AI Layer:</strong> Vercel AI SDK for building and orchestrating agents</li>
-            <li><strong>AI Models:</strong> Vercel AI Gateway for model access (Anthropic, OpenAI, Google &mdash; one API key)</li>
-            <li><strong>Database:</strong> Neon (serverless Postgres) to store schedule data</li>
-            <li><strong>Hosting:</strong> Vercel for zero-friction deployments</li>
-          </ul>
+            <h3>The Stack</h3>
+            <ul>
+              <li>
+                <strong>Frontend:</strong> A responsive web interface built with
+                React and Next.js
+              </li>
+              <li>
+                <strong>AI Layer:</strong> Vercel AI SDK for building and
+                orchestrating agents
+              </li>
+              <li>
+                <strong>AI Models:</strong> Vercel AI Gateway for model access
+                (Anthropic, OpenAI, Google &mdash; one API key)
+              </li>
+              <li>
+                <strong>Database:</strong> Neon (serverless Postgres) to store
+                schedule data
+              </li>
+              <li>
+                <strong>Hosting:</strong> Vercel for zero-friction deployments
+              </li>
+            </ul>
 
-          <h3>The Schedule</h3>
-          <p>The store hours are fixed: 10am&ndash;8pm daily (10am&ndash;9pm on Saturdays). Shifts are divided into three slots per day:</p>
-          <ul>
-            <li><strong>Opening Shift:</strong> 10am&ndash;4pm</li>
-            <li><strong>Mid Shift:</strong> 12pm&ndash;6pm</li>
-            <li><strong>Closing Shift:</strong> 2pm&ndash;8pm (or 2pm&ndash;9pm Saturdays)</li>
-          </ul>
+            <h3>The Schedule</h3>
+            <p>
+              The store hours are fixed: 10am&ndash;8pm daily (10am&ndash;9pm on
+              Saturdays). Shifts are divided into three slots per day:
+            </p>
+            <ul>
+              <li><strong>Opening Shift:</strong> 10am&ndash;4pm</li>
+              <li><strong>Mid Shift:</strong> 12pm&ndash;6pm</li>
+              <li>
+                <strong>Closing Shift:</strong> 2pm&ndash;8pm (or 2pm&ndash;9pm
+                Saturdays)
+              </li>
+            </ul>
 
-          <h3>The Agents</h3>
-          <table>
-            <thead>
-              <tr><th>Agent</th><th>Role</th><th>Analogy</th></tr>
-            </thead>
-            <tbody>
-              <tr><td><strong>Availability Agent</strong></td><td>Checks who's free and when</td><td>"Let me check everyone's calendar"</td></tr>
-              <tr><td><strong>Fairness Agent</strong></td><td>Ensures equitable shift distribution</td><td>"Marcus has had closing three weeks in a row"</td></tr>
-              <tr><td><strong>Coverage Agent</strong></td><td>Validates store staffing rules</td><td>"We need three people every day"</td></tr>
-              <tr><td><strong>Schedule Coordinator</strong></td><td>Orchestrates the other three</td><td>Alvin delegating to his team</td></tr>
-            </tbody>
-          </table>
-          <p>By the end of this tutorial, you'll have a fully functional multi-agent scheduling system that the team at Fabulosa Books can use&mdash;and you'll understand how to design, build, and orchestrate AI agents for any problem.</p>
+            <h3>The Agents</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Agent</th>
+                  <th>Role</th>
+                  <th>Analogy</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Availability Agent</strong></td>
+                  <td>Checks who's free and when</td>
+                  <td>"Let me check everyone's calendar"</td>
+                </tr>
+                <tr>
+                  <td><strong>Fairness Agent</strong></td>
+                  <td>Ensures equitable shift distribution</td>
+                  <td>"Marcus has had closing three weeks in a row"</td>
+                </tr>
+                <tr>
+                  <td><strong>Coverage Agent</strong></td>
+                  <td>Validates store staffing rules</td>
+                  <td>"We need three people every day"</td>
+                </tr>
+                <tr>
+                  <td><strong>Schedule Coordinator</strong></td>
+                  <td>Orchestrates the other three</td>
+                  <td>Alvin delegating to his team</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              By the end of this tutorial, you'll have a fully functional
+              multi-agent scheduling system that the team at Fabulosa Books can
+              use&mdash;and you'll understand how to design, build, and
+              orchestrate AI agents for any problem.
+            </p>
+          </div>
         </div>
-      </div>
-
-    </main>
-    <nav class="bottom-nav">
-      <a href="/fabulosa-books/index.html">&larr; Contents</a>
-      <a href="/fabulosa-books/part2.html">Next: How Agents Think &rarr;</a>
-    </nav>
-    <footer>
-      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
-    </footer>
-  </div>
-</body>
+      </main>
+      <nav class="bottom-nav">
+        <a href="/fabulosa-books/index.html">&larr; Contents</a>
+        <a href="/fabulosa-books/part2.html">Next: How Agents Think &rarr;</a>
+      </nav>
+      <footer>
+        Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the
+        real Fabulosa Books in San Francisco's Castro neighborhood.
+      </footer>
+    </div>
+  </body>
 </html>

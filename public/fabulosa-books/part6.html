@@ -1,47 +1,74 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Part 6: The Specialist Team &mdash; Multi-Agent Orchestration</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/fabulosa-books/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</head>
-<body>
-  <div class="page-wrap">
-    <a href="#main" class="skip-to-content">Skip to content</a>
-    <nav class="site-nav">
-      <a href="/code">&larr; W.S. Gong / Code</a>
-    </nav>
-    <nav class="page-nav">
-      <a href="/fabulosa-books/part5.html">&larr; Previous</a>
-      <a href="/fabulosa-books/part7.html">Next &rarr;</a>
-    </nav>
-    <header>
-      <div class="part-label">Part 6</div>
-      <h1>The Specialist Team &mdash; Multi-Agent Orchestration</h1>
-    </header>
-    <main id="main">
-
-      <div class="section">
-        <h2>One Agent Isn't Enough</h2>
-        <div class="section-content">
-          <p>The Availability Agent is useful, but it has blind spots. It can tell you Dylan is available Thursday, but it doesn't know that Dylan has already worked five shifts this week and giving him a sixth would be unfair. It doesn't know that Marcus has had closing shifts three weeks running. It doesn't check whether the store actually has enough people on Saturday.</p>
-          <p>Each of these is a different kind of reasoning. And each one deserves its own specialist.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Part 6: The Specialist Team &mdash; Multi-Agent Orchestration</title>
+    <meta name="description" content="Fairness Agent, Coverage Agent, and the Coordinator that ties it all together." />
+    <meta property="og:title" content="Part 6: The Specialist Team — Multi-Agent Orchestration" />
+    <meta property="og:description" content="Fairness Agent, Coverage Agent, and the Coordinator that ties it all together." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="W.S. Gong" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/fabulosa-books/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+    />
+    <script
+      defer
+      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
+    </script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <a href="#main" class="skip-to-content">Skip to content</a>
+      <nav class="site-nav">
+        <a href="/code">&larr; W.S. Gong / Code</a>
+      </nav>
+      <nav class="page-nav">
+        <a href="/fabulosa-books/part5.html">&larr; Previous</a>
+        <a href="/fabulosa-books/part7.html">Next &rarr;</a>
+      </nav>
+      <header>
+        <div class="part-label">Part 6</div>
+        <h1>The Specialist Team &mdash; Multi-Agent Orchestration</h1>
+      </header>
+      <main id="main">
+        <div class="section">
+          <h2>One Agent Isn't Enough</h2>
+          <div class="section-content">
+            <p>
+              The Availability Agent is useful, but it has blind spots. It can
+              tell you Dylan is available Thursday, but it doesn't know that
+              Dylan has already worked five shifts this week and giving him a
+              sixth would be unfair. It doesn't know that Marcus has had closing
+              shifts three weeks running. It doesn't check whether the store
+              actually has enough people on Saturday.
+            </p>
+            <p>
+              Each of these is a different kind of reasoning. And each one
+              deserves its own specialist.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Fairness Agent</h2>
-        <div class="section-content">
-          <div class="step">Step 40: Create the fairness tools</div>
-          <p>Create <code>lib/tools/fairness-tools.ts</code>:</p>
-<pre><code>// lib/tools/fairness-tools.ts
+        <div class="section">
+          <h2>The Fairness Agent</h2>
+          <div class="section-content">
+            <div class="step">Step 40: Create the fairness tools</div>
+            <p>Create <code>lib/tools/fairness-tools.ts</code>:</p>
+            <pre><code>// lib/tools/fairness-tools.ts
 
 import { tool } from 'ai'
 import { z } from 'zod'
@@ -88,11 +115,15 @@ export const getMultiWeekHistoryTool = tool({
     // ... returns history + fairnessNotes (auto-detected imbalances)
   },
 })</code></pre>
-          <div class="image-placeholder">Fairness analysis output &mdash; shift distribution across employees, with Marcus highlighted as having 3 closing shifts and Dylan having 0</div>
+            <div class="image-placeholder">
+              Fairness analysis output &mdash; shift distribution across
+              employees, with Marcus highlighted as having 3 closing shifts and
+              Dylan having 0
+            </div>
 
-          <div class="step">Step 41: Create the Fairness Agent</div>
-          <p>Create <code>lib/agents/fairness-agent.ts</code>:</p>
-<pre><code>// lib/agents/fairness-agent.ts
+            <div class="step">Step 41: Create the Fairness Agent</div>
+            <p>Create <code>lib/agents/fairness-agent.ts</code>:</p>
+            <pre><code>// lib/agents/fairness-agent.ts
 
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai'
 import { getShiftDistributionTool, getMultiWeekHistoryTool } from '../tools/fairness-tools'
@@ -122,16 +153,20 @@ a closing shift this week since Marcus has had closing three weeks in a row."`,
     getMultiWeekHistory: getMultiWeekHistoryTool,
   },
 })</code></pre>
-          <p>Notice how the instructions encode Fabulosa's <em>values</em>, not just rules. The agent knows that fairness matters to the store's identity.</p>
+            <p>
+              Notice how the instructions encode Fabulosa's <em>values</em>, not
+              just rules. The agent knows that fairness matters to the store's
+              identity.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Coverage Agent</h2>
-        <div class="section-content">
-          <div class="step">Step 42: Create the coverage tools</div>
-          <p>Create <code>lib/tools/coverage-tools.ts</code>:</p>
-<pre><code>// lib/tools/coverage-tools.ts
+        <div class="section">
+          <h2>The Coverage Agent</h2>
+          <div class="section-content">
+            <div class="step">Step 42: Create the coverage tools</div>
+            <p>Create <code>lib/tools/coverage-tools.ts</code>:</p>
+            <pre><code>// lib/tools/coverage-tools.ts
 
 import { tool } from 'ai'
 import { z } from 'zod'
@@ -178,8 +213,8 @@ export const validateCoverageTool = tool({
   },
 })</code></pre>
 
-          <div class="step">Step 43: Create the Coverage Agent</div>
-<pre><code>// lib/agents/coverage-agent.ts
+            <div class="step">Step 43: Create the Coverage Agent</div>
+            <pre><code>// lib/agents/coverage-agent.ts
 
 import { ToolLoopAgent, InferAgentUIMessage } from 'ai'
 import { validateCoverageTool } from '../tools/coverage-tools'
@@ -200,17 +235,23 @@ When reporting issues, explain the impact.`,
     validateCoverage: validateCoverageTool,
   },
 })</code></pre>
-          <img src="/fabulosa-books/images/three-agents.svg" alt="Three specialist agents: Availability, Fairness, Coverage">
+            <img loading="lazy"
+              src="/fabulosa-books/images/three-agents.svg"
+              alt="Three specialist agents: Availability, Fairness, Coverage"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Coordinator: Orchestrating It All</h2>
-        <div class="section-content">
-          <p>This is the heart of multi-agent orchestration. The Schedule Coordinator is an agent whose tools are the other agents.</p>
-          <div class="step">Step 44: Create the coordinator agent</div>
-          <p>Create <code>lib/agents/coordinator-agent.ts</code>:</p>
-<pre><code>// lib/agents/coordinator-agent.ts
+        <div class="section">
+          <h2>The Coordinator: Orchestrating It All</h2>
+          <div class="section-content">
+            <p>
+              This is the heart of multi-agent orchestration. The Schedule
+              Coordinator is an agent whose tools are the other agents.
+            </p>
+            <div class="step">Step 44: Create the coordinator agent</div>
+            <p>Create <code>lib/agents/coordinator-agent.ts</code>:</p>
+            <pre><code>// lib/agents/coordinator-agent.ts
 
 import { ToolLoopAgent, InferAgentUIMessage, tool } from 'ai'
 import { z } from 'zod'
@@ -304,16 +345,28 @@ Important guidelines:
     assignShift: assignShiftTool,
   },
 })</code></pre>
-          <p><strong>This is the key pattern.</strong> The coordinator's tools are the other agents. When it calls <code>checkAvailability</code>, it's actually running the Availability Agent as a subagent&mdash;a full agent with its own tools and reasoning loop. The coordinator receives a text summary back, reasons about it, and decides what to do next.</p>
-          <img src="/fabulosa-books/images/orchestrator-flow.svg" alt="The orchestrator pattern: how the coordinator delegates to specialists">
+            <p>
+              <strong>This is the key pattern.</strong> The coordinator's tools
+              are the other agents. When it calls
+              <code>checkAvailability</code>, it's actually running the
+              Availability Agent as a subagent&mdash;a full agent with its own
+              tools and reasoning loop. The coordinator receives a text summary
+              back, reasons about it, and decides what to do next.
+            </p>
+            <img loading="lazy"
+              src="/fabulosa-books/images/orchestrator-flow.svg"
+              alt="The orchestrator pattern: how the coordinator delegates to specialists"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Updating the Chat Route and UI</h2>
-        <div class="section-content">
-          <div class="step">Step 45: Update the chat API route to use the coordinator</div>
-<pre><code>// app/api/chat/route.ts
+        <div class="section">
+          <h2>Updating the Chat Route and UI</h2>
+          <div class="section-content">
+            <div class="step">
+              Step 45: Update the chat API route to use the coordinator
+            </div>
+            <pre><code>// app/api/chat/route.ts
 
 import { createAgentUIStreamResponse } from 'ai'
 import { coordinatorAgent } from '@/lib/agents/coordinator-agent'
@@ -326,63 +379,127 @@ export async function POST(request: Request) {
     uiMessages: messages,
   })
 }</code></pre>
-          <p>One line changed: <code>availabilityAgent</code> &rarr; <code>coordinatorAgent</code>. The chat interface is the same, but now the coordinator delegates to all three specialists.</p>
+            <p>
+              One line changed: <code>availabilityAgent</code> &rarr;
+              <code>coordinatorAgent</code>. The chat interface is the same, but
+              now the coordinator delegates to all three specialists.
+            </p>
 
-          <div class="step">Step 46: Update ChatPanel to show agent activity</div>
-          <p>Update <code>components/ChatPanel.tsx</code> to handle the coordinator's tool calls. The key upgrade: the chat panel now shows <em>which agent</em> is working. When the coordinator delegates to the Fairness Agent, you see "Fairness Agent" in the response, with a loading indicator while it runs.</p>
-<pre><code>const AGENT_LABELS: Record&lt;string, string&gt; = {
+            <div class="step">
+              Step 46: Update ChatPanel to show agent activity
+            </div>
+            <p>
+              Update <code>components/ChatPanel.tsx</code> to handle the
+              coordinator's tool calls. The key upgrade: the chat panel now
+              shows <em>which agent</em> is working. When the coordinator
+              delegates to the Fairness Agent, you see "Fairness Agent" in the
+              response, with a loading indicator while it runs.
+            </p>
+            <pre><code>const AGENT_LABELS: Record&lt;string, string&gt; = {
   'tool-checkAvailability': 'Availability Agent',
   'tool-checkFairness': 'Fairness Agent',
   'tool-validateCoverage': 'Coverage Agent',
   'tool-assignShift': 'Assigning Shift',
 }</code></pre>
 
-          <div class="step">Step 47: Connect schedule changes back to the grid</div>
-          <p>Update <code>app/page.tsx</code> so the schedule grid refreshes when the coordinator assigns shifts. A <code>refreshKey</code> state triggers a re-fetch of schedule data after each agent interaction completes.</p>
+            <div class="step">
+              Step 47: Connect schedule changes back to the grid
+            </div>
+            <p>
+              Update <code>app/page.tsx</code> so the schedule grid refreshes
+              when the coordinator assigns shifts. A
+              <code>refreshKey</code> state triggers a re-fetch of schedule data
+              after each agent interaction completes.
+            </p>
 
-          <div class="step">Step 48: Test multi-agent orchestration</div>
-<pre><code>npm run dev</code></pre>
-          <p>Try these prompts:</p>
-          <ul>
-            <li><strong>"Is this week's schedule fair?"</strong> &mdash; The coordinator calls the Availability Agent (to get the current schedule), then the Fairness Agent (to analyze distribution). You'll see both agents activate in the chat panel.</li>
-            <li><strong>"Find someone to cover Tuesday closing"</strong> &mdash; The coordinator checks availability for Tuesday, checks fairness to pick the best candidate, and suggests an assignment.</li>
-            <li><strong>"Schedule next week"</strong> &mdash; The full orchestration: availability &rarr; fairness &rarr; coverage &rarr; assignments.</li>
-          </ul>
-          <div class="image-placeholder">Full-page screenshot: schedule grid on the left with shifts filled in by the coordinator, chat panel on the right showing a multi-step orchestration with all three agent indicators</div>
+            <div class="step">Step 48: Test multi-agent orchestration</div>
+            <pre><code>npm run dev</code></pre>
+            <p>Try these prompts:</p>
+            <ul>
+              <li>
+                <strong>"Is this week's schedule fair?"</strong> &mdash; The
+                coordinator calls the Availability Agent (to get the current
+                schedule), then the Fairness Agent (to analyze distribution).
+                You'll see both agents activate in the chat panel.
+              </li>
+              <li>
+                <strong>"Find someone to cover Tuesday closing"</strong> &mdash;
+                The coordinator checks availability for Tuesday, checks fairness
+                to pick the best candidate, and suggests an assignment.
+              </li>
+              <li>
+                <strong>"Schedule next week"</strong> &mdash; The full
+                orchestration: availability &rarr; fairness &rarr; coverage
+                &rarr; assignments.
+              </li>
+            </ul>
+            <div class="image-placeholder">
+              Full-page screenshot: schedule grid on the left with shifts filled
+              in by the coordinator, chat panel on the right showing a
+              multi-step orchestration with all three agent indicators
+            </div>
 
-          <div class="step">Step 49: Push and deploy</div>
-<pre><code>git add -A
+            <div class="step">Step 49: Push and deploy</div>
+            <pre><code>git add -A
 git commit -m "Add multi-agent orchestration: Fairness, Coverage, and Coordinator agents"
 git push</code></pre>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>What You've Built</h2>
-        <div class="section-content">
-          <p>Take a moment to appreciate what just happened. You've built a multi-agent system where:</p>
-          <ol>
-            <li>A <strong>Coordinator Agent</strong> receives natural-language scheduling requests</li>
-            <li>It delegates to an <strong>Availability Agent</strong> that queries the database</li>
-            <li>It consults a <strong>Fairness Agent</strong> that analyzes historical patterns</li>
-            <li>It validates with a <strong>Coverage Agent</strong> that checks staffing rules</li>
-            <li>It synthesizes the results and either makes recommendations or assigns shifts directly</li>
-            <li>The UI shows the orchestration happening in real-time</li>
-            <li>The schedule grid updates automatically when shifts are assigned</li>
-          </ol>
-          <p>That's multi-agent orchestration. Not one monolithic AI trying to do everything, but a team of specialists coordinating through a leader&mdash;just like Alvin delegates to his team at the bookstore.</p>
-          <img src="/fabulosa-books/images/complete-architecture.svg" alt="Complete multi-agent system architecture deployed on Vercel">
+        <div class="section">
+          <h2>What You've Built</h2>
+          <div class="section-content">
+            <p>
+              Take a moment to appreciate what just happened. You've built a
+              multi-agent system where:
+            </p>
+            <ol>
+              <li>
+                A <strong>Coordinator Agent</strong> receives natural-language
+                scheduling requests
+              </li>
+              <li>
+                It delegates to an <strong>Availability Agent</strong> that
+                queries the database
+              </li>
+              <li>
+                It consults a <strong>Fairness Agent</strong> that analyzes
+                historical patterns
+              </li>
+              <li>
+                It validates with a <strong>Coverage Agent</strong> that checks
+                staffing rules
+              </li>
+              <li>
+                It synthesizes the results and either makes recommendations or
+                assigns shifts directly
+              </li>
+              <li>The UI shows the orchestration happening in real-time</li>
+              <li>
+                The schedule grid updates automatically when shifts are assigned
+              </li>
+            </ol>
+            <p>
+              That's multi-agent orchestration. Not one monolithic AI trying to
+              do everything, but a team of specialists coordinating through a
+              leader&mdash;just like Alvin delegates to his team at the
+              bookstore.
+            </p>
+            <img loading="lazy"
+              src="/fabulosa-books/images/complete-architecture.svg"
+              alt="Complete multi-agent system architecture deployed on Vercel"
+            />
+          </div>
         </div>
-      </div>
-
-    </main>
-    <nav class="bottom-nav">
-      <a href="/fabulosa-books/part5.html">&larr; Your First Agent</a>
-      <a href="/fabulosa-books/part7.html">Making It Real &rarr;</a>
-    </nav>
-    <footer>
-      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
-    </footer>
-  </div>
-</body>
+      </main>
+      <nav class="bottom-nav">
+        <a href="/fabulosa-books/part5.html">&larr; Your First Agent</a>
+        <a href="/fabulosa-books/part7.html">Making It Real &rarr;</a>
+      </nav>
+      <footer>
+        Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the
+        real Fabulosa Books in San Francisco's Castro neighborhood.
+      </footer>
+    </div>
+  </body>
 </html>
