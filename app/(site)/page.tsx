@@ -1,5 +1,17 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getSubstackPosts } from "@/lib/substack";
+
+export const metadata: Metadata = {
+  title: "W.S. Gong — Stories & Systems",
+  description:
+    "Fiction editor at The Rumpus. Technical writer with twenty-five years in software. Building tools at the intersection of language models and the craft of writing.",
+  openGraph: {
+    title: "W.S. Gong — Stories & Systems",
+    description:
+      "Fiction editor at The Rumpus. Technical writer with twenty-five years in software. Building tools at the intersection of language models and the craft of writing.",
+  },
+};
 
 export default async function Home() {
   const posts = await getSubstackPosts("highschoolsmokers", 1);

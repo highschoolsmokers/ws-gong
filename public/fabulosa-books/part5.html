@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Part 5: Your First Agent &mdash; The Availability Agent</title>
+    <meta name="description" content="Building tools, creating an agent, and wiring it to the chat UI." />
+    <meta property="og:title" content="Part 5: Your First Agent — The Availability Agent" />
+    <meta property="og:description" content="Building tools, creating an agent, and wiring it to the chat UI." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="W.S. Gong" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -155,7 +162,7 @@ export const checkAvailabilityTool = tool({
               input schema (so the AI knows what to provide), and an execute
               function (your actual code).
             </p>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/tool-anatomy.svg"
               alt="Anatomy of an AI SDK tool: description, inputSchema, and execute"
             />
@@ -261,7 +268,7 @@ export async function POST(request: Request) {
               response back to the browser in a format that
               <code>useChat</code> understands.
             </p>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/how-it-works.svg"
               alt="How the agent streams responses from server to browser"
             />
@@ -353,7 +360,7 @@ export default function ChatPanel() {
               completes. The user can see the agent <em>working</em>&mdash;not
               just waiting for a final answer.
             </p>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/chat-panel-mockup.svg"
               alt="Chat panel showing agent interaction with tool activity indicators"
             />

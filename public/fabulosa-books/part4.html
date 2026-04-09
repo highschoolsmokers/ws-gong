@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Part 4: The Foundation &mdash; Data and Database</title>
+    <meta name="description" content="Types, utilities, database layer, API routes, and the schedule UI." />
+    <meta property="og:title" content="Part 4: The Foundation — Data and Database" />
+    <meta property="og:description" content="Types, utilities, database layer, API routes, and the schedule UI." />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="W.S. Gong" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -86,7 +93,7 @@ export interface ShiftSlot {
               <code>string | null</code> means the employee name can be
               empty&mdash;because sometimes a shift hasn't been assigned yet.
             </p>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/data-model.svg"
               alt="Diagram showing the relationship between the three types — Employee feeds into ScheduleEntry (via employee_name), ShiftSlot is a simplified view for the UI"
             />
@@ -287,7 +294,7 @@ function initializeLocalSchema() {
   // ... seed employees same as Neon version
   saveLocalDb()
 }</code></pre>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/dual-database.svg"
               alt="Dual-database architecture: SQLite for dev, Neon for production"
             />
@@ -378,7 +385,7 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to update schedule' }, { status: 500 })
   }
 }</code></pre>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/api-architecture.svg"
               alt="API architecture: Browser makes GET/PUT requests to API Routes, which call the Database Layer, which connects to Neon or SQLite"
             />
@@ -469,7 +476,7 @@ export default function Home() {
               Click any cell and pick an employee to verify the assignment
               works.
             </p>
-            <img
+            <img loading="lazy"
               src="/fabulosa-books/images/schedule-grid-mockup.svg"
               alt="The schedule grid UI with week navigation and shift assignments"
             />

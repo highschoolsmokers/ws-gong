@@ -3,15 +3,19 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Use",
   description: "Terms of use and DMCA policy for ws-gong.com.",
+  openGraph: {
+    title: "Terms of Use — W.S. Gong",
+    description: "Terms of use and DMCA policy for ws-gong.com.",
+  },
 };
 
 export default function Terms() {
   return (
     <>
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
+        <h1 className="text-xl md:text-2xl font-black leading-tight">
           Terms of Use
-        </h2>
+        </h1>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             All content on this website — including text, images, code, and
