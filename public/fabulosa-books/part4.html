@@ -1,46 +1,61 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Part 4: The Foundation &mdash; Data and Database</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/fabulosa-books/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</head>
-<body>
-  <div class="page-wrap">
-    <a href="#main" class="skip-to-content">Skip to content</a>
-    <nav class="site-nav">
-      <a href="/code">&larr; W.S. Gong / Code</a>
-    </nav>
-    <nav class="page-nav">
-      <a href="/fabulosa-books/part3.html">&larr; Previous</a>
-      <a href="/fabulosa-books/part5.html">Next &rarr;</a>
-    </nav>
-    <header>
-      <div class="part-label">Part 4</div>
-      <h1>The Foundation &mdash; Data and Database</h1>
-    </header>
-    <main id="main">
-
-      <div class="section">
-        <h2>The Plan</h2>
-        <div class="section-content">
-          <p>Before we build agents, we need the foundation they'll work with: the data model, the database, the API, and the basic schedule UI. This is the "non-AI" part of the app&mdash;the solid ground the agents will stand on.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Part 4: The Foundation &mdash; Data and Database</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/fabulosa-books/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <a href="#main" class="skip-to-content">Skip to content</a>
+      <nav class="site-nav">
+        <a href="/code">&larr; W.S. Gong / Code</a>
+      </nav>
+      <nav class="page-nav">
+        <a href="/fabulosa-books/part3.html">&larr; Previous</a>
+        <a href="/fabulosa-books/part5.html">Next &rarr;</a>
+      </nav>
+      <header>
+        <div class="part-label">Part 4</div>
+        <h1>The Foundation &mdash; Data and Database</h1>
+      </header>
+      <main id="main">
+        <div class="section">
+          <h2>The Plan</h2>
+          <div class="section-content">
+            <p>
+              Before we build agents, we need the foundation they'll work with:
+              the data model, the database, the API, and the basic schedule UI.
+              This is the "non-AI" part of the app&mdash;the solid ground the
+              agents will stand on.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Defining the Data</h2>
-        <div class="section-content">
-          <div class="step">Step 22: Create the TypeScript types</div>
-          <p>Create a <code>types</code> folder in your project root with an <code>index.ts</code> file:</p>
-<pre><code>// types/index.ts
+        <div class="section">
+          <h2>Defining the Data</h2>
+          <div class="section-content">
+            <div class="step">Step 22: Create the TypeScript types</div>
+            <p>
+              Create a <code>types</code> folder in your project root with an
+              <code>index.ts</code> file:
+            </p>
+            <pre><code>// types/index.ts
 
 export interface Employee {
   id: number
@@ -61,17 +76,26 @@ export interface ShiftSlot {
   shiftType: string
   employeeName: string | null
 }</code></pre>
-          <p>An <code>Employee</code> has an id, a name, and a flag for whether they're on-call. A <code>ScheduleEntry</code> records who's working which shift on which day of which week. <code>string | null</code> means the employee name can be empty&mdash;because sometimes a shift hasn't been assigned yet.</p>
-          <img src="/fabulosa-books/images/data-model.svg" alt="Diagram showing the relationship between the three types — Employee feeds into ScheduleEntry (via employee_name), ShiftSlot is a simplified view for the UI">
+            <p>
+              An <code>Employee</code> has an id, a name, and a flag for whether
+              they're on-call. A <code>ScheduleEntry</code> records who's
+              working which shift on which day of which week.
+              <code>string | null</code> means the employee name can be
+              empty&mdash;because sometimes a shift hasn't been assigned yet.
+            </p>
+            <img
+              src="/fabulosa-books/images/data-model.svg"
+              alt="Diagram showing the relationship between the three types — Employee feeds into ScheduleEntry (via employee_name), ShiftSlot is a simplified view for the UI"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Utility Belt</h2>
-        <div class="section-content">
-          <div class="step">Step 23: Create helper functions</div>
-          <p>Create <code>lib/utils.ts</code>:</p>
-<pre><code>// lib/utils.ts
+        <div class="section">
+          <h2>The Utility Belt</h2>
+          <div class="section-content">
+            <div class="step">Step 23: Create helper functions</div>
+            <p>Create <code>lib/utils.ts</code>:</p>
+            <pre><code>// lib/utils.ts
 
 export const DAYS_OF_WEEK = [
   'Sunday', 'Monday', 'Tuesday', 'Wednesday',
@@ -117,16 +141,27 @@ export function formatDate(date: Date): string {
     day: 'numeric',
   })
 }</code></pre>
-          <p>Nothing dramatic&mdash;just useful tools. <code>getWeekStartDate</code> figures out what Sunday starts the current week. <code>getShiftsForDay</code> returns the right shift times, accounting for Saturday's later closing.</p>
+            <p>
+              Nothing dramatic&mdash;just useful tools.
+              <code>getWeekStartDate</code> figures out what Sunday starts the
+              current week. <code>getShiftsForDay</code> returns the right shift
+              times, accounting for Saturday's later closing.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Database Layer</h2>
-        <div class="section-content">
-          <div class="step">Step 24: Build the database module</div>
-          <p>This is the longest file in the project, but it's straightforward. Create <code>lib/db.ts</code>. It has two halves: one for Neon (production) and one for local SQLite (development). The app automatically uses the right one based on whether <code>DATABASE_URL</code> exists.</p>
-<pre><code>// lib/db.ts
+        <div class="section">
+          <h2>The Database Layer</h2>
+          <div class="section-content">
+            <div class="step">Step 24: Build the database module</div>
+            <p>
+              This is the longest file in the project, but it's straightforward.
+              Create <code>lib/db.ts</code>. It has two halves: one for Neon
+              (production) and one for local SQLite (development). The app
+              automatically uses the right one based on whether
+              <code>DATABASE_URL</code> exists.
+            </p>
+            <pre><code>// lib/db.ts
 
 import { neon } from '@neondatabase/serverless'
 
@@ -185,11 +220,18 @@ async function initializeNeonSchema() {
     }
   }
 }</code></pre>
-          <p>That <code>UNIQUE</code> constraint on the schedule table is important&mdash;it means you can't accidentally assign two people to the same shift. The database itself enforces the rules.</p>
+            <p>
+              That <code>UNIQUE</code> constraint on the schedule table is
+              important&mdash;it means you can't accidentally assign two people
+              to the same shift. The database itself enforces the rules.
+            </p>
 
-          <div class="step">Step 25: Add the local development database</div>
-          <p>Below the Neon code in <code>lib/db.ts</code>, add the SQLite fallback for local development:</p>
-<pre><code>// ---- sql.js (local dev) helpers ----
+            <div class="step">Step 25: Add the local development database</div>
+            <p>
+              Below the Neon code in <code>lib/db.ts</code>, add the SQLite
+              fallback for local development:
+            </p>
+            <pre><code>// ---- sql.js (local dev) helpers ----
 
 import initSqlJs, { Database as SqlJsDatabase } from 'sql.js'
 import fs from 'fs'
@@ -242,11 +284,17 @@ function initializeLocalSchema() {
   // ... seed employees same as Neon version
   saveLocalDb()
 }</code></pre>
-          <img src="/fabulosa-books/images/dual-database.svg" alt="Dual-database architecture: SQLite for dev, Neon for production">
+            <img
+              src="/fabulosa-books/images/dual-database.svg"
+              alt="Dual-database architecture: SQLite for dev, Neon for production"
+            />
 
-          <div class="step">Step 26: Add the public API functions</div>
-          <p>These are the functions the rest of the app (and our agents) will use:</p>
-<pre><code>// ---- Public API ----
+            <div class="step">Step 26: Add the public API functions</div>
+            <p>
+              These are the functions the rest of the app (and our agents) will
+              use:
+            </p>
+            <pre><code>// ---- Public API ----
 
 export async function getAllEmployees() {
   if (useNeon) {
@@ -268,14 +316,14 @@ export async function getAllEmployees() {
 
 export async function getWeekSchedule(weekStartDate: string) { /* ... */ }
 export async function updateSchedule(weekStartDate, dayOfWeek, shiftType, employeeName) { /* ... */ }</code></pre>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The API Routes</h2>
-        <div class="section-content">
-          <div class="step">Step 27: Create the employees API route</div>
-<pre><code>// app/api/employees/route.ts
+        <div class="section">
+          <h2>The API Routes</h2>
+          <div class="section-content">
+            <div class="step">Step 27: Create the employees API route</div>
+            <pre><code>// app/api/employees/route.ts
 
 import { getAllEmployees } from '@/lib/db'
 import { NextResponse } from 'next/server'
@@ -297,8 +345,8 @@ export async function GET() {
   }
 }</code></pre>
 
-          <div class="step">Step 28: Create the schedule API route</div>
-<pre><code>// app/api/schedule/route.ts
+            <div class="step">Step 28: Create the schedule API route</div>
+            <pre><code>// app/api/schedule/route.ts
 
 import { NextRequest, NextResponse } from 'next/server'
 import { getWeekSchedule, updateSchedule } from '@/lib/db'
@@ -327,16 +375,23 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: 'Failed to update schedule' }, { status: 500 })
   }
 }</code></pre>
-          <img src="/fabulosa-books/images/api-architecture.svg" alt="API architecture: Browser makes GET/PUT requests to API Routes, which call the Database Layer, which connects to Neon or SQLite">
+            <img
+              src="/fabulosa-books/images/api-architecture.svg"
+              alt="API architecture: Browser makes GET/PUT requests to API Routes, which call the Database Layer, which connects to Neon or SQLite"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Schedule UI</h2>
-        <div class="section-content">
-          <div class="step">Step 29: Build the ShiftCell component</div>
-          <p>Create <code>components/ShiftCell.tsx</code> &mdash; each cell in the schedule grid is its own component. When you click it, a dropdown shows all employees:</p>
-<pre><code>// components/ShiftCell.tsx
+        <div class="section">
+          <h2>The Schedule UI</h2>
+          <div class="section-content">
+            <div class="step">Step 29: Build the ShiftCell component</div>
+            <p>
+              Create <code>components/ShiftCell.tsx</code> &mdash; each cell in
+              the schedule grid is its own component. When you click it, a
+              dropdown shows all employees:
+            </p>
+            <pre><code>// components/ShiftCell.tsx
 'use client'
 
 import { Employee } from '@/types'
@@ -377,12 +432,16 @@ export default function ShiftCell({
   )
 }</code></pre>
 
-          <div class="step">Step 30: Build the ScheduleGrid component</div>
-          <p>Create <code>components/ScheduleGrid.tsx</code> &mdash; the main grid with week navigation and shift cells for all 21 slots (3 shifts &times; 7 days).</p>
+            <div class="step">Step 30: Build the ScheduleGrid component</div>
+            <p>
+              Create <code>components/ScheduleGrid.tsx</code> &mdash; the main
+              grid with week navigation and shift cells for all 21 slots (3
+              shifts &times; 7 days).
+            </p>
 
-          <div class="step">Step 31: Wire up the main page</div>
-          <p>Replace <code>app/page.tsx</code>:</p>
-<pre><code>// app/page.tsx
+            <div class="step">Step 31: Wire up the main page</div>
+            <p>Replace <code>app/page.tsx</code>:</p>
+            <pre><code>// app/page.tsx
 import ScheduleGrid from '@/components/ScheduleGrid'
 
 export default function Home() {
@@ -399,30 +458,46 @@ export default function Home() {
   )
 }</code></pre>
 
-          <div class="step">Step 32: Run and verify</div>
-<pre><code>npm run dev</code></pre>
-          <p>Open <code>http://localhost:3000</code>. You should see the schedule grid with week navigation and 21 "Unassigned" cells. Click any cell and pick an employee to verify the assignment works.</p>
-          <img src="/fabulosa-books/images/schedule-grid-mockup.svg" alt="The schedule grid UI with week navigation and shift assignments">
+            <div class="step">Step 32: Run and verify</div>
+            <pre><code>npm run dev</code></pre>
+            <p>
+              Open <code>http://localhost:3000</code>. You should see the
+              schedule grid with week navigation and 21 "Unassigned" cells.
+              Click any cell and pick an employee to verify the assignment
+              works.
+            </p>
+            <img
+              src="/fabulosa-books/images/schedule-grid-mockup.svg"
+              alt="The schedule grid UI with week navigation and shift assignments"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>The Turning Point</h2>
-        <div class="section-content">
-          <p>The schedule app works. You can click each cell, pick an employee, and build a week's schedule one shift at a time. Push it to GitHub and Vercel deploys it automatically.</p>
-          <p>But right now, filling it is manual. Twenty-one cells, twenty-one clicks, twenty-one decisions. Alvin still has to do all the thinking: Who's available? Is this fair? Is the store covered?</p>
-          <p>Let's teach the app to think.</p>
+        <div class="section">
+          <h2>The Turning Point</h2>
+          <div class="section-content">
+            <p>
+              The schedule app works. You can click each cell, pick an employee,
+              and build a week's schedule one shift at a time. Push it to GitHub
+              and Vercel deploys it automatically.
+            </p>
+            <p>
+              But right now, filling it is manual. Twenty-one cells, twenty-one
+              clicks, twenty-one decisions. Alvin still has to do all the
+              thinking: Who's available? Is this fair? Is the store covered?
+            </p>
+            <p>Let's teach the app to think.</p>
+          </div>
         </div>
-      </div>
-
-    </main>
-    <nav class="bottom-nav">
-      <a href="/fabulosa-books/part3.html">&larr; Setting Up Shop</a>
-      <a href="/fabulosa-books/part5.html">Your First Agent &rarr;</a>
-    </nav>
-    <footer>
-      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
-    </footer>
-  </div>
-</body>
+      </main>
+      <nav class="bottom-nav">
+        <a href="/fabulosa-books/part3.html">&larr; Setting Up Shop</a>
+        <a href="/fabulosa-books/part5.html">Your First Agent &rarr;</a>
+      </nav>
+      <footer>
+        Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the
+        real Fabulosa Books in San Francisco's Castro neighborhood.
+      </footer>
+    </div>
+  </body>
 </html>

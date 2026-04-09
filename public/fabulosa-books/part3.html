@@ -1,177 +1,280 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Part 3: Setting Up Shop</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/fabulosa-books/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-  <script>hljs.highlightAll();</script>
-</head>
-<body>
-  <div class="page-wrap">
-    <a href="#main" class="skip-to-content">Skip to content</a>
-    <nav class="site-nav">
-      <a href="/code">&larr; W.S. Gong / Code</a>
-    </nav>
-    <nav class="page-nav">
-      <a href="/fabulosa-books/part2.html">&larr; Previous</a>
-      <a href="/fabulosa-books/part4.html">Next &rarr;</a>
-    </nav>
-    <header>
-      <div class="part-label">Part 3</div>
-      <h1>Setting Up Shop</h1>
-    </header>
-    <main id="main">
-
-      <div class="section">
-        <h2>Before We Write a Single Line of Code</h2>
-        <div class="section-content">
-          <p>Building a web app is a bit like opening a bookstore. Before you arrange the shelves or order inventory, you need a space. You need keys. You need a plan for how things will be organized.</p>
-          <p>In web development, that space is your "development environment"&mdash;the set of tools and accounts that let you write code, test it, and eventually put it online for everyone to see.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Part 3: Setting Up Shop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/fabulosa-books/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+  </head>
+  <body>
+    <div class="page-wrap">
+      <a href="#main" class="skip-to-content">Skip to content</a>
+      <nav class="site-nav">
+        <a href="/code">&larr; W.S. Gong / Code</a>
+      </nav>
+      <nav class="page-nav">
+        <a href="/fabulosa-books/part2.html">&larr; Previous</a>
+        <a href="/fabulosa-books/part4.html">Next &rarr;</a>
+      </nav>
+      <header>
+        <div class="part-label">Part 3</div>
+        <h1>Setting Up Shop</h1>
+      </header>
+      <main id="main">
+        <div class="section">
+          <h2>Before We Write a Single Line of Code</h2>
+          <div class="section-content">
+            <p>
+              Building a web app is a bit like opening a bookstore. Before you
+              arrange the shelves or order inventory, you need a space. You need
+              keys. You need a plan for how things will be organized.
+            </p>
+            <p>
+              In web development, that space is your "development
+              environment"&mdash;the set of tools and accounts that let you
+              write code, test it, and eventually put it online for everyone to
+              see.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>What You'll Need</h2>
-        <div class="section-content">
-          <div class="step">Step 8: Install Node.js</div>
-          <p>Node.js is the engine that runs JavaScript outside of a web browser. When we write our Next.js app, Node.js is what actually runs it on your machine while you're building and testing.</p>
-          <p>Go to <a href="https://nodejs.org">nodejs.org</a> and download the version labeled "LTS" (Long Term Support). Install it like any other program. Then open your terminal and verify:</p>
-<pre><code>node --version</code></pre>
-          <div class="image-placeholder">Terminal showing <code>node --version</code> with output like <code>v22.x.x</code></div>
+        <div class="section">
+          <h2>What You'll Need</h2>
+          <div class="section-content">
+            <div class="step">Step 8: Install Node.js</div>
+            <p>
+              Node.js is the engine that runs JavaScript outside of a web
+              browser. When we write our Next.js app, Node.js is what actually
+              runs it on your machine while you're building and testing.
+            </p>
+            <p>
+              Go to <a href="https://nodejs.org">nodejs.org</a> and download the
+              version labeled "LTS" (Long Term Support). Install it like any
+              other program. Then open your terminal and verify:
+            </p>
+            <pre><code>node --version</code></pre>
+            <div class="image-placeholder">
+              Terminal showing <code>node --version</code> with output like
+              <code>v22.x.x</code>
+            </div>
 
-          <div class="step">Step 9: Install a code editor</div>
-          <p>Download Visual Studio Code from <a href="https://code.visualstudio.com">code.visualstudio.com</a>. It's free, and it's what most developers use.</p>
+            <div class="step">Step 9: Install a code editor</div>
+            <p>
+              Download Visual Studio Code from
+              <a href="https://code.visualstudio.com">code.visualstudio.com</a>.
+              It's free, and it's what most developers use.
+            </p>
 
-          <div class="step">Step 10: Create a GitHub account</div>
-          <p>Sign up at <a href="https://github.com">github.com</a>. GitHub is like a cloud backup for code, but smarter&mdash;it tracks every change you make, so you can always go back if something breaks.</p>
+            <div class="step">Step 10: Create a GitHub account</div>
+            <p>
+              Sign up at <a href="https://github.com">github.com</a>. GitHub is
+              like a cloud backup for code, but smarter&mdash;it tracks every
+              change you make, so you can always go back if something breaks.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Git: Your Safety Net</h2>
-        <div class="section-content">
-          <div class="step">Step 11: Understand what Git does</div>
-          <p>Git tracks changes to your files. Every time you make a meaningful change to your code, you tell Git, "Hey, save this version." Git remembers. If you break something tomorrow, you can go back to today's version.</p>
-          <p>GitHub is where your Git history lives online. Your computer has a copy. GitHub has a copy. They stay in sync. And when we connect GitHub to Vercel later, every time you push new code to GitHub, Vercel will automatically update your live website.</p>
-          <img src="/fabulosa-books/images/git-workflow.svg" alt="Git workflow: code to GitHub to Vercel auto-deploy">
+        <div class="section">
+          <h2>Git: Your Safety Net</h2>
+          <div class="section-content">
+            <div class="step">Step 11: Understand what Git does</div>
+            <p>
+              Git tracks changes to your files. Every time you make a meaningful
+              change to your code, you tell Git, "Hey, save this version." Git
+              remembers. If you break something tomorrow, you can go back to
+              today's version.
+            </p>
+            <p>
+              GitHub is where your Git history lives online. Your computer has a
+              copy. GitHub has a copy. They stay in sync. And when we connect
+              GitHub to Vercel later, every time you push new code to GitHub,
+              Vercel will automatically update your live website.
+            </p>
+            <img
+              src="/fabulosa-books/images/git-workflow.svg"
+              alt="Git workflow: code to GitHub to Vercel auto-deploy"
+            />
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Creating the Project</h2>
-        <div class="section-content">
-          <div class="step">Step 12: Create the Next.js project</div>
-          <p>Open your terminal and run:</p>
-<pre><code>npx create-next-app@latest fabulosa-scheduler</code></pre>
-          <p>When prompted, answer:</p>
-          <ul>
-            <li><strong>TypeScript?</strong> Yes</li>
-            <li><strong>ESLint?</strong> Yes</li>
-            <li><strong>Tailwind CSS?</strong> Yes</li>
-            <li><strong><code>src/</code> directory?</strong> No</li>
-            <li><strong>App Router?</strong> Yes</li>
-            <li><strong>Customize import alias?</strong> No</li>
-          </ul>
+        <div class="section">
+          <h2>Creating the Project</h2>
+          <div class="section-content">
+            <div class="step">Step 12: Create the Next.js project</div>
+            <p>Open your terminal and run:</p>
+            <pre><code>npx create-next-app@latest fabulosa-scheduler</code></pre>
+            <p>When prompted, answer:</p>
+            <ul>
+              <li><strong>TypeScript?</strong> Yes</li>
+              <li><strong>ESLint?</strong> Yes</li>
+              <li><strong>Tailwind CSS?</strong> Yes</li>
+              <li>
+                <strong><code>src/</code> directory?</strong> No
+              </li>
+              <li><strong>App Router?</strong> Yes</li>
+              <li><strong>Customize import alias?</strong> No</li>
+            </ul>
 
-          <div class="step">Step 13: Enter the project and start the dev server</div>
-<pre><code>cd fabulosa-scheduler
+            <div class="step">
+              Step 13: Enter the project and start the dev server
+            </div>
+            <pre><code>cd fabulosa-scheduler
 npm run dev</code></pre>
-          <p>Open your browser and go to <code>http://localhost:3000</code>. You should see the Next.js welcome page.</p>
+            <p>
+              Open your browser and go to <code>http://localhost:3000</code>.
+              You should see the Next.js welcome page.
+            </p>
 
-          <div class="step">Step 14: Install the AI SDK and Zod</div>
-          <p>Stop the dev server (Ctrl+C) and install the packages we'll need for agents:</p>
-<pre><code>npm install ai @ai-sdk/react zod</code></pre>
-          <ul>
-            <li><code>ai</code> &mdash; the core Vercel AI SDK (agents, tools, streaming)</li>
-            <li><code>@ai-sdk/react</code> &mdash; React hooks for chat interfaces (<code>useChat</code>)</li>
-            <li><code>zod</code> &mdash; schema validation for tool inputs</li>
-          </ul>
+            <div class="step">Step 14: Install the AI SDK and Zod</div>
+            <p>
+              Stop the dev server (Ctrl+C) and install the packages we'll need
+              for agents:
+            </p>
+            <pre><code>npm install ai @ai-sdk/react zod</code></pre>
+            <ul>
+              <li>
+                <code>ai</code> &mdash; the core Vercel AI SDK (agents, tools,
+                streaming)
+              </li>
+              <li>
+                <code>@ai-sdk/react</code> &mdash; React hooks for chat
+                interfaces (<code>useChat</code>)
+              </li>
+              <li>
+                <code>zod</code> &mdash; schema validation for tool inputs
+              </li>
+            </ul>
 
-          <div class="step">Step 15: Install the Neon serverless driver</div>
-<pre><code>npm install @neondatabase/serverless</code></pre>
-          <p>For local development, we'll also use a lightweight SQLite stand-in:</p>
-<pre><code>npm install sql.js
+            <div class="step">Step 15: Install the Neon serverless driver</div>
+            <pre><code>npm install @neondatabase/serverless</code></pre>
+            <p>
+              For local development, we'll also use a lightweight SQLite
+              stand-in:
+            </p>
+            <pre><code>npm install sql.js
 npm install --save-dev @types/sql-js</code></pre>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Putting It on GitHub</h2>
-        <div class="section-content">
-          <div class="step">Step 16: Initialize Git and push to GitHub</div>
-<pre><code>git init
+        <div class="section">
+          <h2>Putting It on GitHub</h2>
+          <div class="section-content">
+            <div class="step">Step 16: Initialize Git and push to GitHub</div>
+            <pre><code>git init
 git add -A
 git commit -m "Initial commit: Fabulosa Books multi-agent scheduler"</code></pre>
-          <p>Go to <a href="https://github.com">github.com</a>, click "+", choose "New repository", name it <code>fabulosa-scheduler</code>, and create it. Then run:</p>
-<pre><code>git remote add origin https://github.com/YOUR-USERNAME/fabulosa-scheduler.git
+            <p>
+              Go to <a href="https://github.com">github.com</a>, click "+",
+              choose "New repository", name it <code>fabulosa-scheduler</code>,
+              and create it. Then run:
+            </p>
+            <pre><code>git remote add origin https://github.com/YOUR-USERNAME/fabulosa-scheduler.git
 git branch -M main
 git push -u origin main</code></pre>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Connecting to Vercel</h2>
-        <div class="section-content">
-          <div class="step">Step 17: Deploy to Vercel</div>
-          <p>Go to <a href="https://vercel.com">vercel.com</a> and sign up with your GitHub account. Click "Add New Project," find <code>fabulosa-scheduler</code>, and click "Import." Vercel detects it's a Next.js project automatically. Click "Deploy."</p>
-          <p>Wait about a minute. When it's done, you'll see a celebration screen with a link to your live site.</p>
-          <div class="image-placeholder">Vercel deployment success page with confetti and the live URL</div>
+        <div class="section">
+          <h2>Connecting to Vercel</h2>
+          <div class="section-content">
+            <div class="step">Step 17: Deploy to Vercel</div>
+            <p>
+              Go to <a href="https://vercel.com">vercel.com</a> and sign up with
+              your GitHub account. Click "Add New Project," find
+              <code>fabulosa-scheduler</code>, and click "Import." Vercel
+              detects it's a Next.js project automatically. Click "Deploy."
+            </p>
+            <p>
+              Wait about a minute. When it's done, you'll see a celebration
+              screen with a link to your live site.
+            </p>
+            <div class="image-placeholder">
+              Vercel deployment success page with confetti and the live URL
+            </div>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Adding the Database</h2>
-        <div class="section-content">
-          <div class="step">Step 18: Create a Neon database through Vercel</div>
-          <p>From your Vercel project dashboard, go to the "Storage" tab. Click "Create Database" and choose Neon. Create a free Postgres database and connect it to all three environments (Development, Preview, Production).</p>
-          <p>Vercel creates an environment variable called <code>DATABASE_URL</code> that connects your app to the database automatically.</p>
+        <div class="section">
+          <h2>Adding the Database</h2>
+          <div class="section-content">
+            <div class="step">
+              Step 18: Create a Neon database through Vercel
+            </div>
+            <p>
+              From your Vercel project dashboard, go to the "Storage" tab. Click
+              "Create Database" and choose Neon. Create a free Postgres database
+              and connect it to all three environments (Development, Preview,
+              Production).
+            </p>
+            <p>
+              Vercel creates an environment variable called
+              <code>DATABASE_URL</code> that connects your app to the database
+              automatically.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>Setting Up the AI Gateway</h2>
-        <div class="section-content">
-          <div class="step">Step 19: Get your AI Gateway API key</div>
-          <p>Go to your Vercel dashboard &rarr; AI Gateway &rarr; API Keys. Create a new key.</p>
+        <div class="section">
+          <h2>Setting Up the AI Gateway</h2>
+          <div class="section-content">
+            <div class="step">Step 19: Get your AI Gateway API key</div>
+            <p>
+              Go to your Vercel dashboard &rarr; AI Gateway &rarr; API Keys.
+              Create a new key.
+            </p>
 
-          <div class="step">Step 20: Add the API key to your project</div>
-          <p>In your Vercel project settings, go to Environment Variables and add:</p>
-<pre><code>AI_GATEWAY_API_KEY=your_key_here</code></pre>
-          <p>For local development, pull the environment variables:</p>
-<pre><code>vercel env pull .env.local</code></pre>
+            <div class="step">Step 20: Add the API key to your project</div>
+            <p>
+              In your Vercel project settings, go to Environment Variables and
+              add:
+            </p>
+            <pre><code>AI_GATEWAY_API_KEY=your_key_here</code></pre>
+            <p>For local development, pull the environment variables:</p>
+            <pre><code>vercel env pull .env.local</code></pre>
+          </div>
         </div>
-      </div>
 
-      <div class="section">
-        <h2>What We've Done</h2>
-        <div class="section-content">
-          <div class="step">Step 21: Verify your setup</div>
-          <p>You now have:</p>
-          <ul>
-            <li>A Next.js project with the AI SDK, Zod, and Neon driver installed</li>
-            <li>A GitHub repository backing up every change</li>
-            <li>A Vercel deployment that auto-publishes on every push</li>
-            <li>A Neon database ready to store schedule data</li>
-            <li>An AI Gateway API key for model access</li>
-          </ul>
-          <p>The scaffolding is up. Now let's build the foundation.</p>
+        <div class="section">
+          <h2>What We've Done</h2>
+          <div class="section-content">
+            <div class="step">Step 21: Verify your setup</div>
+            <p>You now have:</p>
+            <ul>
+              <li>
+                A Next.js project with the AI SDK, Zod, and Neon driver
+                installed
+              </li>
+              <li>A GitHub repository backing up every change</li>
+              <li>A Vercel deployment that auto-publishes on every push</li>
+              <li>A Neon database ready to store schedule data</li>
+              <li>An AI Gateway API key for model access</li>
+            </ul>
+            <p>The scaffolding is up. Now let's build the foundation.</p>
+          </div>
         </div>
-      </div>
-
-    </main>
-    <nav class="bottom-nav">
-      <a href="/fabulosa-books/part2.html">&larr; How Agents Think</a>
-      <a href="/fabulosa-books/part4.html">The Foundation &rarr;</a>
-    </nav>
-    <footer>
-      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
-    </footer>
-  </div>
-</body>
+      </main>
+      <nav class="bottom-nav">
+        <a href="/fabulosa-books/part2.html">&larr; How Agents Think</a>
+        <a href="/fabulosa-books/part4.html">The Foundation &rarr;</a>
+      </nav>
+      <footer>
+        Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the
+        real Fabulosa Books in San Francisco's Castro neighborhood.
+      </footer>
+    </div>
+  </body>
 </html>
