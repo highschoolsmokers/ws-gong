@@ -14,6 +14,23 @@ export const metadata: Metadata = {
 
 type Tag = "AI" | "Writing" | "MCP" | "Design" | "Web";
 
+const docEngineeringProjects: {
+  href: string;
+  title: string;
+  description: string;
+  stack: string[];
+  tags: Tag[];
+}[] = [
+  {
+    href: "/fabulosa-books/",
+    title: "The Fabulosa Books Scheduler: Multi-Agent Orchestration",
+    description:
+      "A tutorial walking through a multi-agent system that coordinates book scheduling across inventory, calendar, and notification services.",
+    stack: ["Python", "Anthropic SDK", "LangGraph"],
+    tags: ["AI"],
+  },
+];
+
 const codeProjects: {
   href: string;
   title: string;
@@ -74,6 +91,38 @@ const codeProjects: {
 export default function Code() {
   return (
     <div className="space-y-0">
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <h2 className="text-xl md:text-2xl font-black leading-tight">
+          Documentation Engineering
+        </h2>
+        <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
+          {docEngineeringProjects.map((p) => (
+            <li key={p.href} className="py-6">
+              <Link
+                href={p.href}
+                className="group block hover:opacity-80 transition-opacity"
+              >
+                <span className="text-sm font-semibold">{p.title}</span>
+                <span className="text-sm block mt-1 leading-relaxed">
+                  {p.description}
+                </span>
+                <span className="text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500">
+                  <span>{p.stack.join(" · ")}</span>
+                  {p.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
+
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-xl md:text-2xl font-black leading-tight">Code</h2>
         <ul className="divide-y divide-neutral-200 border-t border-neutral-200">

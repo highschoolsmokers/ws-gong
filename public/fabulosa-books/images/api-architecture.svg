@@ -1,0 +1,68 @@
+<svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="260" fill="#FFF8F0"/>
+  <text x="350" y="30" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">API Architecture</text>
+
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Browser -->
+    <rect x="20" y="70" width="130" height="100" fill="white" stroke="#D4A574" stroke-width="2" rx="8"/>
+    <rect x="20" y="70" width="130" height="28" fill="#D4A574" rx="8"/>
+    <rect x="20" y="86" width="130" height="12" fill="#D4A574"/>
+    <text x="85" y="90" font-size="13" font-weight="bold" text-anchor="middle" fill="white">Browser</text>
+    <text x="85" y="118" font-size="10" text-anchor="middle" fill="#5B5B5B">Schedule grid</text>
+    <text x="85" y="132" font-size="10" text-anchor="middle" fill="#5B5B5B">makes requests</text>
+    <text x="85" y="158" font-size="9" font-weight="bold" text-anchor="middle" fill="#D4A574">GET &amp; PUT</text>
+
+    <!-- Arrow: Browser -> API Routes -->
+    <line x1="150" y1="120" x2="198" y2="120" stroke="#8B6F5C" stroke-width="2" marker-end="url(#arrow-brown)"/>
+    <text x="174" y="112" font-size="8" text-anchor="middle" fill="#8B6F5C">/api/</text>
+    <text x="174" y="138" font-size="8" text-anchor="middle" fill="#8B6F5C">schedule</text>
+
+    <!-- API Routes -->
+    <rect x="200" y="70" width="150" height="100" fill="white" stroke="#5B8A8A" stroke-width="2" rx="8"/>
+    <rect x="200" y="70" width="150" height="28" fill="#5B8A8A" rx="8"/>
+    <rect x="200" y="86" width="150" height="12" fill="#5B8A8A"/>
+    <text x="275" y="90" font-size="13" font-weight="bold" text-anchor="middle" fill="white">API Routes</text>
+    <text x="275" y="118" font-size="10" text-anchor="middle" fill="#5B5B5B">Next.js route</text>
+    <text x="275" y="132" font-size="10" text-anchor="middle" fill="#5B5B5B">handlers</text>
+    <text x="275" y="158" font-size="9" font-weight="bold" text-anchor="middle" fill="#5B8A8A">GET() &amp; PUT()</text>
+
+    <!-- Arrow: API Routes -> Database Layer -->
+    <line x1="350" y1="120" x2="398" y2="120" stroke="#8B6F5C" stroke-width="2" marker-end="url(#arrow-brown)"/>
+    <text x="374" y="112" font-size="8" text-anchor="middle" fill="#8B6F5C">calls</text>
+
+    <!-- Database Layer -->
+    <rect x="400" y="70" width="140" height="100" fill="white" stroke="#6B2D3E" stroke-width="2" rx="8"/>
+    <rect x="400" y="70" width="140" height="28" fill="#6B2D3E" rx="8"/>
+    <rect x="400" y="86" width="140" height="12" fill="#6B2D3E"/>
+    <text x="470" y="90" font-size="13" font-weight="bold" text-anchor="middle" fill="white">Database Layer</text>
+    <text x="470" y="118" font-size="10" text-anchor="middle" fill="#5B5B5B">lib/db.ts</text>
+    <text x="470" y="132" font-size="10" text-anchor="middle" fill="#5B5B5B">abstraction layer</text>
+    <text x="470" y="158" font-size="9" font-weight="bold" text-anchor="middle" fill="#6B2D3E">Same interface</text>
+
+    <!-- Arrow: DB Layer -> Databases -->
+    <line x1="540" y1="105" x2="588" y2="88" stroke="#8B6F5C" stroke-width="2" marker-end="url(#arrow-brown)"/>
+    <line x1="540" y1="135" x2="588" y2="152" stroke="#8B6F5C" stroke-width="2" marker-end="url(#arrow-brown)"/>
+
+    <!-- Neon -->
+    <rect x="590" y="60" width="90" height="42" fill="#5B8A8A" stroke="#3D6B6B" stroke-width="2" rx="8"/>
+    <text x="635" y="78" font-size="12" font-weight="bold" text-anchor="middle" fill="white">Neon</text>
+    <text x="635" y="94" font-size="8" text-anchor="middle" fill="#C8E0E0">Production</text>
+
+    <!-- SQLite -->
+    <rect x="590" y="138" width="90" height="42" fill="#D4A574" stroke="#8B6F5C" stroke-width="2" rx="8"/>
+    <text x="635" y="156" font-size="12" font-weight="bold" text-anchor="middle" fill="white">SQLite</text>
+    <text x="635" y="172" font-size="8" text-anchor="middle" fill="white">Development</text>
+
+    <!-- Bottom annotation -->
+    <rect x="80" y="200" width="540" height="44" fill="#F5E6D3" stroke="#D4A574" stroke-width="1" rx="6"/>
+    <text x="350" y="218" font-size="11" text-anchor="middle" fill="#6B2D3E">The browser never talks to the database directly. Every request flows through</text>
+    <text x="350" y="234" font-size="11" text-anchor="middle" fill="#6B2D3E">Next.js API routes, which call the database layer. The DB layer picks Neon or SQLite automatically.</text>
+  </g>
+
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrow-brown" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8B6F5C"/>
+    </marker>
+  </defs>
+</svg>

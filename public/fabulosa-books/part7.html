@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Part 7: Making It Real</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/fabulosa-books/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
+</head>
+<body>
+  <div class="page-wrap">
+    <a href="#main" class="skip-to-content">Skip to content</a>
+    <nav class="site-nav">
+      <a href="/code">&larr; W.S. Gong / Code</a>
+    </nav>
+    <nav class="page-nav">
+      <a href="/fabulosa-books/part6.html">&larr; Previous</a>
+      <span class="disabled">Next &rarr;</span>
+    </nav>
+    <header>
+      <div class="part-label">Part 7</div>
+      <h1>Making It Real</h1>
+    </header>
+    <main id="main">
+
+      <div class="section">
+        <h2>The Communication Agent</h2>
+        <div class="section-content">
+          <p>There's one more agent worth building: the Communication Agent. While the other three handle the <em>thinking</em>, this one handles the <em>talking</em>&mdash;drafting human-readable summaries and notifications.</p>
+
+          <div class="step">Step 50: Create the Communication Agent</div>
+          <p>Create <code>lib/tools/communication-tools.ts</code>:</p>
+<pre><code>// lib/tools/communication-tools.ts
+
+export const formatWeekSummaryTool = tool({
+  description: 'Generate a formatted summary of a week\'s schedule,
+    suitable for posting or sending to the team.',
+  inputSchema: z.object({
+    weekStart: z.string().describe('Week start date in YYYY-MM-DD format'),
+  }),
+  execute: async ({ weekStart }) =&gt; {
+    const [schedule, employees] = await Promise.all([
+      getWeekSchedule(weekStart), getAllEmployees(),
+    ])
+
+    const byDay: Record&lt;number, Record&lt;string, string&gt;&gt; = {}
+    for (let d = 0; d &lt; 7; d++) {
+      byDay[d] = {}
+      for (const shift of ['opening', 'mid', 'closing']) {
+        const entry = schedule.find(
+          s =&gt; s.day_of_week === d &amp;&amp; s.shift_type === shift
+        )
+        byDay[d][shift] = entry?.employee_name || '(unassigned)'
+      }
+    }
+
+    return {
+      weekStart,
+      scheduleByDay: Object.entries(byDay).map(([day, shifts]) =&gt; ({
+        day: DAYS_OF_WEEK[Number(day)],
+        opening: shifts.opening,
+        mid: shifts.mid,
+        closing: shifts.closing,
+      })),
+      totalAssigned: schedule.filter(s =&gt; s.employee_name).length,
+      gaps: 21 - schedule.filter(s =&gt; s.employee_name).length,
+    }
+  },
+})
+
+export const getEmployeeScheduleTool = tool({
+  description: 'Get a specific employee\'s shifts for the week.',
+  inputSchema: z.object({
+    employeeName: z.string(),
+    weekStart: z.string(),
+  }),
+  execute: async ({ employeeName, weekStart }) =&gt; {
+    const schedule = await getWeekSchedule(weekStart)
+    const shifts = schedule
+      .filter(s =&gt; s.employee_name === employeeName)
+      .map(s =&gt; ({
+        day: DAYS_OF_WEEK[s.day_of_week],
+        shift: s.shift_type,
+      }))
+
+    return { employee: employeeName, weekStart, shifts, totalShifts: shifts.length }
+  },
+})</code></pre>
+
+          <p>Create <code>lib/agents/communication-agent.ts</code>:</p>
+<pre><code>// lib/agents/communication-agent.ts
+
+export const communicationAgent = new ToolLoopAgent({
+  model: 'anthropic/claude-sonnet-4.5',
+  instructions: `You are the Communication Agent for Fabulosa Books.
+
+Your job is to create clear, friendly, human-readable schedule
+communications. You draft messages that could be posted in the
+breakroom, sent in a group text, or shared in a team chat.
+
+Tone guidelines:
+- Warm and collegial — this is a small, close-knit team
+- Use first names
+- Be concise but complete
+- For individual schedules, mention notable details
+- For weekly summaries, format as a clean, readable table
+
+Example tone: "Hey team! Here's next week's schedule. Marcus, you've
+got Saturday closing (2-9pm) — thanks for taking that one. Let Alvin
+know ASAP if anything doesn't work."`,
+  tools: {
+    formatWeekSummary: formatWeekSummaryTool,
+    getEmployeeSchedule: getEmployeeScheduleTool,
+  },
+})</code></pre>
+
+          <div class="step">Step 51: Add the Communication Agent to the coordinator</div>
+          <p>Update <code>lib/agents/coordinator-agent.ts</code> to include the new subagent:</p>
+<pre><code>// Add to the coordinator's tools:
+const draftCommunicationSubagent = tool({
+  description: 'Ask the Communication Agent to draft a human-readable
+    schedule summary, notification, or message for the team.',
+  inputSchema: z.object({
+    question: z.string().describe('What to draft or format'),
+  }),
+  execute: async ({ question }) =&gt; {
+    const result = await communicationAgent.generate({
+      messages: [{ role: 'user', content: question }],
+    })
+    return { answer: result.text }
+  },
+})
+
+// Updated coordinator instructions mention four specialists:
+// 1. Availability Agent
+// 2. Fairness Agent
+// 3. Coverage Agent
+// 4. Communication Agent</code></pre>
+          <img src="/fabulosa-books/images/agent-architecture.svg" alt="Updated architecture with four specialist agents">
+
+          <div class="step">Step 52: Test the Communication Agent</div>
+          <p>Try:</p>
+          <ul>
+            <li><strong>"Draft the team schedule for this week"</strong> &mdash; The coordinator calls the Communication Agent, which formats a clean, readable summary.</li>
+            <li><strong>"What's Billy's schedule this week?"</strong> &mdash; A personal schedule summary.</li>
+            <li><strong>"Write a message telling the team about next week's schedule"</strong> &mdash; A friendly notification draft.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Error Handling and Guardrails</h2>
+        <div class="section-content">
+          <div class="step">Step 53: Handle impossible schedules gracefully</div>
+          <p>What happens when the agents can't find a valid schedule? Maybe half the team is on vacation. Maybe there's an event requiring extra staff. The coordinator should explain <em>what</em> it couldn't solve and <em>why</em>, rather than failing silently.</p>
+          <p>Add to the coordinator's instructions:</p>
+<pre><code>When you cannot create a complete schedule:
+- Explain which constraints conflict
+- Fill what you can and clearly mark remaining gaps
+- Suggest solutions: "Consider asking Johnny Ray or Carly for extra on-call shifts"
+- Never silently leave shifts unassigned — always flag gaps explicitly</code></pre>
+          <div class="image-placeholder">The coordinator gracefully handling a difficult week &mdash; explaining "I was able to fill 18 of 21 shifts. The remaining 3 gaps are..." with specific suggestions</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Cost and Performance</h2>
+        <div class="section-content">
+          <div class="step">Step 54: Understand the cost implications</div>
+          <p>Each agent call uses an AI model. In a multi-agent system, the coordinator might call 3&ndash;4 subagents per request, each of which might make 2&ndash;3 tool calls. That's real usage.</p>
+          <p>Practical guidance:</p>
+          <ul>
+            <li>The coordinator needs the most capable model since it orchestrates complex reasoning. <code>anthropic/claude-sonnet-4.5</code> is a good default.</li>
+            <li>For simpler agents (Coverage Agent, which mostly validates rules), you could use a faster, cheaper model like <code>anthropic/claude-haiku-4.5</code>.</li>
+            <li>The AI Gateway tracks usage across all providers. Check your dashboard to monitor costs.</li>
+          </ul>
+          <p>To use a cheaper model for a specific agent, just change the model string:</p>
+<pre><code>// In coverage-agent.ts — this agent's job is simple enough for Haiku
+export const coverageAgent = new ToolLoopAgent({
+  model: 'anthropic/claude-haiku-4.5',
+  // ... rest stays the same
+})</code></pre>
+          <div class="image-placeholder">Vercel AI Gateway usage dashboard showing model usage breakdown by agent</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Deploy the Final Version</h2>
+        <div class="section-content">
+          <div class="step">Step 55: Push the complete system</div>
+<pre><code>git add -A
+git commit -m "Complete multi-agent system: Communication Agent, error handling, cost optimization"
+git push</code></pre>
+          <p>Vercel deploys automatically. Your complete multi-agent scheduling system is live.</p>
+          <img src="/fabulosa-books/images/complete-architecture.svg" alt="The complete multi-agent scheduling system">
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>What You've Learned</h2>
+        <div class="section-content">
+          <table>
+            <thead>
+              <tr><th>Concept</th><th>What You Learned</th><th>Where</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>AI Agents</strong></td><td>Programs with goals and tools that reason toward solutions</td><td>Part 2</td></tr>
+              <tr><td><strong>Tools</strong></td><td>Specific capabilities (database queries, validation) given to agents</td><td>Parts 5&ndash;6</td></tr>
+              <tr><td><strong>The Tool Loop</strong></td><td>Think &rarr; use tool &rarr; observe &rarr; think again &rarr; respond</td><td>Part 5</td></tr>
+              <tr><td><strong>Specialization</strong></td><td>Breaking complex problems into focused agents</td><td>Part 6</td></tr>
+              <tr><td><strong>Orchestration</strong></td><td>A coordinator agent that delegates to specialists via tool calls</td><td>Part 6</td></tr>
+              <tr><td><strong>Subagent Pattern</strong></td><td>Wrapping agents as tools for other agents to call</td><td>Part 6</td></tr>
+              <tr><td><strong>Streaming UI</strong></td><td>Real-time agent activity in the browser</td><td>Parts 5&ndash;6</td></tr>
+              <tr><td><strong>Type Safety</strong></td><td><code>InferAgentUIMessage</code> for typed tool results in React</td><td>Part 5</td></tr>
+              <tr><td><strong>Graceful Degradation</strong></td><td>Handling impossible constraints transparently</td><td>Part 7</td></tr>
+              <tr><td><strong>Cost Management</strong></td><td>Using appropriate models for different agent complexity levels</td><td>Part 7</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>What's Next</h2>
+        <div class="section-content">
+          <p>Ideas for extending the system:</p>
+          <ul>
+            <li><strong>Employee self-service:</strong> An agent that handles shift swap requests between employees</li>
+            <li><strong>Calendar integration:</strong> Connect to Google Calendar so the agent knows about personal conflicts</li>
+            <li><strong>Event scheduling:</strong> A specialist agent for staffing readings, signings, and community events</li>
+            <li><strong>Authentication:</strong> Role-based access so only Alvin and Melissa can trigger full reschedules</li>
+            <li><strong>Notifications:</strong> Connect the Communication Agent to email or SMS</li>
+          </ul>
+          <p>The patterns you've learned&mdash;tools, agents, orchestration, subagents&mdash;apply to any domain. Customer support systems, content pipelines, data analysis workflows, DevOps automation. Anywhere you have a complex task that benefits from specialized reasoning coordinated by a central intelligence, multi-agent orchestration is the architecture.</p>
+          <p>For Fabulosa Books, the paper schedule on the breakroom wall can finally retire. Not just because the schedule is digital now&mdash;but because the <em>thinking</em> is automated. Alvin can focus on curating books, hosting events, and running the store he loves. The agents handle the rest.</p>
+        </div>
+      </div>
+
+    </main>
+    <nav class="bottom-nav">
+      <a href="/fabulosa-books/part6.html">&larr; The Specialist Team</a>
+      <a href="/fabulosa-books/index.html">Back to Contents &rarr;</a>
+    </nav>
+    <footer>
+      Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the real Fabulosa Books in San Francisco's Castro neighborhood.
+    </footer>
+  </div>
+</body>
+</html>

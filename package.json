@@ -29,7 +29,10 @@
       "@sentry/cli",
       "sharp",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "nodemailer@<=8.0.4": ">=8.0.5"
+    }
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

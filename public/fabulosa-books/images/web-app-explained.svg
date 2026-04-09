@@ -1,0 +1,131 @@
+<svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="700" height="500" fill="#FFF8F0"/>
+
+  <!-- Title -->
+  <text x="350" y="40" font-size="28" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+    What Is a Web App?
+  </text>
+
+  <!-- Section 1: Website -->
+  <g>
+    <!-- Box -->
+    <rect x="20" y="80" width="140" height="150" fill="#F5E6D3" stroke="#D4A574" stroke-width="2" rx="8"/>
+
+    <!-- Icon: Monitor -->
+    <rect x="50" y="100" width="80" height="50" fill="white" stroke="#8B6F5C" stroke-width="2" rx="4"/>
+    <rect x="45" y="155" width="90" height="8" fill="#8B6F5C" rx="4"/>
+
+    <!-- Label -->
+    <text x="90" y="175" font-size="13" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Website
+    </text>
+    <text x="90" y="195" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      You read info
+    </text>
+    <text x="90" y="210" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      (one-way)
+    </text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <g>
+    <line x1="165" y1="155" x2="195" y2="155" stroke="#D4A574" stroke-width="2"/>
+    <polygon points="195,155 185,150 185,160" fill="#D4A574"/>
+    <text x="180" y="150" font-size="10" fill="#D4A574" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">read</text>
+  </g>
+
+  <!-- Section 2: Web App -->
+  <g>
+    <!-- Box -->
+    <rect x="210" y="80" width="140" height="150" fill="#E8D9CB" stroke="#5B8A8A" stroke-width="2" rx="8"/>
+
+    <!-- Icon: Interactive -->
+    <rect x="240" y="100" width="80" height="50" fill="white" stroke="#5B8A8A" stroke-width="2" rx="4"/>
+    <!-- Plus icon inside -->
+    <line x1="270" y1="115" x2="310" y2="115" stroke="#5B8A8A" stroke-width="3"/>
+    <line x1="290" y1="95" x2="290" y2="135" stroke="#5B8A8A" stroke-width="3"/>
+
+    <rect x="235" y="155" width="90" height="8" fill="#5B8A8A" rx="4"/>
+
+    <!-- Label -->
+    <text x="280" y="175" font-size="13" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Web App
+    </text>
+    <text x="280" y="195" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      You click, type, save
+    </text>
+    <text x="280" y="210" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      (two-way)
+    </text>
+  </g>
+
+  <!-- Bidirectional arrows -->
+  <g>
+    <!-- Left arrow -->
+    <line x1="355" y1="155" x2="385" y2="155" stroke="#5B8A8A" stroke-width="2"/>
+    <polygon points="385,155 375,150 375,160" fill="#5B8A8A"/>
+    <!-- Right arrow -->
+    <line x1="385" y1="125" x2="355" y2="125" stroke="#5B8A8A" stroke-width="2"/>
+    <polygon points="355,125 365,120 365,130" fill="#5B8A8A"/>
+  </g>
+
+  <!-- Section 3: Phone App -->
+  <g>
+    <!-- Box -->
+    <rect x="400" y="80" width="140" height="150" fill="#F5E6D3" stroke="#D4A574" stroke-width="2" rx="8"/>
+
+    <!-- Icon: Phone -->
+    <rect x="430" y="100" width="50" height="80" fill="white" stroke="#8B6F5C" stroke-width="2" rx="4"/>
+    <circle cx="455" cy="175" r="3" fill="#8B6F5C"/>
+
+    <!-- Label -->
+    <text x="470" y="195" font-size="13" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+      Phone App
+    </text>
+    <text x="470" y="215" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      Only on that
+    </text>
+    <text x="470" y="230" font-size="11" text-anchor="middle" fill="#5B5B5B" font-family="system-ui, -apple-system, sans-serif">
+      one phone
+    </text>
+  </g>
+
+  <!-- Bottom Section: Web App Everywhere -->
+  <text x="350" y="280" font-size="18" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">
+    A Web App Works Everywhere
+  </text>
+
+  <!-- Cloud in center -->
+  <ellipse cx="350" cy="370" rx="90" ry="50" fill="#E8D9CB" stroke="#5B8A8A" stroke-width="2"/>
+  <text x="350" y="375" font-size="13" font-weight="bold" text-anchor="middle" fill="#5B8A8A" font-family="system-ui, -apple-system, sans-serif">
+    Schedule App
+  </text>
+
+  <!-- Phone -->
+  <g>
+    <rect x="80" y="310" width="45" height="75" fill="white" stroke="#8B6F5C" stroke-width="2" rx="4"/>
+    <circle cx="102.5" cy="375" r="2" fill="#8B6F5C"/>
+    <text x="102.5" y="400" font-size="11" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">Phone</text>
+    <!-- Connection line -->
+    <line x1="125" y1="347" x2="260" y2="347" stroke="#5B8A8A" stroke-width="2"/>
+  </g>
+
+  <!-- Laptop -->
+  <g>
+    <rect x="615" y="320" width="55" height="35" fill="white" stroke="#8B6F5C" stroke-width="2" rx="3"/>
+    <rect x="610" y="358" width="65" height="6" fill="#8B6F5C" rx="2"/>
+    <text x="642.5" y="405" font-size="11" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">Laptop</text>
+    <!-- Connection line -->
+    <line x1="615" y1="347" x2="440" y2="347" stroke="#5B8A8A" stroke-width="2"/>
+  </g>
+
+  <!-- Tablet -->
+  <g>
+    <rect x="320" y="440" width="60" height="45" fill="white" stroke="#8B6F5C" stroke-width="2" rx="4"/>
+    <circle cx="350" cy="490" r="2" fill="#8B6F5C"/>
+    <text x="350" y="415" font-size="11" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">Tablet</text>
+    <!-- Connection line -->
+    <line x1="350" y1="420" x2="350" y2="320" stroke="#5B8A8A" stroke-width="2"/>
+  </g>
+</svg>
