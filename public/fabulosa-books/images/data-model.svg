@@ -1,0 +1,65 @@
+<svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="700" height="320" fill="#FFF8F0"/>
+  <text x="350" y="30" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">Data Model Relationships</text>
+
+  <g font-family="system-ui, -apple-system, sans-serif">
+    <!-- Employee box -->
+    <rect x="30" y="60" width="180" height="140" fill="white" stroke="#D4A574" stroke-width="2" rx="8"/>
+    <rect x="30" y="60" width="180" height="32" fill="#D4A574" rx="8"/>
+    <rect x="30" y="80" width="180" height="12" fill="#D4A574"/>
+    <text x="120" y="82" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Employee</text>
+    <text x="46" y="114" font-size="11" fill="#5B5B5B">id: <tspan fill="#6B2D3E" font-weight="bold">number</tspan></text>
+    <text x="46" y="132" font-size="11" fill="#5B5B5B">name: <tspan fill="#6B2D3E" font-weight="bold">string</tspan></text>
+    <text x="46" y="150" font-size="11" fill="#5B5B5B">is_on_call: <tspan fill="#6B2D3E" font-weight="bold">number</tspan></text>
+    <text x="120" y="182" font-size="9" text-anchor="middle" fill="#8B6F5C">The source of truth</text>
+    <text x="120" y="193" font-size="9" text-anchor="middle" fill="#8B6F5C">for who works here</text>
+
+    <!-- ScheduleEntry box -->
+    <rect x="260" y="60" width="200" height="190" fill="white" stroke="#5B8A8A" stroke-width="2" rx="8"/>
+    <rect x="260" y="60" width="200" height="32" fill="#5B8A8A" rx="8"/>
+    <rect x="260" y="80" width="200" height="12" fill="#5B8A8A"/>
+    <text x="360" y="82" font-size="14" font-weight="bold" text-anchor="middle" fill="white">ScheduleEntry</text>
+    <text x="276" y="114" font-size="11" fill="#5B5B5B">id: <tspan fill="#6B2D3E" font-weight="bold">number</tspan></text>
+    <text x="276" y="132" font-size="11" fill="#5B5B5B">day_of_week: <tspan fill="#6B2D3E" font-weight="bold">number</tspan></text>
+    <text x="276" y="150" font-size="11" fill="#5B5B5B">shift_type: <tspan fill="#6B2D3E" font-weight="bold">string</tspan></text>
+    <text x="276" y="168" font-size="11" fill="#5B5B5B">employee_name: <tspan fill="#6B2D3E" font-weight="bold">string | null</tspan></text>
+    <text x="276" y="186" font-size="11" fill="#5B5B5B">week_start_date: <tspan fill="#6B2D3E" font-weight="bold">string</tspan></text>
+    <text x="360" y="220" font-size="9" text-anchor="middle" fill="#8B6F5C">Who works which shift,</text>
+    <text x="360" y="231" font-size="9" text-anchor="middle" fill="#8B6F5C">which day, which week</text>
+
+    <!-- ShiftSlot box -->
+    <rect x="510" y="60" width="160" height="155" fill="white" stroke="#8B6F5C" stroke-width="2" rx="8"/>
+    <rect x="510" y="60" width="160" height="32" fill="#8B6F5C" rx="8"/>
+    <rect x="510" y="80" width="160" height="12" fill="#8B6F5C"/>
+    <text x="590" y="82" font-size="14" font-weight="bold" text-anchor="middle" fill="white">ShiftSlot</text>
+    <text x="526" y="114" font-size="11" fill="#5B5B5B">dayOfWeek: <tspan fill="#6B2D3E" font-weight="bold">number</tspan></text>
+    <text x="526" y="132" font-size="11" fill="#5B5B5B">shiftType: <tspan fill="#6B2D3E" font-weight="bold">string</tspan></text>
+    <text x="526" y="150" font-size="11" fill="#5B5B5B">employeeName: <tspan fill="#6B2D3E" font-weight="bold">string | null</tspan></text>
+    <text x="590" y="182" font-size="9" text-anchor="middle" fill="#8B6F5C">Simplified view</text>
+    <text x="590" y="193" font-size="9" text-anchor="middle" fill="#8B6F5C">for the UI grid</text>
+
+    <!-- Arrow: Employee -> ScheduleEntry -->
+    <line x1="210" y1="130" x2="258" y2="130" stroke="#D4A574" stroke-width="2" marker-end="url(#arrow-tan)"/>
+    <text x="234" y="122" font-size="9" text-anchor="middle" fill="#8B6F5C">feeds</text>
+    <text x="234" y="144" font-size="8" text-anchor="middle" fill="#5B5B5B">via employee_name</text>
+
+    <!-- Arrow: ScheduleEntry -> ShiftSlot -->
+    <line x1="460" y1="130" x2="508" y2="130" stroke="#5B8A8A" stroke-width="2" marker-end="url(#arrow-teal)"/>
+    <text x="484" y="122" font-size="9" text-anchor="middle" fill="#8B6F5C">maps to</text>
+    <text x="484" y="144" font-size="8" text-anchor="middle" fill="#5B5B5B">camelCase</text>
+
+    <!-- Bottom annotation -->
+    <rect x="120" y="272" width="460" height="36" fill="#F5E6D3" stroke="#D4A574" stroke-width="1" rx="6"/>
+    <text x="350" y="294" font-size="11" text-anchor="middle" fill="#6B2D3E">Employee is stored in the DB. ScheduleEntry links employees to shifts. ShiftSlot is the UI-friendly shape.</text>
+  </g>
+
+  <!-- Arrow markers -->
+  <defs>
+    <marker id="arrow-tan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#D4A574"/>
+    </marker>
+    <marker id="arrow-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5B8A8A"/>
+    </marker>
+  </defs>
+</svg>
