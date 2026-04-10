@@ -310,7 +310,7 @@ export default function ProfileEditor() {
             </span>
           )}
           {status && (
-            <span className="text-xs text-neutral-400 ml-3">{status}</span>
+            <span className="text-xs text-neutral-500 ml-3">{status}</span>
           )}
         </div>
       </section>

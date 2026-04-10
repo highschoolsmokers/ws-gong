@@ -1,66 +1,61 @@
-export interface ContactEntry {
-  label: string;
-  url: string;
-  type: "web" | "email" | "linkedin";
-}
+import { z } from "zod";
 
-export interface EducationEntry {
-  dates: string;
-  institution: string;
-  degree: string;
-  details?: string | null;
-}
+const contactEntrySchema = z.object({
+  label: z.string(),
+  url: z.string(),
+  type: z.enum(["web", "email", "linkedin"]),
+});
 
-export interface ExperienceEntry {
-  company: string;
-  dates: string;
-  title: string;
-  description: string;
-  location?: string | null;
-}
+const educationEntrySchema = z.object({
+  dates: z.string(),
+  institution: z.string(),
+  degree: z.string(),
+  details: z.string().nullable().optional(),
+});
 
-export interface EarlierExperienceEntry {
-  company: string;
-  title: string;
-  dates: string;
-}
+const experienceEntrySchema = z.object({
+  company: z.string(),
+  dates: z.string(),
+  title: z.string(),
+  description: z.string(),
+  location: z.string().nullable().optional(),
+});
 
-export interface SkillCategory {
-  heading: string;
-  items: string;
-}
+const earlierExperienceEntrySchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  dates: z.string(),
+});
 
-export interface Profile {
-  name: { first: string; last: string };
-  title: string;
-  contact: ContactEntry[];
-  about: string[];
-  education: EducationEntry[];
-  professional_development: string[];
-  skills: string;
-  skill_categories: SkillCategory[];
-  experience: ExperienceEntry[];
-  earlier_experience: EarlierExperienceEntry[];
-}
+const skillCategorySchema = z.object({
+  heading: z.string(),
+  items: z.string(),
+});
+
+const profileSchema = z.object({
+  name: z.object({ first: z.string(), last: z.string() }),
+  title: z.string().default(""),
+  contact: z.array(contactEntrySchema).default([]),
+  about: z.array(z.string()).default([]),
+  education: z.array(educationEntrySchema).default([]),
+  professional_development: z.array(z.string()).default([]),
+  skills: z.string().default(""),
+  skill_categories: z.array(skillCategorySchema).default([]),
+  experience: z.array(experienceEntrySchema).default([]),
+  earlier_experience: z.array(earlierExperienceEntrySchema).default([]),
+});
+
+export type ContactEntry = z.infer<typeof contactEntrySchema>;
+export type EducationEntry = z.infer<typeof educationEntrySchema>;
+export type ExperienceEntry = z.infer<typeof experienceEntrySchema>;
+export type EarlierExperienceEntry = z.infer<
+  typeof earlierExperienceEntrySchema
+>;
+export type SkillCategory = z.infer<typeof skillCategorySchema>;
+export type Profile = z.infer<typeof profileSchema>;
 
 export function validateProfile(data: unknown): Profile {
-  const d = data as Record<string, unknown>;
-  if (!d || typeof d !== "object") throw new Error("Profile must be an object");
-  if (!d.name || typeof d.name !== "object") throw new Error("Missing name");
-
-  return {
-    name: d.name as Profile["name"],
-    title: (d.title as string) || "",
-    contact: (d.contact as ContactEntry[]) || [],
-    about: (d.about as string[]) || [],
-    education: (d.education as EducationEntry[]) || [],
-    professional_development: (d.professional_development as string[]) || [],
-    skills: (d.skills as string) || "",
-    skill_categories: (d.skill_categories as SkillCategory[]) || [],
-    experience: (d.experience as ExperienceEntry[]) || [],
-    earlier_experience:
-      (d.earlier_experience as EarlierExperienceEntry[]) || [],
-  };
+  return profileSchema.parse(data);
 }
 
 export function emptyProfile(): Profile {

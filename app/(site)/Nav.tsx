@@ -32,7 +32,7 @@ export default function Nav() {
           </Link>
         )}
       </h1>
-      <div className="flex flex-col justify-end">
+      <nav aria-label="Main navigation" className="flex flex-col justify-end">
         <span className="text-xl md:text-2xl font-black leading-snug mb-1 underline">
           Stories &amp; Systems
         </span>
@@ -53,7 +53,7 @@ export default function Nav() {
             </li>
           ))}
         </ul>
-      </div>
+      </nav>
     </div>
   );
 }
