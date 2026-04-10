@@ -19,10 +19,11 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "next": "16.1.7",
-    "nodemailer": "^8.0.4",
+    "nodemailer": "^8.0.5",
     "pdfkit": "^0.18.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zod": "^4.3.6"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -30,9 +31,7 @@
       "sharp",
       "unrs-resolver"
     ],
-    "overrides": {
-      "nodemailer@<=8.0.4": ">=8.0.5"
-    }
+    "overrides": {}
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

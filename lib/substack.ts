@@ -16,7 +16,10 @@ export async function getSubstackPosts(
     `https://${subdomain}.substack.com/api/v1/posts?limit=${limit}`,
     { next: { revalidate: 3600 } },
   );
-  if (!res.ok) return [];
+  if (!res.ok) {
+    console.error(`Substack API error: ${res.status} ${res.statusText}`);
+    return [];
+  }
   const data = await res.json();
   return data as SubstackPost[];
 }

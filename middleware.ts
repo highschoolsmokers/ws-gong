@@ -53,21 +53,9 @@ const BLOCKED_AGENTS = [
   // — needed for social media link preview cards (OG metadata)
 ];
 
-// Simple in-memory rate limiter (per edge invocation lifetime)
-const rateMap = new Map<string, { count: number; resetAt: number }>();
-const RATE_LIMIT = 500; // requests per window
-const RATE_WINDOW_MS = 60_000; // 1 minute
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateMap.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateMap.set(ip, { count: 1, resetAt: now + RATE_WINDOW_MS });
-    return false;
-  }
-  entry.count++;
-  return entry.count > RATE_LIMIT;
-}
+// Note: in-memory rate limiting is not effective in serverless/edge environments
+// because each invocation gets a fresh memory space. Rate limiting is handled
+// at the platform level (Vercel's built-in DDoS protection).
 
 export function middleware(request: NextRequest) {
   const ua = request.headers.get("user-agent")?.toLowerCase() ?? "";
@@ -80,15 +68,6 @@ export function middleware(request: NextRequest) {
   // Block empty user agents (likely automated)
   if (!ua || ua.length < 10) {
     return new NextResponse(null, { status: 403 });
-  }
-
-  // Rate limit by IP
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "unknown";
-  if (isRateLimited(ip)) {
-    return new NextResponse("Too Many Requests", { status: 429 });
   }
 
   const response = NextResponse.next();

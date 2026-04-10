@@ -13,6 +13,7 @@ const description =
   "W.S. Gong — writer, editor, and technical writer based in San Francisco. Fiction editor at The Rumpus. Twenty-five years in software and documentation.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://ws-gong.com"),
   title: {
     default: "W.S. Gong",
     template: "%s — W.S. Gong",

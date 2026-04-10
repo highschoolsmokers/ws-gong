@@ -9,11 +9,9 @@ import {
   type ChangeEvent,
 } from "react";
 import { sendMessage, type FormState } from "./actions";
+import { MAX_FILE_SIZE, MAX_FILES } from "@/lib/upload";
 
 const initialState: FormState = { status: "idle", message: "" };
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per file
-const MAX_FILES = 5;
 
 export default function ContactForm() {
   const [state, formAction, pending] = useActionState(
@@ -21,7 +19,6 @@ export default function ContactForm() {
     initialState,
   );
   const [loadedAt, setLoadedAt] = useState<number>(0);
-  const [messageLen, setMessageLen] = useState(0);
   const [files, setFiles] = useState<File[]>([]);
   const [dragging, setDragging] = useState(false);
   const dragCounter = useRef(0);
@@ -29,19 +26,9 @@ export default function ContactForm() {
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: records client-side load time for anti-spam timing
     setLoadedAt(Date.now());
   }, []);
-
-  // Reactive typography: title weight responds to message length
-  const titleStyle = (() => {
-    const weight = Math.max(400, 900 - Math.min(messageLen, 500));
-    const spacing = Math.min(messageLen * 0.005, 3);
-    return {
-      fontWeight: weight,
-      letterSpacing: `${spacing}px`,
-      transition: "font-weight 0.5s ease, letter-spacing 0.5s ease",
-    };
-  })();
 
   const addFiles = useCallback((incoming: File[]) => {
     setFiles((prev) => {
@@ -169,7 +156,6 @@ export default function ContactForm() {
               required
               aria-label="Message"
               rows={6}
-              onChange={(e) => setMessageLen(e.target.value.length)}
               className="border border-neutral-700 bg-transparent px-3 py-3 text-sm outline-none placeholder:text-neutral-500 focus:border-black transition-colors resize-y min-h-40 w-full"
               placeholder="Message"
             />
@@ -188,7 +174,7 @@ export default function ContactForm() {
               >
                 + Attach file
               </button>
-              <span className="text-xs text-neutral-400">
+              <span className="text-xs text-neutral-500">
                 or drag and drop (max {MAX_FILES} files, 5 MB each)
               </span>
             </div>
@@ -200,7 +186,7 @@ export default function ContactForm() {
                     className="flex items-baseline gap-2 text-sm text-neutral-500"
                   >
                     <span>{f.name}</span>
-                    <span className="text-neutral-400">
+                    <span className="text-neutral-500">
                       ({(f.size / 1024).toFixed(1)}kb)
                     </span>
                     <button

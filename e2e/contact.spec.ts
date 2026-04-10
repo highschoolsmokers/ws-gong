@@ -6,7 +6,6 @@ import {
   withTempFile,
 } from "./helpers/contact-form";
 import {
-  ANTI_SPAM_DELAY_MS,
   SUBMISSION_TIMEOUT_MS,
   VALIDATION_TIMEOUT_MS,
   EMAIL_DELIVERY_TIMEOUT_MS,

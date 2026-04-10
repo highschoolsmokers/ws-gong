@@ -49,6 +49,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     // Code projects
     {
+      url: `${base}/code/colophon-mcp`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: `${base}/code/paperless-mcp`,
       lastModified: now,
       changeFrequency: "monthly",

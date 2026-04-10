@@ -1,4 +1,4 @@
-import { randomBytes, createHash } from "crypto";
+import { randomBytes, createHash, timingSafeEqual } from "crypto";
 
 const CSRF_SECRET = process.env.CSRF_SECRET || randomBytes(32).toString("hex");
 
@@ -17,5 +17,12 @@ export function validateToken(token: string): boolean {
   const expected = createHash("sha256")
     .update(salt + CSRF_SECRET)
     .digest("hex");
-  return hash === expected;
+  try {
+    return timingSafeEqual(
+      Buffer.from(hash, "hex"),
+      Buffer.from(expected, "hex"),
+    );
+  } catch {
+    return false;
+  }
 }

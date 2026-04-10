@@ -80,7 +80,7 @@ export default async function Narratives() {
                     href={p.externalHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block hover:opacity-80 transition-opacity"
+                    className="block hover:opacity-70 transition-opacity"
                   >
                     {inner}
                   </a>
@@ -96,7 +96,7 @@ export default async function Narratives() {
                 href={post.canonical_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block hover:opacity-80 transition-opacity"
+                className="block hover:opacity-70 transition-opacity"
               >
                 <span className="text-sm font-semibold">{post.title}</span>
                 {post.subtitle && (
