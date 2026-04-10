@@ -34,9 +34,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${S
 // Generate PNGs at ICO sizes
 const sizes = [16, 32, 48];
 const pngs = await Promise.all(
-  sizes.map((s) =>
-    sharp(Buffer.from(svg)).resize(s, s).png().toBuffer()
-  )
+  sizes.map((s) => sharp(Buffer.from(svg)).resize(s, s).png().toBuffer()),
 );
 
 // Build ICO file (ICONDIR + ICONDIRENTRY[] + PNG data)
@@ -75,5 +73,8 @@ writeFileSync("app/favicon.ico", ico);
 console.log("favicon.ico written to app/favicon.ico");
 
 // Also generate a large PNG for apple-touch-icon etc.
-await sharp(Buffer.from(svg)).resize(180, 180).png().toFile("public/apple-touch-icon.png");
+await sharp(Buffer.from(svg))
+  .resize(180, 180)
+  .png()
+  .toFile("public/apple-touch-icon.png");
 console.log("apple-touch-icon.png written to public/");
