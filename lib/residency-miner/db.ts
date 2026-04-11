@@ -208,6 +208,23 @@ export async function recordSourceFailure(id: string): Promise<void> {
     WHERE id = ${id}`;
 }
 
+export async function getSourceStats(): Promise<{
+  active: number;
+  inactive: number;
+}> {
+  const sql = getClient();
+  const rows = await sql`
+    SELECT
+      COUNT(*) FILTER (WHERE status = 'active') AS active,
+      COUNT(*) FILTER (WHERE status = 'inactive') AS inactive
+    FROM sources`;
+  const row = rows[0] ?? { active: 0, inactive: 0 };
+  return {
+    active: Number(row.active ?? 0),
+    inactive: Number(row.inactive ?? 0),
+  };
+}
+
 export async function logDiscovery(log: DiscoveryLog): Promise<void> {
   const sql = getClient();
   const rejectedJson = JSON.stringify(log.rejected);

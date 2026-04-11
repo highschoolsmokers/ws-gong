@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import * as Sentry from "@sentry/nextjs";
 import { extractOpportunities } from "@/lib/residency-miner/extract";
 import { generateId } from "@/lib/residency-miner/dedupe";
 import {
@@ -18,6 +19,7 @@ import type {
 export const maxDuration = 300;
 
 const MAX_CONCURRENCY = 3;
+const LOW_YIELD_THRESHOLD = 20;
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -103,6 +105,24 @@ export async function POST(request: Request) {
   // Invalidate the cached /residencies page so visitors see the fresh data
   // without a DB lookup on every request.
   revalidatePath("/residencies");
+
+  // Early-warning alert: if this run produced too few opportunities, something
+  // has probably broken (bot blocks, rate limits, schema drift). Send a Sentry
+  // warning with the run log attached so future-me can investigate.
+  if (log.newFound < LOW_YIELD_THRESHOLD) {
+    Sentry.captureMessage(
+      `residency miner: low yield (${log.newFound} opportunities from ${log.sourcesFetched}/${sources.length} sources)`,
+      {
+        level: "warning",
+        extra: {
+          newFound: log.newFound,
+          sourcesFetched: log.sourcesFetched,
+          sourcesTotal: sources.length,
+          errors: log.errors,
+        },
+      },
+    );
+  }
 
   return NextResponse.json(log);
 }
