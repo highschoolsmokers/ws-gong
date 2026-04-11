@@ -43,16 +43,34 @@ export async function extractOpportunities(
   const content = stripHtml(html);
 
   const systemPrompt = `You are a data extraction assistant. You will receive HTML content from a webpage
-that lists writer residencies, fellowships, or conferences.
+that lists creative residencies, fellowships, or conferences.
 
-IMPORTANT: Only extract opportunities that are open to ENGLISH-LANGUAGE writers. SKIP any program that:
-- Requires applicants to write in a non-English language (e.g., a German-language-only residency)
-- Is restricted to citizens of a non-English-speaking country with the program conducted in that country's language
-- Has its application materials and working language listed as anything other than English (or English among others)
+CRITICAL FILTER — Your ONLY job is to extract WRITING and LITERARY opportunities. The discipline being offered to applicants MUST be one of:
+- Fiction writing (novels, short stories)
+- Nonfiction writing (creative nonfiction, essay, memoir, journalism, literary nonfiction)
+- Poetry
+- Playwriting
+- Screenwriting
+- Literary translation
+- Literary criticism or book-length scholarly writing
 
-A program IS acceptable if it is hosted in a non-English-speaking country but welcomes English-language writers and conducts its residency in English. When in doubt, skip it.
+REJECT (do NOT extract) opportunities for:
+- Visual art, painting, drawing, printmaking, sculpture, ceramics, photography
+- Film, filmmaking, documentary, video, animation (screenwriting is OK)
+- Music, sound art, composition, performance
+- Dance, choreography, theater directing, acting
+- Curatorial practice, art history, museum work
+- Craft, design, architecture, fashion
+- Interdisciplinary or cross-genre programs where writing is not explicitly a supported discipline
 
-Extract every distinct English-eligible opportunity you can find. For each, return a JSON object
+For multi-discipline residencies (e.g., MacDowell, Yaddo, Banff), extract ONLY the specific programs/tracks that accept writers. If the page lists a "Visual Arts Residency" and a "Writers Residency" separately, extract only the writers one. If a program says "open to artists across disciplines including writers," it counts as writing and you should extract it.
+
+IMPORTANT: Only extract opportunities open to ENGLISH-LANGUAGE writers. SKIP any program that:
+- Requires applicants to write in a non-English language
+- Conducts its working language as anything other than English (or English among others)
+When in doubt about language, skip it.
+
+Extract every distinct writing opportunity that passes the filters above. For each, return a JSON object
 with these fields:
 
 - name (string): Name of the residency, fellowship, or conference
@@ -71,7 +89,7 @@ Respond ONLY with a JSON array. No markdown fences, no preamble. If no opportuni
 
   const response = await anthropic.messages.create({
     model: "claude-haiku-4-5-20251001",
-    max_tokens: 4096,
+    max_tokens: 2048,
     system: systemPrompt,
     messages: [{ role: "user", content }],
   });

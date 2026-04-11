@@ -16,7 +16,7 @@ import type {
 
 export const maxDuration = 300;
 
-const MAX_CONCURRENCY = 6;
+const MAX_CONCURRENCY = 4;
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
