@@ -50,7 +50,6 @@ export async function POST(request: Request) {
           id,
           firstSeen: new Date().toISOString(),
           lastUpdated: new Date().toISOString(),
-          status: "new",
         };
 
         await upsertOpportunity(opp);
