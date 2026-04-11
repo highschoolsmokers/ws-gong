@@ -33,7 +33,7 @@ function stripHtml(html: string): string {
     .replace(/[ \t]+/g, " ")
     .replace(/\n{3,}/g, "\n\n")
     .trim()
-    .slice(0, 80_000);
+    .slice(0, 20_000);
 }
 
 export async function extractOpportunities(
@@ -70,7 +70,7 @@ with these fields:
 Respond ONLY with a JSON array. No markdown fences, no preamble. If no opportunities found, respond with [].`;
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: "claude-haiku-4-5-20251001",
     max_tokens: 4096,
     system: systemPrompt,
     messages: [{ role: "user", content }],
