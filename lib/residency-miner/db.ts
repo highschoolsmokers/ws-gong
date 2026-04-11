@@ -1,5 +1,15 @@
 import { neon } from "@neondatabase/serverless";
-import type { Opportunity, Genre, MineRunLog } from "./types";
+import type {
+  Opportunity,
+  Genre,
+  MineRunLog,
+  Source,
+  SourceType,
+  SourceStatus,
+  DiscoveryLog,
+} from "./types";
+
+const FAILURE_DEACTIVATE_THRESHOLD = 4;
 
 function getClient() {
   return neon(process.env.DATABASE_URL!);
@@ -121,4 +131,85 @@ export async function getLastRun(): Promise<MineRunLog | null> {
     updated: row.updated as number,
     errors: row.errors as { url: string; error: string }[],
   };
+}
+
+function rowToSource(row: Record<string, unknown>): Source {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    url: row.url as string,
+    type: row.type as SourceType,
+    status: row.status as SourceStatus,
+    discoveredAt: (row.discovered_at as Date).toISOString(),
+    lastFetchedAt: row.last_fetched_at
+      ? (row.last_fetched_at as Date).toISOString()
+      : null,
+    lastSuccessAt: row.last_success_at
+      ? (row.last_success_at as Date).toISOString()
+      : null,
+    successCount: row.success_count as number,
+    failureCount: row.failure_count as number,
+    consecutiveFailures: row.consecutive_failures as number,
+  };
+}
+
+export async function getActiveSources(): Promise<Source[]> {
+  const sql = getClient();
+  const rows =
+    await sql`SELECT * FROM sources WHERE status = 'active' ORDER BY discovered_at ASC`;
+  return rows.map(rowToSource);
+}
+
+export async function getAllSources(): Promise<Source[]> {
+  const sql = getClient();
+  const rows = await sql`SELECT * FROM sources ORDER BY discovered_at ASC`;
+  return rows.map(rowToSource);
+}
+
+export async function insertSource(input: {
+  id: string;
+  name: string;
+  url: string;
+  type: SourceType;
+}): Promise<boolean> {
+  const sql = getClient();
+  const result = await sql`
+    INSERT INTO sources (id, name, url, type)
+    VALUES (${input.id}, ${input.name}, ${input.url}, ${input.type})
+    ON CONFLICT (url) DO NOTHING
+    RETURNING id`;
+  return result.length > 0;
+}
+
+export async function recordSourceSuccess(id: string): Promise<void> {
+  const sql = getClient();
+  await sql`
+    UPDATE sources
+    SET success_count = success_count + 1,
+        consecutive_failures = 0,
+        last_fetched_at = NOW(),
+        last_success_at = NOW()
+    WHERE id = ${id}`;
+}
+
+export async function recordSourceFailure(id: string): Promise<void> {
+  const sql = getClient();
+  await sql`
+    UPDATE sources
+    SET failure_count = failure_count + 1,
+        consecutive_failures = consecutive_failures + 1,
+        last_fetched_at = NOW(),
+        status = CASE
+          WHEN consecutive_failures + 1 >= ${FAILURE_DEACTIVATE_THRESHOLD} THEN 'inactive'
+          ELSE status
+        END
+    WHERE id = ${id}`;
+}
+
+export async function logDiscovery(log: DiscoveryLog): Promise<void> {
+  const sql = getClient();
+  const rejectedJson = JSON.stringify(log.rejected);
+  await sql`
+    INSERT INTO discovery_logs (candidates, added, rejected)
+    VALUES (${log.candidates}, ${log.added}, ${rejectedJson}::jsonb)`;
 }
