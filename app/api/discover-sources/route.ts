@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import * as Sentry from "@sentry/nextjs";
 import Anthropic from "@anthropic-ai/sdk";
 import {
   getAllSources,
@@ -101,6 +102,19 @@ export async function POST(request: Request) {
   }
 
   await logDiscovery(log);
+
+  // Early-warning alert: if the agent found nothing, the parser broke, Claude's
+  // output drifted, or the web_search tool hit a wall. Sentry warning so we
+  // notice before the source list goes stale.
+  if (log.candidates === 0) {
+    Sentry.captureMessage("residency discovery: no candidates returned", {
+      level: "warning",
+      extra: {
+        existingSources: existingSources.length,
+        rejected: log.rejected,
+      },
+    });
+  }
 
   return NextResponse.json(log);
 }
