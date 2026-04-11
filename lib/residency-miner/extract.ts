@@ -1,8 +1,13 @@
 import Anthropic from "@anthropic-ai/sdk";
-import type { Source } from "./sources";
 import type { Opportunity } from "./types";
 
 const anthropic = new Anthropic();
+
+interface ExtractSource {
+  name: string;
+  url: string;
+  type: string;
+}
 
 type ExtractedOpportunity = Omit<
   Opportunity,
@@ -33,7 +38,7 @@ function stripHtml(html: string): string {
 
 export async function extractOpportunities(
   html: string,
-  source: Source,
+  source: ExtractSource,
 ): Promise<ExtractedOpportunity[]> {
   const content = stripHtml(html);
 

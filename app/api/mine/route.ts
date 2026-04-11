@@ -1,17 +1,28 @@
 import { NextResponse } from "next/server";
-import { SOURCES } from "@/lib/residency-miner/sources";
 import { extractOpportunities } from "@/lib/residency-miner/extract";
 import { generateId } from "@/lib/residency-miner/dedupe";
-import { upsertOpportunity, logRun } from "@/lib/residency-miner/db";
-import type { Opportunity, MineRunLog } from "@/lib/residency-miner/types";
+import {
+  upsertOpportunity,
+  logRun,
+  getActiveSources,
+  recordSourceSuccess,
+  recordSourceFailure,
+} from "@/lib/residency-miner/db";
+import type {
+  Opportunity,
+  MineRunLog,
+  Source,
+} from "@/lib/residency-miner/types";
 
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const sources = await getActiveSources();
 
   const log: MineRunLog = {
     timestamp: new Date().toISOString(),
@@ -21,7 +32,7 @@ export async function POST(request: Request) {
     errors: [],
   };
 
-  async function processSource(source: (typeof SOURCES)[number]) {
+  async function processSource(source: Source) {
     try {
       const response = await fetch(source.url, {
         headers: {
@@ -35,13 +46,18 @@ export async function POST(request: Request) {
 
       if (!response.ok) {
         log.errors.push({ url: source.url, error: `HTTP ${response.status}` });
+        await recordSourceFailure(source.id);
         return;
       }
 
       const html = await response.text();
       log.sourcesFetched++;
 
-      const extracted = await extractOpportunities(html, source);
+      const extracted = await extractOpportunities(html, {
+        name: source.name,
+        url: source.url,
+        type: source.type,
+      });
 
       for (const raw of extracted) {
         const id = generateId(raw.org, raw.name, raw.deadline);
@@ -55,16 +71,18 @@ export async function POST(request: Request) {
         await upsertOpportunity(opp);
         log.newFound++;
       }
+
+      await recordSourceSuccess(source.id);
     } catch (error) {
       log.errors.push({
         url: source.url,
         error: error instanceof Error ? error.message : String(error),
       });
+      await recordSourceFailure(source.id);
     }
   }
 
-  // Process all sources in parallel
-  await Promise.allSettled(SOURCES.map(processSource));
+  await Promise.allSettled(sources.map(processSource));
 
   await logRun(log);
 
