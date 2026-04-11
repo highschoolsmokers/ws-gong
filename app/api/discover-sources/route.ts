@@ -112,16 +112,18 @@ async function findCandidates(
     .map((s) => `- ${s.name}: ${s.url}`)
     .join("\n");
 
-  const systemPrompt = `You are a research assistant finding new writing residency, fellowship, and workshop listing pages on the web. You have a web_search tool available — use it to find legitimate, currently active programs we don't already track.
+  const systemPrompt = `You are a research assistant finding new WRITING and LITERARY residency, fellowship, and workshop listing pages on the web. You have a web_search tool — use it to find legitimate, currently active programs we don't already track.
 
 We already track these sources:
 ${existingList}
 
-Your job: find URLs that point to LISTING pages or APPLICATION pages — not homepages — for writing residencies, fellowships, conferences, or workshops. Aim for geographic and genre diversity beyond what we have. Avoid:
-- Pages that require JavaScript to render content
-- Login-gated or paywalled pages
-- Nomination-only programs
-- Defunct or stale programs
+Your job: find URLs that point to LISTING pages or APPLICATION pages — not homepages — for programs open to writers of fiction, nonfiction, poetry, playwriting, screenwriting, literary translation, or literary criticism.
+
+STRICT REQUIREMENTS:
+- The source's primary or dominant discipline must be WRITING or LITERARY ARTS. Reject:
+  * Visual art, painting, sculpture, ceramics, photography, filmmaking, music, dance, theater directing, curatorial, craft, architecture, design — unless the page is an explicit multi-discipline aggregator that clearly includes writers as an accepted discipline.
+- The program must be open to ENGLISH-LANGUAGE writers. Reject any program that requires applicants to write in a non-English language or whose working language is not English.
+- Reject pages that require JavaScript to render content, are login-gated or paywalled, are nomination-only, or are defunct/stale.
 
 Run multiple targeted searches. After each search, evaluate results.
 

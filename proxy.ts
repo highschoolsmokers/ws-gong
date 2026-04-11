@@ -57,7 +57,7 @@ const BLOCKED_AGENTS = [
 // because each invocation gets a fresh memory space. Rate limiting is handled
 // at the platform level (Vercel's built-in DDoS protection).
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const ua = request.headers.get("user-agent")?.toLowerCase() ?? "";
 
   // Block known bots
