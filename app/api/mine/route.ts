@@ -17,7 +17,7 @@ import type {
 
 export const maxDuration = 300;
 
-const MAX_CONCURRENCY = 4;
+const MAX_CONCURRENCY = 3;
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       });
 
       for (const raw of extracted) {
-        const id = generateId(raw.org, raw.name, raw.deadline);
+        const id = generateId(raw.name, raw.deadline);
         const opp: Opportunity = {
           ...raw,
           id,
