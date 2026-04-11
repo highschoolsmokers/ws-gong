@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS opportunities (
   genre           TEXT[] NOT NULL DEFAULT '{}',
   duration        TEXT NOT NULL DEFAULT 'varies',
   stipend         INTEGER,
+  stipend_max     INTEGER,
   location        TEXT NOT NULL DEFAULT 'Unknown',
   eligibility     TEXT NOT NULL DEFAULT 'Open',
   description     TEXT NOT NULL DEFAULT '',

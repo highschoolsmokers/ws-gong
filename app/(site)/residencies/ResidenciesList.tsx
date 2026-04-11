@@ -11,6 +11,7 @@ interface Opportunity {
   genre: string[];
   duration: string;
   stipend: number | null;
+  stipendMax: number | null;
   location: string;
   eligibility: string;
   description: string;
@@ -145,6 +146,9 @@ export default function ResidenciesList({ opportunities, lastRun }: Props) {
                       {opp.stipend !== null && (
                         <span className="text-xs border border-neutral-400 rounded px-1.5 py-0.5">
                           ${opp.stipend.toLocaleString()}
+                          {opp.stipendMax !== null &&
+                            opp.stipendMax !== opp.stipend &&
+                            `–$${opp.stipendMax.toLocaleString()}`}
                         </span>
                       )}
                       <span className="text-xs border border-neutral-400 rounded px-1.5 py-0.5">

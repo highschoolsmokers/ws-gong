@@ -7,6 +7,7 @@ export interface Opportunity {
   genre: Genre[];
   duration: string;
   stipend: number | null;
+  stipendMax: number | null;
   location: string;
   eligibility: string;
   description: string;

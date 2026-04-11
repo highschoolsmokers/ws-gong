@@ -25,6 +25,7 @@ function rowToOpportunity(row: Record<string, unknown>): Opportunity {
     genre: ((row.genre as string[]) ?? []) as Genre[],
     duration: row.duration as string,
     stipend: row.stipend as number | null,
+    stipendMax: (row.stipend_max ?? null) as number | null,
     location: row.location as string,
     eligibility: row.eligibility as string,
     description: row.description as string,
@@ -91,8 +92,8 @@ export async function getOpportunities(filters?: {
 export async function upsertOpportunity(opp: Opportunity): Promise<void> {
   const sql = getClient();
   await sql`
-    INSERT INTO opportunities (id, name, org, url, deadline, genre, duration, stipend, location, eligibility, description, source_url)
-    VALUES (${opp.id}, ${opp.name}, ${opp.org}, ${opp.url}, ${opp.deadline}, ${opp.genre}, ${opp.duration}, ${opp.stipend}, ${opp.location}, ${opp.eligibility}, ${opp.description}, ${opp.sourceUrl})
+    INSERT INTO opportunities (id, name, org, url, deadline, genre, duration, stipend, stipend_max, location, eligibility, description, source_url)
+    VALUES (${opp.id}, ${opp.name}, ${opp.org}, ${opp.url}, ${opp.deadline}, ${opp.genre}, ${opp.duration}, ${opp.stipend}, ${opp.stipendMax}, ${opp.location}, ${opp.eligibility}, ${opp.description}, ${opp.sourceUrl})
     ON CONFLICT (id) DO UPDATE SET
       name = EXCLUDED.name,
       org = EXCLUDED.org,
@@ -101,6 +102,7 @@ export async function upsertOpportunity(opp: Opportunity): Promise<void> {
       genre = EXCLUDED.genre,
       duration = EXCLUDED.duration,
       stipend = EXCLUDED.stipend,
+      stipend_max = EXCLUDED.stipend_max,
       location = EXCLUDED.location,
       eligibility = EXCLUDED.eligibility,
       description = EXCLUDED.description,
