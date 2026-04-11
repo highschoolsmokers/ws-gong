@@ -79,7 +79,8 @@ with these fields:
 - deadline (string): Application deadline as YYYY-MM-DD. If only a month is given, use the last day of that month. If no deadline is stated, use "rolling".
 - genre (string[]): One or more of: "fiction", "nonfiction", "poetry", "screenwriting", "multi", "other". Use "multi" if open to multiple literary genres.
 - duration (string): Length of the residency (e.g., "2 weeks", "1 month"). Use "varies" if not stated.
-- stipend (number | null): Stipend in USD. null if none or not stated.
+- stipend (number | null): Minimum stipend in USD (or exact amount if not a range). null if none or not stated.
+- stipendMax (number | null): Maximum stipend in USD if a range is given (e.g., "$500-$2000" => stipend 500, stipendMax 2000). null if no range or stipend is a single value.
 - location (string): Physical location. "Remote" if applicable. "Unknown" if not stated.
 - eligibility (string): Key eligibility requirements. "Open" if none stated.
 - description (string): 1-3 sentence summary in English.
