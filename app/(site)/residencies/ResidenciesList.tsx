@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo, useState } from "react";
 
 interface Opportunity {
   id: string;
@@ -45,37 +45,19 @@ const GENRE_OPTIONS: { value: GenreFilter; label: string }[] = [
   { value: "other", label: "Other" },
 ];
 
-export default function ResidenciesList() {
-  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
-  const [lastRun, setLastRun] = useState<RunLog | null>(null);
-  const [loading, setLoading] = useState(true);
+interface Props {
+  opportunities: Opportunity[];
+  lastRun: RunLog | null;
+}
+
+export default function ResidenciesList({ opportunities, lastRun }: Props) {
   const [genreFilter, setGenreFilter] = useState<GenreFilter>("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const today = new Date().toISOString().split("T")[0];
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function fetchData() {
-      const params = new URLSearchParams();
-      if (genreFilter) params.set("genre", genreFilter);
-      params.set("deadlineAfter", today);
-
-      const res = await fetch(`/api/opportunities?${params}`);
-      if (!cancelled && res.ok) {
-        const data = await res.json();
-        setOpportunities(data.opportunities ?? []);
-        setLastRun(data.lastRun ?? null);
-      }
-      if (!cancelled) setLoading(false);
-    }
-
-    fetchData();
-    return () => {
-      cancelled = true;
-    };
-  }, [genreFilter, today]);
+  const filtered = useMemo(() => {
+    if (!genreFilter) return opportunities;
+    return opportunities.filter((o) => o.genre.includes(genreFilter));
+  }, [opportunities, genreFilter]);
 
   function formatDeadline(d: string): string {
     if (d === "rolling") return "Rolling";
@@ -105,14 +87,14 @@ export default function ResidenciesList() {
             ))}
           </select>
           <span className="text-xs text-neutral-500 self-center">
-            {loading ? "Loading..." : `${opportunities.length} results`}
+            {filtered.length} results
           </span>
         </div>
       </section>
 
       {/* Results */}
       <section className="border-t border-black pt-4 pb-10">
-        {!loading && opportunities.length === 0 && (
+        {filtered.length === 0 && (
           <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 py-8">
             <div />
             <p className="text-sm text-neutral-500">
@@ -123,7 +105,7 @@ export default function ResidenciesList() {
         )}
 
         <div className="divide-y divide-neutral-200">
-          {opportunities.map((opp) => {
+          {filtered.map((opp) => {
             const isExpanded = expandedId === opp.id;
 
             return (

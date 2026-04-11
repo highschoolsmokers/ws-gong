@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getOpportunities, getLastRun } from "@/lib/residency-miner/db";
 import ResidenciesList from "./ResidenciesList";
 
 export const metadata: Metadata = {
@@ -7,7 +8,22 @@ export const metadata: Metadata = {
     "Writer residencies, fellowships, and conferences — automatically discovered and updated weekly.",
 };
 
-export default function ResidenciesPage() {
+// Fully cached; regenerated on demand when the mine cron calls
+// revalidatePath("/residencies") after a successful run.
+export const revalidate = false;
+
+export default async function ResidenciesPage() {
+  const today = new Date().toISOString().split("T")[0];
+
+  const [opportunities, lastRun] = await Promise.all([
+    getOpportunities({
+      deadlineAfter: today,
+      sort: "deadline",
+      order: "asc",
+    }),
+    getLastRun(),
+  ]);
+
   return (
     <div className="space-y-0">
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
@@ -40,7 +56,7 @@ export default function ResidenciesPage() {
         </div>
       </section>
 
-      <ResidenciesList />
+      <ResidenciesList opportunities={opportunities} lastRun={lastRun} />
     </div>
   );
 }

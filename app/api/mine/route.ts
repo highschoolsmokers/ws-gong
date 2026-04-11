@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { extractOpportunities } from "@/lib/residency-miner/extract";
 import { generateId } from "@/lib/residency-miner/dedupe";
 import {
@@ -98,6 +99,10 @@ export async function POST(request: Request) {
   await Promise.all(workers);
 
   await logRun(log);
+
+  // Invalidate the cached /residencies page so visitors see the fresh data
+  // without a DB lookup on every request.
+  revalidatePath("/residencies");
 
   return NextResponse.json(log);
 }
