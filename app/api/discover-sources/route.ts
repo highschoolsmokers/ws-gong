@@ -33,7 +33,7 @@ export async function POST(request: Request) {
   const existingSources = await getAllSources();
   const existingUrls = new Set(existingSources.map((s) => normalizeUrl(s.url)));
 
-  const candidates = await findCandidates(existingSources);
+  const { candidates, rawText } = await findCandidates(existingSources);
 
   const log: DiscoveryLog = {
     timestamp: new Date().toISOString(),
@@ -42,18 +42,45 @@ export async function POST(request: Request) {
     rejected: [],
   };
 
-  for (const candidate of candidates) {
-    if (log.added >= MAX_NEW_SOURCES) break;
+  if (candidates.length === 0 && rawText.length > 0) {
+    log.rejected.push({
+      url: "(parse)",
+      reason: `parse_failure — raw: ${rawText.slice(0, 800)}`,
+    });
+  }
+
+  // Filter out obvious duplicates before validation
+  const freshCandidates: Candidate[] = [];
+  for (const c of candidates) {
+    if (existingUrls.has(normalizeUrl(c.url))) {
+      log.rejected.push({ url: c.url, reason: "duplicate" });
+    } else {
+      freshCandidates.push(c);
+    }
+  }
+
+  // Validate in parallel
+  const validations = await Promise.all(
+    freshCandidates.map(async (c) => ({
+      candidate: c,
+      result: await validateUrl(c.url),
+    })),
+  );
+
+  for (const { candidate, result } of validations) {
+    if (log.added >= MAX_NEW_SOURCES) {
+      log.rejected.push({ url: candidate.url, reason: "cap_reached" });
+      continue;
+    }
+
+    if (!result.ok) {
+      log.rejected.push({ url: candidate.url, reason: result.reason });
+      continue;
+    }
 
     const normalized = normalizeUrl(candidate.url);
     if (existingUrls.has(normalized)) {
       log.rejected.push({ url: candidate.url, reason: "duplicate" });
-      continue;
-    }
-
-    const validation = await validateUrl(candidate.url);
-    if (!validation.ok) {
-      log.rejected.push({ url: candidate.url, reason: validation.reason });
       continue;
     }
 
@@ -80,7 +107,7 @@ export async function POST(request: Request) {
 
 async function findCandidates(
   existingSources: { name: string; url: string }[],
-): Promise<Candidate[]> {
+): Promise<{ candidates: Candidate[]; rawText: string }> {
   const existingList = existingSources
     .map((s) => `- ${s.name}: ${s.url}`)
     .join("\n");
@@ -98,13 +125,18 @@ Your job: find URLs that point to LISTING pages or APPLICATION pages — not hom
 
 Run multiple targeted searches. After each search, evaluate results.
 
-When done, respond ONLY with a JSON array of candidates (no markdown fences, no preamble). Each candidate is an object with:
+After your research is complete, respond with a JSON array of candidates. You may include brief explanatory text before the array, but the response MUST contain a parseable JSON array. Each candidate object:
 - name: short display name
 - url: full URL to the listing/apply page
-- type: "aggregator" (lists multiple programs) or "org_listing" (a single org's program)
+- type: "aggregator" or "org_listing"
 - reason: one short phrase why this is worth adding
 
-Aim to return 12-15 candidates so we have headroom after validation. If you cannot find good candidates, return [].`;
+Example:
+[
+  {"name": "Example Residency", "url": "https://example.org/apply", "type": "org_listing", "reason": "well-established Italian writing program"}
+]
+
+Aim for 12-15 candidates. If nothing good is found, return [].`;
 
   const response = await anthropic.messages.create({
     model: "claude-sonnet-4-20250514",
@@ -126,21 +158,67 @@ Aim to return 12-15 candidates so we have headroom after validation. If you cann
     ],
   });
 
-  const textBlocks = response.content.filter((b) => b.type === "text");
-  const finalText = textBlocks[textBlocks.length - 1];
-  if (!finalText || finalText.type !== "text") return [];
+  const textBlocks = response.content.filter(
+    (b): b is Extract<typeof b, { type: "text" }> => b.type === "text",
+  );
+  const combinedText = textBlocks.map((b) => b.text).join("\n\n");
 
+  const candidates = parseCandidates(combinedText);
+  return { candidates, rawText: combinedText };
+}
+
+function parseCandidates(text: string): Candidate[] {
+  // Try markdown fence first
+  const fenceMatch = text.match(/```(?:json)?\s*(\[[\s\S]*?\])\s*```/);
+  if (fenceMatch) {
+    const parsed = tryParseArray(fenceMatch[1]);
+    if (parsed) return parsed;
+  }
+
+  // Try to find first top-level JSON array anywhere in the text
+  const firstBracket = text.indexOf("[");
+  if (firstBracket !== -1) {
+    // Find matching close bracket via depth counting
+    let depth = 0;
+    let inString = false;
+    let escape = false;
+    for (let i = firstBracket; i < text.length; i++) {
+      const ch = text[i];
+      if (escape) {
+        escape = false;
+        continue;
+      }
+      if (ch === "\\") {
+        escape = true;
+        continue;
+      }
+      if (ch === '"') {
+        inString = !inString;
+        continue;
+      }
+      if (inString) continue;
+      if (ch === "[") depth++;
+      else if (ch === "]") {
+        depth--;
+        if (depth === 0) {
+          const parsed = tryParseArray(text.slice(firstBracket, i + 1));
+          if (parsed) return parsed;
+          break;
+        }
+      }
+    }
+  }
+
+  return [];
+}
+
+function tryParseArray(str: string): Candidate[] | null {
   try {
-    let jsonStr = finalText.text.trim();
-    const fenceMatch = jsonStr.match(/```(?:json)?\s*([\s\S]*?)```/);
-    if (fenceMatch) jsonStr = fenceMatch[1].trim();
-
-    const parsed = JSON.parse(jsonStr) as unknown;
-    if (!Array.isArray(parsed)) return [];
-
+    const parsed = JSON.parse(str) as unknown;
+    if (!Array.isArray(parsed)) return null;
     return parsed.filter(isValidCandidate);
   } catch {
-    return [];
+    return null;
   }
 }
 
