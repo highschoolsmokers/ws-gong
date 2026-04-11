@@ -16,6 +16,8 @@ import type {
 
 export const maxDuration = 300;
 
+const MAX_CONCURRENCY = 6;
+
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
   if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -82,7 +84,18 @@ export async function POST(request: Request) {
     }
   }
 
-  await Promise.allSettled(sources.map(processSource));
+  // Process sources with bounded concurrency to stay under the Anthropic
+  // input-tokens-per-minute rate limit. Without this, 40+ parallel extract
+  // calls burst past the per-model TPM quota.
+  const queue = [...sources];
+  const workers = Array.from({ length: MAX_CONCURRENCY }, async () => {
+    while (queue.length > 0) {
+      const source = queue.shift();
+      if (!source) break;
+      await processSource(source);
+    }
+  });
+  await Promise.all(workers);
 
   await logRun(log);
 
