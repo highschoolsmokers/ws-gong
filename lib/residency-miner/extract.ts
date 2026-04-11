@@ -45,7 +45,14 @@ export async function extractOpportunities(
   const systemPrompt = `You are a data extraction assistant. You will receive HTML content from a webpage
 that lists writer residencies, fellowships, or conferences.
 
-Extract every distinct opportunity you can find. For each, return a JSON object
+IMPORTANT: Only extract opportunities that are open to ENGLISH-LANGUAGE writers. SKIP any program that:
+- Requires applicants to write in a non-English language (e.g., a German-language-only residency)
+- Is restricted to citizens of a non-English-speaking country with the program conducted in that country's language
+- Has its application materials and working language listed as anything other than English (or English among others)
+
+A program IS acceptable if it is hosted in a non-English-speaking country but welcomes English-language writers and conducts its residency in English. When in doubt, skip it.
+
+Extract every distinct English-eligible opportunity you can find. For each, return a JSON object
 with these fields:
 
 - name (string): Name of the residency, fellowship, or conference
@@ -57,7 +64,7 @@ with these fields:
 - stipend (number | null): Stipend in USD. null if none or not stated.
 - location (string): Physical location. "Remote" if applicable. "Unknown" if not stated.
 - eligibility (string): Key eligibility requirements. "Open" if none stated.
-- description (string): 1-3 sentence summary.
+- description (string): 1-3 sentence summary in English.
 - sourceUrl (string): Set to "${source.url}"
 
 Respond ONLY with a JSON array. No markdown fences, no preamble. If no opportunities found, respond with [].`;
