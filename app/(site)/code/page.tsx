@@ -50,23 +50,23 @@ const categories: Category[] = [
         tags: ["AI", "MCP"],
       },
       {
-        href: "https://github.com/highschoolsmokers/lit-verity-mcp",
+        href: "/code/lit-verity-mcp",
         title: "Lit Verity",
         description:
-          "MCP server that grounds academic literary criticism in verifiable sources. Cross-checks claims against an archive to prevent hallucinated citations, fabricated quotations, and distorted arguments.",
-        stack: ["TypeScript", "MCP SDK", "Zod"],
+          "MCP server that grounds academic literary criticism in verifiable sources. Cross-checks claims against an indexed corpus to prevent hallucinated citations, fabricated quotations, and distorted arguments.",
+        stack: ["TypeScript", "MCP SDK", "Neon", "pgvector"],
         tags: ["AI", "MCP", "Writing"],
       },
       {
-        href: "https://github.com/highschoolsmokers/historical-research-agent",
+        href: "/code/historical-research-agent",
         title: "Historical Research Agent",
         description:
-          "Claude Code plugin: autonomous historical research agent for fiction writers. Surfaces people, cultures, places, and events from newspaper archives and primary sources.",
+          "Claude Code plugin: autonomous historical research agent for fiction writers. Surfaces people, cultures, places, and events from newspaper archives and primary sources, with confidence scoring.",
         stack: ["Claude Code", "Anthropic SDK"],
         tags: ["AI", "Writing"],
       },
       {
-        href: "https://github.com/highschoolsmokers/lit-research-plugin",
+        href: "/code/lit-research-plugin",
         title: "Literary Research Plugin",
         description:
           "Claude Code plugin: literary research agent that retrieves verified quotations from archives, cross-checks citations, and performs craft and theory analysis for scholars working with primary texts.",
@@ -96,11 +96,11 @@ const categories: Category[] = [
         tags: ["AI", "Writing"],
       },
       {
-        href: "https://github.com/highschoolsmokers/submission-watcher-agent",
+        href: "/code/submission-watcher-agent",
         title: "Submission Watcher Agent",
         description:
-          "Claude Code plugin that monitors literary magazine submission windows and emails alerts when they open. Built for writers who miss brief open-call periods.",
-        stack: ["JavaScript", "Claude Code", "SMTP"],
+          "Claude Code plugin and Vercel cron that monitors literary magazine submission windows on Submittable and emails alerts when they open. Built for writers who miss brief open-call periods.",
+        stack: ["JavaScript", "Vercel Cron", "Upstash Redis", "Resend"],
         tags: ["AI", "Writing"],
       },
       {

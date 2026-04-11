@@ -85,6 +85,16 @@ export default function SubmissionCli() {
         <h2 className="text-xl md:text-2xl font-black leading-tight">Stack</h2>
         <div className="text-sm leading-relaxed space-y-2">
           <p>TypeScript · Anthropic SDK · PDFKit · Mammoth · Node.js</p>
+          <p>
+            <a
+              href="https://github.com/highschoolsmokers/submission-cli"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold hover:opacity-70 transition-opacity"
+            >
+              View on GitHub →
+            </a>
+          </p>
         </div>
       </section>
 
