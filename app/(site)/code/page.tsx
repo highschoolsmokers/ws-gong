@@ -50,6 +50,30 @@ const categories: Category[] = [
         tags: ["AI", "MCP"],
       },
       {
+        href: "https://github.com/highschoolsmokers/lit-verity-mcp",
+        title: "Lit Verity",
+        description:
+          "MCP server that grounds academic literary criticism in verifiable sources. Cross-checks claims against an archive to prevent hallucinated citations, fabricated quotations, and distorted arguments.",
+        stack: ["TypeScript", "MCP SDK", "Zod"],
+        tags: ["AI", "MCP", "Writing"],
+      },
+      {
+        href: "https://github.com/highschoolsmokers/historical-research-agent",
+        title: "Historical Research Agent",
+        description:
+          "Claude Code plugin: autonomous historical research agent for fiction writers. Surfaces people, cultures, places, and events from newspaper archives and primary sources.",
+        stack: ["Claude Code", "Anthropic SDK"],
+        tags: ["AI", "Writing"],
+      },
+      {
+        href: "https://github.com/highschoolsmokers/lit-research-plugin",
+        title: "Literary Research Plugin",
+        description:
+          "Claude Code plugin: literary research agent that retrieves verified quotations from archives, cross-checks citations, and performs craft and theory analysis for scholars working with primary texts.",
+        stack: ["Claude Code", "Anthropic SDK"],
+        tags: ["AI", "Writing"],
+      },
+      {
         href: "/fabulosa-books/",
         title: "Multi-Agent Orchestration Tutorial",
         description:
@@ -72,6 +96,14 @@ const categories: Category[] = [
         tags: ["AI", "Writing"],
       },
       {
+        href: "https://github.com/highschoolsmokers/submission-watcher-agent",
+        title: "Submission Watcher Agent",
+        description:
+          "Claude Code plugin that monitors literary magazine submission windows and emails alerts when they open. Built for writers who miss brief open-call periods.",
+        stack: ["JavaScript", "Claude Code", "SMTP"],
+        tags: ["AI", "Writing"],
+      },
+      {
         href: "/code/writer-utilities",
         title: "Writer Utilities",
         description:
@@ -85,6 +117,14 @@ const categories: Category[] = [
     title: "Web & Design",
     subtitle: "Full-stack React applications and design engineering",
     projects: [
+      {
+        href: "https://github.com/highschoolsmokers/ws-gong",
+        title: "ws-gong.com",
+        description:
+          "This portfolio site. Next.js 16 App Router, Tailwind, Neon Postgres, and a cron-driven AI pipeline — weekly source discovery via Claude's web search tool plus throttled residency extraction on Vercel Functions.",
+        stack: ["Next.js", "TypeScript", "Neon", "Anthropic SDK"],
+        tags: ["Web", "AI"],
+      },
       {
         href: "/code/resume-generator",
         title: "Resume Generator",
@@ -126,7 +166,7 @@ const jsonLd = {
       "@type": "CreativeWork",
       name: p.title,
       description: p.description,
-      url: `https://ws-gong.com${p.href}`,
+      url: p.href.startsWith("http") ? p.href : `https://ws-gong.com${p.href}`,
       author: { "@type": "Person", name: "W.S. Gong" },
       keywords: [...p.stack, ...p.tags],
     },
@@ -154,30 +194,47 @@ export default function Code() {
             </p>
           </div>
           <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
-            {category.projects.map((p) => (
-              <li key={p.href} className="py-6">
-                <Link
-                  href={p.href}
-                  className="group block hover:opacity-70 transition-opacity"
-                >
-                  <span className="text-sm font-semibold">{p.title}</span>
-                  <span className="text-sm block mt-1 leading-relaxed">
-                    {p.description}
-                  </span>
-                  <span className="text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500">
-                    <span>{p.stack.join(" · ")}</span>
-                    {p.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </span>
-                </Link>
-              </li>
-            ))}
+            {category.projects.map((p) => {
+              const isExternal = p.href.startsWith("http");
+              return (
+                <li key={p.href} className="py-6">
+                  <Link
+                    href={p.href}
+                    {...(isExternal && {
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                    })}
+                    className="group block hover:opacity-70 transition-opacity"
+                  >
+                    <span className="text-sm font-semibold">
+                      {p.title}
+                      {isExternal && (
+                        <span
+                          aria-hidden="true"
+                          className="ml-1 text-neutral-400"
+                        >
+                          ↗
+                        </span>
+                      )}
+                    </span>
+                    <span className="text-sm block mt-1 leading-relaxed">
+                      {p.description}
+                    </span>
+                    <span className="text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500">
+                      <span>{p.stack.join(" · ")}</span>
+                      {p.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </section>
       ))}
