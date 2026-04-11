@@ -25,6 +25,12 @@ interface RunLog {
   sourcesFetched: number;
   newFound: number;
   updated: number;
+  errors?: { url: string; error: string }[];
+}
+
+interface SourceStats {
+  active: number;
+  inactive: number;
 }
 
 type GenreFilter =
@@ -49,9 +55,27 @@ const GENRE_OPTIONS: { value: GenreFilter; label: string }[] = [
 interface Props {
   opportunities: Opportunity[];
   lastRun: RunLog | null;
+  sourceStats: SourceStats;
 }
 
-export default function ResidenciesList({ opportunities, lastRun }: Props) {
+function nextMondayUtc(): Date {
+  const now = new Date();
+  const day = now.getUTCDay();
+  // Monday = 1; days until next Monday (0 → 1, 1 → 7 for today, etc.)
+  const daysUntilMonday = (1 - day + 7) % 7 || 7;
+  const next = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
+  );
+  next.setUTCDate(next.getUTCDate() + daysUntilMonday);
+  next.setUTCHours(9, 0, 0, 0);
+  return next;
+}
+
+export default function ResidenciesList({
+  opportunities,
+  lastRun,
+  sourceStats,
+}: Props) {
   const [genreFilter, setGenreFilter] = useState<GenreFilter>("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
@@ -184,21 +208,41 @@ export default function ResidenciesList({ opportunities, lastRun }: Props) {
       </section>
 
       {/* Last run footer */}
-      {lastRun && (
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-6 pb-4">
-          <div />
-          <p className="text-xs text-neutral-500">
-            Last scan:{" "}
-            {new Date(lastRun.timestamp).toLocaleDateString("en-US", {
+      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-6 pb-4">
+        <div />
+        <div className="text-xs text-neutral-500 space-y-0.5">
+          {lastRun && (
+            <p>
+              Last scan:{" "}
+              {new Date(lastRun.timestamp).toLocaleDateString("en-US", {
+                month: "long",
+                day: "numeric",
+                year: "numeric",
+              })}
+              {" · "}
+              {lastRun.sourcesFetched} fetched · {lastRun.newFound} extracted
+              {lastRun.errors && lastRun.errors.length > 0
+                ? ` · ${lastRun.errors.length} errors`
+                : ""}
+            </p>
+          )}
+          <p>
+            Sources: {sourceStats.active} active
+            {sourceStats.inactive > 0
+              ? ` · ${sourceStats.inactive} deactivated`
+              : ""}
+          </p>
+          <p>
+            Next scan:{" "}
+            {nextMondayUtc().toLocaleDateString("en-US", {
+              weekday: "long",
               month: "long",
               day: "numeric",
-              year: "numeric",
-            })}
-            {" · "}
-            {lastRun.sourcesFetched} sources · {lastRun.newFound} new
+            })}{" "}
+            at 9:00 UTC
           </p>
-        </section>
-      )}
+        </div>
+      </section>
     </>
   );
 }

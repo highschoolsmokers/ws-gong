@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { getOpportunities, getLastRun } from "@/lib/residency-miner/db";
+import {
+  getOpportunities,
+  getLastRun,
+  getSourceStats,
+} from "@/lib/residency-miner/db";
 import ResidenciesList from "./ResidenciesList";
 
 export const metadata: Metadata = {
@@ -15,13 +19,14 @@ export const revalidate = false;
 export default async function ResidenciesPage() {
   const today = new Date().toISOString().split("T")[0];
 
-  const [opportunities, lastRun] = await Promise.all([
+  const [opportunities, lastRun, sourceStats] = await Promise.all([
     getOpportunities({
       deadlineAfter: today,
       sort: "deadline",
       order: "asc",
     }),
     getLastRun(),
+    getSourceStats(),
   ]);
 
   return (
@@ -56,7 +61,11 @@ export default async function ResidenciesPage() {
         </div>
       </section>
 
-      <ResidenciesList opportunities={opportunities} lastRun={lastRun} />
+      <ResidenciesList
+        opportunities={opportunities}
+        lastRun={lastRun}
+        sourceStats={sourceStats}
+      />
     </div>
   );
 }
