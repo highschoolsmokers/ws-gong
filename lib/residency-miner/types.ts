@@ -12,7 +12,6 @@ export interface Opportunity {
   description: string;
   firstSeen: string;
   lastUpdated: string;
-  status: Status;
   sourceUrl: string;
 }
 
@@ -23,8 +22,6 @@ export type Genre =
   | "screenwriting"
   | "multi"
   | "other";
-
-export type Status = "new" | "reviewed" | "bookmarked" | "applied" | "skipped";
 
 export interface MineRunLog {
   timestamp: string;

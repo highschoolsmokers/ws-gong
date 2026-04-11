@@ -12,14 +12,10 @@ CREATE TABLE IF NOT EXISTS opportunities (
   description     TEXT NOT NULL DEFAULT '',
   first_seen      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   last_updated    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  status          TEXT NOT NULL DEFAULT 'new',
-  source_url      TEXT NOT NULL,
-
-  CONSTRAINT valid_status CHECK (status IN ('new', 'reviewed', 'bookmarked', 'applied', 'skipped'))
+  source_url      TEXT NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS idx_opportunities_deadline ON opportunities (deadline);
-CREATE INDEX IF NOT EXISTS idx_opportunities_status ON opportunities (status);
 CREATE INDEX IF NOT EXISTS idx_opportunities_genre ON opportunities USING GIN (genre);
 
 CREATE TABLE IF NOT EXISTS run_logs (
