@@ -7,21 +7,14 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: "https://4d2eae71fc691017e3ef344cf18aa760@o4511113715515392.ingest.us.sentry.io/4511113720758272",
 
-  // Add optional integrations for additional features
-  integrations: [Sentry.replayIntegration()],
+  // Session Replay is deliberately NOT enabled. It loads ~60 KB of DOM-
+  // recording JS that added ~2s of render delay on static portfolio pages
+  // and pushed every page below Lighthouse's 95 perf threshold. Client-side
+  // error capture still works through the default integration set, and the
+  // server-side Sentry config handles the residency-miner alerts where the
+  // observability actually matters.
 
-  // Define how likely traces are sampled. Adjust this value in production, or use tracesSampler for greater control.
-  tracesSampleRate: 1,
-  // Enable logs to be sent to Sentry
-  enableLogs: true,
-
-  // Define how likely Replay events are sampled.
-  // This sets the sample rate to be 10%. You may want this to be 100% while
-  // in development and sample at a lower rate in production
-  replaysSessionSampleRate: 0.1,
-
-  // Define how likely Replay events are sampled when an error occurs.
-  replaysOnErrorSampleRate: 1.0,
+  tracesSampleRate: 0.1,
 
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
