@@ -1,24 +1,11 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Blocklist narrowed to AI training crawlers, aggressive SEO/audit scrapers,
+// and archiving bots. Search engines (Googlebot, Bingbot, DuckDuckBot, etc.)
+// and social preview bots (twitterbot, linkedinbot, facebookexternalhit) are
+// intentionally allowed so the portfolio is indexable and its OG cards render.
 const BLOCKED_AGENTS = [
-  // Generic bots
-  "bot",
-  "crawler",
-  "spider",
-  "scraper",
-  "crawling",
-  // Search engines
-  "googlebot",
-  "bingbot",
-  "slurp",
-  "duckduckbot",
-  "baiduspider",
-  "yandexbot",
-  "sogou",
-  "exabot",
-  "facebot",
-  "ia_archiver",
   // AI training crawlers
   "gptbot",
   "chatgpt-user",
@@ -33,24 +20,24 @@ const BLOCKED_AGENTS = [
   "bytespider",
   "petalbot",
   "applebot",
-  "semrushbot",
-  "ahrefsbot",
-  "mj12bot",
-  "dotbot",
   "amazonbot",
   "brightbot",
   "velenpublicwebcrawler",
   "img2dataset",
   "omgili",
   "omgilibot",
+  // SEO/audit scrapers
+  "semrushbot",
+  "ahrefsbot",
+  "mj12bot",
+  "dotbot",
   "rogerbot",
   "screaming frog",
   "dataforseobot",
   "piplbot",
+  // Archiving bots
   "archive.org_bot",
   "archive-it",
-  // Note: twitterbot, linkedinbot, facebookexternalhit intentionally NOT blocked
-  // — needed for social media link preview cards (OG metadata)
 ];
 
 // Note: in-memory rate limiting is not effective in serverless/edge environments
@@ -60,7 +47,6 @@ const BLOCKED_AGENTS = [
 export function proxy(request: NextRequest) {
   const ua = request.headers.get("user-agent")?.toLowerCase() ?? "";
 
-  // Block known bots
   if (BLOCKED_AGENTS.some((agent) => ua.includes(agent))) {
     return new NextResponse(null, { status: 403 });
   }
@@ -70,12 +56,7 @@ export function proxy(request: NextRequest) {
     return new NextResponse(null, { status: 403 });
   }
 
-  const response = NextResponse.next();
-
-  // Anti-indexing headers
-  response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
