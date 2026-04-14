@@ -101,6 +101,7 @@ export default function ResidenciesList({
         <div />
         <div className="flex flex-wrap gap-3">
           <select
+            aria-label="Filter by genre"
             value={genreFilter}
             onChange={(e) => setGenreFilter(e.target.value as GenreFilter)}
             className="text-sm border border-neutral-400 rounded px-2 py-1.5 bg-transparent focus:border-black transition-colors"
@@ -111,7 +112,7 @@ export default function ResidenciesList({
               </option>
             ))}
           </select>
-          <span className="text-xs text-neutral-500 self-center">
+          <span className="text-xs text-neutral-600 self-center">
             {filtered.length} results
           </span>
         </div>
@@ -141,7 +142,7 @@ export default function ResidenciesList({
                     <div className="font-semibold">
                       {formatDeadline(opp.deadline)}
                     </div>
-                    <div className="text-neutral-500">{opp.location}</div>
+                    <div className="text-neutral-600">{opp.location}</div>
                   </div>
 
                   {/* Right column: main content */}
@@ -210,7 +211,7 @@ export default function ResidenciesList({
       {/* Last run footer */}
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-6 pb-4">
         <div />
-        <div className="text-xs text-neutral-500 space-y-0.5">
+        <div className="text-xs text-neutral-600 space-y-0.5">
           {lastRun && (
             <p>
               Last scan:{" "}

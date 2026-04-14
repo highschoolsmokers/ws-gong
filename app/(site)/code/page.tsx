@@ -166,7 +166,9 @@ const jsonLd = {
       "@type": "CreativeWork",
       name: p.title,
       description: p.description,
-      url: p.href.startsWith("http") ? p.href : `https://ws-gong.com${p.href}`,
+      url: p.href.startsWith("http")
+        ? p.href
+        : `https://www.ws-gong.com${p.href}`,
       author: { "@type": "Person", name: "W.S. Gong" },
       keywords: [...p.stack, ...p.tags],
     },

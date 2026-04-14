@@ -1,6 +1,6 @@
 import { getSubstackPosts } from "@/lib/substack";
 
-const siteUrl = "https://ws-gong.com";
+const siteUrl = "https://www.ws-gong.com";
 
 const projectItems = [
   {

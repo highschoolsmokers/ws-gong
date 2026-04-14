@@ -13,7 +13,7 @@ const description =
   "W.S. Gong — writer, editor, and technical writer based in San Francisco. Fiction editor at The Rumpus. Twenty-five years in software and documentation.";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://ws-gong.com"),
+  metadataBase: new URL("https://www.ws-gong.com"),
   title: {
     default: "W.S. Gong",
     template: "%s — W.S. Gong",
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     siteName: "W.S. Gong",
-    url: "https://ws-gong.com",
+    url: "https://www.ws-gong.com",
     type: "website",
     title: "W.S. Gong",
     description,
@@ -44,7 +44,7 @@ const jsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
   name: "W.S. Gong",
-  url: "https://ws-gong.com",
+  url: "https://www.ws-gong.com",
   jobTitle: "Fiction Editor & Technical Writer",
   worksFor: {
     "@type": "Organization",

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://ws-gong.com";
+  const base = "https://www.ws-gong.com";
   const now = new Date();
   return [
     { url: base, lastModified: now, changeFrequency: "monthly", priority: 1 },
@@ -13,6 +13,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${base}/code`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    {
+      url: `${base}/residencies`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
@@ -56,6 +62,30 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${base}/code/paperless-mcp`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${base}/code/lit-verity-mcp`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${base}/code/historical-research-agent`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${base}/code/lit-research-plugin`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: `${base}/code/submission-watcher-agent`,
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.6,
