@@ -7,7 +7,6 @@ export const metadata: Metadata = {
   title: "Contact Form",
   description:
     "Reactive contact form with real-time typography scaling and drag-and-drop attachments.",
-  robots: { index: false },
 };
 
 export default function LabContactPage() {
