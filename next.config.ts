@@ -6,6 +6,9 @@ const nextConfig: NextConfig = {
     "/api/resume": ["./private/**"],
   },
   serverExternalPackages: ["pdfkit"],
+  // Serve source maps for production JS so Lighthouse (and stacktraces in the
+  // console) can resolve minified frames back to original sources.
+  productionBrowserSourceMaps: true,
   async redirects() {
     return [
       {
@@ -37,6 +40,10 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https:",
               "font-src 'self'",
               "connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io",
+              // Sentry Session Replay (and some Next.js bundling shims) spawn
+              // Web Workers from blob: URLs; without this the CSP blocks them
+              // and Lighthouse flags console errors on every page.
+              "worker-src 'self' blob:",
               "frame-ancestors 'none'",
             ].join("; "),
           },
