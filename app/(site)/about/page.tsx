@@ -122,17 +122,51 @@ export default function About() {
             Francisco.
           </p>
           <p>
-            By day, he is a technical writer with twenty-five years in software
-            — most recently focused on AI tooling, developer documentation, and
-            the Model Context Protocol. He builds tools at the intersection of
-            language models and the writing craft, including an{" "}
+            A technical writer and agentic developer with twenty-five years in
+            software, he builds open-source tools at the intersection of
+            language models and the writing craft: MCP servers for{" "}
             <Link
               href="/code/paperless-mcp"
               className="hover:opacity-70 transition-opacity font-semibold"
             >
-              MCP server
+              document management
+            </Link>
+            ,{" "}
+            <Link
+              href="/code/colophon-mcp"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              book discovery
+            </Link>
+            , and{" "}
+            <Link
+              href="/code/lit-verity-mcp"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              citation-grounding in literary criticism
+            </Link>
+            ; Claude Code plugins for{" "}
+            <Link
+              href="/code/historical-research-agent"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              historical
             </Link>{" "}
-            for document management and a{" "}
+            and{" "}
+            <Link
+              href="/code/lit-research-plugin"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              literary
+            </Link>{" "}
+            research and for{" "}
+            <Link
+              href="/code/submission-watcher-agent"
+              className="hover:opacity-70 transition-opacity font-semibold"
+            >
+              tracking magazine submission windows
+            </Link>
+            ; and a{" "}
             <Link
               href="/code/submission-cli"
               className="hover:opacity-70 transition-opacity font-semibold"
