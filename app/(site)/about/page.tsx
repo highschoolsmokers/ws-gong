@@ -7,9 +7,6 @@ import {
   LinkedInIcon,
 } from "./SocialIcons";
 import ResumeLink from "../resume/ResumeLink";
-import { generateToken } from "@/lib/resumeToken";
-
-export const dynamic = "force-dynamic";
 
 const description =
   "W.S. Gong is a fiction editor at The Rumpus and a technical writer focused on AI tooling and developer documentation. Twenty-five years in software. At work on a novel about runaway kids in 1980s San Francisco.";
@@ -47,8 +44,6 @@ const socials = [
 ];
 
 export default function About() {
-  const token = generateToken();
-
   return (
     <div className="space-y-0">
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
@@ -199,7 +194,7 @@ export default function About() {
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-xl md:text-2xl font-black leading-tight">Resume</h2>
-        <ResumeLink token={token} />
+        <ResumeLink />
       </section>
 
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">

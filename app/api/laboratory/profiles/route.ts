@@ -17,10 +17,21 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const token = request.headers.get("x-api-token");
+  if (token !== process.env.NEXT_PUBLIC_API_TOKEN) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { name, data } = await request.json();
   if (!name || !data) {
     return NextResponse.json(
       { error: "Missing name or data" },
+      { status: 400 },
+    );
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+    return NextResponse.json(
+      { error: "Invalid profile name" },
       { status: 400 },
     );
   }
