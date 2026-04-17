@@ -23,7 +23,10 @@ export async function GET(
   const { name: raw } = await params;
   const name = safeName(raw);
   if (!name) {
-    return NextResponse.json({ error: "Invalid profile name" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid profile name" },
+      { status: 400 },
+    );
   }
   const filePath = path.join(PROFILES_DIR, `${name}.json`);
   if (!fs.existsSync(filePath)) {
@@ -43,7 +46,10 @@ export async function PUT(
   const { name: raw } = await params;
   const name = safeName(raw);
   if (!name) {
-    return NextResponse.json({ error: "Invalid profile name" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid profile name" },
+      { status: 400 },
+    );
   }
   const data = await request.json();
   fs.mkdirSync(PROFILES_DIR, { recursive: true });
@@ -62,7 +68,10 @@ export async function DELETE(
   const { name: raw } = await params;
   const name = safeName(raw);
   if (!name) {
-    return NextResponse.json({ error: "Invalid profile name" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid profile name" },
+      { status: 400 },
+    );
   }
   const filePath = path.join(PROFILES_DIR, `${name}.json`);
   if (fs.existsSync(filePath)) {

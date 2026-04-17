@@ -15,7 +15,9 @@ const initialState: FormState = { status: "idle", message: "" };
 
 export default function ContactForm() {
   const [formKey, setFormKey] = useState(0);
-  return <ContactFormInner key={formKey} onReset={() => setFormKey((k) => k + 1)} />;
+  return (
+    <ContactFormInner key={formKey} onReset={() => setFormKey((k) => k + 1)} />
+  );
 }
 
 function ContactFormInner({ onReset }: { onReset: () => void }) {
