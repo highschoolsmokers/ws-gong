@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
   getOpportunities,
   getLastRun,
@@ -61,11 +62,13 @@ export default async function ResidenciesPage() {
         </div>
       </section>
 
-      <ResidenciesList
-        opportunities={opportunities}
-        lastRun={lastRun}
-        sourceStats={sourceStats}
-      />
+      <Suspense>
+        <ResidenciesList
+          opportunities={opportunities}
+          lastRun={lastRun}
+          sourceStats={sourceStats}
+        />
+      </Suspense>
     </div>
   );
 }
