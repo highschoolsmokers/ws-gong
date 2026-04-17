@@ -1,3 +1,4 @@
+#!/usr/bin/env sh
 # Prevent direct pushes to main
 branch=$(git symbolic-ref --short HEAD)
 if [ "$branch" = "main" ]; then
@@ -5,5 +6,5 @@ if [ "$branch" = "main" ]; then
   exit 1
 fi
 
-# Build check
-pnpm next build
+# Fast sanity checks; full build runs in CI.
+pnpm lint && pnpm typecheck

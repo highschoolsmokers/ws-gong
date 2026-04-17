@@ -1,4 +1,5 @@
 .next
 node_modules
 test-results
-.claude/worktrees
+.claude
+pnpm-lock.yaml
