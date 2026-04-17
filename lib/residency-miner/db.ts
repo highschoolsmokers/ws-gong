@@ -42,6 +42,7 @@ export async function getOpportunities(filters?: {
   sort?: "deadline" | "firstSeen";
   order?: "asc" | "desc";
 }): Promise<Opportunity[]> {
+  if (!process.env.DATABASE_URL) return [];
   const sql = getClient();
 
   if (!filters?.genre && !filters?.deadlineAfter && !filters?.deadlineBefore) {
@@ -119,6 +120,7 @@ export async function logRun(log: MineRunLog): Promise<void> {
 }
 
 export async function getLastRun(): Promise<MineRunLog | null> {
+  if (!process.env.DATABASE_URL) return null;
   const sql = getClient();
   const rows =
     await sql`SELECT * FROM run_logs ORDER BY timestamp DESC LIMIT 1`;
@@ -212,6 +214,7 @@ export async function getSourceStats(): Promise<{
   active: number;
   inactive: number;
 }> {
+  if (!process.env.DATABASE_URL) return { active: 0, inactive: 0 };
   const sql = getClient();
   const rows = await sql`
     SELECT
