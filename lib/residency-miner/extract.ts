@@ -1,4 +1,5 @@
 import Anthropic from "@anthropic-ai/sdk";
+import * as Sentry from "@sentry/nextjs";
 import type { Opportunity } from "./types";
 
 const anthropic = new Anthropic();
@@ -104,8 +105,10 @@ Respond ONLY with a JSON array. No markdown fences, no preamble. If no opportuni
     if (fenceMatch) jsonStr = fenceMatch[1].trim();
 
     return JSON.parse(jsonStr) as ExtractedOpportunity[];
-  } catch {
-    console.error(`Failed to parse extraction for ${source.name}`);
+  } catch (err) {
+    Sentry.captureException(err, {
+      extra: { source: source.name, url: source.url, raw: textBlock.text },
+    });
     return [];
   }
 }

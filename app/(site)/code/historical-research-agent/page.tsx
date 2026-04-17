@@ -15,6 +15,9 @@ export const metadata: Metadata = {
 export default function HistoricalResearchAgent() {
   return (
     <div className="space-y-0">
+      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+        Historical Research Agent
+      </h1>
       <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
         <h2 className="text-xl md:text-2xl font-black leading-tight">
           Overview

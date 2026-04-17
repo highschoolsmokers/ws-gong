@@ -14,6 +14,11 @@ import { MAX_FILE_SIZE, MAX_FILES } from "@/lib/upload";
 const initialState: FormState = { status: "idle", message: "" };
 
 export default function ContactForm() {
+  const [formKey, setFormKey] = useState(0);
+  return <ContactFormInner key={formKey} onReset={() => setFormKey((k) => k + 1)} />;
+}
+
+function ContactFormInner({ onReset }: { onReset: () => void }) {
   const [state, formAction, pending] = useActionState(
     sendMessage,
     initialState,
@@ -85,7 +90,15 @@ export default function ContactForm() {
     return (
       <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8">
         <div />
-        <p className="text-2xl font-black tracking-tight">{state.message}</p>
+        <div className="space-y-4">
+          <p className="text-2xl font-black tracking-tight">{state.message}</p>
+          <button
+            onClick={onReset}
+            className="text-sm font-semibold hover:opacity-70 transition-opacity"
+          >
+            Send another message
+          </button>
+        </div>
       </div>
     );
   }

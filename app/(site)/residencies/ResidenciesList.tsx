@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Opportunity {
   id: string;
@@ -76,7 +77,21 @@ export default function ResidenciesList({
   lastRun,
   sourceStats,
 }: Props) {
-  const [genreFilter, setGenreFilter] = useState<GenreFilter>("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const genreFilter = (searchParams.get("genre") as GenreFilter) || "";
+  const setGenreFilter = useCallback(
+    (value: GenreFilter) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (value) {
+        params.set("genre", value);
+      } else {
+        params.delete("genre");
+      }
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams],
+  );
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
