@@ -45,7 +45,8 @@ async function fetchWithRetry(
   throw lastErr;
 }
 
-export async function POST(request: Request) {
+// Vercel cron jobs invoke endpoints with HTTP GET.
+export async function GET(request: Request) {
   if (!timingSafeBearer(request, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
