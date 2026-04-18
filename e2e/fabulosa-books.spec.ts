@@ -20,20 +20,20 @@ const tutorialPages = [
 ];
 
 // ---------------------------------------------------------------------------
-// Code page – Documentation Engineering section
+// Code page – AI Engineering section links the tutorial
 // ---------------------------------------------------------------------------
-test.describe("Documentation Engineering section", () => {
-  test("has Documentation Engineering heading on /code", async ({ page }) => {
+test.describe("AI Engineering section", () => {
+  test("has AI Engineering heading on /code", async ({ page }) => {
     await page.goto("/code");
     await expect(
-      page.getByRole("heading", { name: /Documentation Engineering/i }),
+      page.getByRole("heading", { name: /AI Engineering/i }),
     ).toBeVisible();
   });
 
   test("has Fabulosa Books tutorial link", async ({ page }) => {
     await page.goto("/code");
     const link = page.getByRole("link", {
-      name: /Fabulosa Books Scheduler/i,
+      name: /Multi-Agent Orchestration Tutorial/i,
     });
     await expect(link).toBeAttached();
     await expect(link).toHaveAttribute("href", "/fabulosa-books/");
@@ -128,7 +128,9 @@ test.describe("Fabulosa Books cross-navigation", () => {
   test("can navigate from /code to tutorial and back", async ({ page }) => {
     await page.goto("/code");
 
-    await page.getByRole("link", { name: /Fabulosa Books Scheduler/i }).click();
+    await page
+      .getByRole("link", { name: /Multi-Agent Orchestration Tutorial/i })
+      .click();
     await expect(page).toHaveURL(/\/fabulosa-books/);
 
     await page.locator("nav.site-nav").getByRole("link").click();

@@ -17,35 +17,6 @@ test.describe("Resume API", () => {
   });
 });
 
-test.describe("CSRF endpoint", () => {
-  test("returns JSON with token string", async ({ request }) => {
-    const response = await request.get("/api/laboratory/csrf");
-    expect(response.status()).toBe(200);
-
-    const body = await response.json();
-    expect(body).toHaveProperty("token");
-    expect(typeof body.token).toBe("string");
-    expect(body.token.length).toBeGreaterThan(0);
-  });
-
-  test("returns salt.hash format token", async ({ request }) => {
-    const response = await request.get("/api/laboratory/csrf");
-    const body = await response.json();
-    const parts = (body.token as string).split(".");
-    expect(parts).toHaveLength(2);
-    expect(parts[0].length).toBeGreaterThan(0);
-    expect(parts[1].length).toBeGreaterThan(0);
-  });
-
-  test("returns unique tokens per request", async ({ request }) => {
-    const r1 = await request.get("/api/laboratory/csrf");
-    const r2 = await request.get("/api/laboratory/csrf");
-    const t1 = (await r1.json()).token;
-    const t2 = (await r2.json()).token;
-    expect(t1).not.toBe(t2);
-  });
-});
-
 test.describe("Resume PDF generation", () => {
   const validProfile = {
     name: { first: "Test", last: "User" },

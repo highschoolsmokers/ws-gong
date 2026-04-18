@@ -1,5 +1,6 @@
 import { createHash } from "crypto";
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { validateProfile } from "@/lib/resumeEditor/schema";
 import { renderResume } from "@/lib/resumeEditor/renderer";
 
@@ -33,6 +34,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (err) {
+    if (err instanceof ZodError) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
     const message = err instanceof Error ? err.message : "Unknown error";
     const isValidationError =
       message.startsWith("Missing") || message.startsWith("Profile");
