@@ -24,9 +24,9 @@ test.describe("Page content", () => {
   test("about page project links point to /code", async ({ page }) => {
     await page.goto("/about");
     await expect(
-      page.getByRole("link", { name: /MCP server/i }),
+      page.getByRole("link", { name: /document management/i }),
     ).toHaveAttribute("href", "/code/paperless-mcp");
-    await expect(page.getByRole("link", { name: /CLI/i })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: /^CLI$/ })).toHaveAttribute(
       "href",
       "/code/submission-cli",
     );

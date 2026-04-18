@@ -1,14 +1,15 @@
-import { readFileSync, statSync } from "fs";
+import { readFile, stat } from "fs/promises";
 import { join } from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { verifyToken } from "@/lib/resumeToken";
 
 const pdfPath = join(process.cwd(), "private", "wsgong_tech_writer_resume.pdf");
 
-const headers = {
+const baseHeaders = {
   "Content-Type": "application/pdf",
   "Content-Disposition": 'inline; filename="wsgong_tech_writer_resume.pdf"',
   "X-Robots-Tag": "noindex, nofollow",
+  "Cache-Control": "private, max-age=300",
 };
 
 export async function HEAD(request: NextRequest) {
@@ -16,9 +17,9 @@ export async function HEAD(request: NextRequest) {
   if (!token || !verifyToken(token)) {
     return new NextResponse(null, { status: 403 });
   }
-  const { size } = statSync(pdfPath);
+  const { size } = await stat(pdfPath);
   return new NextResponse(null, {
-    headers: { ...headers, "Content-Length": String(size) },
+    headers: { ...baseHeaders, "Content-Length": String(size) },
   });
 }
 
@@ -27,6 +28,6 @@ export async function GET(request: NextRequest) {
   if (!token || !verifyToken(token)) {
     return new NextResponse(null, { status: 403 });
   }
-  const file = readFileSync(pdfPath);
-  return new NextResponse(file, { headers });
+  const file = await readFile(pdfPath);
+  return new NextResponse(new Uint8Array(file), { headers: baseHeaders });
 }

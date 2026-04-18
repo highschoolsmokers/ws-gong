@@ -1,10 +1,11 @@
 import { test, expect } from "@playwright/test";
 
+// /code/resume-generator is admin-only (Basic Auth via proxy.ts) and excluded
+// from public page smoke tests.
 const projectSubPages = [
   { href: "/code/paperless-mcp", title: "Paperless MCP Server" },
   { href: "/code/submission-cli", title: "Submission CLI" },
   { href: "/code/writer-utilities", title: "Writer Utilities" },
-  { href: "/code/resume-generator", title: "Resume Generator" },
   { href: "/code/die-neue-grafik", title: "Die Neue Grafik" },
   { href: "/code/contact-form", title: "Contact Form" },
 ];

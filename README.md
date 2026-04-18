@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ws-gong
 
-## Getting Started
+Personal site of W.S. Gong. Built with Next.js 16 (App Router), React 19, Tailwind 4, and deployed to Vercel.
 
-First, run the development server:
+## Features
+
+- Portfolio pages: `/about`, `/code`, `/narratives`, `/colophon`, `/contact`
+- Residency miner: automated weekly discovery + extraction of writing residencies and fellowships ([lib/residency-miner/](lib/residency-miner))
+- Resume generator: Zod-validated profile → PDF via `pdfkit` ([lib/resumeEditor/](lib/resumeEditor))
+- Gated resume endpoint with HMAC tokens (`/api/resume`)
+
+## Local development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script           | Purpose            |
+| ---------------- | ------------------ |
+| `pnpm dev`       | Next.js dev server |
+| `pnpm build`     | Production build   |
+| `pnpm lint`      | ESLint             |
+| `pnpm typecheck` | `tsc --noEmit`     |
+| `pnpm test:e2e`  | Playwright suite   |
 
-## Learn More
+## Required environment variables
 
-To learn more about Next.js, take a look at the following resources:
+Set these in Vercel (or `.env.local` for dev):
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Name                | Purpose                                                                       |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `DATABASE_URL`      | Neon Postgres connection string for the residency miner                       |
+| `ANTHROPIC_API_KEY` | Used by `extract` + `discover-sources`                                        |
+| `CRON_SECRET`       | Bearer token the Vercel cron sends to `/api/mine` and `/api/discover-sources` |
+| `RESUME_SECRET`     | HMAC key for the gated resume PDF (**required in prod**)                      |
+| `ADMIN_USER`        | HTTP Basic Auth user for `/code/resume-generator` and `/api/laboratory/*`     |
+| `ADMIN_PASSWORD`    | HTTP Basic Auth password (same gate)                                          |
+| `SENTRY_DSN`        | Sentry project DSN (optional — observability disabled if unset)               |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Crons (`vercel.json`): `/api/discover-sources` Sun 09:00 UTC, `/api/mine` Mon 09:00 UTC.

@@ -6,15 +6,23 @@ import {
   insertSource,
   logDiscovery,
 } from "@/lib/residency-miner/db";
-import { generateSourceId } from "@/lib/residency-miner/dedupe";
+import { generateSourceId, normalizeUrl } from "@/lib/residency-miner/dedupe";
+import { DISCOVERY_MODEL } from "@/lib/residency-miner/models";
+import { timingSafeBearer } from "@/lib/authz";
 import type { DiscoveryLog, SourceType } from "@/lib/residency-miner/types";
 
 export const maxDuration = 300;
 
 const MAX_NEW_SOURCES = 10;
 const MIN_BODY_LENGTH = 2000;
+// Intentionally English-only: we only accept programs whose working language
+// includes English, so the validator doubles as a language filter. A multi-
+// lingual variant would need per-language keyword sets AND a rule to reject
+// programs that *only* operate in a non-English language.
 const KEYWORD_PATTERN =
   /\b(residency|residencies|fellowship|fellowships|application|applications|deadline|writers?|authors?|artists?|workshop)\b/i;
+const WRITING_KEYWORD_PATTERN =
+  /\b(writer|writers|writing|fiction|poetry|poet|poets|nonfiction|literary|literature|novelist|playwright|screenwriter|author|authors|manuscript|manuscripts)\b/i;
 
 const anthropic = new Anthropic();
 
@@ -26,8 +34,7 @@ interface Candidate {
 }
 
 export async function POST(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!timingSafeBearer(request, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -50,7 +57,6 @@ export async function POST(request: Request) {
     });
   }
 
-  // Filter out obvious duplicates before validation
   const freshCandidates: Candidate[] = [];
   for (const c of candidates) {
     if (existingUrls.has(normalizeUrl(c.url))) {
@@ -60,7 +66,6 @@ export async function POST(request: Request) {
     }
   }
 
-  // Validate in parallel
   const validations = await Promise.all(
     freshCandidates.map(async (c) => ({
       candidate: c,
@@ -91,6 +96,7 @@ export async function POST(request: Request) {
       name: candidate.name,
       url: candidate.url,
       type: candidate.type,
+      reason: candidate.reason,
     });
 
     if (inserted) {
@@ -103,9 +109,6 @@ export async function POST(request: Request) {
 
   await logDiscovery(log);
 
-  // Early-warning alert: if the agent found nothing, the parser broke, Claude's
-  // output drifted, or the web_search tool hit a wall. Sentry warning so we
-  // notice before the source list goes stale.
   if (log.candidates === 0) {
     Sentry.captureMessage("residency discovery: no candidates returned", {
       level: "warning",
@@ -141,30 +144,57 @@ STRICT REQUIREMENTS:
 
 Run multiple targeted searches. After each search, evaluate results.
 
-After your research is complete, respond with a JSON array of candidates. You may include brief explanatory text before the array, but the response MUST contain a parseable JSON array. Each candidate object:
+Call the \`report_candidates\` tool exactly once with your final list. Each candidate has:
 - name: short display name
 - url: full URL to the listing/apply page
 - type: "aggregator" or "org_listing"
 - reason: one short phrase why this is worth adding
 
-Example:
-[
-  {"name": "Example Residency", "url": "https://example.org/apply", "type": "org_listing", "reason": "well-established Italian writing program"}
-]
+Aim for 12-15 candidates. If nothing good is found, call the tool with an empty array.`;
 
-Aim for 12-15 candidates. If nothing good is found, return [].`;
+  const reportTool = {
+    name: "report_candidates",
+    description: "Return the final list of vetted source candidates.",
+    input_schema: {
+      type: "object" as const,
+      properties: {
+        candidates: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              url: { type: "string" },
+              type: { type: "string", enum: ["aggregator", "org_listing"] },
+              reason: { type: "string" },
+            },
+            required: ["name", "url", "type"],
+          },
+        },
+      },
+      required: ["candidates"],
+    },
+  };
 
   const response = await anthropic.messages.create({
-    model: "claude-sonnet-4-20250514",
+    model: DISCOVERY_MODEL,
     max_tokens: 8192,
+    temperature: 0,
     tools: [
       {
         type: "web_search_20250305",
         name: "web_search",
         max_uses: 6,
       },
+      reportTool,
     ],
-    system: systemPrompt,
+    system: [
+      {
+        type: "text",
+        text: systemPrompt,
+        cache_control: { type: "ephemeral" },
+      },
+    ],
     messages: [
       {
         role: "user",
@@ -174,68 +204,23 @@ Aim for 12-15 candidates. If nothing good is found, return [].`;
     ],
   });
 
+  const toolUse = response.content.find(
+    (b) => b.type === "tool_use" && b.name === "report_candidates",
+  );
   const textBlocks = response.content.filter(
     (b): b is Extract<typeof b, { type: "text" }> => b.type === "text",
   );
   const combinedText = textBlocks.map((b) => b.text).join("\n\n");
 
-  const candidates = parseCandidates(combinedText);
+  if (!toolUse || toolUse.type !== "tool_use") {
+    return { candidates: [], rawText: combinedText };
+  }
+
+  const raw = (toolUse.input as { candidates?: unknown }).candidates;
+  if (!Array.isArray(raw)) return { candidates: [], rawText: combinedText };
+
+  const candidates = raw.filter(isValidCandidate);
   return { candidates, rawText: combinedText };
-}
-
-function parseCandidates(text: string): Candidate[] {
-  // Try markdown fence first
-  const fenceMatch = text.match(/```(?:json)?\s*(\[[\s\S]*?\])\s*```/);
-  if (fenceMatch) {
-    const parsed = tryParseArray(fenceMatch[1]);
-    if (parsed) return parsed;
-  }
-
-  // Try to find first top-level JSON array anywhere in the text
-  const firstBracket = text.indexOf("[");
-  if (firstBracket !== -1) {
-    // Find matching close bracket via depth counting
-    let depth = 0;
-    let inString = false;
-    let escape = false;
-    for (let i = firstBracket; i < text.length; i++) {
-      const ch = text[i];
-      if (escape) {
-        escape = false;
-        continue;
-      }
-      if (ch === "\\") {
-        escape = true;
-        continue;
-      }
-      if (ch === '"') {
-        inString = !inString;
-        continue;
-      }
-      if (inString) continue;
-      if (ch === "[") depth++;
-      else if (ch === "]") {
-        depth--;
-        if (depth === 0) {
-          const parsed = tryParseArray(text.slice(firstBracket, i + 1));
-          if (parsed) return parsed;
-          break;
-        }
-      }
-    }
-  }
-
-  return [];
-}
-
-function tryParseArray(str: string): Candidate[] | null {
-  try {
-    const parsed = JSON.parse(str) as unknown;
-    if (!Array.isArray(parsed)) return null;
-    return parsed.filter(isValidCandidate);
-  } catch {
-    return null;
-  }
 }
 
 function isValidCandidate(c: unknown): c is Candidate {
@@ -281,6 +266,12 @@ async function validateUrl(
       return { ok: false, reason: "no residency keywords found" };
     }
 
+    // Defense against hallucinated or off-topic URLs: require writing-specific
+    // vocabulary, not just generic "workshop/deadline/application" signals.
+    if (!WRITING_KEYWORD_PATTERN.test(html)) {
+      return { ok: false, reason: "no writing-specific keywords found" };
+    }
+
     return { ok: true };
   } catch (error) {
     return {
@@ -288,8 +279,4 @@ async function validateUrl(
       reason: error instanceof Error ? error.message : String(error),
     };
   }
-}
-
-function normalizeUrl(url: string): string {
-  return url.toLowerCase().trim().replace(/\/+$/, "");
 }

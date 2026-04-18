@@ -1,8 +1,19 @@
 import { z } from "zod";
 
+// Accept https:// URLs and mailto: for email contacts. Reject everything else
+// so `javascript:`/`data:` URIs can't be embedded in the rendered PDF links.
+const safeUrl = z.string().refine(
+  (v) =>
+    /^https?:\/\//i.test(v) ||
+    /^mailto:/i.test(v) ||
+    // Allow bare strings like "linkedin.com/in/foo" — renderer prepends scheme
+    /^[\w.-]+\.[a-z]{2,}(\/.*)?$/i.test(v),
+  { message: "URL must be http(s), mailto, or a bare domain" },
+);
+
 const contactEntrySchema = z.object({
   label: z.string(),
-  url: z.string(),
+  url: safeUrl,
   type: z.enum(["web", "email", "linkedin"]),
 });
 

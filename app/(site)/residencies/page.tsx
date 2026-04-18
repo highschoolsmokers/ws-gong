@@ -13,19 +13,16 @@ export const metadata: Metadata = {
     "Writer residencies, fellowships, and conferences — automatically discovered and updated weekly.",
 };
 
-// Fully cached; regenerated on demand when the mine cron calls
-// revalidatePath("/residencies") after a successful run.
-export const revalidate = false;
+// Revalidate at most once an hour so cached pages don't show deadlines that
+// have already passed. The mine cron also calls revalidatePath("/residencies")
+// after a successful run, which supersedes this floor.
+export const revalidate = 3600;
 
 export default async function ResidenciesPage() {
-  const today = new Date().toISOString().split("T")[0];
-
   const [opportunities, lastRun, sourceStats] = await Promise.all([
-    getOpportunities({
-      deadlineAfter: today,
-      sort: "deadline",
-      order: "asc",
-    }),
+    // Fetch everything; the client filters by today + genre so that the SSR
+    // cache stays valid across days without a rebuild.
+    getOpportunities({ sort: "deadline", order: "asc" }),
     getLastRun(),
     getSourceStats(),
   ]);
