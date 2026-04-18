@@ -36,7 +36,8 @@ test.describe("AI Engineering section", () => {
       name: /Multi-Agent Orchestration Tutorial/i,
     });
     await expect(link).toBeAttached();
-    await expect(link).toHaveAttribute("href", "/fabulosa-books/");
+    // Next.js may normalize the trailing slash in the rendered DOM; accept either.
+    await expect(link).toHaveAttribute("href", /^\/fabulosa-books\/?$/);
   });
 });
 

@@ -17,40 +17,22 @@ test.describe("Resume API", () => {
   });
 });
 
-test.describe("Resume PDF generation", () => {
-  const validProfile = {
-    name: { first: "Test", last: "User" },
-    title: "Engineer",
-    contact: [],
-    about: ["Test bio"],
-    education: [],
-    professional_development: [],
-    skills: "TypeScript",
-    skill_categories: [],
-    experience: [],
-    earlier_experience: [],
-  };
-
-  test("returns PDF for valid profile", async ({ request }) => {
+test.describe("Resume PDF generation (admin-gated)", () => {
+  // /api/laboratory/* is Basic-Auth protected by proxy.ts. Without credentials
+  // every request — valid or malformed — must short-circuit to 401 before any
+  // handler runs. Happy-path and validation behavior are covered by unit tests.
+  test("POST without auth returns 401", async ({ request }) => {
     const response = await request.post("/api/laboratory/generate", {
-      data: validProfile,
+      data: { name: { first: "Test", last: "User" } },
     });
-    expect(response.status()).toBe(200);
-    expect(response.headers()["content-type"]).toContain("application/pdf");
+    expect(response.status()).toBe(401);
   });
 
-  test("returns 400 for missing name", async ({ request }) => {
-    const response = await request.post("/api/laboratory/generate", {
-      data: { title: "no name field" },
-    });
-    expect(response.status()).toBe(400);
-  });
-
-  test("returns 400 for empty body", async ({ request }) => {
+  test("POST with empty body without auth returns 401", async ({ request }) => {
     const response = await request.post("/api/laboratory/generate", {
       data: {},
     });
-    expect(response.status()).toBe(400);
+    expect(response.status()).toBe(401);
   });
 });
 
