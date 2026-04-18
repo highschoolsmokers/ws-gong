@@ -7,7 +7,11 @@
     {
       "path": "/api/mine",
       "schedule": "0 9 * * 1"
+    },
+    {
+      "path": "/api/prune-logs",
+      "schedule": "0 10 1 * *"
     }
   ],
-  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':(exclude)*.md' ':(exclude)docs/**'"
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':(exclude)*.md' ':(exclude)docs/**' ':(exclude).github/**' ':(exclude).husky/**' ':(exclude)TODO.md' ':(exclude)README.md' ':(exclude).prettierignore' ':(exclude)lib/**/*.test.ts'"
 }

@@ -3,6 +3,12 @@ name: E2E Smoke Tests
 on:
   deployment_status:
 
+concurrency:
+  # Group by deployment target so preview deploys on the same SHA don't
+  # cancel each other across environments.
+  group: e2e-${{ github.event.deployment_status.environment }}-${{ github.event.deployment.sha || github.sha }}
+  cancel-in-progress: true
+
 jobs:
   e2e:
     if: github.event.deployment_status.state == 'success'
@@ -16,7 +22,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile

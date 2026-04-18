@@ -77,7 +77,6 @@ export default function ProfileEditor() {
 
   const apiHeaders = {
     "Content-Type": "application/json",
-    "x-api-token": process.env.NEXT_PUBLIC_API_TOKEN || "dev-token",
   };
 
   const [showSaveAs, setShowSaveAs] = useState(false);

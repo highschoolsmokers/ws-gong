@@ -13,11 +13,19 @@ CREATE TABLE IF NOT EXISTS opportunities (
   description     TEXT NOT NULL DEFAULT '',
   first_seen      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   last_updated    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  source_url      TEXT NOT NULL
+  source_url      TEXT NOT NULL,
+
+  CONSTRAINT valid_genre_values CHECK (
+    genre <@ ARRAY['fiction','nonfiction','poetry','screenwriting','multi','other']::text[]
+  ),
+  CONSTRAINT stipend_range_sane CHECK (
+    stipend_max IS NULL OR stipend IS NULL OR stipend_max >= stipend
+  )
 );
 
 CREATE INDEX IF NOT EXISTS idx_opportunities_deadline ON opportunities (deadline);
 CREATE INDEX IF NOT EXISTS idx_opportunities_genre ON opportunities USING GIN (genre);
+CREATE INDEX IF NOT EXISTS idx_opportunities_url ON opportunities (url);
 
 CREATE TABLE IF NOT EXISTS run_logs (
   id              SERIAL PRIMARY KEY,
@@ -36,6 +44,7 @@ CREATE TABLE IF NOT EXISTS sources (
   url                  TEXT NOT NULL UNIQUE,
   type                 TEXT NOT NULL,
   status               TEXT NOT NULL DEFAULT 'active',
+  reason               TEXT,
   discovered_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   last_fetched_at      TIMESTAMPTZ,
   last_success_at      TIMESTAMPTZ,

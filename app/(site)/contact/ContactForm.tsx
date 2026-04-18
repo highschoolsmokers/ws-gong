@@ -26,7 +26,9 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
     initialState,
   );
   const [loadedAt, setLoadedAt] = useState<number>(0);
-  const [files, setFiles] = useState<File[]>([]);
+  // Wrap each File with a stable id so React can track items across reorders
+  // or removals without reusing the same array index as a key.
+  const [files, setFiles] = useState<{ id: string; file: File }[]>([]);
   const [dragging, setDragging] = useState(false);
   const dragCounter = useRef(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -39,8 +41,15 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
   const addFiles = useCallback((incoming: File[]) => {
     setFiles((prev) => {
-      const combined = [...prev, ...incoming].slice(0, MAX_FILES);
-      return combined.filter((f) => f.size <= MAX_FILE_SIZE);
+      const wrapped = incoming.map((file) => ({
+        id:
+          typeof crypto !== "undefined" && "randomUUID" in crypto
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        file,
+      }));
+      const combined = [...prev, ...wrapped].slice(0, MAX_FILES);
+      return combined.filter(({ file }) => file.size <= MAX_FILE_SIZE);
     });
   }, []);
 
@@ -71,8 +80,8 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
     [addFiles],
   );
 
-  const removeFile = (index: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== index));
+  const removeFile = (id: string) => {
+    setFiles((prev) => prev.filter((f) => f.id !== id));
   };
 
   const handleFileSelect = (e: ChangeEvent<HTMLInputElement>) => {
@@ -82,7 +91,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
   // Inject files into FormData before submission
   const handleSubmit = (formData: FormData) => {
-    for (const file of files) {
+    for (const { file } of files) {
       formData.append("attachments", file);
     }
     formAction(formData);
@@ -195,20 +204,20 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
             </div>
             {files.length > 0 && (
               <div className="space-y-1">
-                {files.map((f, i) => (
+                {files.map(({ id, file }) => (
                   <div
-                    key={i}
+                    key={id}
                     className="flex items-baseline gap-2 text-sm text-neutral-500"
                   >
-                    <span>{f.name}</span>
+                    <span>{file.name}</span>
                     <span className="text-neutral-500">
-                      ({(f.size / 1024).toFixed(1)}kb)
+                      ({(file.size / 1024).toFixed(1)}kb)
                     </span>
                     <button
                       type="button"
-                      onClick={() => removeFile(i)}
+                      onClick={() => removeFile(id)}
                       className="text-neutral-400 hover:text-red-500 text-xs"
-                      aria-label={`Remove ${f.name}`}
+                      aria-label={`Remove ${file.name}`}
                     >
                       {"\u00D7"}
                     </button>

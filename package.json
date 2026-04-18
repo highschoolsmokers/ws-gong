@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
+    "test:unit": "node --test --experimental-strip-types --test-reporter=spec lib/residency-miner/*.test.ts",
     "test:e2e": "playwright test",
     "prepare": "husky"
   },
@@ -36,10 +37,7 @@
       "@sentry/cli",
       "sharp",
       "unrs-resolver"
-    ],
-    "overrides": {
-      "nodemailer": "^8.0.5"
-    }
+    ]
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

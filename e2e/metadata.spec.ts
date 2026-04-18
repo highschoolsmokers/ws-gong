@@ -8,7 +8,7 @@ test.describe("OG metadata", () => {
   for (const route of SITE_PAGES) {
     test(`${route} has og:title`, async ({ page }) => {
       const res = await page.goto(route);
-      test.skip(res?.status() !== 200, "Page not available");
+      expect(res?.status(), `${route} should return 200`).toBe(200);
 
       const ogTitle = page.locator('meta[property="og:title"]');
       await expect(

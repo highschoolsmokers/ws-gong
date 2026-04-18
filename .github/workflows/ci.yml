@@ -29,6 +29,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Unit tests
+        run: pnpm test:unit
+
       - name: Format check
         run: pnpm exec prettier --check .
 
@@ -36,5 +39,4 @@ jobs:
         run: pnpm build
 
       - name: Audit
-        run: pnpm audit --audit-level=moderate
-        continue-on-error: true
+        run: pnpm audit --audit-level=high

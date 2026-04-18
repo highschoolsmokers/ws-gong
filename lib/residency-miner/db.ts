@@ -1,4 +1,6 @@
-import { neon } from "@neondatabase/serverless";
+import { neon, type NeonQueryFunction } from "@neondatabase/serverless";
+import { z } from "zod";
+import * as Sentry from "@sentry/nextjs";
 import type {
   Opportunity,
   Genre,
@@ -11,28 +13,85 @@ import type {
 
 const FAILURE_DEACTIVATE_THRESHOLD = 4;
 
-function getClient() {
-  return neon(process.env.DATABASE_URL!);
+// Runtime validation for DB rows. Catches schema drift (column renames,
+// nullability changes) before bad data propagates to the UI.
+const opportunityRowSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  org: z.string(),
+  url: z.string(),
+  deadline: z.string(),
+  genre: z.array(z.string()).nullable().default([]),
+  duration: z.string(),
+  stipend: z.number().nullable(),
+  stipend_max: z.number().nullable().optional(),
+  location: z.string(),
+  eligibility: z.string(),
+  description: z.string(),
+  first_seen: z.date(),
+  last_updated: z.date(),
+  source_url: z.string(),
+});
+
+const sourceRowSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  url: z.string(),
+  type: z.enum(["aggregator", "org_listing"]),
+  status: z.enum(["active", "inactive"]),
+  discovered_at: z.date(),
+  last_fetched_at: z.date().nullable(),
+  last_success_at: z.date().nullable(),
+  success_count: z.number(),
+  failure_count: z.number(),
+  consecutive_failures: z.number(),
+});
+
+let client: NeonQueryFunction<false, false> | null = null;
+
+function getClient(): NeonQueryFunction<false, false> | null {
+  if (!process.env.DATABASE_URL) return null;
+  if (!client) client = neon(process.env.DATABASE_URL);
+  return client;
 }
 
-function rowToOpportunity(row: Record<string, unknown>): Opportunity {
+function requireClient(): NeonQueryFunction<false, false> {
+  const sql = getClient();
+  if (!sql) throw new Error("DATABASE_URL is not configured");
+  return sql;
+}
+
+function rowToOpportunity(row: Record<string, unknown>): Opportunity | null {
+  const parsed = opportunityRowSchema.safeParse(row);
+  if (!parsed.success) {
+    Sentry.captureMessage("residency db: malformed opportunity row", {
+      level: "warning",
+      extra: { issues: parsed.error.issues, row },
+    });
+    return null;
+  }
+  const r = parsed.data;
   return {
-    id: row.id as string,
-    name: row.name as string,
-    org: row.org as string,
-    url: row.url as string,
-    deadline: row.deadline as string,
-    genre: ((row.genre as string[]) ?? []) as Genre[],
-    duration: row.duration as string,
-    stipend: row.stipend as number | null,
-    stipendMax: (row.stipend_max ?? null) as number | null,
-    location: row.location as string,
-    eligibility: row.eligibility as string,
-    description: row.description as string,
-    firstSeen: (row.first_seen as Date).toISOString(),
-    lastUpdated: (row.last_updated as Date).toISOString(),
-    sourceUrl: row.source_url as string,
+    id: r.id,
+    name: r.name,
+    org: r.org,
+    url: r.url,
+    deadline: r.deadline,
+    genre: (r.genre ?? []) as Genre[],
+    duration: r.duration,
+    stipend: r.stipend,
+    stipendMax: r.stipend_max ?? null,
+    location: r.location,
+    eligibility: r.eligibility,
+    description: r.description,
+    firstSeen: r.first_seen.toISOString(),
+    lastUpdated: r.last_updated.toISOString(),
+    sourceUrl: r.source_url,
   };
+}
+
+function mapOpportunityRows(rows: Record<string, unknown>[]): Opportunity[] {
+  return rows.map(rowToOpportunity).filter((o): o is Opportunity => o !== null);
 }
 
 export async function getOpportunities(filters?: {
@@ -42,8 +101,13 @@ export async function getOpportunities(filters?: {
   sort?: "deadline" | "firstSeen";
   order?: "asc" | "desc";
 }): Promise<Opportunity[]> {
-  if (!process.env.DATABASE_URL) return [];
   const sql = getClient();
+  if (!sql) return [];
+
+  // Rolling opportunities are stored as the literal string "rolling", which
+  // sorts after any ISO date under lexicographic comparison. That means they
+  // naturally appear at the tail of ORDER BY deadline ASC — which is what we
+  // want: dated opportunities first, rolling last.
 
   if (!filters?.genre && !filters?.deadlineAfter && !filters?.deadlineBefore) {
     const sortByFirstSeen = filters?.sort === "firstSeen";
@@ -59,7 +123,7 @@ export async function getOpportunities(filters?: {
     } else {
       rows = await sql`SELECT * FROM opportunities ORDER BY deadline ASC`;
     }
-    return rows.map(rowToOpportunity);
+    return mapOpportunityRows(rows);
   }
 
   let rows: Record<string, unknown>[];
@@ -70,29 +134,35 @@ export async function getOpportunities(filters?: {
 
   if (da && !g && !db) {
     rows =
-      await sql`SELECT * FROM opportunities WHERE deadline >= ${da} ORDER BY deadline ASC`;
+      await sql`SELECT * FROM opportunities WHERE deadline >= ${da} OR deadline = 'rolling' ORDER BY deadline ASC`;
   } else if (da && g && !db) {
     rows =
-      await sql`SELECT * FROM opportunities WHERE deadline >= ${da} AND genre @> ARRAY[${g}]::text[] ORDER BY deadline ASC`;
+      await sql`SELECT * FROM opportunities WHERE (deadline >= ${da} OR deadline = 'rolling') AND genre @> ARRAY[${g}]::text[] ORDER BY deadline ASC`;
   } else if (g && !da && !db) {
     rows =
       await sql`SELECT * FROM opportunities WHERE genre @> ARRAY[${g}]::text[] ORDER BY deadline ASC`;
+  } else if (db && !da && !g) {
+    rows =
+      await sql`SELECT * FROM opportunities WHERE deadline <= ${db} AND deadline <> 'rolling' ORDER BY deadline ASC`;
+  } else if (db && g && !da) {
+    rows =
+      await sql`SELECT * FROM opportunities WHERE deadline <= ${db} AND deadline <> 'rolling' AND genre @> ARRAY[${g}]::text[] ORDER BY deadline ASC`;
+  } else if (da && db && !g) {
+    rows =
+      await sql`SELECT * FROM opportunities WHERE ((deadline >= ${da} AND deadline <= ${db}) OR deadline = 'rolling') ORDER BY deadline ASC`;
   } else {
-    rows = await sql`SELECT * FROM opportunities ORDER BY deadline ASC`;
-    rows = rows.filter((r) => {
-      if (g && !(r.genre as string[])?.includes(g)) return false;
-      if (da && (r.deadline as string) < da) return false;
-      if (db && (r.deadline as string) > db) return false;
-      return true;
-    });
+    rows =
+      await sql`SELECT * FROM opportunities WHERE ((deadline >= ${da ?? ""} AND deadline <= ${db ?? "9999-12-31"}) OR deadline = 'rolling') AND genre @> ARRAY[${g}]::text[] ORDER BY deadline ASC`;
   }
 
-  return rows.map(rowToOpportunity);
+  return mapOpportunityRows(rows);
 }
 
-export async function upsertOpportunity(opp: Opportunity): Promise<void> {
-  const sql = getClient();
-  await sql`
+export async function upsertOpportunity(
+  opp: Opportunity,
+): Promise<{ inserted: boolean }> {
+  const sql = requireClient();
+  const rows = await sql`
     INSERT INTO opportunities (id, name, org, url, deadline, genre, duration, stipend, stipend_max, location, eligibility, description, source_url)
     VALUES (${opp.id}, ${opp.name}, ${opp.org}, ${opp.url}, ${opp.deadline}, ${opp.genre}, ${opp.duration}, ${opp.stipend}, ${opp.stipendMax}, ${opp.location}, ${opp.eligibility}, ${opp.description}, ${opp.sourceUrl})
     ON CONFLICT (id) DO UPDATE SET
@@ -108,11 +178,14 @@ export async function upsertOpportunity(opp: Opportunity): Promise<void> {
       eligibility = EXCLUDED.eligibility,
       description = EXCLUDED.description,
       source_url = EXCLUDED.source_url,
-      last_updated = NOW()`;
+      last_updated = NOW()
+    RETURNING (xmax = 0) AS inserted`;
+  return { inserted: Boolean((rows[0] as { inserted: boolean })?.inserted) };
 }
 
 export async function logRun(log: MineRunLog): Promise<void> {
   const sql = getClient();
+  if (!sql) return;
   const errorsJson = JSON.stringify(log.errors);
   await sql`
     INSERT INTO run_logs (sources_fetched, new_found, updated, errors)
@@ -120,8 +193,8 @@ export async function logRun(log: MineRunLog): Promise<void> {
 }
 
 export async function getLastRun(): Promise<MineRunLog | null> {
-  if (!process.env.DATABASE_URL) return null;
   const sql = getClient();
+  if (!sql) return null;
   const rows =
     await sql`SELECT * FROM run_logs ORDER BY timestamp DESC LIMIT 1`;
 
@@ -137,37 +210,48 @@ export async function getLastRun(): Promise<MineRunLog | null> {
   };
 }
 
-function rowToSource(row: Record<string, unknown>): Source {
+function rowToSource(row: Record<string, unknown>): Source | null {
+  const parsed = sourceRowSchema.safeParse(row);
+  if (!parsed.success) {
+    Sentry.captureMessage("residency db: malformed source row", {
+      level: "warning",
+      extra: { issues: parsed.error.issues, row },
+    });
+    return null;
+  }
+  const r = parsed.data;
   return {
-    id: row.id as string,
-    name: row.name as string,
-    url: row.url as string,
-    type: row.type as SourceType,
-    status: row.status as SourceStatus,
-    discoveredAt: (row.discovered_at as Date).toISOString(),
-    lastFetchedAt: row.last_fetched_at
-      ? (row.last_fetched_at as Date).toISOString()
-      : null,
-    lastSuccessAt: row.last_success_at
-      ? (row.last_success_at as Date).toISOString()
-      : null,
-    successCount: row.success_count as number,
-    failureCount: row.failure_count as number,
-    consecutiveFailures: row.consecutive_failures as number,
+    id: r.id,
+    name: r.name,
+    url: r.url,
+    type: r.type as SourceType,
+    status: r.status as SourceStatus,
+    discoveredAt: r.discovered_at.toISOString(),
+    lastFetchedAt: r.last_fetched_at ? r.last_fetched_at.toISOString() : null,
+    lastSuccessAt: r.last_success_at ? r.last_success_at.toISOString() : null,
+    successCount: r.success_count,
+    failureCount: r.failure_count,
+    consecutiveFailures: r.consecutive_failures,
   };
+}
+
+function mapSourceRows(rows: Record<string, unknown>[]): Source[] {
+  return rows.map(rowToSource).filter((s): s is Source => s !== null);
 }
 
 export async function getActiveSources(): Promise<Source[]> {
   const sql = getClient();
+  if (!sql) return [];
   const rows =
     await sql`SELECT * FROM sources WHERE status = 'active' ORDER BY discovered_at ASC`;
-  return rows.map(rowToSource);
+  return mapSourceRows(rows);
 }
 
 export async function getAllSources(): Promise<Source[]> {
   const sql = getClient();
+  if (!sql) return [];
   const rows = await sql`SELECT * FROM sources ORDER BY discovered_at ASC`;
-  return rows.map(rowToSource);
+  return mapSourceRows(rows);
 }
 
 export async function insertSource(input: {
@@ -175,11 +259,12 @@ export async function insertSource(input: {
   name: string;
   url: string;
   type: SourceType;
+  reason?: string;
 }): Promise<boolean> {
-  const sql = getClient();
+  const sql = requireClient();
   const result = await sql`
-    INSERT INTO sources (id, name, url, type)
-    VALUES (${input.id}, ${input.name}, ${input.url}, ${input.type})
+    INSERT INTO sources (id, name, url, type, reason)
+    VALUES (${input.id}, ${input.name}, ${input.url}, ${input.type}, ${input.reason ?? null})
     ON CONFLICT (url) DO NOTHING
     RETURNING id`;
   return result.length > 0;
@@ -187,6 +272,7 @@ export async function insertSource(input: {
 
 export async function recordSourceSuccess(id: string): Promise<void> {
   const sql = getClient();
+  if (!sql) return;
   await sql`
     UPDATE sources
     SET success_count = success_count + 1,
@@ -198,6 +284,7 @@ export async function recordSourceSuccess(id: string): Promise<void> {
 
 export async function recordSourceFailure(id: string): Promise<void> {
   const sql = getClient();
+  if (!sql) return;
   await sql`
     UPDATE sources
     SET failure_count = failure_count + 1,
@@ -214,8 +301,8 @@ export async function getSourceStats(): Promise<{
   active: number;
   inactive: number;
 }> {
-  if (!process.env.DATABASE_URL) return { active: 0, inactive: 0 };
   const sql = getClient();
+  if (!sql) return { active: 0, inactive: 0 };
   const rows = await sql`
     SELECT
       COUNT(*) FILTER (WHERE status = 'active') AS active,
@@ -230,8 +317,24 @@ export async function getSourceStats(): Promise<{
 
 export async function logDiscovery(log: DiscoveryLog): Promise<void> {
   const sql = getClient();
+  if (!sql) return;
   const rejectedJson = JSON.stringify(log.rejected);
   await sql`
     INSERT INTO discovery_logs (candidates, added, rejected)
     VALUES (${log.candidates}, ${log.added}, ${rejectedJson}::jsonb)`;
+}
+
+// Log retention: delete rows older than the given number of days. Call from
+// a scheduled route to keep run_logs / discovery_logs from growing unbounded.
+export async function pruneLogs(keepDays: number): Promise<{
+  runLogs: number;
+  discoveryLogs: number;
+}> {
+  const sql = getClient();
+  if (!sql) return { runLogs: 0, discoveryLogs: 0 };
+  const runRows =
+    await sql`DELETE FROM run_logs WHERE timestamp < NOW() - (${keepDays} || ' days')::interval RETURNING id`;
+  const discoveryRows =
+    await sql`DELETE FROM discovery_logs WHERE timestamp < NOW() - (${keepDays} || ' days')::interval RETURNING id`;
+  return { runLogs: runRows.length, discoveryLogs: discoveryRows.length };
 }
