@@ -1,28 +1,37 @@
 import { NextResponse } from "next/server";
-import fs from "fs";
+import { readdir, mkdir, writeFile } from "fs/promises";
 import path from "path";
 
 const PROFILES_DIR = path.join(process.cwd(), "profiles");
+const MAX_BODY_BYTES = 256 * 1024;
 
 export async function GET() {
-  if (!fs.existsSync(PROFILES_DIR)) {
-    return NextResponse.json([]);
+  try {
+    const entries = await readdir(PROFILES_DIR);
+    const names = entries
+      .filter((f) => f.endsWith(".json"))
+      .map((f) => f.replace(".json", ""))
+      .sort();
+    return NextResponse.json(names);
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code === "ENOENT") {
+      return NextResponse.json([]);
+    }
+    throw err;
   }
-  const names = fs
-    .readdirSync(PROFILES_DIR)
-    .filter((f) => f.endsWith(".json"))
-    .map((f) => f.replace(".json", ""))
-    .sort();
-  return NextResponse.json(names);
 }
 
 export async function POST(request: Request) {
-  const token = request.headers.get("x-api-token");
-  if (token !== process.env.NEXT_PUBLIC_API_TOKEN) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const len = Number(request.headers.get("content-length") ?? 0);
+  if (len > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
+  }
+  const raw = await request.text();
+  if (raw.length > MAX_BODY_BYTES) {
+    return NextResponse.json({ error: "Payload too large" }, { status: 413 });
   }
 
-  const { name, data } = await request.json();
+  const { name, data } = JSON.parse(raw);
   if (!name || !data) {
     return NextResponse.json(
       { error: "Missing name or data" },
@@ -35,8 +44,8 @@ export async function POST(request: Request) {
       { status: 400 },
     );
   }
-  fs.mkdirSync(PROFILES_DIR, { recursive: true });
+  await mkdir(PROFILES_DIR, { recursive: true });
   const filePath = path.join(PROFILES_DIR, `${name}.json`);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  await writeFile(filePath, JSON.stringify(data, null, 2));
   return NextResponse.json({ saved: name });
 }

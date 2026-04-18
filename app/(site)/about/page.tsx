@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -19,6 +20,30 @@ export const metadata: Metadata = {
     description,
   },
 };
+
+const linkClass = "hover:opacity-70 transition-opacity";
+
+function Section({ title, children }: { title: string; children: ReactNode }) {
+  return (
+    <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <h2 className="text-xl md:text-2xl font-black leading-tight">{title}</h2>
+      {children}
+    </section>
+  );
+}
+
+function Ext({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={linkClass}
+    >
+      {children}
+    </a>
+  );
+}
 
 const socials = [
   {
@@ -46,73 +71,21 @@ const socials = [
 export default function About() {
   return (
     <div className="space-y-0">
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Bio</h2>
+      <Section title="Bio">
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             W.S. Gong is a fiction editor at{" "}
-            <a
-              href="https://therumpus.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
-              The Rumpus
-            </a>{" "}
-            whose work appears in{" "}
-            <a
-              href="https://www.14hills.net"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
-              14 Hills
-            </a>
-            . He is an alumnus of{" "}
-            <a
-              href="https://www.middlebury.edu/bread-loaf-conferences"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
+            <Ext href="https://therumpus.net">The Rumpus</Ext> whose work
+            appears in <Ext href="https://www.14hills.net">14 Hills</Ext>. He is
+            an alumnus of{" "}
+            <Ext href="https://www.middlebury.edu/bread-loaf-conferences">
               Bread Loaf
-            </a>
-            ,{" "}
-            <a
-              href="https://sewaneewriters.org"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Sewanee
-            </a>
-            ,{" "}
-            <a
-              href="https://tinhouse.com/writers-workshop"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Tin House
-            </a>
-            , and{" "}
-            <a
-              href="https://www.kenyonreview.org/workshops"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Kenyon
-            </a>
-            , and a resident of the{" "}
-            <a
-              href="https://vcca.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
-            >
-              Virginia Center for Creative Arts
-            </a>
+            </Ext>
+            , <Ext href="https://sewaneewriters.org">Sewanee</Ext>,{" "}
+            <Ext href="https://tinhouse.com/writers-workshop">Tin House</Ext>,
+            and <Ext href="https://www.kenyonreview.org/workshops">Kenyon</Ext>,
+            and a resident of the{" "}
+            <Ext href="https://vcca.com">Virginia Center for Creative Arts</Ext>
             . He is at work on a novel about runaway kids in 1980s San
             Francisco.
           </p>
@@ -122,131 +95,91 @@ export default function About() {
             language models and the writing craft: MCP servers for{" "}
             <Link
               href="/code/paperless-mcp"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               document management
             </Link>
             ,{" "}
             <Link
               href="/code/colophon-mcp"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               book discovery
             </Link>
             , and{" "}
             <Link
               href="/code/lit-verity-mcp"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               citation-grounding in literary criticism
             </Link>
             ; Claude Code plugins for{" "}
             <Link
               href="/code/historical-research-agent"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               historical
             </Link>{" "}
             and{" "}
             <Link
               href="/code/lit-research-plugin"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               literary
             </Link>{" "}
             research and for{" "}
             <Link
               href="/code/submission-watcher-agent"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               tracking magazine submission windows
             </Link>
             ; and a{" "}
             <Link
               href="/code/submission-cli"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className={`${linkClass} font-semibold`}
             >
               CLI
             </Link>{" "}
             that uses Claude to streamline fiction submissions.
           </p>
         </div>
-      </section>
+      </Section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Readings &amp; Events
-        </h2>
-        <div className="text-sm leading-relaxed space-y-2">
-          <p className="text-neutral-500">No upcoming events.</p>
+      <Section title="Resume">
+        <ResumeLink />
+      </Section>
+
+      <Section title="Links">
+        <div className="text-sm space-y-4">
           <p>
-            For readings, panels, or workshop inquiries —{" "}
-            <Link
-              href="/contact"
-              className="font-semibold hover:opacity-70 transition-opacity"
-            >
+            For readings, panels, workshops, or any other inquiries —{" "}
+            <Link href="/contact" className={`${linkClass} font-semibold`}>
               get in touch
             </Link>
-            .
+            . Fiction and essays on{" "}
+            <Ext href="https://highschoolsmokers.substack.com/subscribe">
+              Substack
+            </Ext>
+            , occasionally.
           </p>
+          <ul className="flex gap-5 items-start">
+            {socials.map((s) => (
+              <li key={s.label}>
+                <a
+                  href={s.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`block ${linkClass}`}
+                  aria-label={s.label}
+                >
+                  {s.icon}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Resume</h2>
-        <ResumeLink />
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Newsletter
-        </h2>
-        <div className="text-sm space-y-3">
-          <p>Fiction and essays, occasionally.</p>
-          <a
-            href="https://highschoolsmokers.substack.com/subscribe"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block font-semibold hover:opacity-70 transition-opacity"
-          >
-            Subscribe on Substack →
-          </a>
-        </div>
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Links</h2>
-        <ul className="flex gap-5 items-start">
-          {socials.map((s) => (
-            <li key={s.label}>
-              <a
-                href={s.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block hover:opacity-70 transition-opacity"
-                aria-label={s.label}
-              >
-                {s.icon}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Contact
-        </h2>
-        <div className="text-sm space-y-3">
-          <p>For inquiries about writing, editing, or technical work.</p>
-          <Link
-            href="/contact"
-            className="inline-block font-semibold hover:opacity-70 transition-opacity"
-          >
-            Get in touch →
-          </Link>
-        </div>
-      </section>
+      </Section>
     </div>
   );
 }

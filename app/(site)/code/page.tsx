@@ -182,6 +182,9 @@ export default function Code() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+        Code
+      </h1>
       {categories.map((category) => (
         <section
           key={category.title}

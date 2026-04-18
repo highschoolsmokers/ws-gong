@@ -12,6 +12,7 @@ import {
   IMAP_MAX_RETRIES,
   IMAP_RETRY_DELAY_MS,
 } from "./helpers/constants";
+import { requireEnv } from "./helpers/required-env";
 
 // ---------------------------------------------------------------------------
 // Field presence
@@ -91,7 +92,7 @@ test.describe("Contact form validation", () => {
 // ---------------------------------------------------------------------------
 test.describe("Contact form submission", () => {
   test("successful submission", async ({ page }) => {
-    test.skip(!process.env.SMTP_HOST, "SMTP_HOST not set");
+    requireEnv("SMTP_HOST");
     await page.goto("/contact");
 
     await fillContactForm(page, {
@@ -109,7 +110,7 @@ test.describe("Contact form submission", () => {
   });
 
   test("submission without optional subject", async ({ page }) => {
-    test.skip(!process.env.SMTP_HOST, "SMTP_HOST not set");
+    requireEnv("SMTP_HOST");
     await page.goto("/contact");
 
     await fillContactForm(page, {
@@ -130,7 +131,7 @@ test.describe("Contact form submission", () => {
 // ---------------------------------------------------------------------------
 test.describe("Contact form email delivery", () => {
   test("email delivery verification @infra", async ({ page }) => {
-    test.skip(!process.env.IMAP_PASS, "IMAP_PASS not set");
+    requireEnv("IMAP_PASS");
     test.setTimeout(EMAIL_DELIVERY_TIMEOUT_MS);
 
     const token = `e2e-${Date.now()}`;

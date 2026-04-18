@@ -2,32 +2,9 @@
 
 import { useMemo, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import type { Opportunity, MineRunLog } from "@/lib/residency-miner/types";
 
-interface Opportunity {
-  id: string;
-  name: string;
-  org: string;
-  url: string;
-  deadline: string;
-  genre: string[];
-  duration: string;
-  stipend: number | null;
-  stipendMax: number | null;
-  location: string;
-  eligibility: string;
-  description: string;
-  firstSeen: string;
-  lastUpdated: string;
-  sourceUrl: string;
-}
-
-interface RunLog {
-  timestamp: string;
-  sourcesFetched: number;
-  newFound: number;
-  updated: number;
-  errors?: { url: string; error: string }[];
-}
+type RunLog = MineRunLog;
 
 interface SourceStats {
   active: number;
@@ -95,17 +72,23 @@ export default function ResidenciesList({
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const filtered = useMemo(() => {
-    if (!genreFilter) return opportunities;
-    return opportunities.filter((o) => o.genre.includes(genreFilter));
+    const today = new Date().toISOString().slice(0, 10);
+    return opportunities.filter((o) => {
+      if (o.deadline !== "rolling" && o.deadline < today) return false;
+      if (genreFilter && !o.genre.includes(genreFilter)) return false;
+      return true;
+    });
   }, [opportunities, genreFilter]);
 
   function formatDeadline(d: string): string {
     if (d === "rolling") return "Rolling";
-    const date = new Date(d + "T00:00:00");
+    // Parse as UTC so the user's timezone can't shift the rendered day.
+    const date = new Date(d + "T00:00:00Z");
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
+      timeZone: "UTC",
     });
   }
 
