@@ -143,9 +143,9 @@ const categories: Category[] = [
       },
       {
         href: "https://github.com/highschoolsmokers/fabulosa-books",
-        title: "Fabulosa Books",
+        title: "Fabulosa Books — Next.js on Vercel Tutorial",
         description:
-          "A tutorial for building and deploying Next.js applications on Vercel — an employee scheduler for a bookstore, with Neon Postgres, authentication, and server actions.",
+          "A step-by-step tutorial for building and deploying Next.js applications on Vercel — an employee scheduler for a bookstore, with Neon Postgres, authentication, and server actions.",
         stack: ["Next.js", "Vercel", "Neon", "TypeScript"],
         tags: ["Tutorial", "Web"],
       },
