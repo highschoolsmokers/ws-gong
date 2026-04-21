@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   },
 };
 
-type Tag = "AI" | "Writing" | "MCP" | "Design" | "Web";
+type Tag = "AI" | "Writing" | "MCP" | "Design" | "Web" | "Tutorial";
 
 type Project = {
   href: string;
@@ -72,14 +72,6 @@ const categories: Category[] = [
           "Claude Code plugin: literary research agent that retrieves verified quotations from archives, cross-checks citations, and performs craft and theory analysis for scholars working with primary texts.",
         stack: ["Claude Code", "Anthropic SDK"],
         tags: ["AI", "Writing"],
-      },
-      {
-        href: "/fabulosa-books/",
-        title: "Multi-Agent Orchestration Tutorial",
-        description:
-          "A technical walkthrough of a multi-agent system that coordinates book scheduling across inventory, calendar, and notification services.",
-        stack: ["Python", "Anthropic SDK", "LangGraph"],
-        tags: ["AI"],
       },
     ],
   },
@@ -148,6 +140,14 @@ const categories: Category[] = [
           "A design study of Swiss International Typographic Style — Bauhaus grid systems, modernist typography, and responsive layout.",
         stack: ["Next.js", "Tailwind CSS"],
         tags: ["Design"],
+      },
+      {
+        href: "https://github.com/highschoolsmokers/fabulosa-books",
+        title: "Fabulosa Books",
+        description:
+          "A tutorial for building and deploying Next.js applications on Vercel — an employee scheduler for a bookstore, with Neon Postgres, authentication, and server actions.",
+        stack: ["Next.js", "Vercel", "Neon", "TypeScript"],
+        tags: ["Tutorial", "Web"],
       },
     ],
   },
