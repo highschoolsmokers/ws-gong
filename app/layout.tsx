@@ -80,11 +80,6 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} font-sans antialiased`}>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `document.addEventListener('contextmenu',e=>e.preventDefault());document.addEventListener('dragstart',e=>e.preventDefault());`,
-          }}
-        />
         {children}
         <Analytics />
         <SpeedInsights />

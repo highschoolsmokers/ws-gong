@@ -138,17 +138,15 @@ export default function ContactForm() {
       {/* Drop overlay */}
       {dragging && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center border-4 border-dashed border-black">
-          <span className="text-4xl font-black tracking-tight">
+          <span className="text-4xl font-bold tracking-tight">
             Drop to Attach
           </span>
         </div>
       )}
 
       {/* Form */}
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Inquiry
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Inquiry</h2>
         <div className="space-y-6">
           {/* Honeypot — hidden from real users, bots will fill it */}
           <input
@@ -273,12 +271,12 @@ export default function ContactForm() {
       </section>
 
       {/* Actions */}
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div />
         <div className="flex flex-wrap items-baseline gap-0 text-xl tracking-tight">
           <button
             onClick={handleSend}
-            className="font-semibold text-neutral-400 hover:text-black hover:underline transition-colors"
+            className="font-medium text-neutral-400 hover:text-black hover:underline transition-colors"
           >
             Send
           </button>

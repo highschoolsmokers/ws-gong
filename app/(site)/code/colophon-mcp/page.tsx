@@ -15,13 +15,11 @@ export const metadata: Metadata = {
 export default function ColophonMcp() {
   return (
     <div className="space-y-0">
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+      <h1 className="swiss-display text-[2.5rem] md:text-[3.5rem] pb-12">
         Colophon
       </h1>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Overview
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Overview</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             A book search engine and{" "}
@@ -29,7 +27,7 @@ export default function ColophonMcp() {
               href="https://modelcontextprotocol.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className=" font-medium"
             >
               Model Context Protocol
             </a>{" "}
@@ -49,28 +47,26 @@ export default function ColophonMcp() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Dual Interface
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Dual Interface</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <ul className="space-y-2">
             <li>
-              <span className="font-semibold">MCP Server:</span> Runs over stdio
+              <span className="font-medium">MCP Server:</span> Runs over stdio
               transport for use with Claude Code. Exposes tools for book search,
               author bibliography, retailer pricing, library lending status, and
               ebook availability.
             </li>
             <li>
-              <span className="font-semibold">Web App:</span> Express-based
+              <span className="font-medium">Web App:</span> Express-based
               browser UI with smart search (auto-detects ISBN, author, or
               title), author pages with bios and bibliographies, book detail
               pages with edition comparison, price comparison across retailers,
               and a local reading list.
             </li>
             <li>
-              <span className="font-semibold">Docker:</span> Two Dockerfiles —
-              one for the web UI, one for the MCP server. The MCP container runs
+              <span className="font-medium">Docker:</span> Two Dockerfiles — one
+              for the web UI, one for the MCP server. The MCP container runs
               with <code className="text-xs">docker run -i</code> for stdio
               transport and plugs directly into Claude Code config.
             </li>
@@ -78,41 +74,39 @@ export default function ColophonMcp() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Features
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Features</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <ul className="space-y-2">
             <li>
-              <span className="font-semibold">Price comparison:</span> AbeBooks
+              <span className="font-medium">Price comparison:</span> AbeBooks
               new/used prices, links to Amazon, Bookshop.org, BookFinder, eBay,
               ThriftBooks
             </li>
             <li>
-              <span className="font-semibold">Library and ebook lookup:</span>{" "}
+              <span className="font-medium">Library and ebook lookup:</span>{" "}
               Open Library/Internet Archive lending status, Google Play Books
               search
             </li>
             <li>
-              <span className="font-semibold">Author pages:</span> Photo, bio
-              from Wikipedia, dates, bibliography with cover thumbnails
+              <span className="font-medium">Author pages:</span> Photo, bio from
+              Wikipedia, dates, bibliography with cover thumbnails
             </li>
             <li>
-              <span className="font-semibold">Performance:</span> Circuit
-              breaker for failing upstream services, in-memory TTL cache, fuzzy
-              dedup across sources, gzip compression
+              <span className="font-medium">Performance:</span> Circuit breaker
+              for failing upstream services, in-memory TTL cache, fuzzy dedup
+              across sources, gzip compression
             </li>
             <li>
-              <span className="font-semibold">PWA:</span> Installable, caches
+              <span className="font-medium">PWA:</span> Installable, caches
               cover images offline via service worker
             </li>
           </ul>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Stack</h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Stack</h2>
         <div className="text-sm leading-relaxed space-y-2">
           <p>TypeScript · MCP SDK · Express 5 · Zod · Pino · Vitest · Docker</p>
           <p>
@@ -120,7 +114,7 @@ export default function ColophonMcp() {
               href="https://github.com/highschoolsmokers/colophon-mcp"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:opacity-70 transition-opacity"
+              className="font-medium"
             >
               View on GitHub →
             </a>
@@ -128,12 +122,9 @@ export default function ColophonMcp() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div />
-        <Link
-          href="/code"
-          className="text-sm font-semibold hover:opacity-70 transition-opacity"
-        >
+        <Link href="/code" className="text-sm font-medium">
           ← All projects
         </Link>
       </section>

@@ -12,10 +12,8 @@ export const metadata: Metadata = {
 export default function Terms() {
   return (
     <>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h1 className="text-xl md:text-2xl font-black leading-tight">
-          Terms of Use
-        </h1>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h1 className="swiss-label">Terms of Use</h1>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             All content on this website — including text, images, code, and
@@ -36,10 +34,8 @@ export default function Terms() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          DMCA Policy
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">DMCA Policy</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             W.S. Gong respects the intellectual property rights of others and
@@ -71,15 +67,13 @@ export default function Terms() {
           </ul>
           <p>
             Send DMCA notices to:{" "}
-            <span className="font-semibold">ws [at] ws-gong.com</span>
+            <span className="font-medium">ws [at] ws-gong.com</span>
           </p>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          AI / ML Training
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">AI / ML Training</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             Use of any content from this site for training artificial

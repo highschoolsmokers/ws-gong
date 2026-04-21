@@ -15,7 +15,7 @@ export default function Nav() {
   const isHome = pathname === "/";
 
   const masthead = (
-    <span className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
+    <span className="swiss-display block text-[3.5rem] md:text-[5rem] lg:text-[6rem]">
       W.S.
       <br />
       Gong
@@ -23,33 +23,31 @@ export default function Nav() {
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12">
-      <h1>
-        {isHome ? (
-          masthead
-        ) : (
-          <Link href="/" className="transition-opacity hover:opacity-70">
-            {masthead}
-          </Link>
-        )}
+    <div className="swiss-grid">
+      <h1 className="col-span-12 md:col-span-8">
+        {isHome ? masthead : <Link href="/">{masthead}</Link>}
       </h1>
-      <nav aria-label="Main navigation" className="flex flex-col justify-start">
-        <ul className="text-xl md:text-2xl font-black leading-snug">
-          {links.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className={`transition-opacity ${
-                  pathname === link.href ||
-                  (link.href !== "/" && pathname.startsWith(link.href))
-                    ? "pointer-events-none"
-                    : "hover:opacity-70"
-                }`}
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
+      <nav
+        aria-label="Main navigation"
+        className="col-span-12 md:col-span-4 flex md:justify-end"
+      >
+        <ul className="flex md:flex-col flex-wrap gap-x-6 gap-y-1 text-base md:text-lg font-medium">
+          {links.map((link) => {
+            const isActive =
+              pathname === link.href ||
+              (link.href !== "/" && pathname.startsWith(link.href));
+            return (
+              <li key={link.href}>
+                {isActive ? (
+                  <span aria-current="page" className="pointer-events-none">
+                    {link.label}
+                  </span>
+                ) : (
+                  <Link href={link.href}>{link.label}</Link>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </nav>
     </div>

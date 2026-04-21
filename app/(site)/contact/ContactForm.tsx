@@ -99,14 +99,11 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
   if (state.status === "success") {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8">
+      <div className="swiss-grid swiss-rule pt-6">
         <div />
         <div className="space-y-4">
-          <p className="text-2xl font-black tracking-tight">{state.message}</p>
-          <button
-            onClick={onReset}
-            className="text-sm font-semibold hover:opacity-70 transition-opacity"
-          >
+          <p className="text-2xl font-bold tracking-tight">{state.message}</p>
+          <button onClick={onReset} className="text-sm font-medium">
             Send another message
           </button>
         </div>
@@ -125,7 +122,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
       {/* Drop overlay */}
       {dragging && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center border-4 border-dashed border-white">
-          <span className="text-4xl font-black tracking-tight text-white">
+          <span className="text-4xl font-bold tracking-tight text-white">
             Drop to Attach
           </span>
         </div>
@@ -149,7 +146,7 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
         <input type="hidden" name="_t" value={loadedAt} />
 
         {/* Form section */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <section className="swiss-grid swiss-rule pt-6 pb-12">
           <div />
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
@@ -229,13 +226,13 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
         </section>
 
         {/* Actions */}
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+        <section className="swiss-grid swiss-rule pt-6 pb-12">
           <div />
           <div className="flex items-baseline gap-3">
             <button
               type="submit"
               disabled={pending || !loadedAt}
-              className="text-xl font-semibold text-neutral-400 hover:text-black hover:underline transition-colors tracking-tight disabled:opacity-40"
+              className="text-xl font-medium text-neutral-400 hover:text-black hover:underline transition-colors tracking-tight disabled:opacity-40"
             >
               {pending ? "Sending…" : "Send"}
             </button>

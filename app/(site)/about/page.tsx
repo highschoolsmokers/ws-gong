@@ -21,25 +21,22 @@ export const metadata: Metadata = {
   },
 };
 
-const linkClass = "hover:opacity-70 transition-opacity";
+const linkClass = "font-medium";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-      <h2 className="text-xl md:text-2xl font-black leading-tight">{title}</h2>
-      {children}
+    <section className="swiss-grid swiss-rule pt-6 pb-16">
+      <div className="col-span-12 md:col-span-4">
+        <h2 className="swiss-label">{title}</h2>
+      </div>
+      <div className="col-span-12 md:col-span-8">{children}</div>
     </section>
   );
 }
 
 function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={linkClass}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );

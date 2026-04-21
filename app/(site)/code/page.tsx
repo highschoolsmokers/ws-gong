@@ -177,28 +177,25 @@ const jsonLd = {
 
 export default function Code() {
   return (
-    <div className="space-y-0">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
-        Code
-      </h1>
-      {categories.map((category) => (
+      {categories.map((category, idx) => (
         <section
           key={category.title}
-          className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10"
+          className="swiss-grid swiss-rule pt-6 pb-12"
         >
-          <div>
-            <h2 className="text-xl md:text-2xl font-black leading-tight">
-              {category.title}
-            </h2>
-            <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
+          <div className="col-span-12 md:col-span-4 space-y-2">
+            <span className="swiss-label block">
+              {String(idx + 1).padStart(2, "0")} / {category.title}
+            </span>
+            <p className="text-xs text-neutral-500 leading-relaxed">
               {category.subtitle}
             </p>
           </div>
-          <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
             {category.projects.map((p) => {
               const isExternal = p.href.startsWith("http");
               return (
@@ -209,28 +206,28 @@ export default function Code() {
                       target: "_blank",
                       rel: "noopener noreferrer",
                     })}
-                    className="group block hover:opacity-70 transition-opacity"
+                    className="block no-underline hover:no-underline"
                   >
-                    <span className="text-sm font-semibold">
+                    <span className="block text-base font-medium leading-snug">
                       {p.title}
                       {isExternal && (
                         <span
                           aria-hidden="true"
-                          className="ml-1 text-neutral-400"
+                          className="ml-1 text-neutral-500"
                         >
                           ↗
                         </span>
                       )}
                     </span>
-                    <span className="text-sm block mt-1 leading-relaxed">
+                    <span className="block mt-2 text-sm leading-relaxed">
                       {p.description}
                     </span>
-                    <span className="text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500">
-                      <span>{p.stack.join(" · ")}</span>
+                    <span className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+                      <span>{p.stack.join(" / ")}</span>
                       {p.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
+                          className="inline-block border border-current px-2 py-0.5 font-medium"
                         >
                           {tag}
                         </span>
