@@ -42,7 +42,6 @@ export const SITE_PAGES = [
   "/code/paperless-mcp",
   "/code/submission-cli",
   "/code/writer-utilities",
-  "/code/die-neue-grafik",
   "/code/contact-form",
 ] as const;
 

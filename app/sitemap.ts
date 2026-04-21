@@ -103,12 +103,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
-      url: `${base}/code/die-neue-grafik`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.5,
-    },
-    {
       url: `${base}/code/contact-form`,
       lastModified: now,
       changeFrequency: "monthly",

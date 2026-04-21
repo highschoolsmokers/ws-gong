@@ -6,7 +6,6 @@ const projectSubPages = [
   { href: "/code/paperless-mcp", title: "Paperless MCP Server" },
   { href: "/code/submission-cli", title: "Submission CLI" },
   { href: "/code/writer-utilities", title: "Writer Utilities" },
-  { href: "/code/die-neue-grafik", title: "Die Neue Grafik" },
   { href: "/code/contact-form", title: "Contact Form" },
 ];
 

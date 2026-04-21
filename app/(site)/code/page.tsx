@@ -135,14 +135,6 @@ const categories: Category[] = [
         tags: ["Web", "Design"],
       },
       {
-        href: "/code/die-neue-grafik",
-        title: "Die Neue Grafik",
-        description:
-          "A design study of Swiss International Typographic Style — Bauhaus grid systems, modernist typography, and responsive layout.",
-        stack: ["Next.js", "Tailwind CSS"],
-        tags: ["Design"],
-      },
-      {
         href: "https://workbench.ws-gong.com",
         title: "Swiss Design Workbench",
         description:
