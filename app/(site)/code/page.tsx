@@ -142,7 +142,7 @@ const categories: Category[] = [
         tags: ["Design"],
       },
       {
-        href: "https://github.com/highschoolsmokers/fabulosa-books",
+        href: "/fabulosa-books/",
         title: "Fabulosa Books — Next.js on Vercel Tutorial",
         description:
           "A step-by-step tutorial for building and deploying Next.js applications on Vercel — an employee scheduler for a bookstore, with Neon Postgres, authentication, and server actions.",
