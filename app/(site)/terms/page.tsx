@@ -15,8 +15,8 @@ export default function Terms() {
     <>
       <PageTitle>Terms of Use</PageTitle>
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Overview</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Overview</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             All content on this website — including text, images, code, and
             design — is the intellectual property of W.S. Gong unless otherwise
@@ -37,8 +37,8 @@ export default function Terms() {
       </section>
 
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">DMCA Policy</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">DMCA Policy</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             W.S. Gong respects the intellectual property rights of others and
             expects users of this site to do the same. If you believe that
@@ -75,8 +75,10 @@ export default function Terms() {
       </section>
 
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">AI / ML Training</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">
+          AI / ML Training
+        </h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             Use of any content from this site for training artificial
             intelligence or machine learning models is expressly prohibited

@@ -100,8 +100,10 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
   if (state.status === "success") {
     return (
       <div className="swiss-grid swiss-rule pt-6">
-        <div />
-        <div className="space-y-4">
+        <div className="col-span-12 md:col-span-4">
+          <span className="swiss-label">Sent</span>
+        </div>
+        <div className="col-span-12 md:col-span-8 space-y-4">
           <p className="text-2xl font-bold tracking-tight">{state.message}</p>
           <button onClick={onReset} className="text-sm font-medium">
             Send another message
@@ -147,8 +149,10 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
         {/* Form section */}
         <section className="swiss-grid swiss-rule pt-6 pb-12">
-          <div />
-          <div className="space-y-6">
+          <div className="col-span-12 md:col-span-4">
+            <span className="swiss-label">Message</span>
+          </div>
+          <div className="col-span-12 md:col-span-8 space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <input
                 name="name"
@@ -227,8 +231,10 @@ function ContactFormInner({ onReset }: { onReset: () => void }) {
 
         {/* Actions */}
         <section className="swiss-grid swiss-rule pt-6 pb-12">
-          <div />
-          <div className="flex items-baseline gap-3">
+          <div className="col-span-12 md:col-span-4">
+            <span className="swiss-label">Send</span>
+          </div>
+          <div className="col-span-12 md:col-span-8 flex items-baseline gap-3">
             <button
               type="submit"
               disabled={pending || !loadedAt}

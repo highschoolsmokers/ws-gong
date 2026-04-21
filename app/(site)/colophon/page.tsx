@@ -15,8 +15,8 @@ export default function Colophon() {
     <>
       <PageTitle>Colophon</PageTitle>
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Typography</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Typography</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             Set in{" "}
             <a
@@ -33,8 +33,8 @@ export default function Colophon() {
       </section>
 
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Design</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Design</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             Informed by the Swiss International Typographic Style. Asymmetric
             grid, black-and-white palette, strong hierarchy through weight and
@@ -44,8 +44,8 @@ export default function Colophon() {
       </section>
 
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Stack</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Stack</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <ul className="space-y-1">
             <li>Next.js 16</li>
             <li>React 19</li>
@@ -57,8 +57,8 @@ export default function Colophon() {
       </section>
 
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Tools</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Tools</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <ul className="space-y-1">
             <li>Nodemailer — contact form delivery</li>
             <li>PDFKit — resume generation</li>
@@ -70,8 +70,8 @@ export default function Colophon() {
       </section>
 
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Source</h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Source</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             <a
               href="https://github.com/highschoolsmokers/ws-gong"

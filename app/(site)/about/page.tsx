@@ -94,49 +94,49 @@ export default function About() {
             language models and the writing craft: MCP servers for{" "}
             <Link
               href="/code/paperless-mcp"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               document management
             </Link>
             ,{" "}
             <Link
               href="/code/colophon-mcp"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               book discovery
             </Link>
             , and{" "}
             <Link
               href="/code/lit-verity-mcp"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               citation-grounding in literary criticism
             </Link>
             ; Claude Code plugins for{" "}
             <Link
               href="/code/historical-research-agent"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               historical
             </Link>{" "}
             and{" "}
             <Link
               href="/code/lit-research-plugin"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               literary
             </Link>{" "}
             research and for{" "}
             <Link
               href="/code/submission-watcher-agent"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               tracking magazine submission windows
             </Link>
             ; and a{" "}
             <Link
               href="/code/submission-cli"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               CLI
             </Link>{" "}
@@ -153,7 +153,7 @@ export default function About() {
         <div className="text-sm space-y-4">
           <p>
             For readings, panels, workshops, or any other inquiries —{" "}
-            <Link href="/contact" className={`${linkClass} font-semibold`}>
+            <Link href="/contact" className={`${linkClass} font-medium`}>
               get in touch
             </Link>
             . Fiction and essays on{" "}
