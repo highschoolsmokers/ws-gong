@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import ContactForm from "../ContactForm";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Contact Form",
@@ -12,11 +13,12 @@ export const metadata: Metadata = {
 export default function LabContactPage() {
   return (
     <>
+      <PageTitle>Contact Form</PageTitle>
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h2 className="swiss-label">Contact Form</h2>
         <Link href="/code" className="text-sm">
           ← All projects
         </Link>
+        <div />
       </section>
       <Suspense>
         <ContactForm />

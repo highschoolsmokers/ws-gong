@@ -6,6 +6,7 @@ import {
   getSourceStats,
 } from "@/lib/residency-miner/db";
 import ResidenciesList from "./ResidenciesList";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Residencies",
@@ -29,9 +30,10 @@ export default async function ResidenciesPage() {
 
   return (
     <div>
+      <PageTitle>Residencies</PageTitle>
       <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div className="col-span-12 md:col-span-4">
-          <h2 className="swiss-label">Residencies</h2>
+          <h2 className="swiss-label">Overview</h2>
         </div>
         <div className="col-span-12 md:col-span-8 text-sm leading-relaxed">
           <p>

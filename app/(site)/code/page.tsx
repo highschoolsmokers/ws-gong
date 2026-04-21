@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Code",
@@ -190,6 +191,7 @@ export default function Code() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
+      <PageTitle>Code</PageTitle>
       {categories.map((category, idx) => (
         <section
           key={category.title}

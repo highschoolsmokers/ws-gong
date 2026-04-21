@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
@@ -12,8 +13,9 @@ export const metadata: Metadata = {
 export default function Terms() {
   return (
     <>
+      <PageTitle>Terms of Use</PageTitle>
       <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h1 className="swiss-label">Terms of Use</h1>
+        <h2 className="swiss-label">Overview</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             All content on this website — including text, images, code, and

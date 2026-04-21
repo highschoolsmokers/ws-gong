@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import PageTitle from "@/app/components/PageTitle";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -68,6 +69,7 @@ const socials = [
 export default function About() {
   return (
     <div className="space-y-0">
+      <PageTitle>About</PageTitle>
       <Section title="Bio">
         <div className="space-y-4 text-sm leading-relaxed">
           <p>

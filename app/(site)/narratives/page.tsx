@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSubstackPosts } from "@/lib/substack";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Narratives",
@@ -56,74 +57,77 @@ export default async function Narratives() {
   const posts = await getSubstackPosts("highschoolsmokers");
 
   return (
-    <section className="swiss-grid swiss-rule pt-6 pb-16">
-      <div className="col-span-12 md:col-span-4">
-        <span className="swiss-label">Narratives</span>
-      </div>
-      <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
-        {writingProjects.map((p) => {
-          const inner = (
-            <>
-              <span className="block text-base font-medium leading-snug">
-                {p.title}
-              </span>
-              <span className="block mt-2 text-sm leading-relaxed">
-                {p.description}
-              </span>
-              <span className="mt-3 flex flex-wrap items-center gap-2">
-                {p.tags.map((tag) => (
-                  <TagPill key={tag}>{tag}</TagPill>
-                ))}
-              </span>
-            </>
-          );
-          return (
-            <li key={p.title} className="py-6">
-              {p.externalHref ? (
-                <a
-                  href={p.externalHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block no-underline hover:no-underline"
-                >
-                  {inner}
-                </a>
-              ) : (
-                <div>{inner}</div>
-              )}
-            </li>
-          );
-        })}
-        {posts.map((post) => (
-          <li key={post.id} className="py-6">
-            <a
-              href={post.canonical_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block no-underline hover:no-underline"
-            >
-              <span className="block text-base font-medium leading-snug">
-                {post.title}
-              </span>
-              {post.subtitle && (
+    <>
+      <PageTitle>Narratives</PageTitle>
+      <section className="swiss-grid swiss-rule pt-6 pb-16">
+        <div className="col-span-12 md:col-span-4">
+          <span className="swiss-label">Index</span>
+        </div>
+        <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+          {writingProjects.map((p) => {
+            const inner = (
+              <>
+                <span className="block text-base font-medium leading-snug">
+                  {p.title}
+                </span>
                 <span className="block mt-2 text-sm leading-relaxed">
-                  {post.subtitle}
+                  {p.description}
                 </span>
-              )}
-              <span className="mt-3 flex items-baseline gap-3 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
-                <span>
-                  {new Date(post.post_date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                  })}
+                <span className="mt-3 flex flex-wrap items-center gap-2">
+                  {p.tags.map((tag) => (
+                    <TagPill key={tag}>{tag}</TagPill>
+                  ))}
                 </span>
-                <span aria-hidden>/</span>
-                <span>Substack</span>
-              </span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
+              </>
+            );
+            return (
+              <li key={p.title} className="py-6">
+                {p.externalHref ? (
+                  <a
+                    href={p.externalHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block no-underline hover:no-underline"
+                  >
+                    {inner}
+                  </a>
+                ) : (
+                  <div>{inner}</div>
+                )}
+              </li>
+            );
+          })}
+          {posts.map((post) => (
+            <li key={post.id} className="py-6">
+              <a
+                href={post.canonical_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block no-underline hover:no-underline"
+              >
+                <span className="block text-base font-medium leading-snug">
+                  {post.title}
+                </span>
+                {post.subtitle && (
+                  <span className="block mt-2 text-sm leading-relaxed">
+                    {post.subtitle}
+                  </span>
+                )}
+                <span className="mt-3 flex items-baseline gap-3 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+                  <span>
+                    {new Date(post.post_date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                    })}
+                  </span>
+                  <span aria-hidden>/</span>
+                  <span>Substack</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </>
   );
 }

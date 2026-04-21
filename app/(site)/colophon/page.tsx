@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Colophon",
@@ -12,11 +13,7 @@ export const metadata: Metadata = {
 export default function Colophon() {
   return (
     <>
-      <section className="swiss-grid swiss-rule pt-6 pb-12">
-        <h1 className="swiss-label">Colophon</h1>
-        <div />
-      </section>
-
+      <PageTitle>Colophon</PageTitle>
       <section className="swiss-grid swiss-rule pt-6 pb-12">
         <h2 className="swiss-label">Typography</h2>
         <div className="space-y-4 text-sm leading-relaxed">
