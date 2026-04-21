@@ -53,7 +53,7 @@ export default function ResumeLink() {
       href={`/api/resume?token=${token}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="text-sm hover:opacity-70 transition-opacity"
+      className="text-sm"
     >
       Download PDF{fileSize ? ` (${fileSize})` : ""}
     </a>

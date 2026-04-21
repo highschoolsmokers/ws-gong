@@ -58,7 +58,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={cycle}
-      className="text-xs text-neutral-500 hover:opacity-70 transition-opacity"
+      className="text-[10px] uppercase tracking-[0.12em] text-neutral-500"
       aria-label={`Color theme: ${labels[theme]}. Click to change.`}
     >
       {labels[theme]}

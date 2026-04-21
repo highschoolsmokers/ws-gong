@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import ContactForm from "../ContactForm";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Contact Form",
@@ -12,16 +13,12 @@ export const metadata: Metadata = {
 export default function LabContactPage() {
   return (
     <>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Contact Form
-        </h2>
-        <Link
-          href="/code"
-          className="text-sm hover:opacity-70 transition-opacity"
-        >
+      <PageTitle>Contact Form</PageTitle>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <Link href="/code" className="text-sm">
           ← All projects
         </Link>
+        <div />
       </section>
       <Suspense>
         <ContactForm />

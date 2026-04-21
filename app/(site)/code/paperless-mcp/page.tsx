@@ -15,13 +15,11 @@ export const metadata: Metadata = {
 export default function PaperlessMcp() {
   return (
     <div className="space-y-0">
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+      <h1 className="swiss-display text-[2.5rem] md:text-[3.5rem] pb-12">
         Paperless MCP Server
       </h1>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Overview
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Overview</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             A stateless{" "}
@@ -29,7 +27,7 @@ export default function PaperlessMcp() {
               href="https://modelcontextprotocol.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className=" font-medium"
             >
               Model Context Protocol
             </a>{" "}
@@ -38,7 +36,7 @@ export default function PaperlessMcp() {
               href="https://docs.paperless-ngx.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className=" font-medium"
             >
               Paperless-ngx
             </a>{" "}
@@ -55,35 +53,33 @@ export default function PaperlessMcp() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Architecture
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Architecture</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <ul className="space-y-2">
             <li>
-              <span className="font-semibold">Transport:</span>{" "}
+              <span className="font-medium">Transport:</span>{" "}
               StreamableHTTPServerTransport — stateless, one transport per
               request
             </li>
             <li>
-              <span className="font-semibold">Tools:</span> Document search and
+              <span className="font-medium">Tools:</span> Document search and
               retrieval, tag CRUD, metadata and correspondent queries
             </li>
             <li>
-              <span className="font-semibold">Client:</span> Typed wrapper
-              around the Paperless-ngx REST API with token authentication
+              <span className="font-medium">Client:</span> Typed wrapper around
+              the Paperless-ngx REST API with token authentication
             </li>
             <li>
-              <span className="font-semibold">Deployment:</span> Designed to run
+              <span className="font-medium">Deployment:</span> Designed to run
               alongside Paperless-ngx in Docker Compose
             </li>
           </ul>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Stack</h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Stack</h2>
         <div className="text-sm leading-relaxed space-y-2">
           <p>TypeScript · MCP SDK · Express 5 · Paperless-ngx API</p>
           <p>
@@ -91,7 +87,7 @@ export default function PaperlessMcp() {
               href="https://github.com/highschoolsmokers/paperless-mcp"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:opacity-70 transition-opacity"
+              className="font-medium"
             >
               View on GitHub →
             </a>
@@ -99,12 +95,9 @@ export default function PaperlessMcp() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div />
-        <Link
-          href="/code"
-          className="text-sm font-semibold hover:opacity-70 transition-opacity"
-        >
+        <Link href="/code" className="text-sm font-medium">
           ← All projects
         </Link>
       </section>

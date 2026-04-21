@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Code",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
   },
 };
 
-type Tag = "AI" | "Writing" | "MCP" | "Design" | "Web";
+type Tag = "AI" | "Writing" | "MCP" | "Design" | "Web" | "Tutorial";
 
 type Project = {
   href: string;
@@ -72,14 +73,6 @@ const categories: Category[] = [
           "Claude Code plugin: literary research agent that retrieves verified quotations from archives, cross-checks citations, and performs craft and theory analysis for scholars working with primary texts.",
         stack: ["Claude Code", "Anthropic SDK"],
         tags: ["AI", "Writing"],
-      },
-      {
-        href: "/fabulosa-books/",
-        title: "Multi-Agent Orchestration Tutorial",
-        description:
-          "A technical walkthrough of a multi-agent system that coordinates book scheduling across inventory, calendar, and notification services.",
-        stack: ["Python", "Anthropic SDK", "LangGraph"],
-        tags: ["AI"],
       },
     ],
   },
@@ -149,6 +142,22 @@ const categories: Category[] = [
         stack: ["Next.js", "Tailwind CSS"],
         tags: ["Design"],
       },
+      {
+        href: "https://workbench.ws-gong.com",
+        title: "Swiss Design Workbench",
+        description:
+          "A working studio for design in the Swiss tradition — grid, type, and objectivity applied to web and print. Every piece reads from a single token system; vanilla HTML and hand-authored SVG with togglable grid and baseline overlays.",
+        stack: ["Vanilla HTML/CSS", "Vite", "SVG"],
+        tags: ["Design", "Web"],
+      },
+      {
+        href: "/fabulosa-books/",
+        title: "Fabulosa Books — Next.js on Vercel Tutorial",
+        description:
+          "A step-by-step tutorial for building and deploying Next.js applications on Vercel — an employee scheduler for a bookstore, with Neon Postgres, authentication, and server actions.",
+        stack: ["Next.js", "Vercel", "Neon", "TypeScript"],
+        tags: ["Tutorial", "Web"],
+      },
     ],
   },
 ];
@@ -177,28 +186,26 @@ const jsonLd = {
 
 export default function Code() {
   return (
-    <div className="space-y-0">
+    <div>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
-        Code
-      </h1>
-      {categories.map((category) => (
+      <PageTitle>Code</PageTitle>
+      {categories.map((category, idx) => (
         <section
           key={category.title}
-          className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10"
+          className="swiss-grid swiss-rule pt-6 pb-12"
         >
-          <div>
-            <h2 className="text-xl md:text-2xl font-black leading-tight">
-              {category.title}
-            </h2>
-            <p className="text-xs text-neutral-500 mt-1 leading-relaxed">
+          <div className="col-span-12 md:col-span-4 space-y-2">
+            <span className="swiss-label block">
+              {String(idx + 1).padStart(2, "0")} / {category.title}
+            </span>
+            <p className="text-xs text-neutral-500 leading-relaxed">
               {category.subtitle}
             </p>
           </div>
-          <ul className="divide-y divide-neutral-200 border-t border-neutral-200">
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
             {category.projects.map((p) => {
               const isExternal = p.href.startsWith("http");
               return (
@@ -209,28 +216,28 @@ export default function Code() {
                       target: "_blank",
                       rel: "noopener noreferrer",
                     })}
-                    className="group block hover:opacity-70 transition-opacity"
+                    className="block no-underline hover:no-underline"
                   >
-                    <span className="text-sm font-semibold">
+                    <span className="block text-base font-medium leading-snug">
                       {p.title}
                       {isExternal && (
                         <span
                           aria-hidden="true"
-                          className="ml-1 text-neutral-400"
+                          className="ml-1 text-neutral-500"
                         >
                           ↗
                         </span>
                       )}
                     </span>
-                    <span className="text-sm block mt-1 leading-relaxed">
+                    <span className="block mt-2 text-sm leading-relaxed">
                       {p.description}
                     </span>
-                    <span className="text-xs mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-neutral-500">
-                      <span>{p.stack.join(" · ")}</span>
+                    <span className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+                      <span>{p.stack.join(" / ")}</span>
                       {p.tags.map((tag) => (
                         <span
                           key={tag}
-                          className="inline-block border border-neutral-400 rounded px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide"
+                          className="inline-block border border-current px-2 py-0.5 font-medium"
                         >
                           {tag}
                         </span>

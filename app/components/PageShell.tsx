@@ -8,42 +8,36 @@ export default function PageShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="max-w-5xl mx-auto px-8 md:px-12">
+    <div className="swiss-container">
       <a href="#main" className="skip-to-content">
         Skip to content
       </a>
-      <header className="pt-8 pb-12">{header}</header>
-      <main id="main" className="pb-16">
+      <header className="pt-8 pb-16">{header}</header>
+      <main id="main" className="pb-24">
         {children}
       </main>
-      <footer className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <div />
-        <div className="space-y-3">
+      <footer className="swiss-grid swiss-rule pt-6 pb-10">
+        <div className="col-span-12 md:col-span-4">
+          <span className="swiss-label">Colophon</span>
+        </div>
+        <div className="col-span-12 md:col-span-8 space-y-4">
           <div className="text-sm">
             <a
               href="https://highschoolsmokers.substack.com/subscribe"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:opacity-70 transition-opacity"
+              className="font-medium"
             >
               Subscribe to the newsletter →
             </a>
           </div>
-          <div className="text-sm flex items-center gap-1">
-            <span>
-              © {new Date().getFullYear()} W.S. Gong ·{" "}
-              <a href="/terms" className="hover:opacity-70 transition-opacity">
-                Terms
-              </a>{" "}
-              ·{" "}
-              <a
-                href="/colophon"
-                className="hover:opacity-70 transition-opacity"
-              >
-                Colophon
-              </a>
-              {" · "}
-            </span>
+          <div className="text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>© {new Date().getFullYear()} W.S. Gong</span>
+            <span aria-hidden>·</span>
+            <a href="/terms">Terms</a>
+            <span aria-hidden>·</span>
+            <a href="/colophon">Colophon</a>
+            <span aria-hidden>·</span>
             <ThemeToggle />
           </div>
         </div>

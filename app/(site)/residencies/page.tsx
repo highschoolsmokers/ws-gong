@@ -6,6 +6,7 @@ import {
   getSourceStats,
 } from "@/lib/residency-miner/db";
 import ResidenciesList from "./ResidenciesList";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Residencies",
@@ -28,12 +29,13 @@ export default async function ResidenciesPage() {
   ]);
 
   return (
-    <div className="space-y-0">
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Residencies
-        </h2>
-        <div className="space-y-2 text-sm leading-relaxed">
+    <div>
+      <PageTitle>Residencies</PageTitle>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <div className="col-span-12 md:col-span-4">
+          <h2 className="swiss-label">Overview</h2>
+        </div>
+        <div className="col-span-12 md:col-span-8 text-sm leading-relaxed">
           <p>
             Writer residencies, fellowships, and conferences — automatically
             discovered from{" "}
@@ -41,7 +43,7 @@ export default async function ResidenciesPage() {
               href="https://www.pw.org/grants"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className="font-medium"
             >
               Poets &amp; Writers
             </a>
@@ -50,7 +52,7 @@ export default async function ResidenciesPage() {
               href="https://www.macdowell.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className="font-medium"
             >
               MacDowell
             </a>
