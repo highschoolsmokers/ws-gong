@@ -142,6 +142,14 @@ const categories: Category[] = [
         tags: ["Design"],
       },
       {
+        href: "https://workbench.ws-gong.com",
+        title: "Swiss Design Workbench",
+        description:
+          "A working studio for design in the Swiss tradition — grid, type, and objectivity applied to web and print. Every piece reads from a single token system; vanilla HTML and hand-authored SVG with togglable grid and baseline overlays.",
+        stack: ["Vanilla HTML/CSS", "Vite", "SVG"],
+        tags: ["Design", "Web"],
+      },
+      {
         href: "/fabulosa-books/",
         title: "Fabulosa Books — Next.js on Vercel Tutorial",
         description:
