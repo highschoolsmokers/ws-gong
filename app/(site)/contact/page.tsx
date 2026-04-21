@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ContactForm from "./ContactForm";
+import PageTitle from "@/app/components/PageTitle";
 
 const description = "Get in touch with W.S. Gong.";
 
@@ -13,5 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default function Contact() {
-  return <ContactForm />;
+  return (
+    <>
+      <PageTitle>Contact</PageTitle>
+      <ContactForm />
+    </>
+  );
 }

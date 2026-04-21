@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import PageTitle from "@/app/components/PageTitle";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -21,25 +22,22 @@ export const metadata: Metadata = {
   },
 };
 
-const linkClass = "hover:opacity-70 transition-opacity";
+const linkClass = "font-medium";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-      <h2 className="text-xl md:text-2xl font-black leading-tight">{title}</h2>
-      {children}
+    <section className="swiss-grid swiss-rule pt-6 pb-16">
+      <div className="col-span-12 md:col-span-4">
+        <h2 className="swiss-label">{title}</h2>
+      </div>
+      <div className="col-span-12 md:col-span-8">{children}</div>
     </section>
   );
 }
 
 function Ext({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className={linkClass}
-    >
+    <a href={href} target="_blank" rel="noopener noreferrer">
       {children}
     </a>
   );
@@ -71,6 +69,7 @@ const socials = [
 export default function About() {
   return (
     <div className="space-y-0">
+      <PageTitle>About</PageTitle>
       <Section title="Bio">
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
@@ -95,49 +94,49 @@ export default function About() {
             language models and the writing craft: MCP servers for{" "}
             <Link
               href="/code/paperless-mcp"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               document management
             </Link>
             ,{" "}
             <Link
               href="/code/colophon-mcp"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               book discovery
             </Link>
             , and{" "}
             <Link
               href="/code/lit-verity-mcp"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               citation-grounding in literary criticism
             </Link>
             ; Claude Code plugins for{" "}
             <Link
               href="/code/historical-research-agent"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               historical
             </Link>{" "}
             and{" "}
             <Link
               href="/code/lit-research-plugin"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               literary
             </Link>{" "}
             research and for{" "}
             <Link
               href="/code/submission-watcher-agent"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               tracking magazine submission windows
             </Link>
             ; and a{" "}
             <Link
               href="/code/submission-cli"
-              className={`${linkClass} font-semibold`}
+              className={`${linkClass} font-medium`}
             >
               CLI
             </Link>{" "}
@@ -154,7 +153,7 @@ export default function About() {
         <div className="text-sm space-y-4">
           <p>
             For readings, panels, workshops, or any other inquiries —{" "}
-            <Link href="/contact" className={`${linkClass} font-semibold`}>
+            <Link href="/contact" className={`${linkClass} font-medium`}>
               get in touch
             </Link>
             . Fiction and essays on{" "}

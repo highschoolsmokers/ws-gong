@@ -15,13 +15,11 @@ export const metadata: Metadata = {
 export default function SubmissionCli() {
   return (
     <div className="space-y-0">
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+      <h1 className="swiss-display text-[2.5rem] md:text-[3.5rem] pb-12">
         Submission CLI
       </h1>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Overview
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Overview</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             A command-line pipeline for submitting fiction to literary
@@ -32,7 +30,7 @@ export default function SubmissionCli() {
               href="https://www.shunn.net/format/story/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className=" font-medium"
             >
               Shunn standard
             </a>
@@ -49,34 +47,32 @@ export default function SubmissionCli() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          How it works
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">How it works</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <ul className="space-y-2">
             <li>
-              <span className="font-semibold">Manuscript parsing:</span>{" "}
-              Extracts text, title, and word count from .txt, .rtf, and .docx
-              files via Mammoth
+              <span className="font-medium">Manuscript parsing:</span> Extracts
+              text, title, and word count from .txt, .rtf, and .docx files via
+              Mammoth
             </li>
             <li>
-              <span className="font-semibold">Shunn formatting:</span> Generates
-              a properly formatted PDF with contact block, headers, word count,
+              <span className="font-medium">Shunn formatting:</span> Generates a
+              properly formatted PDF with contact block, headers, word count,
               and standard manuscript typography
             </li>
             <li>
-              <span className="font-semibold">Cover letters:</span> Claude
-              drafts a publication-specific letter from your author profile and
-              the manuscript metadata
+              <span className="font-medium">Cover letters:</span> Claude drafts
+              a publication-specific letter from your author profile and the
+              manuscript metadata
             </li>
             <li>
-              <span className="font-semibold">Queue management:</span> Tracks
+              <span className="font-medium">Queue management:</span> Tracks
               submissions by status — draft, sent, accepted, rejected — with
               scan and list commands
             </li>
             <li>
-              <span className="font-semibold">Author config:</span> Interactive
+              <span className="font-medium">Author config:</span> Interactive
               setup stores your legal name, pen name, address, and bio for reuse
               across submissions
             </li>
@@ -84,8 +80,8 @@ export default function SubmissionCli() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Stack</h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Stack</h2>
         <div className="text-sm leading-relaxed space-y-2">
           <p>TypeScript · Anthropic SDK · PDFKit · Mammoth · Node.js</p>
           <p>
@@ -93,7 +89,7 @@ export default function SubmissionCli() {
               href="https://github.com/highschoolsmokers/submission-cli"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:opacity-70 transition-opacity"
+              className="font-medium"
             >
               View on GitHub →
             </a>
@@ -101,12 +97,9 @@ export default function SubmissionCli() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div />
-        <Link
-          href="/code"
-          className="text-sm font-semibold hover:opacity-70 transition-opacity"
-        >
+        <Link href="/code" className="text-sm font-medium">
           ← All projects
         </Link>
       </section>

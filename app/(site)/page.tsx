@@ -18,22 +18,22 @@ export default async function Home() {
   const latest = posts[0] ?? null;
 
   return (
-    <div className="space-y-0">
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-4 pb-10">
-        <div />
-        <div className="space-y-4 text-sm leading-relaxed">
-          <p>
+    <div>
+      <section className="swiss-grid swiss-rule pt-6 pb-16">
+        <div className="col-span-12 md:col-span-4">
+          <span className="swiss-label">Statement</span>
+        </div>
+        <div className="col-span-12 md:col-span-8">
+          <p className="text-base leading-relaxed max-w-prose">
             Fiction editor at{" "}
             <a
               href="https://therumpus.net"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity"
             >
               The Rumpus
             </a>
-            .
-            <br />
+            .<br />
             Technical writer with twenty-five years in software.
             <br />
             Building tools at the intersection of language models and the craft
@@ -42,9 +42,11 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <div />
-        <figure className="space-y-5">
+      <section className="swiss-grid swiss-rule pt-6 pb-16">
+        <div className="col-span-12 md:col-span-4">
+          <span className="swiss-label">Plate 01</span>
+        </div>
+        <figure className="col-span-12 md:col-span-8 space-y-4">
           <Image
             src="/images/giacometti_palace_4am.jpg"
             alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
@@ -55,38 +57,44 @@ export default async function Home() {
             blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAAFBhESITFBUf/EABQBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADERL/2gAMAwEAAhEDEEQA/wCzTd6WaijJp8Mc0kceZYpmKqjeSVIBJxjGSKhLCOzuf//Z"
             priority
           />
-          <figcaption className="text-sm leading-relaxed">
-            Alberto Giacometti
-            <br />
-            <em>The Palace at 4 a.m.</em>
-            <br />
-            1932
+          <figcaption className="grid grid-cols-12 gap-x-6 text-sm">
+            <span className="col-span-4 swiss-label">Figure</span>
+            <span className="col-span-8">
+              Alberto Giacometti, <em>The Palace at 4 a.m.</em>, 1932
+            </span>
           </figcaption>
         </figure>
       </section>
 
       {latest && (
-        <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-          <h2 className="text-xl md:text-2xl font-black leading-tight">
-            Latest
-          </h2>
+        <section className="swiss-grid swiss-rule pt-6 pb-16">
+          <div className="col-span-12 md:col-span-4">
+            <span className="swiss-label">Latest</span>
+          </div>
           <a
             href={latest.canonical_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="block hover:opacity-70 transition-opacity"
+            className="col-span-12 md:col-span-8 block no-underline hover:no-underline"
           >
-            <span className="text-sm font-semibold">{latest.title}</span>
+            <span className="block text-lg font-medium leading-tight">
+              {latest.title}
+            </span>
             {latest.subtitle && (
-              <span className="text-sm block mt-0.5">{latest.subtitle}</span>
+              <span className="block mt-2 text-sm leading-relaxed">
+                {latest.subtitle}
+              </span>
             )}
-            <span className="text-xs block mt-2 text-neutral-500">
-              {new Date(latest.post_date).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-              {" · Substack"}
+            <span className="mt-4 flex items-baseline gap-3 text-xs uppercase tracking-[0.12em] text-neutral-500">
+              <span>
+                {new Date(latest.post_date).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </span>
+              <span aria-hidden>/</span>
+              <span>Substack</span>
             </span>
           </a>
         </section>

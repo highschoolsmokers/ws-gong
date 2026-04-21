@@ -15,13 +15,11 @@ export const metadata: Metadata = {
 export default function WriterUtilities() {
   return (
     <div className="space-y-0">
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+      <h1 className="swiss-display text-[2.5rem] md:text-[3.5rem] pb-12">
         Writer Utilities
       </h1>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Overview
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Overview</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             A monorepo for the small tools that accumulate around a writing
@@ -36,23 +34,18 @@ export default function WriterUtilities() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Included
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Included</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <ul className="space-y-3">
             <li>
-              <span className="font-semibold">gdoc-to-scrivener</span> — A
-              Python script that converts a Google Doc outline (with heading
-              structure and Roman numeral sections) into a Scrivener 3 project,
-              preserving the binder hierarchy and research folders.
+              <span className="font-medium">gdoc-to-scrivener</span> — A Python
+              script that converts a Google Doc outline (with heading structure
+              and Roman numeral sections) into a Scrivener 3 project, preserving
+              the binder hierarchy and research folders.
             </li>
             <li>
-              <Link
-                href="/code/submission-cli"
-                className="font-semibold hover:opacity-70 transition-opacity"
-              >
+              <Link href="/code/submission-cli" className="font-medium">
                 submission-cli
               </Link>{" "}
               — Format manuscripts to Shunn standard, generate cover letters
@@ -62,8 +55,8 @@ export default function WriterUtilities() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Stack</h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Stack</h2>
         <div className="text-sm leading-relaxed space-y-2">
           <p>TypeScript · Python · Node.js · Google Docs API</p>
           <p>
@@ -71,7 +64,7 @@ export default function WriterUtilities() {
               href="https://github.com/highschoolsmokers/writer-utilities"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:opacity-70 transition-opacity"
+              className="font-medium"
             >
               View on GitHub →
             </a>
@@ -79,12 +72,9 @@ export default function WriterUtilities() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div />
-        <Link
-          href="/code"
-          className="text-sm font-semibold hover:opacity-70 transition-opacity"
-        >
+        <Link href="/code" className="text-sm font-medium">
           ← All projects
         </Link>
       </section>

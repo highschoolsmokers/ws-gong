@@ -75,32 +75,30 @@ const links = [
 
 export default function Links() {
   return (
-    <div className="max-w-md mx-auto py-8 space-y-6">
-      <div className="text-center space-y-2">
-        <Link
-          href="/"
-          className="text-2xl font-black tracking-tight hover:opacity-70 transition-opacity"
-        >
+    <div className="max-w-md mx-auto py-12 px-6 space-y-10">
+      <div className="space-y-3">
+        <Link href="/" className="swiss-display block text-3xl no-underline">
           W.S. Gong
         </Link>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400">
-          Narratives. Code.
-        </p>
+        <p className="swiss-label">Narratives / Code</p>
       </div>
 
-      <ul className="space-y-3">
+      <ul className="divide-y divide-current border-y border-current">
         {links.map((link) => (
           <li key={link.label}>
             <a
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 border border-black px-4 py-3 text-sm font-semibold hover:opacity-70 transition-opacity"
+              className="flex items-center gap-4 py-4 text-sm font-medium no-underline"
             >
               {link.icon && (
                 <span className="w-5 h-5 flex-shrink-0">{link.icon}</span>
               )}
               <span className="flex-1">{link.label}</span>
+              <span aria-hidden className="text-xs">
+                →
+              </span>
             </a>
           </li>
         ))}

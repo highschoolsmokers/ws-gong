@@ -16,21 +16,15 @@ export default function SiteError({
   }, [error]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-      <h2 className="text-xl md:text-2xl font-black leading-tight">Error</h2>
+    <div className="swiss-grid swiss-rule pt-6 pb-12">
+      <h2 className="swiss-label">Error</h2>
       <div className="space-y-4 text-sm leading-relaxed">
         <p>Something went wrong loading this page.</p>
         <div className="flex gap-4">
-          <button
-            onClick={reset}
-            className="font-semibold hover:opacity-70 transition-opacity"
-          >
+          <button onClick={reset} className="font-medium">
             Try again
           </button>
-          <Link
-            href="/"
-            className="font-semibold hover:opacity-70 transition-opacity"
-          >
+          <Link href="/" className="font-medium">
             Home
           </Link>
         </div>

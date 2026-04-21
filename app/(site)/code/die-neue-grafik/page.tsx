@@ -10,14 +10,11 @@ export default function DieNeueGrafik() {
   return (
     <div className="bg-[#EDAB00] text-black -mx-8 md:-mx-12 px-8 md:px-12 -mb-16 py-12 md:py-16">
       <div className="max-w-5xl mx-auto">
-        <Link
-          href="/code"
-          className="text-sm font-semibold hover:opacity-70 transition-opacity"
-        >
+        <Link href="/code" className="text-sm font-medium">
           ← All projects
         </Link>
         <header className="grid grid-cols-1 md:grid-cols-[2fr_1fr] gap-8 md:gap-12 mb-12 mt-6">
-          <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-black leading-[0.95] tracking-tight">
+          <h1 className="text-6xl md:text-7xl lg:text-[5.5rem] font-bold leading-none tracking-tight">
             Die
             <br />
             Neue
@@ -26,7 +23,7 @@ export default function DieNeueGrafik() {
             <br />
             Design
           </h1>
-          <ul className="text-sm font-semibold leading-loose">
+          <ul className="text-sm font-medium leading-loose">
             <li>The Bauhaus</li>
             <li>Swiss Modernism</li>
             <li>Swiss Graphic Design</li>
@@ -38,8 +35,8 @@ export default function DieNeueGrafik() {
         </header>
 
         <div className="space-y-0">
-          <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-            <h2 className="text-xl md:text-2xl font-black leading-tight">
+          <section className="swiss-grid swiss-rule pt-6 pb-12">
+            <h2 className="swiss-label">
               The Bauhaus 1919&thinsp;-&thinsp;1933
             </h2>
             <div className="text-sm leading-relaxed space-y-4">
@@ -67,8 +64,8 @@ export default function DieNeueGrafik() {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-            <h2 className="text-xl md:text-2xl font-black leading-tight">
+          <section className="swiss-grid swiss-rule pt-6 pb-12">
+            <h2 className="swiss-label">
               The International
               <br />
               Typographic
@@ -96,8 +93,8 @@ export default function DieNeueGrafik() {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-            <h2 className="text-xl md:text-2xl font-black leading-tight">
+          <section className="swiss-grid swiss-rule pt-6 pb-12">
+            <h2 className="swiss-label">
               Swiss Graphic Design&thinsp;/
               <br />
               Modernism

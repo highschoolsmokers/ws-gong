@@ -15,13 +15,11 @@ export const metadata: Metadata = {
 export default function SubmissionWatcherAgent() {
   return (
     <div className="space-y-0">
-      <h1 className="text-4xl md:text-5xl font-black leading-tight tracking-tight pb-8">
+      <h1 className="swiss-display text-[2.5rem] md:text-[3.5rem] pb-12">
         Submission Watcher Agent
       </h1>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Overview
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Overview</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             Monitors literary magazine submission windows and emails the moment
@@ -36,7 +34,7 @@ export default function SubmissionWatcherAgent() {
               href="https://docs.claude.com/en/docs/claude-code"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:opacity-70 transition-opacity font-semibold"
+              className=" font-medium"
             >
               Claude Code
             </a>{" "}
@@ -47,37 +45,35 @@ export default function SubmissionWatcherAgent() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          How it works
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">How it works</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <ul className="space-y-2">
             <li>
-              <span className="font-semibold">Watchers:</span> Each magazine is
-              a module that exports a <code>run()</code> function returning{" "}
+              <span className="font-medium">Watchers:</span> Each magazine is a
+              module that exports a <code>run()</code> function returning{" "}
               <code>{"{ agent, open, checkedAt }"}</code>
             </li>
             <li>
-              <span className="font-semibold">Parser:</span> Fetches the target
+              <span className="font-medium">Parser:</span> Fetches the target
               Submittable page and filters out workshops, conferences, and teen
               programs to isolate magazine submission links
             </li>
             <li>
-              <span className="font-semibold">Dedupe:</span> State stored in
+              <span className="font-medium">Dedupe:</span> State stored in
               Upstash Redis so each opening triggers exactly one email, even
               across concurrent cron invocations
             </li>
             <li>
-              <span className="font-semibold">Alerts:</span> Email sent via
-              Resend with a branded sender address
+              <span className="font-medium">Alerts:</span> Email sent via Resend
+              with a branded sender address
             </li>
             <li>
-              <span className="font-semibold">Schedule:</span> Vercel cron at 9
-              AM and 5 PM; endpoint is CRON_SECRET protected
+              <span className="font-medium">Schedule:</span> Vercel cron at 9 AM
+              and 5 PM; endpoint is CRON_SECRET protected
             </li>
             <li>
-              <span className="font-semibold">Status API:</span>{" "}
+              <span className="font-medium">Status API:</span>{" "}
               <code>GET /api/status</code> returns last check result and
               notification state per watcher
             </li>
@@ -85,10 +81,8 @@ export default function SubmissionWatcherAgent() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Adding a watcher
-        </h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Adding a watcher</h2>
         <div className="space-y-4 text-sm leading-relaxed">
           <p>
             Create a directory, implement <code>run()</code>, register it in{" "}
@@ -98,8 +92,8 @@ export default function SubmissionWatcherAgent() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">Stack</h2>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label">Stack</h2>
         <div className="text-sm leading-relaxed space-y-2">
           <p>JavaScript · Claude Code · Vercel Cron · Upstash Redis · Resend</p>
           <p>
@@ -107,7 +101,7 @@ export default function SubmissionWatcherAgent() {
               href="https://github.com/highschoolsmokers/submission-watcher-agent"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold hover:opacity-70 transition-opacity"
+              className="font-medium"
             >
               View on GitHub →
             </a>
@@ -115,12 +109,9 @@ export default function SubmissionWatcherAgent() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
         <div />
-        <Link
-          href="/code"
-          className="text-sm font-semibold hover:opacity-70 transition-opacity"
-        >
+        <Link href="/code" className="text-sm font-medium">
           ← All projects
         </Link>
       </section>

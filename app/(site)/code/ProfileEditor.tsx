@@ -237,17 +237,17 @@ export default function ProfileEditor() {
   return (
     <div className="text-black capitalize">
       {/* Toolbar */}
-      <section className="sticky top-0 z-10 bg-[#F2EDE4] grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          Profile
-        </h2>
-        <div className="flex flex-wrap items-baseline gap-0 text-xl tracking-tight">
+      <section className="sticky top-0 z-10 bg-background swiss-grid swiss-rule pt-6 pb-8">
+        <div className="col-span-12 md:col-span-4">
+          <h2 className="swiss-label">Profile</h2>
+        </div>
+        <div className="col-span-12 md:col-span-8 flex flex-wrap items-baseline gap-0 text-lg">
           {profiles.map((n, i) => (
             <span key={n} className="group/profile flex items-baseline">
               {i > 0 && <span className="text-neutral-300 mx-3">/</span>}
               <button
                 onClick={() => loadProfile(n)}
-                className={`hover:underline ${profileName === n ? "font-black" : "text-neutral-400 hover:text-black"}`}
+                className={`hover:underline ${profileName === n ? "font-bold" : "text-neutral-400 hover:text-black"}`}
               >
                 {n}
               </button>
@@ -592,10 +592,11 @@ export default function ProfileEditor() {
         ))}
       </Section>
 
-      {/* Actions */}
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <div />
-        <div className="flex flex-wrap items-baseline gap-0 text-xl tracking-tight">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <div className="col-span-12 md:col-span-4">
+          <span className="swiss-label">Actions</span>
+        </div>
+        <div className="col-span-12 md:col-span-8 flex flex-wrap items-baseline gap-0 text-lg">
           {profileName && (
             <>
               <Btn onClick={() => saveAs(profileName)}>Save</Btn>
@@ -640,28 +641,32 @@ function Section({
 }) {
   if (onAdd && isEmpty) {
     return (
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-sm font-black leading-tight text-neutral-400">
-          {title}
-        </h2>
-        <button
-          onClick={onAdd}
-          className="text-sm font-semibold text-neutral-400 hover:text-black hover:underline transition-colors justify-self-start"
-        >
-          + Add
-        </button>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <div className="col-span-12 md:col-span-4">
+          <h2 className="swiss-label text-neutral-400">{title}</h2>
+        </div>
+        <div className="col-span-12 md:col-span-8">
+          <button
+            onClick={onAdd}
+            className="text-sm font-medium text-neutral-400 hover:text-black"
+          >
+            + Add
+          </button>
+        </div>
       </section>
     );
   }
   return (
-    <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-      <h2 className="text-xl md:text-2xl font-black leading-tight">{title}</h2>
-      <div className="space-y-4">
+    <section className="swiss-grid swiss-rule pt-6 pb-12">
+      <div className="col-span-12 md:col-span-4">
+        <h2 className="swiss-label">{title}</h2>
+      </div>
+      <div className="col-span-12 md:col-span-8 space-y-4">
         {children}
         {onAdd && (
           <button
             onClick={onAdd}
-            className="font-semibold text-neutral-400 hover:text-black hover:underline transition-colors"
+            className="font-medium text-neutral-400 hover:text-black"
           >
             + Add
           </button>

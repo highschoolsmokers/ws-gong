@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Terms of Use",
@@ -12,11 +13,10 @@ export const metadata: Metadata = {
 export default function Terms() {
   return (
     <>
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h1 className="text-xl md:text-2xl font-black leading-tight">
-          Terms of Use
-        </h1>
-        <div className="space-y-4 text-sm leading-relaxed">
+      <PageTitle>Terms of Use</PageTitle>
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label col-span-12 md:col-span-4">Overview</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             All content on this website — including text, images, code, and
             design — is the intellectual property of W.S. Gong unless otherwise
@@ -36,11 +36,9 @@ export default function Terms() {
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
-          DMCA Policy
-        </h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label col-span-12 md:col-span-4">DMCA Policy</h2>
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             W.S. Gong respects the intellectual property rights of others and
             expects users of this site to do the same. If you believe that
@@ -71,16 +69,16 @@ export default function Terms() {
           </ul>
           <p>
             Send DMCA notices to:{" "}
-            <span className="font-semibold">ws [at] ws-gong.com</span>
+            <span className="font-medium">ws [at] ws-gong.com</span>
           </p>
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-6 md:gap-12 border-t border-black pt-8 pb-10">
-        <h2 className="text-xl md:text-2xl font-black leading-tight">
+      <section className="swiss-grid swiss-rule pt-6 pb-12">
+        <h2 className="swiss-label col-span-12 md:col-span-4">
           AI / ML Training
         </h2>
-        <div className="space-y-4 text-sm leading-relaxed">
+        <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <p>
             Use of any content from this site for training artificial
             intelligence or machine learning models is expressly prohibited
