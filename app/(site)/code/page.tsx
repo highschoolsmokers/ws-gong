@@ -119,28 +119,12 @@ const categories: Category[] = [
         tags: ["Web", "AI"],
       },
       {
-        href: "/code/resume-generator",
-        title: "Resume Generator",
-        description:
-          "Interactive resume editor with multi-profile management, live preview, and server-side PDF generation.",
-        stack: ["Next.js", "React", "PDFKit"],
-        tags: ["Web"],
-      },
-      {
         href: "/code/contact-form",
         title: "Contact Form",
         description:
           "Reactive contact form with real-time typography scaling, drag-and-drop file attachments, and honeypot spam prevention.",
         stack: ["Next.js", "React", "Server Actions"],
         tags: ["Web", "Design"],
-      },
-      {
-        href: "/code/die-neue-grafik",
-        title: "Die Neue Grafik",
-        description:
-          "A design study of Swiss International Typographic Style — Bauhaus grid systems, modernist typography, and responsive layout.",
-        stack: ["Next.js", "Tailwind CSS"],
-        tags: ["Design"],
       },
       {
         href: "https://workbench.ws-gong.com",

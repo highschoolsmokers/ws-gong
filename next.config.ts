@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/resume": ["./private/**"],
   },
-  serverExternalPackages: ["pdfkit"],
   // Serve source maps for production JS so Lighthouse (and stacktraces in the
   // console) can resolve minified frames back to original sources.
   productionBrowserSourceMaps: true,

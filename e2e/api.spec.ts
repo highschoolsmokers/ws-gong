@@ -17,25 +17,6 @@ test.describe("Resume API", () => {
   });
 });
 
-test.describe("Resume PDF generation (admin-gated)", () => {
-  // /api/laboratory/* is Basic-Auth protected by proxy.ts. Without credentials
-  // every request — valid or malformed — must short-circuit to 401 before any
-  // handler runs. Happy-path and validation behavior are covered by unit tests.
-  test("POST without auth returns 401", async ({ request }) => {
-    const response = await request.post("/api/laboratory/generate", {
-      data: { name: { first: "Test", last: "User" } },
-    });
-    expect(response.status()).toBe(401);
-  });
-
-  test("POST with empty body without auth returns 401", async ({ request }) => {
-    const response = await request.post("/api/laboratory/generate", {
-      data: {},
-    });
-    expect(response.status()).toBe(401);
-  });
-});
-
 test.describe("RSS feed", () => {
   test("returns valid XML with channel element", async ({ request }) => {
     const response = await request.get("/feed");
