@@ -28,18 +28,6 @@ const projectItems = [
       "Scripts and small apps for fiction writers — including a Google Docs to Scrivener converter.",
   },
   {
-    title: "Resume Generator",
-    link: `${siteUrl}/code/resume-generator`,
-    description:
-      "Interactive resume editor with profile management and PDF export.",
-  },
-  {
-    title: "Die Neue Grafik",
-    link: `${siteUrl}/code/die-neue-grafik`,
-    description:
-      "A study in Swiss International Typographic Style — Bauhaus, modernism, and grid-based design.",
-  },
-  {
     title: "Contact Form",
     link: `${siteUrl}/code/contact-form`,
     description:

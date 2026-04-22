@@ -259,6 +259,7 @@ export default function ContactForm() {
                   </span>
                   <button
                     onClick={() => removeAttachment(i)}
+                    aria-label={`Remove ${a.name}`}
                     className="text-neutral-300 hover:text-red-500 text-xs"
                   >
                     {"\u00D7"}
