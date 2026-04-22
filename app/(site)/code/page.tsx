@@ -119,14 +119,6 @@ const categories: Category[] = [
         tags: ["Web", "AI"],
       },
       {
-        href: "/code/resume-generator",
-        title: "Resume Generator",
-        description:
-          "Interactive resume editor with multi-profile management, live preview, and server-side PDF generation.",
-        stack: ["Next.js", "React", "PDFKit"],
-        tags: ["Web"],
-      },
-      {
         href: "/code/contact-form",
         title: "Contact Form",
         description:

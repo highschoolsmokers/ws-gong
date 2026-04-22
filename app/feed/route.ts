@@ -28,12 +28,6 @@ const projectItems = [
       "Scripts and small apps for fiction writers — including a Google Docs to Scrivener converter.",
   },
   {
-    title: "Resume Generator",
-    link: `${siteUrl}/code/resume-generator`,
-    description:
-      "Interactive resume editor with profile management and PDF export.",
-  },
-  {
     title: "Contact Form",
     link: `${siteUrl}/code/contact-form`,
     description:

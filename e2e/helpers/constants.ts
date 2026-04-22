@@ -27,7 +27,6 @@ export const MAX_TAB_STEPS_FORM = 20;
 
 /**
  * All publicly routable pages — used by smoke tests and OG metadata checks.
- * Admin-gated routes (Basic Auth via proxy.ts) are excluded: /code/resume-generator.
  */
 export const SITE_PAGES = [
   "/",
