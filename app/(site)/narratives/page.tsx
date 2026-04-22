@@ -87,7 +87,7 @@ export default async function Narratives() {
                     href={p.externalHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block no-underline hover:no-underline"
+                    className="block no-underline hover:!no-underline"
                   >
                     {inner}
                   </a>
@@ -103,7 +103,7 @@ export default async function Narratives() {
                 href={post.canonical_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block no-underline hover:no-underline"
+                className="block no-underline hover:!no-underline"
               >
                 <span className="block text-base font-medium leading-snug">
                   {post.title}
