@@ -23,21 +23,18 @@ const tutorialPages = [
 // Code page – AI Engineering section links the tutorial
 // ---------------------------------------------------------------------------
 test.describe("AI Engineering section", () => {
-  test("has AI Engineering heading on /code", async ({ page }) => {
+  test("has AI Engineering label on /code", async ({ page }) => {
     await page.goto("/code");
-    await expect(
-      page.getByRole("heading", { name: /AI Engineering/i }),
-    ).toBeVisible();
+    // The Swiss redesign uses <span class="swiss-label"> for category names
+    // instead of <h2>, so we assert by text rather than by role=heading.
+    await expect(page.getByText(/AI Engineering/i).first()).toBeVisible();
   });
 
   test("has Fabulosa Books tutorial link", async ({ page }) => {
     await page.goto("/code");
-    const link = page.getByRole("link", {
-      name: /Multi-Agent Orchestration Tutorial/i,
-    });
+    const link = page.locator('a[href^="/fabulosa-books"]');
     await expect(link).toBeAttached();
-    // Next.js may normalize the trailing slash in the rendered DOM; accept either.
-    await expect(link).toHaveAttribute("href", /^\/fabulosa-books\/?$/);
+    await expect(link).toContainText(/Fabulosa Books/i);
   });
 });
 
@@ -129,9 +126,7 @@ test.describe("Fabulosa Books cross-navigation", () => {
   test("can navigate from /code to tutorial and back", async ({ page }) => {
     await page.goto("/code");
 
-    await page
-      .getByRole("link", { name: /Multi-Agent Orchestration Tutorial/i })
-      .click();
+    await page.locator('a[href^="/fabulosa-books"]').click();
     await expect(page).toHaveURL(/\/fabulosa-books/);
 
     await page.locator("nav.site-nav").getByRole("link").click();

@@ -1,8 +1,13 @@
 import type { MetadataRoute } from "next";
 
+// Compute once per build, not per request. Per-request `new Date()` makes
+// every URL look freshly modified to crawlers, which trains them to ignore
+// the lastmod signal entirely.
+const buildTime = new Date();
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://www.ws-gong.com";
-  const now = new Date();
+  const now = buildTime;
   return [
     { url: base, lastModified: now, changeFrequency: "monthly", priority: 1 },
     {
@@ -107,6 +112,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.5,
+    },
+    {
+      url: `${base}/code/swiss-design-workbench`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.6,
     },
     // Fabulosa Books tutorial
     {

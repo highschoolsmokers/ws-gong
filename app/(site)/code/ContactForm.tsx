@@ -129,7 +129,7 @@ export default function ContactForm() {
 
   return (
     <div
-      className="text-black capitalize"
+      className="text-black"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}

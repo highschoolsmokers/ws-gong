@@ -127,7 +127,7 @@ const categories: Category[] = [
         tags: ["Web", "Design"],
       },
       {
-        href: "https://workbench.ws-gong.com",
+        href: "/code/swiss-design-workbench",
         title: "Swiss Design Workbench",
         description:
           "A working studio for design in the Swiss tradition — grid, type, and objectivity applied to web and print. Every piece reads from a single token system; vanilla HTML and hand-authored SVG with togglable grid and baseline overlays.",
