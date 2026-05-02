@@ -1,484 +1,568 @@
-# Residency Miner — Technical Specification
+# ws-gong.com — Technical Specification
 
-## Overview
+> **Status:** Rudimentary snapshot of existing functionality as of 2026-05-02. Captures
+> what is shipped, not what is intended. To be audited and refined in a later pass.
 
-A feature of ws-gong.com that automatically discovers writer residencies and fellowships from the web, extracts structured data using an LLM, stores results in Neon Postgres, and serves them at `/residencies`. Built as API routes and a page within the existing Next.js App Router project, deployed on Vercel.
+## 1. Overview
 
-## Architecture
+`ws-gong.com` is the personal site of W.S. Gong (Billy Gong). It is a Next.js 16
+App Router application deployed to Vercel. It serves a small portfolio of
+narrative and code work, an automated weekly-updated residency listings page
+backed by Neon Postgres + Anthropic, an HMAC-gated resume PDF, a contact form
+delivered over SMTP, and an RSS feed.
+
+## 2. Tech Stack
+
+- **Framework:** Next.js 16 (App Router), React 19, TypeScript
+- **Styling:** Tailwind CSS 4, custom Swiss-grid design tokens; Geist font (Vercel)
+- **Hosting:** Vercel (Fluid Compute), `engines.node >= 24`
+- **Database:** Neon Postgres (`@neondatabase/serverless`)
+- **LLM:** Anthropic SDK (`@anthropic-ai/sdk`); models centralized in
+  `lib/residency-miner/models.ts` (`EXTRACT_MODEL = claude-haiku-4-5-20251001`,
+  `DISCOVERY_MODEL = claude-sonnet-4-6`)
+- **Email:** Nodemailer over SMTP (port 465, secure)
+- **Observability:** Sentry (server + edge instrumentation; client SDK
+  intentionally disabled to keep portfolio pages under Lighthouse 95),
+  Vercel Analytics, Vercel Speed Insights
+- **Validation:** Zod
+- **Testing:** Playwright (chromium / firefox / webkit), Node test runner
+  for `lib/residency-miner/*.test.ts`
+- **Lint / format:** ESLint 9, Prettier, Husky + lint-staged
+- **Package manager:** pnpm
+
+## 3. Routing & Layouts
+
+Two App Router groups:
+
+- `app/(site)/` — uses `PageShell` + `Nav` (header masthead, primary nav,
+  footer with subscribe link, terms/colophon/theme toggle).
+- `app/(bare)/` — minimal layout for `/links` (Linktree-style page).
+
+Top-level routes:
+
+| Path                    | Type                           | Notes                                                |
+| ----------------------- | ------------------------------ | ---------------------------------------------------- |
+| `/`                     | Server page                    | Statement, Giacometti plate, latest Substack post    |
+| `/about`                | Server page                    | Bio, resume link, social icons                       |
+| `/narratives`           | Server page                    | Writing index + Substack feed                        |
+| `/code`                 | Server page                    | Project portfolio with JSON-LD `ItemList`            |
+| `/code/{slug}`          | Server pages                   | One page per project (10 projects)                   |
+| `/residencies`          | Server page (revalidate 3600s) | Reads from Neon, hands off to client list            |
+| `/colophon`             | Server page                    | Typography, design, stack, tools, source             |
+| `/contact`              | Server page                    | Contact form (server action)                         |
+| `/terms`                | Server page                    | DMCA + AI/ML training prohibition                    |
+| `/links`                | Server page (bare layout)      | Linktree-style social index                          |
+| `/feed`                 | Route handler                  | RSS 2.0 feed (Substack posts + featured projects)    |
+| `/sitemap.xml`          | `app/sitemap.ts`               | Static + project URLs + Fabulosa Books parts 1-7     |
+| `/robots.txt`           | `app/robots.ts`                | Disallows `/api/`, `/monitoring`; advertises sitemap |
+| `/manifest.webmanifest` | `app/manifest.ts`              | PWA manifest, `#f2ede4` theme color                  |
+| `/opengraph-image`      | `app/opengraph-image.tsx`      | Default OG image                                     |
+
+Code project pages (under `/code/`):
+
+- `colophon-mcp`, `paperless-mcp`, `lit-verity-mcp`,
+  `historical-research-agent`, `lit-research-plugin`,
+  `submission-cli`, `submission-watcher-agent`, `writer-utilities`,
+  `contact-form`, `swiss-design-workbench`
+
+Configured redirects (`next.config.ts`):
+
+- `/narratives-code` → `/code` (permanent)
+- `/narratives-code/:slug` → `/code/:slug` (permanent)
+
+The `/fabulosa-books/` tutorial is served as static assets out of `public/`
+and surfaced in the sitemap (`part1.html` … `part7.html`).
+
+### 3.1 Navigation
+
+`app/(site)/Nav.tsx` renders the masthead and primary nav:
+
+- Narratives, Code, Residencies, About
+
+The masthead is the H1 on the home page and a link to `/` on every other page.
+
+## 4. Home Page
+
+`app/(site)/page.tsx`:
+
+1. Statement section (Rumpus link, technical writing, AI tooling).
+2. Plate 01 — Giacometti, _The Palace at 4 a.m._ (`public/images/giacometti_palace_4am.jpg`,
+   priority loaded).
+3. "Latest" section pulling the most recent Substack post via
+   `getSubstackPosts("highschoolsmokers", 1)`.
+
+## 5. Code Portfolio
+
+`app/(site)/code/page.tsx` defines three categories — AI Engineering,
+Developer Tools, Web & Design — each with a typed `Project` array
+(`href`, `title`, `description`, `stack`, `tags`). Emits a JSON-LD
+`ItemList` of all projects.
+
+Each project page is a static MDX-free server component documenting that
+single project (overview, structure, principles, stack, external links).
+`/code/contact-form` reuses the lab `ContactForm` component (demo only,
+non-sending).
+
+## 6. Narratives
+
+`app/(site)/narratives/page.tsx` renders three hand-curated entries
+(Novel in progress, 14 Hills, Rumpus editing) followed by all Substack
+posts from the `highschoolsmokers` subdomain.
+
+## 7. Residencies (Residency Miner)
+
+The residencies feature has its own subsystem under `lib/residency-miner/`
+plus four route handlers under `app/api/`. It automatically discovers
+sources, mines them weekly for opportunities, and renders a filterable
+list at `/residencies`.
+
+### 7.1 Pipeline
 
 ```
-Vercel Cron (weekly)
-  → /api/mine (route handler inside ws-gong.com)
-    → fetches HTML from source URLs
-    → sends HTML to Claude API for structured extraction
-    → deduplicates against existing Postgres records
-    → upserts new/updated opportunities
+GET /api/discover-sources  (Vercel cron, Sun 09:00 UTC)
+  → Anthropic web_search → tool-use report_candidates
+  → URL validation (HTTP, content-type, body length, residency + writing keyword regexes)
+  → INSERT INTO sources (dedup on normalized URL)
+  → INSERT INTO discovery_logs
 
-/api/opportunities (route handler inside ws-gong.com)
-  → GET: returns opportunities with optional filters
-  → PATCH: updates status field on a single opportunity
+GET /api/mine              (Vercel cron, Mon 09:00 UTC)
+  → SELECT active sources
+  → fetch HTML (15s timeout, retry once on 5xx/429, browser UA)
+  → extractOpportunities(html, source)  [Anthropic tool-use → Zod validate]
+  → upsertOpportunity(...)               [INSERT ... ON CONFLICT (id) DO UPDATE]
+  → recordSourceSuccess / recordSourceFailure
+  → INSERT INTO run_logs
+  → revalidatePath("/residencies") (always; zero-yield runs still must refresh
+                                    the "Last scan" footer to reflect reality)
+  → Sentry warning if low yield (sourcesFetched ≥ 5 and newFound/sourcesFetched < 0.4)
 
-/residencies (Next.js page inside ws-gong.com)
-  → fetches from /api/opportunities
-  → client-side filtering and display
+GET /api/heartbeat         (Vercel cron, daily 10:00 UTC)
+  → getLastRun(); Sentry error if older than 7.5 days
+
+GET /api/prune-logs        (Vercel cron, monthly, day 1 at 10:00 UTC)
+  → DELETE FROM run_logs / discovery_logs older than 90 days
 ```
 
-## Tech Stack
+All four routes are GET (Vercel cron uses GET) and authenticate with
+`Authorization: Bearer <CRON_SECRET>` via `lib/authz.ts:timingSafeBearer`.
+`maxDuration = 300` on `/api/mine` and `/api/discover-sources`.
+`/api/mine` runs sources with a concurrency cap of 3 to stay under
+Anthropic input-tokens-per-minute limits.
 
-- **Existing**: Next.js App Router, TypeScript, Vercel
-- **New dependencies**: `@neondatabase/serverless`, `@anthropic-ai/sdk`
-- **Database**: Neon Postgres (free tier)
-- **LLM**: Anthropic Claude API (claude-sonnet-4-20250514)
+### 7.2 Data Model
 
-## New Files
+TypeScript types live in `lib/residency-miner/types.ts`:
 
-All paths are relative to the ws-gong.com project root.
+- `Opportunity` — `id`, `name`, `org`, `url`, `deadline` (strict
+  `YYYY-MM-DD` or the literal lowercase `"rolling"` — enforced by Zod regex
+  in `extract.ts` and the `valid_deadline_format` CHECK in
+  migration `002_deadline_format.sql`), `genre[]`, `duration`, `stipend`,
+  `stipendMax`, `location`, `eligibility`, `description`, `firstSeen`,
+  `lastUpdated`, `sourceUrl`
+- `Genre` — `fiction | nonfiction | poetry | screenwriting | multi | other`
+- `Source` — `id`, `name`, `url`, `type` (`aggregator | org_listing`),
+  `status` (`active | inactive`), `discoveredAt`, `lastFetchedAt`,
+  `lastSuccessAt`, `successCount`, `failureCount`, `consecutiveFailures`
+- `MineRunLog` — `timestamp`, `sourcesFetched`, `newFound`, `updated`, `errors[]`
+- `DiscoveryLog` — `timestamp`, `candidates`, `added`, `rejected[]`
+
+Postgres tables — canonical DDL lives in
+[`lib/residency-miner/schema.sql`](lib/residency-miner/schema.sql) with
+incremental migrations under
+[`lib/residency-miner/migrations/`](lib/residency-miner/migrations/):
+
+- `opportunities` — primary key `id`; columns include `genre TEXT[]`,
+  `stipend`, `stipend_max`, `first_seen`, `last_updated`, `source_url`.
+  ID = first 16 hex chars of `sha256(normalizedName + "|" + year)`.
+  Org is intentionally NOT in the hash because extractors emit
+  inconsistent org names.
+- `sources` — primary key `id`, unique `url`, with `consecutive_failures`
+  and a deactivation threshold of 4 consecutive failures.
+- `run_logs` — append-only mining run history with JSONB `errors`.
+- `discovery_logs` — append-only discovery history with JSONB `rejected`.
+
+Both runtime row schemas are validated with Zod (`opportunityRowSchema`,
+`sourceRowSchema`); malformed rows are reported to Sentry and filtered
+out rather than crashing the request.
+
+### 7.3 Extraction (`lib/residency-miner/extract.ts`)
+
+- HTML stripped of `<script>`, `<style>`, `<nav>`, `<footer>`, comments,
+  most tags; entities decoded; whitespace normalized; truncated to
+  `MAX_CONTENT_CHARS = 20_000` (Sentry info on truncation).
+- Anthropic call: `EXTRACT_MODEL`, `max_tokens: 8192`, `temperature: 0`,
+  cached system prompt (`cache_control: ephemeral`), forced tool-use of
+  `report_opportunities`.
+- System prompt enforces: writing/literary disciplines only, English-language
+  only, multi-discipline residencies extract only writer tracks.
+- Each returned item is parsed by `extractedSchema` (Zod); rejected items
+  are reported to Sentry and dropped.
+- `stop_reason === "max_tokens"` is reported to Sentry.
+
+### 7.4 Discovery (`app/api/discover-sources/route.ts`)
+
+- Anthropic call: `DISCOVERY_MODEL`, `max_tokens: 8192`, `temperature: 0`,
+  cached system prompt, two tools (`web_search_20250305` with `max_uses: 6`,
+  and `report_candidates`).
+- Strict English-language, writing-primary filter encoded in the prompt.
+- Cap of `MAX_NEW_SOURCES = 10` per run.
+- Validation regexes: `KEYWORD_PATTERN` (residency vocabulary) AND
+  `WRITING_KEYWORD_PATTERN` (writing-specific vocabulary). Bodies under
+  `MIN_BODY_LENGTH = 2000` are rejected. Non-`text/html` content-types
+  are rejected.
+- Sentry warning when zero candidates are returned.
+
+### 7.5 Page (`app/(site)/residencies/page.tsx` + `ResidenciesList.tsx`)
+
+- Server component fetches all opportunities sorted by deadline asc, plus
+  `getLastRun()` and `getSourceStats()`. It also computes `today` (ISO
+  YYYY-MM-DD) and passes it as a prop so SSR and the first CSR pass agree
+  on the past-deadline filter — important for `/residencies?genre=…` deep
+  links and for crawler-visible HTML.
+- `revalidate = 3600`; `revalidatePath("/residencies")` is also called
+  from the mine cron after every run.
+- Client list filters by genre (URL param `?genre=…`) and hides past
+  deadlines (`o.deadline < today` unless `"rolling"`). "Index" footer
+  shows last scan time, fetched/extracted/error counts, source counts,
+  and the next-Monday-09:00-UTC scan time (the "next scan" string is
+  formatted client-side post-mount to avoid SSR/CSR locale divergence).
+
+## 8. Resume PDF Gate
+
+Source: `private/wsgong_tech_writer_resume.pdf` (included in
+`outputFileTracingIncludes` so it ships with the function bundle).
+
+Endpoints:
+
+- `GET /api/resume/token` — `lib/resumeToken.ts:generateToken()` returns
+  `{ token: "<ts>.<hmac-sha256(ts, RESUME_SECRET)>" }`.
+- `HEAD /api/resume?token=…` — returns size headers for UI display.
+- `GET /api/resume?token=…` — streams the PDF.
+
+Tokens are reusable within a 2-minute TTL (`TTL_MS = 2 * 60 * 1000`).
+Verification uses `timingSafeEqual`. `RESUME_SECRET` is required in
+production (throws on missing).
+
+The gate is intentionally decorative: the `/api/resume/token` endpoint is
+unauthenticated and unrate-limited. Anyone can mint a token. The point is
+short URL freshness in referrer logs, not access control. If the threat
+model changes, replace the gate rather than rate-limiting the mint.
+
+Headers on PDF responses:
+
+- `Content-Type: application/pdf`
+- `Content-Disposition: inline; filename="wsgong_tech_writer_resume.pdf"`
+- `X-Robots-Tag: noindex, nofollow`
+- `Cache-Control: no-store` (prevents back-button replay after token expiry)
+
+`app/(site)/resume/ResumeLink.tsx` fetches a token on mount, shows
+`Download PDF (NN KB)`, refreshes every 90 seconds (well inside the
+2-minute TTL), and renders a retry button on failure.
+
+## 9. Contact Form
+
+Two form components share a UI but differ in transport:
+
+- **Real form** — `app/(site)/contact/ContactForm.tsx` + server action
+  `app/(site)/contact/actions.ts:sendMessage`. Uses Nodemailer SMTP.
+- **Lab demo** — `app/(site)/code/ContactForm.tsx`, used by
+  `/code/contact-form`. Validates and pretends to send; never delivers
+  email. Pre-fills the subject from a `?from=` query parameter.
+
+Real-form anti-spam:
+
+- Hidden `website` honeypot field — non-empty rejects the submission.
+- Timing check — submissions earlier than `MIN_TIME_MS = 3000` after
+  page load are rejected (form embeds `_t` from `Date.now()`).
+
+Real-form attachments:
+
+- Multipart upload, max `MAX_FILES = 5`, max `MAX_FILE_SIZE = 5 MB` per
+  file, max `MAX_TOTAL_ATTACHMENT_BYTES = 10 MB` aggregate (constants in
+  `lib/upload.ts`). Files exceeding the per-file size are dropped client-
+  side; the count cap stops the loop server-side; the total-bytes cap
+  skips oversize files but keeps checking smaller ones (so a big PDF
+  followed by a small image doesn't drop the image silently).
+- `isBlockedAttachmentName` rejects executable / script extensions
+  (`.exe`, `.scr`, `.bat`, `.cmd`, `.com`, `.msi`, `.ps1`, `.vbs`, `.js`,
+  `.jse`, `.wsf`, `.wsh`, `.jar`, `.lnk`, `.reg`, `.sh`, `.app`, `.dmg`,
+  `.pkg`, `.iso`) before the file is buffered. Denylist not allowlist —
+  legitimate attachments are unbounded by extension type.
+
+Email envelope:
+
+- `from: SMTP_USER`, `to: CONTACT_EMAIL`, `replyTo: <user email>`,
+  `subject: "[Contact Form] …"`, plain text body, attachments, header
+  `X-Source: contact-form`.
+
+## 10. RSS Feed
+
+`app/feed/route.ts` returns `application/rss+xml` for the channel
+`https://www.ws-gong.com`:
+
+- All posts from `getSubstackPosts("highschoolsmokers")` as `<category>Newsletter</category>`, each with `<pubDate>` from the Substack `post_date`.
+- Five hand-curated project items (Fabulosa Books, Paperless MCP,
+  Submission CLI, Writer Utilities, Contact Form) as `<category>Project</category>`,
+  each with a stable `date` field that becomes `<pubDate>` so RSS readers
+  sort and dedupe predictably (without it, Feedly/Reeder treat dateless
+  items as "now" on every fetch).
+- All title/description text passes through a small inline `cdata()`
+  helper that escapes any `]]>` in user-supplied content (Substack post
+  titles can contain anything) by emitting `]]]]><![CDATA[>`.
+- `Cache-Control: s-maxage=3600, stale-while-revalidate`.
+
+The root layout advertises the feed via
+`alternates.types["application/rss+xml"] = "/feed"`.
+
+## 11. Substack Integration (`lib/substack.ts`)
+
+`getSubstackPosts(subdomain, limit = 10)`:
+
+- Subdomain validated with `^[a-z0-9][a-z0-9-]{0,62}$`.
+- Calls `https://<subdomain>.substack.com/api/v1/posts?limit=…`,
+  `next.revalidate = 3600`, `AbortSignal.timeout(5000)`.
+- Each item parsed with `substackPostSchema` (Zod); failures dropped.
+- Non-OK responses and malformed payloads `throw` so Next's data cache
+  treats the call as a failed fetch and retries on the next request,
+  rather than caching `[]` for the full hour and silently hiding the
+  newsletter section across the site. The outer try/catch still returns
+  `[]` to the page, so the section just disappears for one request.
+
+Posts surface on `/`, `/narratives`, and `/feed`.
+
+## 12. Theming
+
+`app/components/ThemeToggle.tsx`:
+
+- Three states: `system | light | dark`, cycled in that order.
+- Persisted in `localStorage["theme"]`. `system` removes the key.
+- Applied via `data-theme` attribute on `<html>`.
+- Cross-tab sync via the `storage` event.
+- `applyTheme` runs in a `useEffect` (not during render) so React's
+  concurrent renderer can't double-invoke the DOM write.
+
+To prevent a flash-of-light-theme for returning dark-mode users, a tiny
+inline `<script>` in `app/layout.tsx`'s `<head>` reads `localStorage.theme`
+and sets `data-theme` synchronously, before any CSS evaluates
+`prefers-color-scheme`. The `<html>` element carries `suppressHydrationWarning`
+so React doesn't flag the script-set attribute as a hydration mismatch.
+
+## 13. SEO & Metadata
+
+Root metadata (`app/layout.tsx`):
+
+- `metadataBase: https://www.ws-gong.com`
+- Title template `"%s — W.S. Gong"`, default `"W.S. Gong"`
+- Person JSON-LD with `worksFor` (The Rumpus), `sameAs` (GitHub, LinkedIn,
+  Substack, Instagram), `knowsAbout` keywords.
+- OpenGraph site name + URL.
+- `icons.apple = /apple-touch-icon.png`.
+
+Per-page metadata is set on every route. `/code` adds an `ItemList`
+JSON-LD.
+
+`app/sitemap.ts` computes `lastModified` from a module-level `buildTime`
+constant, not `new Date()` per request, so the same crawl returns the
+same timestamp across all URLs and successive crawls only see "modified"
+when the deployment changed.
+
+## 14. HTTP Headers (`next.config.ts`)
+
+Applied to `(.*)`:
+
+- `X-Content-Type-Options: nosniff`
+- `X-Frame-Options: DENY`
+- `Referrer-Policy: no-referrer`
+- `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`
+- `Permissions-Policy` denies accelerometer, camera, geolocation,
+  gyroscope, magnetometer, microphone, payment, usb, interest-cohort,
+  browsing-topics — the static portfolio uses none of these.
+- `Content-Security-Policy`:
+  - `default-src 'self'`
+  - `script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com`
+  - `style-src 'self' 'unsafe-inline'`
+  - `img-src 'self' data: https:`
+  - `font-src 'self'`
+  - `connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io https://*.ingest.sentry.io`
+  - `worker-src 'self' blob:`
+  - `frame-ancestors 'none'`
+
+`productionBrowserSourceMaps: true` so Lighthouse / Sentry can resolve
+minified frames.
+
+## 15. Sentry
+
+- `sentry.server.config.ts`, `sentry.edge.config.ts`, registered via
+  `instrumentation.ts` (`register()` + `onRequestError`).
+- Client SDK intentionally disabled (`instrumentation-client.ts` exports
+  nothing) to preserve Lighthouse performance on portfolio pages.
+- `withSentryConfig` (in `next.config.ts`):
+  - org `high-school-smokers`, project `javascript-nextjs`
+  - `tunnelRoute: "/monitoring"` (also disallowed in `robots.ts`)
+  - `automaticVercelMonitors: true`
+  - tree-shakes Sentry debug logging
+- Captured signals (residency miner): truncated extraction content (info),
+  `max_tokens` stops, malformed rows, rejected extracted items, low-yield
+  runs (warning), zero discovery candidates (warning), heartbeat staleness
+  (error), missing run logs (error).
+
+## 16. Cron Jobs (`vercel.json`)
+
+| Path                    | Schedule                               | Purpose                                                 |
+| ----------------------- | -------------------------------------- | ------------------------------------------------------- |
+| `/api/discover-sources` | `0 9 * * 0` (Sun 09:00 UTC)            | Discover new residency sources                          |
+| `/api/mine`             | `0 9 * * 1` (Mon 09:00 UTC)            | Mine active sources for opportunities                   |
+| `/api/prune-logs`       | `0 10 1 * *` (1st of month, 10:00 UTC) | Delete `run_logs` / `discovery_logs` older than 90 days |
+| `/api/heartbeat`        | `0 10 * * *` (daily 10:00 UTC)         | Page Sentry if mine has not run in > 7.5 days           |
+
+`vercel.json` also sets an `ignoreCommand` that skips deploys when only
+docs/config/test-fixture files change.
+
+## 17. Environment Variables
+
+| Name                                               | Used in                | Purpose                                         |
+| -------------------------------------------------- | ---------------------- | ----------------------------------------------- |
+| `DATABASE_URL`                                     | residency miner        | Neon Postgres connection string                 |
+| `ANTHROPIC_API_KEY`                                | extract + discovery    | Anthropic SDK auth                              |
+| `CRON_SECRET`                                      | all four cron handlers | Bearer token verified by `timingSafeBearer`     |
+| `RESUME_SECRET`                                    | resume token           | HMAC key (required in production)               |
+| `SENTRY_DSN`                                       | Sentry instrumentation | Optional; observability disabled if unset       |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS` | contact form           | SMTP credentials (port defaults to 465, secure) |
+| `CONTACT_EMAIL`                                    | contact form           | Inbox the form delivers to                      |
+| `BASE_URL`                                         | playwright             | Override base URL in CI                         |
+| `VERCEL_AUTOMATION_BYPASS_SECRET`                  | playwright             | Bypass Vercel preview protection in CI          |
+
+## 18. Testing
+
+- **Unit:** `lib/residency-miner/dedupe.test.ts` via `pnpm test:unit`
+  (`node --test --experimental-strip-types`).
+- **E2E:** Playwright tests under `e2e/` —
+  `accessibility.spec.ts`, `api.spec.ts`, `contact.spec.ts`,
+  `content.spec.ts`, `fabulosa-books.spec.ts`, `metadata.spec.ts`,
+  `navigation.spec.ts`, `projects.spec.ts`, `smoke.spec.ts`. Helpers in
+  `e2e/helpers/` (`imap.ts` for verifying contact email delivery,
+  `contact-form.ts`, `constants.ts`, `required-env.ts`). Run on
+  chromium / firefox / webkit, 2 workers, fully parallel.
+
+## 19. Scripts
+
+| Script           | Command                                               |
+| ---------------- | ----------------------------------------------------- |
+| `pnpm dev`       | `next dev`                                            |
+| `pnpm build`     | `next build`                                          |
+| `pnpm start`     | `next start`                                          |
+| `pnpm lint`      | `eslint`                                              |
+| `pnpm typecheck` | `tsc --noEmit`                                        |
+| `pnpm test:unit` | Node test runner over `lib/residency-miner/*.test.ts` |
+| `pnpm test:e2e`  | Playwright                                            |
+| `pnpm prepare`   | `husky`                                               |
+
+`scripts/make-favicon.mjs` is a one-shot generator used to produce
+`public/apple-touch-icon.png` from the W.S. Gong mark.
+
+## 20. Repository Layout
 
 ```
-src/
-├── lib/
-│   └── residency-miner/
-│       ├── types.ts
-│       ├── db.ts
-│       ├── schema.sql
-│       ├── extract.ts
-│       ├── sources.ts
-│       └── dedupe.ts
-├── app/
-│   ├── api/
-│   │   ├── mine/
-│   │   │   └── route.ts
-│   │   └── opportunities/
-│   │       └── route.ts
-│   └── residencies/
-│       └── page.tsx
+app/
+  (site)/                site-shell route group (PageShell + Nav + footer)
+    page.tsx             home
+    Nav.tsx
+    layout.tsx
+    error.tsx
+    about/
+    code/                portfolio + 10 project pages, ContactForm (lab demo)
+    colophon/
+    contact/             real form + server action
+    narratives/
+    residencies/         server page + ResidenciesList client component
+    resume/              ResumeLink client component
+    terms/
+  (bare)/
+    links/               linktree-style page
+  api/
+    mine/                cron — weekly extraction
+    discover-sources/    cron — weekly source discovery
+    heartbeat/           cron — staleness monitor
+    prune-logs/          cron — log retention
+    resume/              token + gated PDF
+  components/            PageShell, PageTitle, ThemeToggle
+  feed/                  RSS 2.0
+  layout.tsx, manifest.ts, opengraph-image.tsx, sitemap.ts, robots.ts,
+  global-error.tsx, not-found.tsx
+lib/
+  authz.ts               timingSafeBearer
+  resumeToken.ts         HMAC token generate/verify
+  substack.ts            Substack posts fetcher (Zod-validated)
+  upload.ts              MAX_FILES, MAX_FILE_SIZE, MAX_TOTAL_ATTACHMENT_BYTES, isBlockedAttachmentName
+  residency-miner/
+    db.ts                Neon client + all SQL
+    extract.ts           Anthropic tool-use extraction
+    dedupe.ts            normalizeName / normalizeUrl / generateId / generateSourceId
+    dedupe.test.ts       unit tests
+    models.ts            EXTRACT_MODEL / DISCOVERY_MODEL
+    types.ts             shared types
+    schema.sql           canonical DDL
+    migrations/          incremental schema migrations
+private/
+  wsgong_tech_writer_resume.pdf   gated by /api/resume
+public/
+  fabulosa-books/        static tutorial site (parts 1-7 + index)
+  images/                site imagery (Giacometti plate, etc.)
+  apple-touch-icon.png, *.svg
+e2e/                     Playwright tests + helpers
+scripts/                 make-favicon.mjs
+docs/                    deployment.md
+sentry.{server,edge}.config.ts, instrumentation.ts, instrumentation-client.ts
+next.config.ts, vercel.json, playwright.config.ts, postcss.config.mjs
+tsconfig.json, eslint.config.mjs
+package.json, pnpm-lock.yaml
 ```
 
-All residency-miner logic lives under `src/lib/residency-miner/`. This keeps it isolated from the rest of the site. If it ever needs to be extracted into its own repo, move that directory and the two API routes.
-
-## Environment Variables
-
-Add to the existing `.env.local` and Vercel project settings:
-
-```
-DATABASE_URL=postgresql://<user>:<pass>@<host>.neon.tech/residency_miner?sslmode=require
-ANTHROPIC_API_KEY=sk-ant-...
-CRON_SECRET=<random string for securing the cron endpoint>
-```
-
-## Database Schema
-
-### `src/lib/residency-miner/schema.sql`
-
-Run this once against the Neon database to initialize.
-
-```sql
-CREATE TABLE IF NOT EXISTS opportunities (
-  id              TEXT PRIMARY KEY,
-  name            TEXT NOT NULL,
-  org             TEXT NOT NULL,
-  url             TEXT NOT NULL,
-  deadline        TEXT NOT NULL,
-  genre           TEXT[] NOT NULL DEFAULT '{}',
-  duration        TEXT NOT NULL DEFAULT 'varies',
-  stipend         INTEGER,
-  location        TEXT NOT NULL DEFAULT 'Unknown',
-  eligibility     TEXT NOT NULL DEFAULT 'Open',
-  description     TEXT NOT NULL DEFAULT '',
-  first_seen      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  last_updated    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  status          TEXT NOT NULL DEFAULT 'new',
-  source_url      TEXT NOT NULL,
-
-  CONSTRAINT valid_status CHECK (status IN ('new', 'reviewed', 'bookmarked', 'applied', 'skipped'))
-);
-
-CREATE INDEX IF NOT EXISTS idx_opportunities_deadline ON opportunities (deadline);
-CREATE INDEX IF NOT EXISTS idx_opportunities_status ON opportunities (status);
-CREATE INDEX IF NOT EXISTS idx_opportunities_genre ON opportunities USING GIN (genre);
-
-CREATE TABLE IF NOT EXISTS run_logs (
-  id              SERIAL PRIMARY KEY,
-  timestamp       TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  sources_fetched INTEGER NOT NULL,
-  new_found       INTEGER NOT NULL,
-  updated         INTEGER NOT NULL,
-  errors          JSONB NOT NULL DEFAULT '[]'
-);
-
-CREATE INDEX IF NOT EXISTS idx_run_logs_timestamp ON run_logs (timestamp DESC);
-```
-
-## Data Model
-
-### `src/lib/residency-miner/types.ts`
-
-```typescript
-export interface Opportunity {
-  /** Deterministic ID: sha256(lowercase(org + name + deadlineYear)), truncated to 16 chars */
-  id: string;
-
-  /** Name of the residency/fellowship (e.g., "MacDowell Fellowship") */
-  name: string;
-
-  /** Sponsoring organization (e.g., "MacDowell") */
-  org: string;
-
-  /** Canonical URL to the opportunity listing or application page */
-  url: string;
-
-  /** Application deadline as ISO 8601 date string (YYYY-MM-DD), or "rolling" */
-  deadline: string;
-
-  /** Applicable genres */
-  genre: Genre[];
-
-  /** Duration as a human-readable string (e.g., "2 weeks", "1 month", "varies") */
-  duration: string;
-
-  /** Stipend amount in USD, or null if no stipend / unclear */
-  stipend: number | null;
-
-  /** Physical location (e.g., "Peterborough, NH") or "Remote" */
-  location: string;
-
-  /** Eligibility notes (e.g., "US citizens only", "emerging writers") or "Open" */
-  eligibility: string;
-
-  /** 1-3 sentence description */
-  description: string;
-
-  /** ISO 8601 datetime when this record was first created */
-  firstSeen: string;
-
-  /** ISO 8601 datetime when this record was last updated by a mining run */
-  lastUpdated: string;
-
-  /** User-managed status */
-  status: Status;
-
-  /** URL of the source page this was extracted from */
-  sourceUrl: string;
-}
-
-export type Genre =
-  | "fiction"
-  | "nonfiction"
-  | "poetry"
-  | "screenwriting"
-  | "multi"
-  | "other";
-
-export type Status = "new" | "reviewed" | "bookmarked" | "applied" | "skipped";
-
-export interface MineRunLog {
-  timestamp: string;
-  sourcesFetched: number;
-  newFound: number;
-  updated: number;
-  errors: { url: string; error: string }[];
-}
-```
-
-## Database Layer
-
-### `src/lib/residency-miner/db.ts`
-
-Use `@neondatabase/serverless` with its `neon()` SQL tagged template function. This is the recommended driver for Vercel serverless — it uses HTTP by default, no connection pooling needed.
-
-```typescript
-import { neon } from "@neondatabase/serverless";
-
-const sql = neon(process.env.DATABASE_URL!);
-```
-
-**Exported functions**:
-
-```typescript
-/** Return all opportunities, optionally filtered. Build WHERE clauses dynamically. */
-export async function getOpportunities(filters?: {
-  status?: Status;
-  genre?: Genre;
-  deadlineBefore?: string;
-  deadlineAfter?: string;
-}): Promise<Opportunity[]>;
-
-/**
- * Upsert a single opportunity by id.
- * Uses INSERT ... ON CONFLICT (id) DO UPDATE.
- * On conflict: update all fields EXCEPT first_seen and status.
- * Set last_updated to NOW().
- */
-export async function upsertOpportunity(opp: Opportunity): Promise<void>;
-
-/** Update only the status of an opportunity. */
-export async function updateStatus(id: string, status: Status): Promise<void>;
-
-/** Insert a run log row. */
-export async function logRun(log: MineRunLog): Promise<void>;
-
-/** Get the most recent run log. */
-export async function getLastRun(): Promise<MineRunLog | null>;
-```
-
-**Column name mapping**: The TypeScript interface uses camelCase (`firstSeen`, `lastUpdated`, `sourceUrl`). The Postgres columns use snake_case (`first_seen`, `last_updated`, `source_url`). Map between them in this module. All other code uses the TypeScript interface — no raw SQL outside this file.
-
-**Design constraint**: This is the only file that imports `@neondatabase/serverless`. All other modules interact with the database through these functions.
-
-## Source Configuration
-
-### `src/lib/residency-miner/sources.ts`
-
-```typescript
-export interface Source {
-  name: string;
-  url: string;
-  type: "aggregator" | "org_listing" | "calendar";
-}
-
-export const SOURCES: Source[] = [
-  // Aggregators
-  {
-    name: "Poets & Writers Grants & Awards",
-    url: "https://www.pw.org/grants",
-    type: "aggregator",
-  },
-  {
-    name: "The Review Review",
-    url: "https://www.thereviewreview.net/residencies",
-    type: "aggregator",
-  },
-  {
-    name: "Authors Publish Residencies",
-    url: "https://www.authorspublish.com/category/residencies/",
-    type: "aggregator",
-  },
-  {
-    name: "NewPages Classifieds",
-    url: "https://www.newpages.com/classifieds/",
-    type: "aggregator",
-  },
-
-  // Individual orgs
-  {
-    name: "MacDowell",
-    url: "https://www.macdowell.org/apply",
-    type: "org_listing",
-  },
-  { name: "Yaddo", url: "https://www.yaddo.org/apply/", type: "org_listing" },
-  {
-    name: "Hedgebrook",
-    url: "https://www.hedgebrook.org/apply",
-    type: "org_listing",
-  },
-  {
-    name: "Ragdale",
-    url: "https://ragdale.org/residencies/",
-    type: "org_listing",
-  },
-  { name: "VCCA", url: "https://www.vcca.com/apply/", type: "org_listing" },
-  {
-    name: "Ucross",
-    url: "https://www.ucrossfoundation.org/residency-program/",
-    type: "org_listing",
-  },
-  {
-    name: "Millay Arts",
-    url: "https://www.millayarts.org/residencies",
-    type: "org_listing",
-  },
-  {
-    name: "Bread Loaf",
-    url: "https://www.middlebury.edu/bread-loaf-conferences/bl-writers",
-    type: "org_listing",
-  },
-  {
-    name: "Sewanee Writers Conference",
-    url: "https://new.sewanee.edu/sewanee-writers-conference/",
-    type: "org_listing",
-  },
-  {
-    name: "Tin House Summer Workshop",
-    url: "https://tinhouse.com/workshop/",
-    type: "org_listing",
-  },
-];
-```
-
-New sources are added by appending to this array. No other code changes needed.
-
-## LLM Extraction
-
-### `src/lib/residency-miner/extract.ts`
-
-```typescript
-export async function extractOpportunities(
-  html: string,
-  source: Source,
-): Promise<Omit<Opportunity, "id" | "firstSeen" | "lastUpdated" | "status">[]>;
-```
-
-**Implementation**:
-
-1. Strip `<script>`, `<style>`, `<nav>`, `<footer>` tags from the HTML. Truncate to 80,000 characters.
-
-2. Call `claude-sonnet-4-20250514` via the Anthropic SDK with `max_tokens: 4096`.
-
-3. System prompt:
-
-```
-You are a data extraction assistant. You will receive HTML content from a webpage
-that lists writer residencies, fellowships, or conferences.
-
-Extract every distinct opportunity you can find. For each, return a JSON object
-with these fields:
-
-- name (string): Name of the residency, fellowship, or conference
-- org (string): Sponsoring organization
-- url (string): Direct link to the opportunity or application page. If only a relative path is available, prepend the base domain.
-- deadline (string): Application deadline as YYYY-MM-DD. If only a month is given, use the last day of that month. If no deadline is stated, use "rolling".
-- genre (string[]): One or more of: "fiction", "nonfiction", "poetry", "screenwriting", "multi", "other". Use "multi" if open to multiple literary genres.
-- duration (string): Length of the residency (e.g., "2 weeks", "1 month"). Use "varies" if not stated.
-- stipend (number | null): Stipend in USD. null if none or not stated.
-- location (string): Physical location. "Remote" if applicable. "Unknown" if not stated.
-- eligibility (string): Key eligibility requirements. "Open" if none stated.
-- description (string): 1-3 sentence summary.
-- sourceUrl (string): Set to "${sourceUrl}"
-
-Respond ONLY with a JSON array. No markdown fences, no preamble. If no opportunities found, respond with [].
-```
-
-4. Parse response as JSON. On parse failure, log the error, return empty array. Do not retry.
-
-## Deduplication
-
-### `src/lib/residency-miner/dedupe.ts`
-
-```typescript
-import { createHash } from "crypto";
-
-export function generateId(
-  org: string,
-  name: string,
-  deadline: string,
-): string {
-  const year = deadline === "rolling" ? "rolling" : deadline.slice(0, 4);
-  const input = `${org.toLowerCase().trim()}|${name.toLowerCase().trim()}|${year}`;
-  return createHash("sha256").update(input).digest("hex").slice(0, 16);
-}
-```
-
-During the mining run, after extraction:
-
-1. Compute `id` for each extracted opportunity.
-2. Upsert into Postgres via `INSERT ... ON CONFLICT (id) DO UPDATE`. On conflict: update all fields EXCEPT `first_seen` and `status`. Set `last_updated` to `NOW()`.
-3. If no conflict, the row is inserted with defaults (`first_seen = NOW()`, `status = 'new'`).
-
-## API Routes
-
-### `POST /api/mine`
-
-Located at `src/app/api/mine/route.ts`.
-
-**Auth**: Verify `Authorization: Bearer <CRON_SECRET>` header. Return 401 if invalid. Vercel cron requests automatically include this header when `CRON_SECRET` is set as an env var.
-
-**Flow**:
-
-1. Iterate over `SOURCES`.
-2. For each source, `fetch()` the URL with a 15-second timeout and browser-like `User-Agent`.
-3. On success, call `extractOpportunities(html, source)`.
-4. For each result, compute `id` via `generateId()`, then upsert.
-5. Track counts: sourcesFetched, newFound, updated, errors.
-6. Write a row to `run_logs`.
-7. Return the run log as JSON, status 200.
-
-**Error handling**: If a single source fails, log it in `errors` and continue. Never abort the full run.
-
-**Timeout**: Vercel hobby plan allows 60 seconds per function invocation. With ~15 sources, use `Promise.allSettled()` to process sources in parallel and stay within the limit.
-
-### `GET /api/opportunities`
-
-Located at `src/app/api/opportunities/route.ts`.
-
-**Query parameters** (all optional):
-
-- `status` — filter by status value
-- `genre` — filter by genre (uses `@>` array contains operator)
-- `deadlineAfter` — ISO date string
-- `deadlineBefore` — ISO date string
-- `sort` — `deadline` (default) or `firstSeen`
-- `order` — `asc` (default) or `desc`
-
-**Response**: JSON array of `Opportunity` objects (camelCase, mapped from snake_case in db.ts).
-
-### `PATCH /api/opportunities`
-
-Same route file, handles PATCH method.
-
-**Request body**:
-
-```json
-{ "id": "abc123...", "status": "bookmarked" }
-```
-
-**Validation**: Reject if `status` is not a valid `Status` value. Return 400. The `valid_status` CHECK constraint in Postgres is a second safety net.
-
-**Response**: Updated `Opportunity` object.
-
-## Page
-
-### `src/app/residencies/page.tsx`
-
-A client-side page (or hybrid with server-side initial fetch) that:
-
-1. Fetches `/api/opportunities` on load.
-2. Renders a filterable list of opportunities.
-3. Filter controls: genre (multi-select), status (dropdown), deadline range.
-4. Default view: sorted by deadline ascending, status not `skipped`, deadline >= today.
-5. Each item shows: name, org, deadline, stipend, location, genre tags.
-6. Expandable detail: full description, eligibility, link to apply.
-7. Status dropdown per item that sends a PATCH to `/api/opportunities`.
-8. Last run timestamp displayed at the bottom.
-
-**Design**: Match the existing ws-gong.com site styles. Functional reference page, not a showcase.
-
-## Vercel Configuration
-
-Add to the existing `vercel.json` (or create if it doesn't exist):
-
-```json
-{
-  "crons": [
-    {
-      "path": "/api/mine",
-      "schedule": "0 9 * * 1"
-    }
-  ]
-}
-```
-
-Runs every Monday at 9:00 AM UTC. On Hobby plan, cron frequency is daily minimum — deduplication makes extra runs harmless.
-
-## Neon Setup
-
-1. Create a free account at https://neon.tech
-2. Create a new project. The free tier includes one project with a 0.5 GiB database.
-3. Copy the connection string from the Neon dashboard. It will look like:
-   `postgresql://username:password@ep-something-123456.us-east-2.aws.neon.tech/residency_miner?sslmode=require`
-4. Set as `DATABASE_URL` in Vercel environment variables and `.env.local`.
-5. Run `schema.sql` against the database using the Neon SQL Editor in the dashboard, or via `psql`.
-
-## Manual Run
-
-```bash
-curl -X POST https://ws-gong.com/api/mine -H "Authorization: Bearer <CRON_SECRET>"
-```
-
-## Future Enhancements (Not V1)
-
-- Additional sources: Submittable search, Twitter/X hashtags, newsletter parsing.
-- Email digest via Resend: weekly summary of new opportunities.
-- Scoring: rank by profile fit (fiction, novel-length, POC-focused, stipend).
-- Deadline reminders: notify N days before bookmarked deadlines.
-- Integration with broader submissions tracker (Neon is already the right DB for this).
-- Caching: store fetched HTML to avoid re-fetching unchanged pages.
+## 21. Anti-Patterns
+
+Do not:
+
+- Add abstractions until there are two concrete callers.
+- Catch errors to make tests pass; fix the underlying behavior.
+- Add a config value that has only one real setting.
+- Introduce a new dependency without flagging it in the PR description.
+- Run schema changes ad-hoc against the live database. Commit them as numbered, reversible migration files under `lib/residency-miner/migrations/` and update `schema.sql` to match the resulting state, so a fresh DB and a migrated DB end up identical.
+- Write defensive code against conditions that can't occur given the types.
+
+## 22. Intentional Decisions
+
+Items that look like accidents but are deliberate. Each one was removed
+or deviated from a "default" choice on purpose; do not regress them
+without revisiting the linked rationale.
+
+- **No per-opportunity status workflow.** The `status` column,
+  `valid_status` CHECK, status dropdown, status filter, and PATCH
+  endpoint were removed in [#46](https://github.com/highschoolsmokers/ws-gong/pull/46)
+  ("triage workflow added complexity without matching actual usage
+  patterns"). The `GET /api/opportunities` JSON endpoint was then
+  removed in [#54](https://github.com/highschoolsmokers/ws-gong/pull/54)
+  when `/residencies` became a fully cached ISR server component. Do
+  not reintroduce either without product justification.
+- **Dedup hash excludes `org`.** `generateId(name, deadline)` hashes
+  only the normalized name and deadline year. Extractors emit
+  inconsistent org variants for the same program ("Banff Centre" vs
+  "Banff Centre for Arts & Creativity"); including `org` would split
+  one program into multiple records. Rationale lives in
+  [`lib/residency-miner/dedupe.ts`](lib/residency-miner/dedupe.ts).
+- **Client Sentry SDK disabled.** `instrumentation-client.ts` is
+  empty by design — the core SDK added ~65 KB of unused JS and ~2 s
+  render delay, dropping portfolio pages below the Lighthouse 95
+  performance threshold. Server + edge instrumentation still runs
+  via `instrumentation.ts`, which is where the residency miner (the
+  only place errors actually matter) reports.
+- **Public production source maps.** `productionBrowserSourceMaps: true`
+  ships source maps so Lighthouse and the browser console can resolve
+  minified frames back to original sources. Added in
+  [#60](https://github.com/highschoolsmokers/ws-gong/pull/60). The site
+  has no proprietary client logic, so the disclosure is acceptable.
+- **Cron handlers export GET, not POST.** Vercel cron invokes endpoints
+  with HTTP GET; a POST-only handler returns 405 silently and the cron
+  appears to "work" while doing nothing. Every cron route in
+  `app/api/*/route.ts` carries the comment
+  `// Vercel cron jobs invoke endpoints with HTTP GET.` to make the
+  invariant load-bearing.

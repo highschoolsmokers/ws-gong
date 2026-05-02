@@ -17,7 +17,12 @@ export type FormState = {
   message: string;
 };
 
-import { MAX_FILE_SIZE, MAX_FILES } from "@/lib/upload";
+import {
+  MAX_FILE_SIZE,
+  MAX_FILES,
+  MAX_TOTAL_ATTACHMENT_BYTES,
+  isBlockedAttachmentName,
+} from "@/lib/upload";
 
 const MIN_TIME_MS = 3000; // reject submissions faster than 3 seconds
 
@@ -59,18 +64,20 @@ export async function sendMessage(
   // Process attachments
   const rawFiles = formData.getAll("attachments");
   const attachments: { filename: string; content: Buffer }[] = [];
+  let totalBytes = 0;
   for (const entry of rawFiles) {
-    if (
-      entry instanceof File &&
-      entry.size > 0 &&
-      entry.size <= MAX_FILE_SIZE
-    ) {
-      if (attachments.length >= MAX_FILES) break;
-      attachments.push({
-        filename: entry.name,
-        content: Buffer.from(await entry.arrayBuffer()),
-      });
-    }
+    if (!(entry instanceof File) || entry.size === 0) continue;
+    if (entry.size > MAX_FILE_SIZE) continue;
+    if (isBlockedAttachmentName(entry.name)) continue;
+    if (attachments.length >= MAX_FILES) break;
+    // Skip oversized files but keep checking smaller ones — a 9 MB file
+    // followed by a 100 KB file shouldn't drop the second silently.
+    if (totalBytes + entry.size > MAX_TOTAL_ATTACHMENT_BYTES) continue;
+    totalBytes += entry.size;
+    attachments.push({
+      filename: entry.name,
+      content: Buffer.from(await entry.arrayBuffer()),
+    });
   }
 
   try {
@@ -87,9 +94,8 @@ export async function sendMessage(
     return { status: "success", message: "Message sent. Thank you." };
   } catch (err) {
     console.error("Contact form send failed:", err);
-    return {
-      status: "error",
-      message: "Something went wrong. Please try again.",
-    };
+    // Match the generic failure message used elsewhere so spammers can't
+    // distinguish bot detection / config errors from real SMTP faults.
+    return { status: "error", message: "Something went wrong." };
   }
 }

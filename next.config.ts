@@ -30,6 +30,29 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "X-Frame-Options", value: "DENY" },
           { key: "Referrer-Policy", value: "no-referrer" },
+          // 2-year HSTS with subdomains; preload-eligible. Keep this even with
+          // Vercel's edge defaults so the policy travels with the codebase.
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          // Static portfolio doesn't use any of these capabilities; deny by
+          // default so a future XSS or third-party include can't request them.
+          {
+            key: "Permissions-Policy",
+            value: [
+              "accelerometer=()",
+              "camera=()",
+              "geolocation=()",
+              "gyroscope=()",
+              "magnetometer=()",
+              "microphone=()",
+              "payment=()",
+              "usb=()",
+              "interest-cohort=()",
+              "browsing-topics=()",
+            ].join(", "),
+          },
           {
             key: "Content-Security-Policy",
             value: [
@@ -38,7 +61,9 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self'",
-              "connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io",
+              // *.ingest.sentry.io covers regional ingest hosts (us, de, etc.)
+              // that *.sentry.io's single-label wildcard does not match.
+              "connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io https://*.ingest.sentry.io",
               // Sentry Session Replay (and some Next.js bundling shims) spawn
               // Web Workers from blob: URLs; without this the CSP blocks them
               // and Lighthouse flags console errors on every page.

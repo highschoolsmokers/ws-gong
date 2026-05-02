@@ -46,18 +46,29 @@ test.describe("Navigation", () => {
     await expect(link).toHaveAttribute("href", "/code");
   });
 
-  test("Narratives link is disabled on its own page", async ({ page }) => {
+  test("Narratives nav entry marks current page on /narratives", async ({
+    page,
+  }) => {
     await page.goto("/narratives");
-    const link = page
-      .locator("header")
-      .getByRole("link", { name: "Narratives" });
-    await expect(link).toHaveClass(/pointer-events-none/);
+    // Active entry renders as <span aria-current="page">, not a link, so it
+    // can't be clicked again. Confirm both: the link is absent and the span
+    // is present with the correct aria attribute.
+    await expect(
+      page.locator("header").getByRole("link", { name: "Narratives" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator('header [aria-current="page"]', { hasText: "Narratives" }),
+    ).toBeVisible();
   });
 
-  test("Code link is disabled on its own page", async ({ page }) => {
+  test("Code nav entry marks current page on /code", async ({ page }) => {
     await page.goto("/code");
-    const link = page.locator("header").getByRole("link", { name: "Code" });
-    await expect(link).toHaveClass(/pointer-events-none/);
+    await expect(
+      page.locator("header").getByRole("link", { name: "Code" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator('header [aria-current="page"]', { hasText: "Code" }),
+    ).toBeVisible();
   });
 
   test("nav appears on site pages", async ({ page }) => {

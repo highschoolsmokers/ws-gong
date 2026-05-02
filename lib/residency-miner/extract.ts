@@ -26,11 +26,25 @@ const nullableNumber = z.preprocess(
   z.number().nullable(),
 );
 
+// Downstream code (SQL ordering in db.ts, formatDeadline in ResidenciesList)
+// assumes deadline is either a strict YYYY-MM-DD ISO date or the literal
+// lowercase string "rolling". Reject anything else here so a chatty LLM
+// returning "Rolling Admissions" or "December 2025" doesn't poison the table.
+const deadlineSchema = z.preprocess(
+  (v) => {
+    if (typeof v !== "string") return v;
+    const trimmed = v.trim();
+    if (/^rolling/i.test(trimmed)) return "rolling";
+    return trimmed;
+  },
+  z.string().regex(/^(\d{4}-\d{2}-\d{2}|rolling)$/),
+);
+
 const extractedSchema = z.object({
   name: z.string().min(1),
   org: z.string().min(1),
   url: z.url(),
-  deadline: z.string().min(1),
+  deadline: deadlineSchema,
   genre: z.array(genreSchema).min(1),
   duration: z.string().default("varies"),
   stipend: nullableNumber,
