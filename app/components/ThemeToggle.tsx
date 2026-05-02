@@ -1,6 +1,6 @@
 "use client";
 
-import { useSyncExternalStore, useCallback } from "react";
+import { useEffect, useSyncExternalStore, useCallback } from "react";
 
 type Theme = "system" | "light" | "dark";
 
@@ -31,10 +31,12 @@ function applyTheme(t: Theme) {
 export default function ThemeToggle() {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  // Apply data-theme attribute on mount and when theme changes
-  if (typeof window !== "undefined") {
+  // Apply data-theme attribute on mount and when theme changes. Doing this in
+  // an effect (not during render) keeps React 19's concurrent renderer from
+  // double-invoking the DOM write under StrictMode.
+  useEffect(() => {
     applyTheme(theme);
-  }
+  }, [theme]);
 
   const cycle = useCallback(() => {
     const order: Theme[] = ["system", "light", "dark"];

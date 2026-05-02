@@ -285,6 +285,9 @@ export async function recordSourceSuccess(id: string): Promise<void> {
 export async function recordSourceFailure(id: string): Promise<void> {
   const sql = getClient();
   if (!sql) return;
+  // Single atomic UPDATE: the row's current value is read, incremented, and
+  // tested in one statement so concurrent failures from the worker pool
+  // can't race against each other or against a recent recordSourceSuccess.
   await sql`
     UPDATE sources
     SET failure_count = failure_count + 1,

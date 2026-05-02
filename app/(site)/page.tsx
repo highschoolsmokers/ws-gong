@@ -53,9 +53,9 @@ export default async function Home() {
             width={813}
             height={600}
             className="w-full h-auto border border-black"
-            placeholder="blur"
-            blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIBAAAgIBBAMBAAAAAAAAAAAAAQIDBAAFBhESITFBUf/EABQBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADERL/2gAMAwEAAhEDEEQA/wCzTd6WaijJp8Mc0kceZYpmKqjeSVIBJxjGSKhLCOzuf//Z"
+            sizes="(min-width: 768px) 66vw, 100vw"
             priority
+            fetchPriority="high"
           />
           <figcaption className="grid grid-cols-12 gap-x-6 text-sm">
             <span className="col-span-4 swiss-label">Figure</span>

@@ -92,19 +92,28 @@ export async function GET(request: Request) {
     }
 
     const id = generateSourceId(candidate.url);
-    const inserted = await insertSource({
-      id,
-      name: candidate.name,
-      url: candidate.url,
-      type: candidate.type,
-      reason: candidate.reason,
-    });
+    try {
+      const inserted = await insertSource({
+        id,
+        name: candidate.name,
+        url: candidate.url,
+        type: candidate.type,
+        reason: candidate.reason,
+      });
 
-    if (inserted) {
-      log.added++;
-      existingUrls.add(normalized);
-    } else {
-      log.rejected.push({ url: candidate.url, reason: "duplicate (db)" });
+      if (inserted) {
+        log.added++;
+        existingUrls.add(normalized);
+      } else {
+        log.rejected.push({ url: candidate.url, reason: "duplicate (db)" });
+      }
+    } catch (err) {
+      // Don't let a single insert failure abort the whole route — we still
+      // want to log the run and keep processing the remaining candidates.
+      log.rejected.push({
+        url: candidate.url,
+        reason: `insert_failed: ${err instanceof Error ? err.message : String(err)}`,
+      });
     }
   }
 

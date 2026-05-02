@@ -9,7 +9,9 @@ const baseHeaders = {
   "Content-Type": "application/pdf",
   "Content-Disposition": 'inline; filename="wsgong_tech_writer_resume.pdf"',
   "X-Robots-Tag": "noindex, nofollow",
-  "Cache-Control": "private, max-age=300",
+  // Tokens are valid for 2 minutes; no-store prevents the browser disk cache
+  // from outliving the URL via back-button replay.
+  "Cache-Control": "no-store",
 };
 
 export async function HEAD(request: NextRequest) {
