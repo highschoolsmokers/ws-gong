@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { Opportunity, MineRunLog } from "@/lib/residency-miner/types";
 
@@ -34,6 +34,8 @@ interface Props {
   opportunities: Opportunity[];
   lastRun: RunLog | null;
   sourceStats: SourceStats;
+  /** ISO YYYY-MM-DD computed on the server so SSR and CSR agree on the filter. */
+  today: string;
 }
 
 function nextMondayUtc(): Date {
@@ -53,6 +55,7 @@ export default function ResidenciesList({
   opportunities,
   lastRun,
   sourceStats,
+  today,
 }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,14 +74,29 @@ export default function ResidenciesList({
   );
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
+  // `today` arrives from the server (page.tsx), so SSR and the first CSR pass
+  // agree. The "next scan" string also depends on wall-clock time but is
+  // formatted with locale options that vary across browsers; keep it in an
+  // effect so the SSR HTML doesn't try to predict the client's locale rendering.
+  const [nextScanLabel, setNextScanLabel] = useState<string | null>(null);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- intentional: defer locale-dependent rendering until after hydration
+    setNextScanLabel(
+      nextMondayUtc().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+      }),
+    );
+  }, []);
+
   const filtered = useMemo(() => {
-    const today = new Date().toISOString().slice(0, 10);
     return opportunities.filter((o) => {
       if (o.deadline !== "rolling" && o.deadline < today) return false;
       if (genreFilter && !o.genre.includes(genreFilter)) return false;
       return true;
     });
-  }, [opportunities, genreFilter]);
+  }, [opportunities, genreFilter, today]);
 
   function formatDeadline(d: string): string {
     if (d === "rolling") return "Rolling";
@@ -230,15 +248,7 @@ export default function ResidenciesList({
               ? ` · ${sourceStats.inactive} deactivated`
               : ""}
           </p>
-          <p>
-            Next scan:{" "}
-            {nextMondayUtc().toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}{" "}
-            at 9:00 UTC
-          </p>
+          {nextScanLabel && <p>Next scan: {nextScanLabel} at 9:00 UTC</p>}
         </div>
       </section>
     </>

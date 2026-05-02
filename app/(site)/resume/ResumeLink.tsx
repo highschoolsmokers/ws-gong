@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react";
 
-const REFRESH_MS = 4 * 60 * 1000; // refresh token every 4 minutes (TTL is 5)
+// Token TTL is 2 minutes (lib/resumeToken.ts); refresh well inside that
+// window so a slow click after the next interval still hits a live token.
+const REFRESH_MS = 90 * 1000;
 
 export default function ResumeLink() {
   const [token, setToken] = useState<string | null>(null);

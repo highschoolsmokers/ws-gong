@@ -135,11 +135,10 @@ export async function GET(request: Request) {
 
   await logRun(log);
 
-  // Only revalidate the cached page if we actually learned something. If
-  // every source failed we'd be replacing good cache with no data.
-  if (log.newFound > 0 || log.updated > 0) {
-    revalidatePath("/residencies");
-  }
+  // Always revalidate. Even a zero-yield run must refresh the page so the
+  // "Last scan" footer reflects the latest run_logs row; otherwise a
+  // total-failure cycle silently shows the previous successful timestamp.
+  revalidatePath("/residencies");
 
   // Early-warning alert: low yield relative to sources that were actually
   // fetched, with a floor to avoid noise on tiny runs.

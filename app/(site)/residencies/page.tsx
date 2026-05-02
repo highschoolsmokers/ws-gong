@@ -66,6 +66,7 @@ export default async function ResidenciesPage() {
           opportunities={opportunities}
           lastRun={lastRun}
           sourceStats={sourceStats}
+          today={new Date().toISOString().slice(0, 10)}
         />
       </Suspense>
     </div>
