@@ -75,7 +75,7 @@ export default async function Home() {
             href={latest.canonical_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="col-span-12 md:col-span-8 block no-underline hover:no-underline"
+            className="col-span-12 md:col-span-8 block no-underline hover:!no-underline"
           >
             <span className="block text-lg font-medium leading-tight">
               {latest.title}
