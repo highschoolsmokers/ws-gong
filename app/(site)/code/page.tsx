@@ -200,7 +200,7 @@ export default function Code() {
                       target: "_blank",
                       rel: "noopener noreferrer",
                     })}
-                    className="block no-underline hover:no-underline"
+                    className="block no-underline hover:!no-underline"
                   >
                     <span className="block text-base font-medium leading-snug">
                       {p.title}
