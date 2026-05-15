@@ -46,6 +46,20 @@ test.describe("Navigation", () => {
     await expect(link).toHaveAttribute("href", "/code");
   });
 
+  test("has Reading link pointing to /reading", async ({ page }) => {
+    await page.goto("/");
+    const link = page.locator("header").getByRole("link", { name: "Reading" });
+    await expect(link).toHaveAttribute("href", "/reading");
+  });
+
+  test("nav slot order without SLUSHPILE_URL: Narratives, Code, Reading", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const navItems = page.locator("header nav ul li");
+    await expect(navItems).toHaveText(["Narratives", "Code", "Reading"]);
+  });
+
   test("Narratives nav entry marks current page on /narratives", async ({
     page,
   }) => {
@@ -72,7 +86,14 @@ test.describe("Navigation", () => {
   });
 
   test("nav appears on site pages", async ({ page }) => {
-    for (const route of ["/", "/about", "/narratives", "/code", "/contact"]) {
+    for (const route of [
+      "/",
+      "/about",
+      "/narratives",
+      "/code",
+      "/reading",
+      "/contact",
+    ]) {
       await page.goto(route);
       await expect(
         page.locator("header"),

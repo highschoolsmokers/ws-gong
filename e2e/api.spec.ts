@@ -1,22 +1,5 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Resume API", () => {
-  test("GET without token returns 403", async ({ request }) => {
-    const response = await request.get("/api/resume");
-    expect(response.status()).toBe(403);
-  });
-
-  test("HEAD without token returns 403", async ({ request }) => {
-    const response = await request.head("/api/resume");
-    expect(response.status()).toBe(403);
-  });
-
-  test("GET with invalid token returns 403", async ({ request }) => {
-    const response = await request.get("/api/resume?token=bogus.token");
-    expect(response.status()).toBe(403);
-  });
-});
-
 test.describe("RSS feed", () => {
   test("returns valid XML with channel element", async ({ request }) => {
     const response = await request.get("/feed");
