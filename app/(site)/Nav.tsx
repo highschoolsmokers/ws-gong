@@ -33,7 +33,13 @@ export default function Nav({
   return (
     <div className="swiss-grid">
       <h1 className="col-span-12 md:col-span-8">
-        {isHome ? masthead : <Link href="/">{masthead}</Link>}
+        {isHome ? (
+          masthead
+        ) : (
+          <Link href="/" className="no-underline hover:!no-underline">
+            {masthead}
+          </Link>
+        )}
       </h1>
       <nav
         aria-label="Main navigation"
