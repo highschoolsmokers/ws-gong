@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SUBSTACK_BASE_URL } from "@/lib/substack";
 import {
   SubstackIcon,
   InstagramIcon,
@@ -53,7 +54,7 @@ const links = [
   },
   {
     label: "Substack",
-    url: "https://highschoolsmokers.substack.com",
+    url: SUBSTACK_BASE_URL,
     icon: <SubstackIcon />,
   },
   {

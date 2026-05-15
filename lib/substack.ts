@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+// Canonical Substack subdomain. All Substack call sites (post fetcher,
+// subscribe link, RSS feed) import this rather than re-typing the string.
+export const SUBSTACK_SUBDOMAIN = "highschoolsmokers";
+export const SUBSTACK_BASE_URL = `https://${SUBSTACK_SUBDOMAIN}.substack.com`;
+
 const substackPostSchema = z.object({
   id: z.number(),
   title: z.string(),

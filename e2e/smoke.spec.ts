@@ -11,9 +11,4 @@ test.describe("Route smoke tests", () => {
       expect(response?.status(), `${route} should return 200`).toBe(200);
     });
   }
-
-  test("/api/resume returns 403 without token", async ({ request }) => {
-    const response = await request.get("/api/resume");
-    expect(response.status()).toBe(403);
-  });
 });

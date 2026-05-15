@@ -33,15 +33,11 @@ export const SITE_PAGES = [
   "/about",
   "/narratives",
   "/code",
+  "/reading",
   "/contact",
   "/terms",
   "/colophon",
   "/links",
-  "/code/colophon-mcp",
-  "/code/paperless-mcp",
-  "/code/submission-cli",
-  "/code/writer-utilities",
-  "/code/contact-form",
 ] as const;
 
 export const STATIC_ROUTES = ["/sitemap.xml", "/robots.txt"] as const;

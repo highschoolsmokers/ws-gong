@@ -3,16 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const links = [
-  { href: "/narratives", label: "Narratives" },
-  { href: "/code", label: "Code" },
-  { href: "/residencies", label: "Residencies" },
-  { href: "/about", label: "About" },
-];
+type NavLink = { href: string; label: string };
 
-export default function Nav() {
+export default function Nav({
+  slushpileEnabled,
+}: {
+  slushpileEnabled: boolean;
+}) {
   const pathname = usePathname();
   const isHome = pathname === "/";
+
+  const links: NavLink[] = [
+    { href: "/narratives", label: "Narratives" },
+    { href: "/code", label: "Code" },
+    ...(slushpileEnabled
+      ? [{ href: "/slushpile", label: "Slushpile" } satisfies NavLink]
+      : []),
+    { href: "/reading", label: "Reading" },
+  ];
 
   const masthead = (
     <span className="swiss-display block text-[3.5rem] md:text-[5rem] lg:text-[6rem]">
