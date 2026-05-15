@@ -1,3 +1,4 @@
+import { SUBSTACK_BASE_URL } from "@/lib/substack";
 import ThemeToggle from "./ThemeToggle";
 
 export default function PageShell({
@@ -23,7 +24,7 @@ export default function PageShell({
         <div className="col-span-12 md:col-span-8 space-y-4">
           <div className="text-sm">
             <a
-              href="https://highschoolsmokers.substack.com/subscribe"
+              href={`${SUBSTACK_BASE_URL}/subscribe`}
               target="_blank"
               rel="noopener noreferrer"
               className="font-medium"
@@ -34,9 +35,15 @@ export default function PageShell({
           <div className="text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
             <span>© {new Date().getFullYear()} W.S. Gong</span>
             <span aria-hidden>·</span>
-            <a href="/terms">Terms</a>
+            <a href="/about">About</a>
             <span aria-hidden>·</span>
             <a href="/colophon">Colophon</a>
+            <span aria-hidden>·</span>
+            <a href="/terms">Terms</a>
+            <span aria-hidden>·</span>
+            <a href="/contact">Contact</a>
+            <span aria-hidden>·</span>
+            <a href="/links">Links</a>
             <span aria-hidden>·</span>
             <ThemeToggle />
           </div>

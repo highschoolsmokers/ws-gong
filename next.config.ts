@@ -1,10 +1,8 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+import { slushpileUrl } from "./lib/site/env";
 
 const nextConfig: NextConfig = {
-  outputFileTracingIncludes: {
-    "/api/resume": ["./private/**"],
-  },
   // Serve source maps for production JS so Lighthouse (and stacktraces in the
   // console) can resolve minified frames back to original sources.
   productionBrowserSourceMaps: true,
@@ -17,8 +15,40 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/narratives-code/:slug",
-        destination: "/code/:slug",
+        destination: "/code",
         permanent: true,
+      },
+      {
+        // /code/{slug} sub-pages no longer exist. Inbound links from search
+        // engines, the about page's inline references, and feed items all
+        // collapse to the flat /code page.
+        source: "/code/:slug",
+        destination: "/code",
+        permanent: true,
+      },
+      {
+        // /residencies became slushpile (a separate app, mounted via rewrite).
+        // When SLUSHPILE_URL is unset, /slushpile 404s — accepted.
+        source: "/residencies",
+        destination: "/slushpile",
+        permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    // /slushpile lives in a separate Next.js app. When SLUSHPILE_URL is set,
+    // proxy the path through to that deployment. Slushpile must run with
+    // basePath: "/slushpile" so its _next/static/* chunks resolve under the
+    // same prefix.
+    if (!slushpileUrl) return [];
+    return [
+      {
+        source: "/slushpile",
+        destination: `${slushpileUrl}/slushpile`,
+      },
+      {
+        source: "/slushpile/:path*",
+        destination: `${slushpileUrl}/slushpile/:path*`,
       },
     ];
   },

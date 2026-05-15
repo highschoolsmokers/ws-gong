@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import PageTitle from "@/app/components/PageTitle";
+import { SUBSTACK_BASE_URL } from "@/lib/substack";
 import {
   SubstackIcon,
   InstagramIcon,
   GitHubIcon,
   LinkedInIcon,
 } from "./SocialIcons";
-import ResumeLink from "../resume/ResumeLink";
 
 const description =
   "W.S. Gong is a fiction editor at The Rumpus and a technical writer focused on AI tooling and developer documentation. Twenty-five years in software. At work on a novel about runaway kids in 1980s San Francisco.";
@@ -92,61 +92,52 @@ export default function About() {
             A technical writer and agentic developer with twenty-five years in
             software, he builds open-source tools at the intersection of
             language models and the writing craft: MCP servers for{" "}
-            <Link
-              href="/code/paperless-mcp"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/paperless-mcp">
               document management
-            </Link>
+            </Ext>
             ,{" "}
-            <Link
-              href="/code/colophon-mcp"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/colophon-mcp">
               book discovery
-            </Link>
+            </Ext>
             , and{" "}
-            <Link
-              href="/code/lit-verity-mcp"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/lit-verity-mcp">
               citation-grounding in literary criticism
-            </Link>
+            </Ext>
             ; Claude Code plugins for{" "}
-            <Link
-              href="/code/historical-research-agent"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/historical-research-agent">
               historical
-            </Link>{" "}
+            </Ext>{" "}
             and{" "}
-            <Link
-              href="/code/lit-research-plugin"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/lit-research-plugin">
               literary
-            </Link>{" "}
+            </Ext>{" "}
             research and for{" "}
-            <Link
-              href="/code/submission-watcher-agent"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/submission-watcher-agent">
               tracking magazine submission windows
-            </Link>
+            </Ext>
             ; and a{" "}
-            <Link
-              href="/code/submission-cli"
-              className={`${linkClass} font-medium`}
-            >
+            <Ext href="https://github.com/highschoolsmokers/submission-cli">
               CLI
-            </Link>{" "}
-            that uses Claude to streamline fiction submissions.
+            </Ext>{" "}
+            that uses Claude to streamline fiction submissions. The full
+            catalogue lives on{" "}
+            <Link href="/code" className={`${linkClass} font-medium`}>
+              the code page
+            </Link>
+            .
           </p>
         </div>
       </Section>
 
       <Section title="Resume">
-        <ResumeLink />
+        <a
+          href="/wsgong_tech_writer_resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-medium"
+        >
+          Download PDF
+        </a>
       </Section>
 
       <Section title="Links">
@@ -157,10 +148,8 @@ export default function About() {
               get in touch
             </Link>
             . Fiction and essays on{" "}
-            <Ext href="https://highschoolsmokers.substack.com/subscribe">
-              Substack
-            </Ext>
-            , occasionally.
+            <Ext href={`${SUBSTACK_BASE_URL}/subscribe`}>Substack</Ext>,
+            occasionally.
           </p>
           <ul className="flex gap-5 items-start">
             {socials.map((s) => (

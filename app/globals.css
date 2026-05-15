@@ -1,3 +1,4 @@
+/* Design tokens locked to redesign.md. New tokens require a spec change. */
 @import "tailwindcss";
 
 :root {

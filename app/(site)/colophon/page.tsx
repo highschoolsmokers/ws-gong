@@ -61,7 +61,6 @@ export default function Colophon() {
         <div className="col-span-12 md:col-span-8 space-y-4 text-sm leading-relaxed">
           <ul className="space-y-1">
             <li>Nodemailer — contact form delivery</li>
-            <li>PDFKit — resume generation</li>
             <li>Playwright — end-to-end testing</li>
             <li>Sentry — error monitoring</li>
             <li>Vercel Analytics — visitor insights</li>
