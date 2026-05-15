@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import { getSubstackPosts } from "@/lib/substack";
+import { getSubstackPosts, SUBSTACK_SUBDOMAIN } from "@/lib/substack";
+import { latestProject } from "@/lib/code/projects";
+import { latestBook } from "@/lib/reading/books";
 
 export const metadata: Metadata = {
   title: "W.S. Gong — Stories & Systems",
@@ -14,8 +15,8 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const posts = await getSubstackPosts("highschoolsmokers", 1);
-  const latest = posts[0] ?? null;
+  const posts = await getSubstackPosts(SUBSTACK_SUBDOMAIN, 1);
+  const latestNarrative = posts[0] ?? null;
 
   return (
     <div>
@@ -42,56 +43,35 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="swiss-grid swiss-rule pt-6 pb-16">
-        <div className="col-span-12 md:col-span-4">
-          <span className="swiss-label">Plate 01</span>
-        </div>
-        <figure className="col-span-12 md:col-span-8 space-y-4">
-          <Image
-            src="/images/giacometti_palace_4am.jpg"
-            alt="Alberto Giacometti, The Palace at 4 a.m., 1932"
-            width={813}
-            height={600}
-            className="w-full h-auto border border-black"
-            sizes="(min-width: 768px) 66vw, 100vw"
-            priority
-            fetchPriority="high"
-          />
-          <figcaption className="grid grid-cols-12 gap-x-6 text-sm">
-            <span className="col-span-4 swiss-label">Figure</span>
-            <span className="col-span-8">
-              Alberto Giacometti, <em>The Palace at 4 a.m.</em>, 1932
-            </span>
-          </figcaption>
-        </figure>
-      </section>
-
-      {latest && (
+      {latestNarrative && (
         <section className="swiss-grid swiss-rule pt-6 pb-16">
           <div className="col-span-12 md:col-span-4">
-            <span className="swiss-label">Latest</span>
+            <span className="swiss-label">Latest narrative</span>
           </div>
           <a
-            href={latest.canonical_url}
+            href={latestNarrative.canonical_url}
             target="_blank"
             rel="noopener noreferrer"
             className="col-span-12 md:col-span-8 block no-underline hover:!no-underline"
           >
             <span className="block text-lg font-medium leading-tight">
-              {latest.title}
+              {latestNarrative.title}
             </span>
-            {latest.subtitle && (
+            {latestNarrative.subtitle && (
               <span className="block mt-2 text-sm leading-relaxed">
-                {latest.subtitle}
+                {latestNarrative.subtitle}
               </span>
             )}
             <span className="mt-4 flex items-baseline gap-3 text-xs uppercase tracking-[0.12em] text-neutral-500">
               <span>
-                {new Date(latest.post_date).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {new Date(latestNarrative.post_date).toLocaleDateString(
+                  "en-US",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  },
+                )}
               </span>
               <span aria-hidden>/</span>
               <span>Substack</span>
@@ -99,6 +79,74 @@ export default async function Home() {
           </a>
         </section>
       )}
+
+      {latestProject && (
+        <section className="swiss-grid swiss-rule pt-6 pb-16">
+          <div className="col-span-12 md:col-span-4">
+            <span className="swiss-label">Latest code</span>
+          </div>
+          <a
+            href={latestProject.href}
+            {...(latestProject.href.startsWith("http")
+              ? { target: "_blank", rel: "noopener noreferrer" }
+              : {})}
+            className="col-span-12 md:col-span-8 block no-underline hover:!no-underline"
+          >
+            <span className="block text-lg font-medium leading-tight">
+              {latestProject.title}
+            </span>
+            <span className="block mt-2 text-sm leading-relaxed">
+              {latestProject.description}
+            </span>
+            <span className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs uppercase tracking-[0.12em] text-neutral-500">
+              <span>{latestProject.stack.join(" / ")}</span>
+            </span>
+          </a>
+        </section>
+      )}
+
+      {latestBook && (
+        <section className="swiss-grid swiss-rule pt-6 pb-16">
+          <div className="col-span-12 md:col-span-4">
+            <span className="swiss-label">Latest reading</span>
+          </div>
+          <div className="col-span-12 md:col-span-8">
+            {latestBook.link ? (
+              <a
+                href={latestBook.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block no-underline hover:!no-underline"
+              >
+                <ReadingEntry book={latestBook} />
+              </a>
+            ) : (
+              <ReadingEntry book={latestBook} />
+            )}
+          </div>
+        </section>
+      )}
     </div>
+  );
+}
+
+function ReadingEntry({
+  book,
+}: {
+  book: { title: string; author: string; finished: string; note?: string };
+}) {
+  return (
+    <>
+      <span className="block text-lg font-medium leading-tight">
+        {book.title}
+      </span>
+      <span className="block mt-1 text-sm leading-relaxed">{book.author}</span>
+      {book.note && (
+        <span className="block mt-2 text-sm leading-relaxed">{book.note}</span>
+      )}
+      <span className="mt-4 flex items-baseline gap-3 text-xs uppercase tracking-[0.12em] text-neutral-500">
+        <span>{book.finished === "reading" ? "Reading" : book.finished}</span>
+      </span>
+    </>
   );
 }

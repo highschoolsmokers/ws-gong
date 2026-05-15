@@ -21,15 +21,17 @@ test.describe("Page content", () => {
     ).toBeGreaterThanOrEqual(2);
   });
 
-  test("about page project links point to /code", async ({ page }) => {
+  test("about page links to /code and at least one project repo", async ({
+    page,
+  }) => {
     await page.goto("/about");
     await expect(
+      page.getByRole("link", { name: /the code page/i }),
+    ).toHaveAttribute("href", "/code");
+    // Project mentions in the bio resolve to public GitHub repos.
+    await expect(
       page.getByRole("link", { name: /document management/i }),
-    ).toHaveAttribute("href", "/code/paperless-mcp");
-    await expect(page.getByRole("link", { name: /^CLI$/ })).toHaveAttribute(
-      "href",
-      "/code/submission-cli",
-    );
+    ).toHaveAttribute("href", /github\.com\/highschoolsmokers/);
   });
 
   test("narratives page has content", async ({ page }) => {

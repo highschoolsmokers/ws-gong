@@ -1,0 +1,7 @@
+# pnpm 11 requires explicit approval for build scripts. Without these flags
+# `pnpm install --frozen-lockfile` errors on ignored builds in CI.
+# Mirrors `package.json` `pnpm.onlyBuiltDependencies`; keep both in sync.
+allowBuilds:
+  "@sentry/cli": true
+  sharp: true
+  unrs-resolver: true

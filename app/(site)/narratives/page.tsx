@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getSubstackPosts } from "@/lib/substack";
+import { getSubstackPosts, SUBSTACK_SUBDOMAIN } from "@/lib/substack";
 import PageTitle from "@/app/components/PageTitle";
 
 export const metadata: Metadata = {
@@ -15,14 +15,14 @@ export const metadata: Metadata = {
 
 type Tag = "Fiction" | "Editing" | "Essay";
 
-interface Project {
+interface PublishedEntry {
   externalHref?: string;
   title: string;
   description: string;
   tags: Tag[];
 }
 
-const writingProjects: Project[] = [
+const published: PublishedEntry[] = [
   {
     title: "Novel in Progress",
     description:
@@ -54,17 +54,18 @@ function TagPill({ children }: { children: React.ReactNode }) {
 }
 
 export default async function Narratives() {
-  const posts = await getSubstackPosts("highschoolsmokers");
+  const posts = await getSubstackPosts(SUBSTACK_SUBDOMAIN);
 
   return (
     <>
       <PageTitle>Narratives</PageTitle>
+
       <section className="swiss-grid swiss-rule pt-6 pb-16">
         <div className="col-span-12 md:col-span-4">
-          <span className="swiss-label">Index</span>
+          <h2 className="swiss-label">Published</h2>
         </div>
         <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
-          {writingProjects.map((p) => {
+          {published.map((p) => {
             const inner = (
               <>
                 <span className="block text-base font-medium leading-snug">
@@ -97,37 +98,47 @@ export default async function Narratives() {
               </li>
             );
           })}
-          {posts.map((post) => (
-            <li key={post.id} className="py-6">
-              <a
-                href={post.canonical_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block no-underline hover:!no-underline"
-              >
-                <span className="block text-base font-medium leading-snug">
-                  {post.title}
-                </span>
-                {post.subtitle && (
-                  <span className="block mt-2 text-sm leading-relaxed">
-                    {post.subtitle}
-                  </span>
-                )}
-                <span className="mt-3 flex items-baseline gap-3 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
-                  <span>
-                    {new Date(post.post_date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                    })}
-                  </span>
-                  <span aria-hidden>/</span>
-                  <span>Substack</span>
-                </span>
-              </a>
-            </li>
-          ))}
         </ul>
       </section>
+
+      {posts.length > 0 && (
+        <section className="swiss-grid swiss-rule pt-6 pb-16">
+          <div className="col-span-12 md:col-span-4">
+            <h2 className="swiss-label">Newsletter</h2>
+          </div>
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+            {posts.map((post) => (
+              <li key={post.id} className="py-6">
+                <a
+                  href={post.canonical_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block no-underline hover:!no-underline"
+                >
+                  <span className="block text-base font-medium leading-snug">
+                    {post.title}
+                  </span>
+                  {post.subtitle && (
+                    <span className="block mt-2 text-sm leading-relaxed">
+                      {post.subtitle}
+                    </span>
+                  )}
+                  <span className="mt-3 flex items-baseline gap-3 text-[10px] uppercase tracking-[0.12em] text-neutral-500">
+                    <span>
+                      {new Date(post.post_date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                      })}
+                    </span>
+                    <span aria-hidden>/</span>
+                    <span>Substack</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
     </>
   );
 }
