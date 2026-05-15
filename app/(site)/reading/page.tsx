@@ -26,7 +26,7 @@ export default function Reading() {
           <div className="col-span-12 md:col-span-4">
             <h2 className="swiss-label">Currently reading</h2>
           </div>
-          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200">
             {reading.map((b) => (
               <BookEntry key={`${b.title}::${b.author}`} book={b} />
             ))}
@@ -39,7 +39,7 @@ export default function Reading() {
           <div className="col-span-12 md:col-span-4">
             <h2 className="swiss-label">Finished</h2>
           </div>
-          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200">
             {finished.map((b) => (
               <BookEntry key={`${b.title}::${b.author}`} book={b} />
             ))}
@@ -49,9 +49,7 @@ export default function Reading() {
 
       {reading.length === 0 && finished.length === 0 && (
         <section className="swiss-grid swiss-rule pt-6 pb-16">
-          <div className="col-span-12 md:col-span-4">
-            <h2 className="swiss-label">Reading</h2>
-          </div>
+          <div className="col-span-12 md:col-span-4" />
           <p className="col-span-12 md:col-span-8 text-sm leading-relaxed">
             Empty for the moment.
           </p>
