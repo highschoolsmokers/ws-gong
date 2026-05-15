@@ -139,7 +139,7 @@ export default function Code() {
           <div className="col-span-12 md:col-span-4">
             <span className="swiss-label">Index</span>
           </div>
-          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200">
             {listedProjects.map((p) => (
               <ListedProject key={p.href} project={p} />
             ))}
