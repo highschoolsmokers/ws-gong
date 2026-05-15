@@ -47,9 +47,10 @@ No Giacometti plate.
 
 ### `/narratives`
 
-Two sections on one page:
+Three sections on one page:
 
-- **Published** — hand-curated entries (Novel in progress, 14 Hills, Rumpus editing, future placements)
+- **In progress** — work currently being written (e.g., the Novel)
+- **Selected work** — published fiction and editorial roles (14 Hills, Rumpus editing, future placements)
 - **Newsletter** — Substack feed
 
 ### `/code`
@@ -112,17 +113,18 @@ once crons are removed, but is harmless and future-proofs against new crons.
 
 ## Data sources
 
-| Surface                    | Source                                                     |
-| -------------------------- | ---------------------------------------------------------- |
-| Home — latest narrative    | Substack `highschoolsmokers` (existing `getSubstackPosts`) |
-| Home — latest code         | Local: `lib/code/projects.ts`                              |
-| Home — latest reading      | Local: `lib/reading/books.ts`                              |
-| `/narratives` — Published  | Hand-curated in the page module                            |
-| `/narratives` — Newsletter | Substack `highschoolsmokers`                               |
-| `/code`                    | Local: `lib/code/projects.ts`                              |
-| `/slushpile/*`             | Vercel rewrite to `SLUSHPILE_URL` (external)               |
-| `/reading`                 | Local: `lib/reading/books.ts`                              |
-| `/about` resume link       | Static PDF in `public/`                                    |
+| Surface                       | Source                                                     |
+| ----------------------------- | ---------------------------------------------------------- |
+| Home — latest narrative       | Substack `highschoolsmokers` (existing `getSubstackPosts`) |
+| Home — latest code            | Local: `lib/code/projects.ts`                              |
+| Home — latest reading         | Local: `lib/reading/books.ts`                              |
+| `/narratives` — In progress   | Hand-curated in the page module                            |
+| `/narratives` — Selected work | Hand-curated in the page module                            |
+| `/narratives` — Newsletter    | Substack `highschoolsmokers`                               |
+| `/code`                       | Local: `lib/code/projects.ts`                              |
+| `/slushpile/*`                | Vercel rewrite to `SLUSHPILE_URL` (external)               |
+| `/reading`                    | Local: `lib/reading/books.ts`                              |
+| `/about` resume link          | Static PDF in `public/`                                    |
 
 ## Environment
 

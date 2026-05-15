@@ -115,10 +115,16 @@ There are no per-project sub-pages and no category groupings.
 
 ## 6. Narratives
 
-`app/(site)/narratives/page.tsx` renders two sections:
+`app/(site)/narratives/page.tsx` renders three sections plus the newsletter feed:
 
-- **Published** — hand-curated entries (Novel, 14 Hills, Rumpus editing)
+- **In progress** — work currently being written (Novel in Progress)
+- **Selected work** — published fiction + editorial roles (14 Hills, The Rumpus)
 - **Newsletter** — all Substack posts from `highschoolsmokers`
+
+Novel-in-progress is intentionally NOT under "Selected work" / "Published" — it
+has not been published yet. The Rumpus belongs under "Selected work" because
+editorial work is part of the writing portfolio even though it is not a
+publication.
 
 ## 7. Reading
 
