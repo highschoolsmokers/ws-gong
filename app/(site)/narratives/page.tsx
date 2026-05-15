@@ -64,7 +64,7 @@ export default async function Narratives() {
         <div className="col-span-12 md:col-span-4">
           <h2 className="swiss-label">Published</h2>
         </div>
-        <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+        <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200">
           {published.map((p) => {
             const inner = (
               <>
@@ -106,7 +106,7 @@ export default async function Narratives() {
           <div className="col-span-12 md:col-span-4">
             <h2 className="swiss-label">Newsletter</h2>
           </div>
-          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200 border-t border-neutral-200">
+          <ul className="col-span-12 md:col-span-8 divide-y divide-neutral-200">
             {posts.map((post) => (
               <li key={post.id} className="py-6">
                 <a
