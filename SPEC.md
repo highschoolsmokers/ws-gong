@@ -44,7 +44,7 @@ Top-level routes:
 | Path                    | Type                      | Notes                                                    |
 | ----------------------- | ------------------------- | -------------------------------------------------------- |
 | `/`                     | Server page               | Statement + latest narrative / code / reading            |
-| `/about`                | Server page               | Bio, plain resume PDF link, social icons                 |
+| `/about`                | Server page               | Bio, resume PDF link (Blob), social icons                |
 | `/narratives`           | Server page               | Published (curated) + Newsletter (Substack)              |
 | `/code`                 | Server page               | Featured projects inline + flat list; `ItemList` JSON-LD |
 | `/reading`              | Server page               | Manual in-repo reading log                               |
@@ -92,7 +92,7 @@ disallowed (see §22 Intentional Decisions).
 
 `app/(site)/page.tsx`:
 
-1. Statement section (Rumpus link, technical writing, AI tooling).
+1. Statement section, from `content/site.json` → `statement` (§23).
 2. **Latest narrative** — most recent Substack post via `getSubstackPosts`.
 3. **Latest code** — `latestProject` from [`lib/code/projects.ts`](lib/code/projects.ts) (most recent `addedAt`).
 4. **Latest reading** — `latestBook` from [`lib/reading/books.ts`](lib/reading/books.ts) (currently-reading pinned, else most recent finished).
@@ -117,7 +117,7 @@ There are no per-project sub-pages and no category groupings.
 
 `app/(site)/narratives/page.tsx` renders two sections:
 
-- **Published** — hand-curated entries (Novel, 14 Hills, Rumpus editing)
+- **Published** — entries from `content/site.json` → `published` (§23)
 - **Newsletter** — all Substack posts from `highschoolsmokers`
 
 ## 7. Reading
@@ -272,6 +272,8 @@ its `ignoreCommand`.
 | `SENTRY_DSN`                                       | Sentry instrumentation | Optional; observability disabled if unset                    |
 | `BASE_URL`                                         | Playwright             | Override base URL in CI                                      |
 | `VERCEL_AUTOMATION_BYPASS_SECRET`                  | Playwright             | Bypass Vercel preview protection in CI                       |
+| `BLOB_READ_WRITE_TOKEN`                            | `pnpm sync:resume`     | Local only (`.env.local`): uploads the resume PDF to Blob    |
+| `RESUMES_CVS_DIR`                                  | `pnpm sync:resume`     | Path to the resumes-cvs checkout; default `../resumes-cvs`   |
 
 ## 18. Testing
 
@@ -294,6 +296,7 @@ its `ignoreCommand`.
 | `pnpm test:unit` | Node test runner over `lib/code/*.test.ts` + `lib/reading/*.test.ts` |
 | `pnpm test:e2e`  | Playwright                                                           |
 | `pnpm prepare`   | `husky`                                                              |
+| `pnpm sync:resume` | `node scripts/sync-resume.mjs`: pull site content and the resume PDF from resumes-cvs (§23) |
 
 `scripts/make-favicon.mjs` is a one-shot generator used to produce
 `public/apple-touch-icon.png` from the W.S. Gong mark.
@@ -333,10 +336,10 @@ lib/
 public/
   fabulosa-books/        static tutorial site (parts 1-7 + index)
   images/                site imagery
-  wsgong_tech_writer_resume.pdf   resume (intentionally public)
   apple-touch-icon.png, *.svg
 e2e/                     Playwright tests + helpers
-scripts/                 make-favicon.mjs
+content/                 site.json: published bio, statement, entries (§23)
+scripts/                 make-favicon.mjs, sync-resume.mjs
 docs/                    deployment.md
 redesign.md              conceptual redesign spec
 sentry.{server,edge}.config.ts, instrumentation.ts, instrumentation-client.ts
@@ -355,6 +358,8 @@ Do not:
 - Introduce a new dependency without flagging it in the PR description.
 - Reintroduce `lib/residency-miner/`, Anthropic/Neon SDKs, or cron handlers — that work belongs in the slushpile repo (see §22).
 - Write defensive code against conditions that can't occur given the types.
+- Commit a résumé document (PDF, DOCX, or résumé data in code). The PDF lives in Vercel Blob; résumé facts live in resumes-cvs.
+- Hand-edit `content/site.json` or hardcode bio, statement, or published-entry text in a page. Change it in resumes-cvs and re-sync.
 
 ## 22. Intentional Decisions
 
@@ -363,10 +368,22 @@ from a "default" choice on purpose; do not regress them without revisiting
 the rationale.
 
 - **Slushpile lives in a separate repo and is mounted via Vercel rewrite.** Looks accidental: a major site surface with no code in this repo. Deliberate: slushpile has its own stack (Drizzle, six-agent architecture, shadcn UI) that does not belong inside the Swiss portfolio. Mount via `next.config.ts` rewrite to `${SLUSHPILE_URL}/slushpile/(.*)`; nav slot gated by env presence.
-- **Resume PDF served as a static public asset.** The decorative HMAC gate is removed; the resume is intended to be findable. Do not reintroduce the gate without product justification.
+- **Resume PDF served publicly from Vercel Blob, not git.** The decorative HMAC gate is removed; the resume is intended to be findable. It lives in a public Blob store so no résumé document enters this public repo. Do not reintroduce the gate without product justification.
 - **`/code` flattened — no sub-pages, no categories.** 10 detail pages and 3 category groupings disappeared deliberately. The dual-citizen home plus featured-plus-list `/code` carries the engineering identity without resume-bloat.
 - **Anthropic + Neon dependencies dropped.** The previous SPEC documented an Anthropic + Neon pipeline; that pipeline moved to the slushpile repo.
 - **`SLUSHPILE_URL` has one reader.** `lib/site/env.ts` is the single source of truth; direct `process.env.SLUSHPILE_URL` reads anywhere else are an anti-pattern (rewrite + nav slot must agree on the flag state).
 - **Client Sentry SDK disabled.** [instrumentation-client.ts](instrumentation-client.ts) is empty by design — the core SDK added ~65 KB of unused JS and ~2 s render delay, dropping portfolio pages below the Lighthouse 95 performance threshold. Server + edge instrumentation still runs via `instrumentation.ts`.
 - **Public production source maps.** `productionBrowserSourceMaps: true` ships source maps so Lighthouse and the browser console can resolve minified frames back to original sources. The site has no proprietary client logic, so the disclosure is acceptable.
 - **`automaticVercelMonitors: true` retained despite no crons.** Harmless when there is nothing to monitor; rearmed automatically if any future cron is added.
+
+## 23. Résumé Sync
+
+The bio, home statement, published entries, and resume PDF come from the
+resumes-cvs master résumé, not from hand-written page text.
+
+- **Source.** resumes-cvs renders a `web` target: `out/web/site.json` (public fields only: statement, bio, published entries with links) and `out/web/resume.pdf`. That target lists the fields allowed on the site; source notes, answers, and contact details beyond the site's own never appear.
+- **`pnpm sync:resume`.** Reads `$RESUMES_CVS_DIR/out/web/`, validates `site.json` against `lib/site/content.ts`, writes `content/site.json`, uploads `resume.pdf` to the public Blob store at a fixed pathname, and prints the diff and the PDF URL. It never commits or deploys.
+- **Readers.** The home statement, `/about` bio and PDF link, and `/narratives` Published section read `content/site.json` through `lib/site/content.ts`. `/code` stays hand-maintained in `lib/code/projects.ts`; the sync reports projects listed there that the master lacks.
+- **Publishing.** The user reviews the diff, commits `content/site.json`, and deploys with the Vercel CLI (the project is not Git-connected).
+- **Privacy.** `content/site.json` holds only what the site shows. No résumé document enters git.
+
