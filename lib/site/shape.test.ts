@@ -61,8 +61,13 @@ test("resume HMAC gate is removed", () => {
   );
   assert.equal(
     existsSync(r("public/wsgong_tech_writer_resume.pdf")),
-    true,
-    "Resume PDF must live in public/ as a static asset",
+    false,
+    "Resume PDF must not be in git; it lives in Vercel Blob (lib/site/resume.ts)",
+  );
+  assert.match(
+    readFileSync(r("lib/site/resume.ts"), "utf8"),
+    /public\.blob\.vercel-storage\.com\//,
+    "lib/site/resume.ts must point at the public Blob store",
   );
 });
 

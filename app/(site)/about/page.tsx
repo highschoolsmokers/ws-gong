@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import PageTitle from "@/app/components/PageTitle";
+import { RESUME_PATH } from "@/lib/site/resume";
 import { SUBSTACK_BASE_URL } from "@/lib/substack";
 import {
   SubstackIcon,
@@ -131,7 +132,7 @@ export default function About() {
 
       <Section title="Resume">
         <a
-          href="/wsgong_tech_writer_resume.pdf"
+          href={RESUME_PATH}
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm font-medium"

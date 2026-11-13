@@ -1,6 +1,7 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 import { slushpileUrl } from "./lib/site/env";
+import { RESUME_BLOB_URL, RESUME_PATH } from "./lib/site/resume";
 
 const nextConfig: NextConfig = {
   // Serve source maps for production JS so Lighthouse (and stacktraces in the
@@ -39,9 +40,11 @@ const nextConfig: NextConfig = {
     // /slushpile lives in a separate Next.js app. When SLUSHPILE_URL is set,
     // proxy the path through to that deployment. Slushpile must run with
     // basePath: "/slushpile" so its _next/static/* chunks resolve under the
-    // same prefix.
-    if (!slushpileUrl) return [];
+    // same prefix. The resume PDF is proxied from Blob at its old path.
+    const resume = [{ source: RESUME_PATH, destination: RESUME_BLOB_URL }];
+    if (!slushpileUrl) return resume;
     return [
+      ...resume,
       {
         source: "/slushpile",
         destination: `${slushpileUrl}/slushpile`,
