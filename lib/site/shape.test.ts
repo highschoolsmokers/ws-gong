@@ -50,11 +50,6 @@ test("resume HMAC gate is removed", () => {
     "app/api/resume/ must not exist — resume PDF is now a public static asset",
   );
   assert.equal(
-    existsSync(r("app/(site)/resume")),
-    false,
-    "app/(site)/resume/ must not exist — ResumeLink component removed",
-  );
-  assert.equal(
     existsSync(r("lib/resumeToken.ts")),
     false,
     "lib/resumeToken.ts must not exist — HMAC gate removed",

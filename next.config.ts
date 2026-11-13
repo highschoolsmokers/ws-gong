@@ -3,6 +3,26 @@ import type { NextConfig } from "next";
 import { slushpileUrl } from "./lib/site/env";
 import { RESUME_BLOB_URL, RESUME_PATH } from "./lib/site/resume";
 
+// One CSP for every route; only frame-ancestors varies (the résumé PDF may be
+// framed by this site's /resume page).
+function csp(frameAncestors: string): string {
+  return [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: https:",
+    "font-src 'self'",
+    // *.ingest.sentry.io covers regional ingest hosts (us, de, etc.)
+    // that *.sentry.io's single-label wildcard does not match.
+    "connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io https://*.ingest.sentry.io",
+    // Sentry Session Replay (and some Next.js bundling shims) spawn
+    // Web Workers from blob: URLs; without this the CSP blocks them
+    // and Lighthouse flags console errors on every page.
+    "worker-src 'self' blob:",
+    `frame-ancestors ${frameAncestors}`,
+  ].join("; ");
+}
+
 const nextConfig: NextConfig = {
   // Serve source maps for production JS so Lighthouse (and stacktraces in the
   // console) can resolve minified frames back to original sources.
@@ -86,24 +106,15 @@ const nextConfig: NextConfig = {
               "browsing-topics=()",
             ].join(", "),
           },
-          {
-            key: "Content-Security-Policy",
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https:",
-              "font-src 'self'",
-              // *.ingest.sentry.io covers regional ingest hosts (us, de, etc.)
-              // that *.sentry.io's single-label wildcard does not match.
-              "connect-src 'self' https://va.vercel-scripts.com https://*.sentry.io https://*.ingest.sentry.io",
-              // Sentry Session Replay (and some Next.js bundling shims) spawn
-              // Web Workers from blob: URLs; without this the CSP blocks them
-              // and Lighthouse flags console errors on every page.
-              "worker-src 'self' blob:",
-              "frame-ancestors 'none'",
-            ].join("; "),
-          },
+          { key: "Content-Security-Policy", value: csp("'none'") },
+        ],
+      },
+      {
+        // The résumé PDF is embedded on /resume; allow same-origin framing for it only.
+        source: RESUME_PATH,
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "Content-Security-Policy", value: csp("'self'") },
         ],
       },
     ];

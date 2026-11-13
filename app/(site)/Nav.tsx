@@ -20,6 +20,7 @@ export default function Nav({
       ? [{ href: "/slushpile", label: "Slushpile" } satisfies NavLink]
       : []),
     { href: "/reading", label: "Reading" },
+    { href: "/resume", label: "Resume" },
   ];
 
   const masthead = (

@@ -48,6 +48,7 @@ Top-level routes:
 | `/narratives`           | Server page               | Published (curated) + Newsletter (Substack)              |
 | `/code`                 | Server page               | Featured projects inline + flat list; `ItemList` JSON-LD |
 | `/reading`              | Server page               | Manual in-repo reading log                               |
+| `/resume`               | Server page               | Resume PDF (Blob) embedded, with a download link         |
 | `/slushpile`            | Rewrite                   | Proxied to `${SLUSHPILE_URL}/slushpile` when set         |
 | `/colophon`             | Server page               | Typography, design, stack, tools, source                 |
 | `/contact`              | Server page               | Contact form (server action)                             |
@@ -79,8 +80,8 @@ and surfaced in the sitemap (`part1.html` … `part7.html`).
 `app/(site)/Nav.tsx` renders the masthead and primary nav with conditional
 slot composition:
 
-- When `SLUSHPILE_URL` is unset: `Narratives · Code · Reading` (3 slots)
-- When set: `Narratives · Code · Slushpile · Reading` (4 slots)
+- When `SLUSHPILE_URL` is unset: `Narratives · Code · Reading · Resume` (4 slots)
+- When set: `Narratives · Code · Slushpile · Reading · Resume` (5 slots)
 
 The masthead is the H1 on the home page and a link to `/` on every other page.
 
@@ -286,16 +287,16 @@ its `ignoreCommand`.
 
 ## 19. Scripts
 
-| Script           | Command                                                              |
-| ---------------- | -------------------------------------------------------------------- |
-| `pnpm dev`       | `next dev`                                                           |
-| `pnpm build`     | `next build`                                                         |
-| `pnpm start`     | `next start`                                                         |
-| `pnpm lint`      | `eslint`                                                             |
-| `pnpm typecheck` | `tsc --noEmit`                                                       |
-| `pnpm test:unit` | Node test runner over `lib/code/*.test.ts` + `lib/reading/*.test.ts` |
-| `pnpm test:e2e`  | Playwright                                                           |
-| `pnpm prepare`   | `husky`                                                              |
+| Script             | Command                                                                                     |
+| ------------------ | ------------------------------------------------------------------------------------------- |
+| `pnpm dev`         | `next dev`                                                                                  |
+| `pnpm build`       | `next build`                                                                                |
+| `pnpm start`       | `next start`                                                                                |
+| `pnpm lint`        | `eslint`                                                                                    |
+| `pnpm typecheck`   | `tsc --noEmit`                                                                              |
+| `pnpm test:unit`   | Node test runner over `lib/code/*.test.ts` + `lib/reading/*.test.ts`                        |
+| `pnpm test:e2e`    | Playwright                                                                                  |
+| `pnpm prepare`     | `husky`                                                                                     |
 | `pnpm sync:resume` | `node scripts/sync-resume.mjs`: pull site content and the resume PDF from resumes-cvs (§23) |
 
 `scripts/make-favicon.mjs` is a one-shot generator used to produce
@@ -369,6 +370,7 @@ the rationale.
 
 - **Slushpile lives in a separate repo and is mounted via Vercel rewrite.** Looks accidental: a major site surface with no code in this repo. Deliberate: slushpile has its own stack (Drizzle, six-agent architecture, shadcn UI) that does not belong inside the Swiss portfolio. Mount via `next.config.ts` rewrite to `${SLUSHPILE_URL}/slushpile/(.*)`; nav slot gated by env presence.
 - **Resume PDF served publicly from Vercel Blob, not git.** The decorative HMAC gate is removed; the resume is intended to be findable. It lives in a public Blob store so no résumé document enters this public repo. Do not reintroduce the gate without product justification.
+- **`/resume` restored as a page, not a gate.** The PDF is embedded from its public path and linked in the nav; only that path may be framed (same origin), every other route keeps `frame-ancestors 'none'`.
 - **`/code` flattened — no sub-pages, no categories.** 10 detail pages and 3 category groupings disappeared deliberately. The dual-citizen home plus featured-plus-list `/code` carries the engineering identity without resume-bloat.
 - **Anthropic + Neon dependencies dropped.** The previous SPEC documented an Anthropic + Neon pipeline; that pipeline moved to the slushpile repo.
 - **`SLUSHPILE_URL` has one reader.** `lib/site/env.ts` is the single source of truth; direct `process.env.SLUSHPILE_URL` reads anywhere else are an anti-pattern (rewrite + nav slot must agree on the flag state).
@@ -386,4 +388,3 @@ resumes-cvs master résumé, not from hand-written page text.
 - **Readers.** The home statement, `/about` bio and PDF link, and `/narratives` Published section read `content/site.json` through `lib/site/content.ts`. `/code` stays hand-maintained in `lib/code/projects.ts`; the sync reports projects listed there that the master lacks.
 - **Publishing.** The user reviews the diff, commits `content/site.json`, and deploys with the Vercel CLI (the project is not Git-connected).
 - **Privacy.** `content/site.json` holds only what the site shows. No résumé document enters git.
-

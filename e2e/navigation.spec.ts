@@ -52,12 +52,17 @@ test.describe("Navigation", () => {
     await expect(link).toHaveAttribute("href", "/reading");
   });
 
-  test("nav slot order without SLUSHPILE_URL: Narratives, Code, Reading", async ({
+  test("nav slot order without SLUSHPILE_URL: Narratives, Code, Reading, Resume", async ({
     page,
   }) => {
     await page.goto("/");
     const navItems = page.locator("header nav ul li");
-    await expect(navItems).toHaveText(["Narratives", "Code", "Reading"]);
+    await expect(navItems).toHaveText([
+      "Narratives",
+      "Code",
+      "Reading",
+      "Resume",
+    ]);
   });
 
   test("Narratives nav entry marks current page on /narratives", async ({

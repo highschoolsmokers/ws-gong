@@ -12,7 +12,13 @@ test.describe("Slushpile mount", () => {
     const labels = await navItems.allTextContents();
 
     if (slushpileConfigured) {
-      expect(labels).toEqual(["Narratives", "Code", "Slushpile", "Reading"]);
+      expect(labels).toEqual([
+        "Narratives",
+        "Code",
+        "Slushpile",
+        "Reading",
+        "Resume",
+      ]);
     } else {
       expect(labels).toEqual(["Narratives", "Code", "Reading"]);
     }
