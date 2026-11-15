@@ -118,6 +118,10 @@ test.describe("Not found page", () => {
     );
   });
 
+  test("unknown API route returns 404", async ({ request }) => {
+    expect((await request.get("/api/nonexistent-endpoint")).status()).toBe(404);
+  });
+
   test("old /projects route returns 404", async ({ page }) => {
     const response = await page.goto("/projects");
     expect(response?.status()).toBe(404);

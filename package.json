@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test:unit": "node --test --experimental-strip-types --test-reporter=spec lib/code/*.test.ts lib/reading/*.test.ts lib/site/*.test.ts",
+    "test:unit": "node --test --experimental-strip-types \"lib/**/*.test.ts\"",
     "test:e2e": "playwright test",
     "prepare": "husky",
     "sync:resume": "node --env-file-if-exists=.env.local scripts/sync-resume.ts"

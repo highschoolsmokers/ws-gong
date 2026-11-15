@@ -6,21 +6,12 @@ export type Book = {
   link?: string;
 };
 
-// Seed empty. Add entries as you finish (or start) a book.
-// "reading" entries are pinned on top, in array order.
-// "YYYY-MM-DD" entries are sorted reverse-chronologically by finished date.
+// Add entries as you start or finish a book.
 export const books: Book[] = [];
 
-const currentlyReading = books.filter((b) => b.finished === "reading");
-const finished = books
-  .filter(
-    (b): b is Book & { finished: `${number}-${number}-${number}` } =>
-      b.finished !== "reading",
-  )
-  .sort((a, b) =>
-    a.finished < b.finished ? 1 : a.finished > b.finished ? -1 : 0,
-  );
+// Currently reading first (in array order), then finished, newest first.
+export const orderBooks = (list: Book[]) =>
+  [...list].sort((a, b) => key(b).localeCompare(key(a)));
+const key = (b: Book) => (b.finished === "reading" ? "9" : b.finished);
 
-export const orderedBooks: Book[] = [...currentlyReading, ...finished];
-
-export const latestBook: Book | null = orderedBooks[0] ?? null;
+export const orderedBooks = orderBooks(books);

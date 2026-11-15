@@ -1,114 +1,64 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 export const alt = "W.S. Gong";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-async function loadGeistFont(): Promise<ArrayBuffer> {
+// Geist Bold from Google Fonts; Next's bundled copy if the fetch fails.
+async function geist(): Promise<ArrayBuffer> {
   try {
-    const css = await fetch(
-      "https://fonts.googleapis.com/css2?family=Geist:wght@700&display=swap",
-      { headers: { "User-Agent": "Mozilla/5.0" } },
-    ).then((r) => r.text());
+    const css = await (
+      await fetch("https://fonts.googleapis.com/css2?family=Geist:wght@700")
+    ).text();
     const url = css.match(/src:\s*url\(([^)]+)\)/)?.[1];
-    if (url) return await fetch(url).then((r) => r.arrayBuffer());
-  } catch {
-    /* fall through */
-  }
-  const { readFile } = await import("node:fs/promises");
-  const { join } = await import("node:path");
+    if (url) return await (await fetch(url)).arrayBuffer();
+  } catch {}
   const buf = await readFile(
     join(
       process.cwd(),
       "node_modules/next/dist/next-devtools/server/font/geist-latin.woff2",
     ),
   );
-  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+  return new Uint8Array(buf).buffer;
 }
 
-export default async function Image() {
-  const fontData = await loadGeistFont();
+const ink = "#161616";
 
+export default async function Image() {
   return new ImageResponse(
     <div
       style={{
-        background: "#f2ede4",
+        background: "#f3efe7",
+        color: ink,
         width: "100%",
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "flex-start",
-        padding: "100px 80px 0 80px",
+        padding: "100px 80px 0",
         fontFamily: "Geist",
+        fontWeight: 700,
       }}
     >
-      {/* Title */}
-      <div
-        style={{
-          fontSize: 104,
-          fontWeight: 700,
-          color: "black",
-          letterSpacing: "-0.04em",
-          lineHeight: 0.9,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <span>W.S. Gong</span>
+      <div style={{ fontSize: 104, letterSpacing: "-0.04em", lineHeight: 0.9 }}>
+        W.S. Gong
       </div>
-
-      {/* Horizontal rule */}
-      <div
-        style={{
-          width: "100%",
-          height: 1,
-          backgroundColor: "black",
-          marginTop: 40,
-          display: "flex",
-        }}
-      />
-
-      {/* Tagline with icon */}
+      <div style={{ height: 1, background: ink, marginTop: 40 }} />
       <div
         style={{
           display: "flex",
-          flexDirection: "row",
           alignItems: "center",
           gap: 20,
           marginTop: 56,
+          fontSize: 80,
+          letterSpacing: "-0.03em",
         }}
       >
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            backgroundColor: "black",
-            flexShrink: 0,
-          }}
-        />
-        <div
-          style={{
-            fontSize: 80,
-            fontWeight: 700,
-            color: "black",
-            letterSpacing: "-0.03em",
-            lineHeight: 1,
-          }}
-        >
-          Narratives. Code.
-        </div>
+        <div style={{ width: 32, height: 32, background: ink }} />
+        Stories &amp; Systems
       </div>
     </div>,
-    {
-      ...size,
-      fonts: [
-        {
-          name: "Geist",
-          data: fontData,
-          weight: 700,
-          style: "normal" as const,
-        },
-      ],
-    },
+    { ...size, fonts: [{ name: "Geist", data: await geist(), weight: 700 }] },
   );
 }

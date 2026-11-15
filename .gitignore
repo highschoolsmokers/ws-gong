@@ -47,7 +47,7 @@ next-env.d.ts
 # local notes
 TODO.md
 
-# Personal: résumé documents never enter git (SPEC §21–23)
+# Personal: résumé documents never enter git (SPEC §12, §14)
 /private/
 /public/*resume*.pdf
 *.docx

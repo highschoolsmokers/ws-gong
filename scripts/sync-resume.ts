@@ -1,4 +1,4 @@
-// pnpm sync:resume — pull the site copy and résumé PDF from resumes-cvs (SPEC §23).
+// pnpm sync:resume — pull the site copy and résumé PDF from resumes-cvs (SPEC §14).
 //
 // Reads $RESUMES_CVS_DIR/private/out/web/{site.json,resume.pdf} (build them there
 // with `.venv/bin/python -m resumekit web`), validates site.json, writes

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { SITE_PAGES } from "./helpers/constants";
+import { SITE_PAGES, STATIC_ROUTES } from "./helpers/constants";
 
 // ---------------------------------------------------------------------------
 // OG metadata
@@ -15,6 +15,14 @@ test.describe("OG metadata", () => {
         ogTitle,
         `${route} should have an og:title meta tag`,
       ).toHaveAttribute("content", /.+/, { timeout: 5000 });
+    });
+  }
+});
+
+test.describe("Static routes", () => {
+  for (const route of STATIC_ROUTES) {
+    test(`${route} returns 200`, async ({ request }) => {
+      expect((await request.get(route)).status()).toBe(200);
     });
   }
 });

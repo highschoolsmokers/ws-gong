@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // The shape of content/site.json, written by `pnpm sync:resume` from the
-// resumes-cvs `web` build (SPEC §23). No path aliases here: the sync script
+// resumes-cvs `web` build (SPEC §14). No path aliases here: the sync script
 // imports this file directly under Node.
 export const siteContentSchema = z
   .object({

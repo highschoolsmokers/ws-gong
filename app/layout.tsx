@@ -2,38 +2,21 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { site } from "@/lib/site/content";
+import { profiles, site } from "@/lib/site/content";
 import "./globals.css";
 
-const geistSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-geist-sans",
-});
-
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const description = `W.S. Gong, San Francisco. ${site.statement.join(" ")}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ws-gong.com"),
-  title: {
-    default: "W.S. Gong",
-    template: "%s — W.S. Gong",
-  },
+  title: { default: "W.S. Gong", template: "%s — W.S. Gong" },
   description,
-  robots: {
-    index: true,
-    follow: true,
-  },
-  icons: {
-    apple: "/apple-touch-icon.png",
-  },
-  alternates: {
-    types: {
-      "application/rss+xml": "/feed",
-    },
-  },
+  icons: { apple: "/apple-touch-icon.png" },
+  alternates: { types: { "application/rss+xml": "/feed" } },
   openGraph: {
     siteName: "W.S. Gong",
-    url: "https://www.ws-gong.com",
+    url: "/",
     type: "website",
     title: "W.S. Gong",
     description,
@@ -46,12 +29,7 @@ const jsonLd = {
   name: "W.S. Gong",
   url: "https://www.ws-gong.com",
   jobTitle: "Developer and Technical Writer",
-  sameAs: [
-    site.links.github,
-    site.links.linkedin,
-    "https://substack.com/@highschoolsmokers",
-    "https://www.instagram.com/born.deleuze",
-  ],
+  sameAs: profiles.map((p) => p.url),
   knowsAbout: [
     "Fiction Writing",
     "Technical Writing",
@@ -61,29 +39,25 @@ const jsonLd = {
   ],
 };
 
+// The inline script applies a stored theme before first paint (no flash);
+// ThemeToggle owns it afterwards.
+const themeScript = `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}`;
+
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Apply the persisted theme synchronously, before CSS evaluates
-            prefers-color-scheme, to avoid a light-mode flash for users who
-            previously selected dark. ThemeToggle re-applies on mount and
-            keeps localStorage in sync; this script just front-runs paint. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}`,
-          }}
-        />
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={`${geistSans.variable} font-sans antialiased`}>
+      <body className={`${geist.variable} font-sans antialiased`}>
         {children}
         <Analytics />
         <SpeedInsights />
