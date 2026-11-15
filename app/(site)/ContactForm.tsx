@@ -1,14 +1,21 @@
 "use client";
 
 import {
+  startTransition,
   useActionState,
   useEffect,
   useRef,
   useState,
   type DragEvent,
 } from "react";
-import { MAX_FILE_SIZE, MAX_FILES } from "@/lib/upload";
+import {
+  MAX_FILES,
+  MAX_TOTAL_BYTES,
+  isBlockedAttachmentName,
+} from "@/lib/upload";
 import { sendMessage, type FormState } from "./actions";
+
+const MB = 1024 * 1024;
 
 // Remounting on "Send another" resets the action state and the fields.
 export default function ContactForm() {
@@ -21,28 +28,36 @@ function Form({ onReset }: { onReset: () => void }) {
     status: "idle",
     message: "",
   } as FormState);
-  const [loadedAt, setLoadedAt] = useState(0);
   const [files, setFiles] = useState<{ id: string; file: File }[]>([]);
+  const [note, setNote] = useState("");
   const [dragging, setDragging] = useState(false);
+  const startedAt = useRef(0);
   const depth = useRef(0); // dragenter/leave fire per child element
   const picker = useRef<HTMLInputElement>(null);
 
-  // eslint-disable-next-line react-hooks/set-state-in-effect -- client load time for the anti-spam timer
-  useEffect(() => setLoadedAt(Date.now()), []);
+  useEffect(() => {
+    startedAt.current = Date.now();
+  }, []);
 
   // Copy the FileList now: the picker is cleared before the updater runs.
   const add = (list: FileList | null) => {
-    const incoming = Array.from(list ?? []);
-    setFiles((prev) =>
-      [
-        ...prev,
-        ...incoming.map((file) => ({
-          id: crypto.randomUUID(),
-          file,
-        })),
-      ]
-        .filter(({ file }) => file.size <= MAX_FILE_SIZE)
-        .slice(0, MAX_FILES),
+    const kept = [...files];
+    const skipped: string[] = [];
+    for (const file of Array.from(list ?? [])) {
+      const total = kept.reduce((n, f) => n + f.file.size, 0) + file.size;
+      if (
+        isBlockedAttachmentName(file.name) ||
+        kept.length >= MAX_FILES ||
+        total > MAX_TOTAL_BYTES
+      )
+        skipped.push(file.name);
+      else kept.push({ id: crypto.randomUUID(), file });
+    }
+    setFiles(kept);
+    setNote(
+      skipped.length
+        ? `Not attached (type, count, or size limit): ${skipped.join(", ")}`
+        : "",
     );
   };
   const drag = (delta: number) => (e: DragEvent) => {
@@ -63,9 +78,14 @@ function Form({ onReset }: { onReset: () => void }) {
 
   return (
     <form
-      action={(data) => {
+      // onSubmit rather than a form action: React resets the fields after an
+      // action, which would wipe the message on any error.
+      onSubmit={(e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
         files.forEach(({ file }) => data.append("attachments", file));
-        action(data);
+        data.set("_elapsed", String(Date.now() - startedAt.current));
+        startTransition(() => action(data));
       }}
       onDragEnter={drag(1)}
       onDragLeave={drag(-1)}
@@ -81,20 +101,24 @@ function Form({ onReset }: { onReset: () => void }) {
           Drop to Attach
         </div>
       )}
+      {/* Bot trap. The name and the ignore attributes keep browser autofill and password managers out of it. */}
       <input
-        name="website"
+        name="contact_hp"
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"
+        data-1p-ignore=""
+        data-lpignore="true"
+        data-form-type="other"
         className="absolute -left-[9999px] h-0 opacity-0"
       />
-      <input type="hidden" name="_t" value={loadedAt} />
       <div className="grid grid-cols-2 gap-4">
         <input
           name="name"
           required
           aria-label="Name"
           placeholder="Name"
+          autoComplete="name"
           className="field"
         />
         <input
@@ -103,6 +127,7 @@ function Form({ onReset }: { onReset: () => void }) {
           required
           aria-label="Email"
           placeholder="Email"
+          autoComplete="email"
           className="field"
         />
       </div>
@@ -136,7 +161,8 @@ function Form({ onReset }: { onReset: () => void }) {
           + Attach file
         </button>
         <span className="text-xs">
-          or drag and drop (max {MAX_FILES} files, 5 MB each)
+          or drag and drop (up to {MAX_FILES} files, {MAX_TOTAL_BYTES / MB} MB
+          total)
         </span>
       </div>
       {files.map(({ id, file }) => (
@@ -152,10 +178,11 @@ function Form({ onReset }: { onReset: () => void }) {
           </button>
         </p>
       ))}
+      {note && <p className="text-xs text-muted">{note}</p>}
       <div className="flex items-baseline gap-3">
         <button
           type="submit"
-          disabled={pending || !loadedAt}
+          disabled={pending}
           className="text-xl font-medium tracking-tight hover:underline disabled:opacity-40"
         >
           {pending ? "Sending…" : "Send"}

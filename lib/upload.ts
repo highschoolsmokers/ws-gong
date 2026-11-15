@@ -1,7 +1,7 @@
 export const MAX_FILES = 5;
-export const MAX_FILE_SIZE = 5 * 1024 * 1024;
-// Aggregate cap so one submission can't buffer 5 × 5 MB in a function.
-export const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
+// Vercel caps a function request body at 4.5 MB, and next.config.ts raises
+// Next's 1 MB server-action limit to match, so attachments share 4 MB.
+export const MAX_TOTAL_BYTES = 4 * 1024 * 1024;
 
 // Executables and scripts could ride into the inbox past SPF/DKIM via
 // SMTP_USER; a denylist keeps ordinary documents and images attachable.

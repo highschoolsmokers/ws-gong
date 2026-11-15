@@ -49,9 +49,11 @@ test.describe("Form accessibility", () => {
   test("honeypot field is hidden from assistive tech", async ({ page }) => {
     await page.goto("/contact");
 
-    const honeypot = page.locator("input[name='website']");
+    const honeypot = page.locator("input[name='contact_hp']");
     await expect(honeypot).toHaveAttribute("aria-hidden", "true");
     await expect(honeypot).toHaveAttribute("tabindex", "-1");
+    // Password managers must not fill the trap and flag a real visitor.
+    await expect(honeypot).toHaveAttribute("data-1p-ignore", "");
   });
 });
 

@@ -28,6 +28,8 @@ const redirects = Object.entries({
 const nextConfig: NextConfig = {
   // Public source maps so Lighthouse and the console resolve minified frames.
   productionBrowserSourceMaps: true,
+  // Contact-form attachments: match Vercel's 4.5 MB request cap (lib/upload.ts).
+  experimental: { serverActions: { bodySizeLimit: "4.5mb" } },
   redirects: async () => redirects,
   rewrites: async () => [
     // The résumé PDF lives in public Blob storage, served at its old path.

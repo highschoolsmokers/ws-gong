@@ -67,13 +67,17 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 
 ## 5. Contact form
 
-`app/(site)/ContactForm.tsx` posts to the server action
-`app/(site)/actions.ts`. Spam guards: a hidden `website` honeypot and a
-3-second minimum between page load and submit. Every guard, config, and SMTP
-failure returns the same generic message. Attachments: at most 5 files, 5 MB
-each, 10 MB total, executable extensions refused (`lib/upload.ts`). Mail goes
-from `SMTP_USER` to `CONTACT_EMAIL`, reply-to the sender, subject
-`[Contact Form] …`, header `X-Source: contact-form`.
+`app/(site)/ContactForm.tsx` submits (via `onSubmit`, so a failed send keeps
+the visitor's text) to the server action `app/(site)/actions.ts`. Spam
+guards: a hidden `contact_hp` field that autofill and password managers are
+told to skip, and a 3-second minimum measured on the visitor's own clock
+(`_elapsed`). Visitors see one generic failure for guard, config, and SMTP
+faults; the function log records the reason (`Contact form rejected: …`).
+Attachments: up to 5 files, 4 MB total, executable extensions refused
+(`lib/upload.ts`); `next.config.ts` raises the server-action body limit to
+Vercel's 4.5 MB request cap. Mail goes from `SMTP_USER` to `CONTACT_EMAIL`,
+reply-to the sender, subject `[Contact Form] …`, header
+`X-Source: contact-form`.
 
 ## 6. Design and theming
 
