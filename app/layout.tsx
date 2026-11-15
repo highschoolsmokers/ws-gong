@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { site } from "@/lib/site/content";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -9,8 +10,7 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
 });
 
-const description =
-  "W.S. Gong — writer, editor, and technical writer based in San Francisco. Fiction editor at The Rumpus. Twenty-five years in software and documentation.";
+const description = `W.S. Gong, San Francisco. ${site.statement.join(" ")}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.ws-gong.com"),
@@ -45,15 +45,10 @@ const jsonLd = {
   "@type": "Person",
   name: "W.S. Gong",
   url: "https://www.ws-gong.com",
-  jobTitle: "Fiction Editor & Technical Writer",
-  worksFor: {
-    "@type": "Organization",
-    name: "The Rumpus",
-    url: "https://therumpus.net",
-  },
+  jobTitle: "Developer and Technical Writer",
   sameAs: [
-    "https://github.com/highschoolsmokers",
-    "https://www.linkedin.com/in/billy-gong",
+    site.links.github,
+    site.links.linkedin,
     "https://substack.com/@highschoolsmokers",
     "https://www.instagram.com/born.deleuze",
   ],

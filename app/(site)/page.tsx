@@ -1,152 +1,218 @@
 import type { Metadata } from "next";
-import { getSubstackPosts, SUBSTACK_SUBDOMAIN } from "@/lib/substack";
-import { latestProject } from "@/lib/code/projects";
-import { latestBook } from "@/lib/reading/books";
+import {
+  featuredProjects,
+  listedProjects,
+  projects,
+} from "@/lib/code/projects";
+import { orderedBooks } from "@/lib/reading/books";
+import { site } from "@/lib/site/content";
+import { RESUME_PATH } from "@/lib/site/resume";
+import {
+  getSubstackPosts,
+  SUBSTACK_BASE_URL,
+  SUBSTACK_SUBDOMAIN,
+} from "@/lib/substack";
+import ContactForm from "./_home/ContactForm";
+import { Row, RowList, Section, SubHead } from "./_home/ui";
+
+const description = site.statement.join(" ");
 
 export const metadata: Metadata = {
   title: "W.S. Gong — Stories & Systems",
-  description:
-    "Fiction editor at The Rumpus. Technical writer with twenty-five years in software. Building tools at the intersection of language models and the craft of writing.",
-  openGraph: {
-    title: "W.S. Gong — Stories & Systems",
-    description:
-      "Fiction editor at The Rumpus. Technical writer with twenty-five years in software. Building tools at the intersection of language models and the craft of writing.",
-  },
+  description,
+  openGraph: { title: "W.S. Gong — Stories & Systems", description },
 };
 
-export default async function Home() {
-  const posts = await getSubstackPosts(SUBSTACK_SUBDOMAIN, 1);
-  const latestNarrative = posts[0] ?? null;
+const RECENT_POSTS = 5;
+const RECENT_BOOKS = 5;
 
+const projectsLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Code Projects by W.S. Gong",
+  itemListElement: projects.map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    item: {
+      "@type": "CreativeWork",
+      name: p.title,
+      description: p.description,
+      url: p.href.startsWith("http")
+        ? p.href
+        : `https://www.ws-gong.com${p.href}`,
+      author: { "@type": "Person", name: "W.S. Gong" },
+      keywords: [...p.stack, ...p.tags],
+    },
+  })),
+};
+
+function monthYear(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+  });
+}
+
+function ProjectRows({ list }: { list: typeof projects }) {
   return (
-    <div>
-      <section className="swiss-grid swiss-rule pt-6 pb-16">
-        <div className="col-span-12 md:col-span-4">
-          <span className="swiss-label">Statement</span>
-        </div>
-        <div className="col-span-12 md:col-span-8">
-          <p className="text-base leading-relaxed max-w-prose">
-            Fiction editor at{" "}
-            <a
-              href="https://therumpus.net"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              The Rumpus
-            </a>
-            .<br />
-            Technical writer with twenty-five years in software.
-            <br />
-            Building tools at the intersection of language models and the craft
-            of writing.
-          </p>
-        </div>
-      </section>
-
-      {latestNarrative && (
-        <section className="swiss-grid swiss-rule pt-6 pb-16">
-          <div className="col-span-12 md:col-span-4">
-            <span className="swiss-label">Latest narrative</span>
-          </div>
-          <a
-            href={latestNarrative.canonical_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="col-span-12 md:col-span-8 block no-underline hover:!no-underline"
-          >
-            <span className="block text-lg font-medium leading-tight">
-              {latestNarrative.title}
-            </span>
-            {latestNarrative.subtitle && (
-              <span className="block mt-2 text-sm leading-relaxed">
-                {latestNarrative.subtitle}
-              </span>
-            )}
-            <span className="mt-4 flex items-baseline gap-3 text-xs uppercase tracking-[0.12em] text-neutral-500">
-              <span>
-                {new Date(latestNarrative.post_date).toLocaleDateString(
-                  "en-US",
-                  {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  },
-                )}
-              </span>
-              <span aria-hidden>/</span>
-              <span>Substack</span>
-            </span>
-          </a>
-        </section>
-      )}
-
-      {latestProject && (
-        <section className="swiss-grid swiss-rule pt-6 pb-16">
-          <div className="col-span-12 md:col-span-4">
-            <span className="swiss-label">Latest code</span>
-          </div>
-          <a
-            href={latestProject.href}
-            {...(latestProject.href.startsWith("http")
-              ? { target: "_blank", rel: "noopener noreferrer" }
-              : {})}
-            className="col-span-12 md:col-span-8 block no-underline hover:!no-underline"
-          >
-            <span className="block text-lg font-medium leading-tight">
-              {latestProject.title}
-            </span>
-            <span className="block mt-2 text-sm leading-relaxed">
-              {latestProject.description}
-            </span>
-            <span className="mt-4 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-xs uppercase tracking-[0.12em] text-neutral-500">
-              <span>{latestProject.stack.join(" / ")}</span>
-            </span>
-          </a>
-        </section>
-      )}
-
-      {latestBook && (
-        <section className="swiss-grid swiss-rule pt-6 pb-16">
-          <div className="col-span-12 md:col-span-4">
-            <span className="swiss-label">Latest reading</span>
-          </div>
-          <div className="col-span-12 md:col-span-8">
-            {latestBook.link ? (
-              <a
-                href={latestBook.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block no-underline hover:!no-underline"
-              >
-                <ReadingEntry book={latestBook} />
-              </a>
-            ) : (
-              <ReadingEntry book={latestBook} />
-            )}
-          </div>
-        </section>
-      )}
-    </div>
+    <RowList>
+      {list.map((p) => (
+        <Row
+          key={p.href}
+          href={p.href}
+          title={p.title}
+          meta={p.stack.join(" / ")}
+        >
+          {p.description}
+        </Row>
+      ))}
+    </RowList>
   );
 }
 
-function ReadingEntry({
-  book,
-}: {
-  book: { title: string; author: string; finished: string; note?: string };
-}) {
+export default async function Home() {
+  const posts = (await getSubstackPosts(SUBSTACK_SUBDOMAIN)).slice(
+    0,
+    RECENT_POSTS,
+  );
+  const books = orderedBooks.slice(0, RECENT_BOOKS);
+
+  // Sections number themselves, so an empty one (no books yet) leaves no gap.
+  let n = 0;
+  const next = () => ++n;
+
   return (
-    <>
-      <span className="block text-lg font-medium leading-tight">
-        {book.title}
-      </span>
-      <span className="block mt-1 text-sm leading-relaxed">{book.author}</span>
-      {book.note && (
-        <span className="block mt-2 text-sm leading-relaxed">{book.note}</span>
+    <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsLd) }}
+      />
+
+      <section aria-label="Statement" className="statement swiss-grid">
+        <p className="col-span-12 md:col-span-10">
+          {site.statement.map((line) => (
+            <span key={line} className="block">
+              {line}
+            </span>
+          ))}
+        </p>
+      </section>
+
+      <Section id="work" index={next()} title="Work">
+        <div className="space-y-14">
+          {featuredProjects.length > 0 && (
+            <div>
+              <SubHead>Featured</SubHead>
+              <ProjectRows list={featuredProjects} />
+            </div>
+          )}
+          {listedProjects.length > 0 && (
+            <div>
+              <SubHead>Index</SubHead>
+              <ProjectRows list={listedProjects} />
+            </div>
+          )}
+        </div>
+      </Section>
+
+      <Section id="writing" index={next()} title="Writing">
+        <div className="space-y-14">
+          {site.published.length > 0 && (
+            <div>
+              <SubHead>Fiction</SubHead>
+              <RowList>
+                {site.published.map((p) => (
+                  <Row
+                    key={p.title}
+                    href={p.url}
+                    title={p.title}
+                    meta={[p.venue, p.detail].filter(Boolean).join(" · ")}
+                  />
+                ))}
+              </RowList>
+            </div>
+          )}
+          {site.editing.length > 0 && (
+            <div>
+              <SubHead>Editing</SubHead>
+              <RowList>
+                {site.editing.map((e) => (
+                  <Row
+                    key={`${e.org}-${e.title}`}
+                    title={`${e.title}, ${e.org}`}
+                    meta={e.dates}
+                  >
+                    {e.summary}
+                  </Row>
+                ))}
+              </RowList>
+            </div>
+          )}
+          {posts.length > 0 && (
+            <div>
+              <SubHead>Newsletter</SubHead>
+              <RowList>
+                {posts.map((post) => (
+                  <Row
+                    key={post.id}
+                    href={post.canonical_url}
+                    title={post.title}
+                    meta={monthYear(post.post_date)}
+                  >
+                    {post.subtitle}
+                  </Row>
+                ))}
+              </RowList>
+              <p className="mt-6 text-sm">
+                <a
+                  href={`${SUBSTACK_BASE_URL}/subscribe`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium"
+                >
+                  Subscribe on Substack →
+                </a>
+              </p>
+            </div>
+          )}
+        </div>
+      </Section>
+
+      {books.length > 0 && (
+        <Section id="reading" index={next()} title="Reading">
+          <RowList>
+            {books.map((b) => (
+              <Row
+                key={`${b.title}::${b.author}`}
+                href={b.link}
+                title={b.title}
+                meta={b.finished === "reading" ? "Reading" : b.finished}
+              >
+                {b.note ? `${b.author}. ${b.note}` : b.author}
+              </Row>
+            ))}
+          </RowList>
+        </Section>
       )}
-      <span className="mt-4 flex items-baseline gap-3 text-xs uppercase tracking-[0.12em] text-neutral-500">
-        <span>{book.finished === "reading" ? "Reading" : book.finished}</span>
-      </span>
-    </>
+
+      <Section id="resume" index={next()} title="Résumé">
+        <RowList>
+          <Row href={RESUME_PATH} title="Résumé (PDF)" />
+          <Row href={site.links.linkedin} title="LinkedIn" />
+          <Row href={site.links.github} title="GitHub" />
+        </RowList>
+      </Section>
+
+      <Section
+        id="contact"
+        index={next()}
+        title="Contact"
+        after={<ContactForm />}
+      >
+        <p className="text-base leading-relaxed">
+          For readings, panels, workshops, or any other inquiries, get in touch.
+        </p>
+      </Section>
+    </div>
   );
 }

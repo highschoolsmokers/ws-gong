@@ -1,6 +1,13 @@
 import { SUBSTACK_BASE_URL } from "@/lib/substack";
 import ThemeToggle from "./ThemeToggle";
 
+const footerLinks = [
+  { href: "/about", label: "About" },
+  { href: "/colophon", label: "Colophon" },
+  { href: "/terms", label: "Terms" },
+  { href: "/links", label: "Links" },
+];
+
 export default function PageShell({
   header,
   children,
@@ -13,40 +20,30 @@ export default function PageShell({
       <a href="#main" className="skip-to-content">
         Skip to content
       </a>
-      <header className="pt-8 pb-16">{header}</header>
+      <header className="site-header">{header}</header>
       <main id="main" className="pb-24">
         {children}
       </main>
-      <footer className="swiss-grid swiss-rule pt-6 pb-10">
-        <div className="col-span-12 md:col-span-4">
-          <span className="swiss-label">Colophon</span>
+      <footer className="site-footer swiss-grid">
+        <div className="col-span-12 md:col-span-4 text-sm">
+          © {new Date().getFullYear()} W.S. Gong
         </div>
-        <div className="col-span-12 md:col-span-8 space-y-4">
-          <div className="text-sm">
-            <a
-              href={`${SUBSTACK_BASE_URL}/subscribe`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium"
-            >
-              Subscribe to the newsletter →
+        <div className="col-span-12 md:col-span-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+          {footerLinks.map((l) => (
+            <a key={l.href} href={l.href}>
+              {l.label}
             </a>
-          </div>
-          <div className="text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>© {new Date().getFullYear()} W.S. Gong</span>
-            <span aria-hidden>·</span>
-            <a href="/about">About</a>
-            <span aria-hidden>·</span>
-            <a href="/colophon">Colophon</a>
-            <span aria-hidden>·</span>
-            <a href="/terms">Terms</a>
-            <span aria-hidden>·</span>
-            <a href="/contact">Contact</a>
-            <span aria-hidden>·</span>
-            <a href="/links">Links</a>
-            <span aria-hidden>·</span>
+          ))}
+          <a
+            href={`${SUBSTACK_BASE_URL}/subscribe`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Subscribe
+          </a>
+          <span className="md:ml-auto">
             <ThemeToggle />
-          </div>
+          </span>
         </div>
       </footer>
     </div>

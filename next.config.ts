@@ -3,8 +3,6 @@ import type { NextConfig } from "next";
 import { slushpileUrl } from "./lib/site/env";
 import { RESUME_BLOB_URL, RESUME_PATH } from "./lib/site/resume";
 
-// One CSP for every route; only frame-ancestors varies (the résumé PDF may be
-// framed by this site's /resume page).
 function csp(frameAncestors: string): string {
   return [
     "default-src 'self'",
@@ -28,25 +26,24 @@ const nextConfig: NextConfig = {
   // console) can resolve minified frames back to original sources.
   productionBrowserSourceMaps: true,
   async redirects() {
+    // The site is one page: the old section pages land on their anchors.
+    // permanent: false while the one-page layout settles.
+    const folded: [string, string][] = [
+      ["/code", "/#work"],
+      ["/code/:slug", "/#work"],
+      ["/narratives-code", "/#work"],
+      ["/narratives-code/:slug", "/#work"],
+      ["/narratives", "/#writing"],
+      ["/reading", "/#reading"],
+      ["/resume", "/#resume"],
+      ["/contact", "/#contact"],
+    ];
     return [
-      {
-        source: "/narratives-code",
-        destination: "/code",
-        permanent: true,
-      },
-      {
-        source: "/narratives-code/:slug",
-        destination: "/code",
-        permanent: true,
-      },
-      {
-        // /code/{slug} sub-pages no longer exist. Inbound links from search
-        // engines, the about page's inline references, and feed items all
-        // collapse to the flat /code page.
-        source: "/code/:slug",
-        destination: "/code",
-        permanent: true,
-      },
+      ...folded.map(([source, destination]) => ({
+        source,
+        destination,
+        permanent: false,
+      })),
       {
         // /residencies became slushpile (a separate app, mounted via rewrite).
         // When SLUSHPILE_URL is unset, /slushpile 404s — accepted.
@@ -107,14 +104,6 @@ const nextConfig: NextConfig = {
             ].join(", "),
           },
           { key: "Content-Security-Policy", value: csp("'none'") },
-        ],
-      },
-      {
-        // The résumé PDF is embedded on /resume; allow same-origin framing for it only.
-        source: RESUME_PATH,
-        headers: [
-          { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          { key: "Content-Security-Policy", value: csp("'self'") },
         ],
       },
     ];

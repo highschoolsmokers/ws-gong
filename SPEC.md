@@ -1,8 +1,8 @@
 # ws-gong.com — Technical Specification
 
-> **Status:** Reflects the state after the dual-citizen redesign. Conceptual
-> spec lives in [redesign.md](redesign.md); this document records the
-> implementation-level details.
+> **Status:** Reflects the one-page redesign (2026-11): the home page is the
+> site, and its copy syncs from resumes-cvs (§23). [redesign.md](redesign.md)
+> holds the earlier dual-citizen concept; where they differ, this file wins.
 
 ## 1. Overview
 
@@ -34,38 +34,33 @@ when `SLUSHPILE_URL` is set; nothing slushpile-related lives in this codebase.
 
 Two App Router groups:
 
-- `app/(site)/` — uses `PageShell` + `Nav` (header masthead, primary nav,
-  footer with subscribe link + About / Colophon / Terms / Contact / Links /
+- `app/(site)/` — uses `PageShell` + `Nav` (header masthead, anchor nav into
+  the home sections, footer with About / Colophon / Terms / Links / Subscribe /
   theme toggle).
 - `app/(bare)/` — minimal layout for `/links` (Linktree-style page).
 
 Top-level routes:
 
-| Path                    | Type                      | Notes                                                    |
-| ----------------------- | ------------------------- | -------------------------------------------------------- |
-| `/`                     | Server page               | Statement + latest narrative / code / reading            |
-| `/about`                | Server page               | Bio, resume PDF link (Blob), social icons                |
-| `/narratives`           | Server page               | Published (curated) + Newsletter (Substack)              |
-| `/code`                 | Server page               | Featured projects inline + flat list; `ItemList` JSON-LD |
-| `/reading`              | Server page               | Manual in-repo reading log                               |
-| `/resume`               | Server page               | Resume PDF (Blob) embedded, with a download link         |
-| `/slushpile`            | Rewrite                   | Proxied to `${SLUSHPILE_URL}/slushpile` when set         |
-| `/colophon`             | Server page               | Typography, design, stack, tools, source                 |
-| `/contact`              | Server page               | Contact form (server action)                             |
-| `/terms`                | Server page               | DMCA + AI/ML training prohibition                        |
-| `/links`                | Server page (bare layout) | Linktree-style social index                              |
-| `/feed`                 | Route handler             | RSS 2.0 feed (Substack posts)                            |
-| `/sitemap.xml`          | `app/sitemap.ts`          | Static routes + Fabulosa Books parts 1-7                 |
-| `/robots.txt`           | `app/robots.ts`           | Disallows `/api/`, `/monitoring`; advertises sitemap     |
-| `/manifest.webmanifest` | `app/manifest.ts`         | PWA manifest, `#f2ede4` theme color                      |
-| `/opengraph-image`      | `app/opengraph-image.tsx` | Default OG image                                         |
+| Path                    | Type                      | Notes                                                        |
+| ----------------------- | ------------------------- | ------------------------------------------------------------ |
+| `/`                     | Server page               | One page: statement, Work, Writing, Reading, Résumé, Contact |
+| `/about`                | Server page               | Bio (from `content/site.json`) and social links              |
+| `/slushpile`            | Rewrite                   | Proxied to `${SLUSHPILE_URL}/slushpile` when set             |
+| `/colophon`             | Server page               | Typography, design, stack, tools, source                     |
+| `/contact`              | Server page               | Contact form (server action)                                 |
+| `/terms`                | Server page               | DMCA + AI/ML training prohibition                            |
+| `/links`                | Server page (bare layout) | Linktree-style social index                                  |
+| `/feed`                 | Route handler             | RSS 2.0 feed (Substack posts)                                |
+| `/sitemap.xml`          | `app/sitemap.ts`          | Static routes + Fabulosa Books parts 1-7                     |
+| `/robots.txt`           | `app/robots.ts`           | Disallows `/api/`, `/monitoring`; advertises sitemap         |
+| `/manifest.webmanifest` | `app/manifest.ts`         | PWA manifest, `#f2ede4` theme color                          |
+| `/opengraph-image`      | `app/opengraph-image.tsx` | Default OG image                                             |
 
-Configured redirects (`next.config.ts`):
+Configured redirects (`next.config.ts`; all temporary while the one-page layout settles):
 
-- `/narratives-code` → `/code` (permanent)
-- `/narratives-code/:slug` → `/code` (permanent; was `/code/:slug`)
-- `/code/:slug` → `/code` (permanent; sub-pages removed)
-- `/residencies` → `/slushpile` (302; 404s until `SLUSHPILE_URL` is set)
+- `/code`, `/code/:slug`, `/narratives-code`, `/narratives-code/:slug` → `/#work`
+- `/narratives` → `/#writing`; `/reading` → `/#reading`; `/resume` → `/#resume`; `/contact` → `/#contact`
+- `/residencies` → `/slushpile` (404s until `SLUSHPILE_URL` is set)
 
 Configured rewrites (`next.config.ts`, only when `SLUSHPILE_URL` is set):
 
@@ -77,13 +72,12 @@ and surfaced in the sitemap (`part1.html` … `part7.html`).
 
 ### 3.1 Navigation
 
-`app/(site)/Nav.tsx` renders the masthead and primary nav with conditional
-slot composition:
+`app/(site)/Nav.tsx` renders the masthead and an anchor nav into the home
+sections: `Work · Writing · [Reading] · Résumé · Contact`, plus `Slushpile`
+when `SLUSHPILE_URL` is set. `Reading` appears only when `lib/reading/books.ts`
+has entries (the layout passes `readingEnabled`).
 
-- When `SLUSHPILE_URL` is unset: `Narratives · Code · Reading · Resume` (4 slots)
-- When set: `Narratives · Code · Slushpile · Reading · Resume` (5 slots)
-
-The masthead is the H1 on the home page and a link to `/` on every other page.
+The masthead is the H1 on the home page and a home link on every other page.
 
 `lib/site/env.ts` is the **single source of truth** for `SLUSHPILE_URL` —
 direct `process.env.SLUSHPILE_URL` reads outside this module are
@@ -91,46 +85,40 @@ disallowed (see §22 Intentional Decisions).
 
 ## 4. Home Page
 
-`app/(site)/page.tsx`:
+`app/(site)/page.tsx` is the site. Sections, numbered in order (an omitted
+section leaves no gap in the numbering):
 
-1. Statement section, from `content/site.json` → `statement` (§23).
-2. **Latest narrative** — most recent Substack post via `getSubstackPosts`.
-3. **Latest code** — `latestProject` from [`lib/code/projects.ts`](lib/code/projects.ts) (most recent `addedAt`).
-4. **Latest reading** — `latestBook` from [`lib/reading/books.ts`](lib/reading/books.ts) (currently-reading pinned, else most recent finished).
+1. **Statement** — `content/site.json` → `statement`, one line per entry.
+2. **Work** (`#work`) — `featuredProjects` then `listedProjects` from
+   [`lib/code/projects.ts`](lib/code/projects.ts), hand-maintained. Emits the
+   projects `ItemList` JSON-LD.
+3. **Writing** (`#writing`) — Fiction (`site.published`), Editing
+   (`site.editing`), and the five latest Substack posts with a subscribe link.
+4. **Reading** (`#reading`) — up to five entries from
+   [`lib/reading/books.ts`](lib/reading/books.ts) (currently reading first);
+   omitted when the log is empty.
+5. **Résumé** (`#resume`) — the PDF (`RESUME_PATH`), LinkedIn, GitHub
+   (`site.links`).
+6. **Contact** (`#contact`) — the contact form (§9).
 
-Each row is omitted (the whole `<section>` is not rendered) when its source
-yields no entry.
+Section and row primitives live in `app/(site)/_home/ui.tsx`.
 
 ## 5. Code Portfolio
 
-`app/(site)/code/page.tsx` consumes [`lib/code/projects.ts`](lib/code/projects.ts), which
-exports a typed `Project[]` with `featured: boolean` and `addedAt: YYYY-MM-DD`.
-The page renders:
+The Work section (§4) renders `lib/code/projects.ts`: a typed `Project[]`
+with `featured: boolean` and `addedAt: YYYY-MM-DD`. No per-project sub-pages,
+no category groupings.
 
-- A **Featured** section with `featuredProjects` inline (1–3 projects, longer writeups)
-- An **Index** section with `listedProjects` as a flat list
+## 6. Writing
 
-It emits a JSON-LD `ItemList` of all projects.
-
-There are no per-project sub-pages and no category groupings.
-
-## 6. Narratives
-
-`app/(site)/narratives/page.tsx` renders two sections:
-
-- **Published** — entries from `content/site.json` → `published` (§23)
-- **Newsletter** — all Substack posts from `highschoolsmokers`
+Fiction and editing entries come from `content/site.json` (§23); the
+newsletter comes from Substack (§11).
 
 ## 7. Reading
 
-`app/(site)/reading/page.tsx` consumes [`lib/reading/books.ts`](lib/reading/books.ts), which
-exports a typed `Book[]` with `finished: "YYYY-MM-DD" | "reading"`. The page
-renders:
-
-- **Currently reading** — books with `finished === "reading"`, pinned in array order
-- **Finished** — sorted reverse-chronologically by `finished`
-
-An empty-state copy ("Empty for the moment.") renders when both lists are empty.
+[`lib/reading/books.ts`](lib/reading/books.ts) exports a typed `Book[]` with
+`finished: "YYYY-MM-DD" | "reading"` and `orderedBooks` (currently reading
+first, then finished, newest first).
 
 ## 8. Slushpile (external)
 
@@ -146,8 +134,9 @@ through the rewrite.
 
 ## 9. Contact Form
 
-`app/(site)/contact/ContactForm.tsx` + server action
-`app/(site)/contact/actions.ts:sendMessage` deliver messages over SMTP.
+`app/(site)/_home/ContactForm.tsx` + server action
+`app/(site)/_home/actions.ts:sendMessage` deliver messages over SMTP. The form
+renders at the end of the home page.
 
 Anti-spam:
 
@@ -185,7 +174,7 @@ advertises the feed via `alternates.types["application/rss+xml"] = "/feed"`.
 - Non-OK responses throw so Next's data cache retries on next request.
 - Outer try/catch returns `[]` to the page so the section just disappears.
 
-Posts surface on `/`, `/narratives`, and `/feed`. The footer subscribe link
+Posts surface on `/` (Writing) and `/feed`. The footer subscribe link
 on every page and the `/links` Linktree entry both use `SUBSTACK_BASE_URL`.
 
 ## 12. Theming
@@ -208,11 +197,12 @@ Root metadata (`app/layout.tsx`):
 
 - `metadataBase: https://www.ws-gong.com`
 - Title template `"%s — W.S. Gong"`, default `"W.S. Gong"`
-- Person JSON-LD with `worksFor`, `sameAs` (GitHub, LinkedIn, Substack,
-  Instagram), `knowsAbout` keywords.
+- Description built from `site.statement`; Person JSON-LD with `jobTitle`,
+  `sameAs` (GitHub and LinkedIn from `site.links`, Substack, Instagram),
+  `knowsAbout` keywords.
 - OpenGraph site name + URL.
 
-Per-page metadata is set on every route. `/code` adds an `ItemList` JSON-LD.
+Per-page metadata is set on every route. `/` adds the projects `ItemList` JSON-LD.
 
 `app/sitemap.ts` computes `lastModified` from a module-level `buildTime`
 constant, not `new Date()` per request, so the same crawl returns the same
@@ -287,17 +277,17 @@ its `ignoreCommand`.
 
 ## 19. Scripts
 
-| Script             | Command                                                                                     |
-| ------------------ | ------------------------------------------------------------------------------------------- |
-| `pnpm dev`         | `next dev`                                                                                  |
-| `pnpm build`       | `next build`                                                                                |
-| `pnpm start`       | `next start`                                                                                |
-| `pnpm lint`        | `eslint`                                                                                    |
-| `pnpm typecheck`   | `tsc --noEmit`                                                                              |
-| `pnpm test:unit`   | Node test runner over `lib/code/*.test.ts` + `lib/reading/*.test.ts`                        |
-| `pnpm test:e2e`    | Playwright                                                                                  |
-| `pnpm prepare`     | `husky`                                                                                     |
-| `pnpm sync:resume` | `node scripts/sync-resume.mjs`: pull site content and the resume PDF from resumes-cvs (§23) |
+| Script             | Command                                                                                    |
+| ------------------ | ------------------------------------------------------------------------------------------ |
+| `pnpm dev`         | `next dev`                                                                                 |
+| `pnpm build`       | `next build`                                                                               |
+| `pnpm start`       | `next start`                                                                               |
+| `pnpm lint`        | `eslint`                                                                                   |
+| `pnpm typecheck`   | `tsc --noEmit`                                                                             |
+| `pnpm test:unit`   | Node test runner over `lib/code/*.test.ts` + `lib/reading/*.test.ts`                       |
+| `pnpm test:e2e`    | Playwright                                                                                 |
+| `pnpm prepare`     | `husky`                                                                                    |
+| `pnpm sync:resume` | `node scripts/sync-resume.ts`: pull site content and the resume PDF from resumes-cvs (§23) |
 
 `scripts/make-favicon.mjs` is a one-shot generator used to produce
 `public/apple-touch-icon.png` from the W.S. Gong mark.
@@ -307,16 +297,13 @@ its `ignoreCommand`.
 ```
 app/
   (site)/                site-shell route group (PageShell + Nav + footer)
-    page.tsx             home (statement + 3 latest rows)
+    page.tsx             the one-page home (§4)
+    _home/               section/row primitives, contact form + server action
     Nav.tsx
     layout.tsx
     error.tsx
     about/
-    code/                portfolio page (featured + index)
     colophon/
-    contact/             real form + server action
-    narratives/          Published + Newsletter sections
-    reading/             manual reading log
     terms/
   (bare)/
     links/               linktree-style page
@@ -332,6 +319,9 @@ lib/
     books.test.ts
   site/
     env.ts               SLUSHPILE_URL single source of truth
+    content-schema.ts    zod schema for content/site.json
+    content.ts           parsed site copy (build-time)
+    resume.ts            résumé PDF path and Blob URL
   substack.ts            Substack posts fetcher + SUBSTACK_SUBDOMAIN
   upload.ts              attachment limits + extension denylist
 public/
@@ -340,7 +330,7 @@ public/
   apple-touch-icon.png, *.svg
 e2e/                     Playwright tests + helpers
 content/                 site.json: published bio, statement, entries (§23)
-scripts/                 make-favicon.mjs, sync-resume.mjs
+scripts/                 make-favicon.mjs, sync-resume.ts
 docs/                    deployment.md
 redesign.md              conceptual redesign spec
 sentry.{server,edge}.config.ts, instrumentation.ts, instrumentation-client.ts
@@ -370,8 +360,8 @@ the rationale.
 
 - **Slushpile lives in a separate repo and is mounted via Vercel rewrite.** Looks accidental: a major site surface with no code in this repo. Deliberate: slushpile has its own stack (Drizzle, six-agent architecture, shadcn UI) that does not belong inside the Swiss portfolio. Mount via `next.config.ts` rewrite to `${SLUSHPILE_URL}/slushpile/(.*)`; nav slot gated by env presence.
 - **Resume PDF served publicly from Vercel Blob, not git.** The decorative HMAC gate is removed; the resume is intended to be findable. It lives in a public Blob store so no résumé document enters this public repo. Do not reintroduce the gate without product justification.
-- **`/resume` restored as a page, not a gate.** The PDF is embedded from its public path and linked in the nav; only that path may be framed (same origin), every other route keeps `frame-ancestors 'none'`.
-- **`/code` flattened — no sub-pages, no categories.** 10 detail pages and 3 category groupings disappeared deliberately. The dual-citizen home plus featured-plus-list `/code` carries the engineering identity without resume-bloat.
+- **One page, not five.** `/narratives`, `/code`, `/reading`, `/resume`, and `/contact` folded into home sections (2026-11); `next.config.ts` redirects each to its anchor. Do not reintroduce section pages; add a home section instead. No page embeds the PDF, so every route keeps `frame-ancestors 'none'`.
+- **Work is flat — no sub-pages, no categories.** Featured plus index carries the engineering identity without résumé bloat.
 - **Anthropic + Neon dependencies dropped.** The previous SPEC documented an Anthropic + Neon pipeline; that pipeline moved to the slushpile repo.
 - **`SLUSHPILE_URL` has one reader.** `lib/site/env.ts` is the single source of truth; direct `process.env.SLUSHPILE_URL` reads anywhere else are an anti-pattern (rewrite + nav slot must agree on the flag state).
 - **Client Sentry SDK disabled.** [instrumentation-client.ts](instrumentation-client.ts) is empty by design — the core SDK added ~65 KB of unused JS and ~2 s render delay, dropping portfolio pages below the Lighthouse 95 performance threshold. Server + edge instrumentation still runs via `instrumentation.ts`.
@@ -383,8 +373,8 @@ the rationale.
 The bio, home statement, published entries, and resume PDF come from the
 resumes-cvs master résumé, not from hand-written page text.
 
-- **Source.** resumes-cvs renders a `web` target: `out/web/site.json` (public fields only: statement, bio, published entries with links) and `out/web/resume.pdf`. That target lists the fields allowed on the site; source notes, answers, and contact details beyond the site's own never appear.
-- **`pnpm sync:resume`.** Reads `$RESUMES_CVS_DIR/out/web/`, validates `site.json` against `lib/site/content.ts`, writes `content/site.json`, uploads `resume.pdf` to the public Blob store at a fixed pathname, and prints the diff and the PDF URL. It never commits or deploys.
-- **Readers.** The home statement, `/about` bio and PDF link, and `/narratives` Published section read `content/site.json` through `lib/site/content.ts`. `/code` stays hand-maintained in `lib/code/projects.ts`; the sync reports projects listed there that the master lacks.
+- **Source.** In resumes-cvs, `.venv/bin/python -m resumekit web` writes `private/out/web/site.json` and `private/out/web/resume.pdf` (the devdocs base). `site.json` holds only statement, bio, fiction publications, the editing role, and the LinkedIn and GitHub links; the build refuses an email address or any guard Layer 3 error. The statement and bio live in the master's `## Website` section.
+- **`pnpm sync:resume`.** Reads `$RESUMES_CVS_DIR/private/out/web/`, validates `site.json` against `lib/site/content-schema.ts`, writes `content/site.json`, uploads `resume.pdf` to the public Blob store at the fixed pathname (`BLOB_READ_WRITE_TOKEN` from `.env.local`), and prints the diff and the PDF URL. `--no-pdf` syncs the copy only. It never commits or deploys.
+- **Readers.** The home statement, Writing, and Résumé links, the `/about` bio, the `/links` page, and the root metadata read `content/site.json` through `lib/site/content.ts`. Work stays hand-maintained in `lib/code/projects.ts`.
 - **Publishing.** The user reviews the diff, commits `content/site.json`, and deploys with the Vercel CLI (the project is not Git-connected).
 - **Privacy.** `content/site.json` holds only what the site shows. No résumé document enters git.

@@ -66,16 +66,29 @@ test("resume HMAC gate is removed", () => {
   );
 });
 
-test("no per-project sub-pages under /code", () => {
-  const codeDir = r("app/(site)/code");
-  const entries = readdirSync(codeDir);
-  for (const entry of entries) {
-    const path = join(codeDir, entry);
-    if (statSync(path).isDirectory()) {
-      assert.fail(
-        `Unexpected subdirectory app/(site)/code/${entry}/ — /code is flat post-redesign`,
-      );
-    }
+test("the home page is the site: section pages stay folded into it", () => {
+  for (const route of ["code", "narratives", "reading", "resume", "contact"]) {
+    assert.equal(
+      existsSync(r(`app/(site)/${route}`)),
+      false,
+      `app/(site)/${route}/ must not exist — it is a section of the home page; next.config.ts redirects /${route}`,
+    );
+  }
+});
+
+test("site copy comes from content/site.json, not page text", () => {
+  const site = readFileSync(r("content/site.json"), "utf8");
+  assert.doesNotMatch(
+    site,
+    /[\w.+-]+@[\w-]+\.[\w.]+/,
+    "content/site.json must not carry an email address",
+  );
+  for (const page of ["app/(site)/page.tsx", "app/(site)/about/page.tsx"]) {
+    assert.match(
+      readFileSync(r(page), "utf8"),
+      /@\/lib\/site\/content/,
+      `${page} must read its copy from lib/site/content.ts (SPEC §23)`,
+    );
   }
 });
 

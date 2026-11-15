@@ -32,8 +32,8 @@ export const projects: Project[] = [
     addedAt: "2026-03-01",
   },
   {
-    href: "https://github.com/highschoolsmokers/lit-verity-mcp",
-    title: "Lit Verity",
+    href: "https://github.com/highschoolsmokers/second-reader",
+    title: "Second Reader",
     description:
       "MCP server that grounds academic literary criticism in verifiable sources. Cross-checks claims against an indexed corpus to prevent hallucinated citations, fabricated quotations, and distorted arguments.",
     stack: ["TypeScript", "MCP SDK", "Neon", "pgvector"],

@@ -25,13 +25,13 @@ test.describe("OG metadata", () => {
 test.describe("JSON-LD", () => {
   test("home page has Person structured data", async ({ page }) => {
     await page.goto("/");
-    const jsonLd = page.locator('script[type="application/ld+json"]');
-    await expect(jsonLd).toBeAttached();
-
-    const content = await jsonLd.textContent();
-    const data = JSON.parse(content!);
-    expect(data["@type"]).toBe("Person");
-    expect(data.name).toBe("W.S. Gong");
+    const blocks = await page
+      .locator('script[type="application/ld+json"]')
+      .allTextContents();
+    const person = blocks
+      .map((b) => JSON.parse(b))
+      .find((d) => d["@type"] === "Person");
+    expect(person?.name).toBe("W.S. Gong");
   });
 });
 

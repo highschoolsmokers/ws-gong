@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { FOLDED_ROUTES } from "./helpers/constants";
 
 // ---------------------------------------------------------------------------
 // Header & masthead
@@ -13,92 +14,48 @@ test.describe("Navigation", () => {
     ).toBeGreaterThanOrEqual(2);
   });
 
-  test("masthead is static text on index, link on sub-pages", async ({
+  test("masthead is the h1 on home, a home link elsewhere", async ({
     page,
   }) => {
     await page.goto("/");
     const h1 = page.locator("header h1");
     await expect(h1).toContainText("W.S.");
+    await expect(h1.getByRole("link")).not.toBeAttached();
 
-    // On index the masthead is NOT a link
-    const homeLink = h1.getByRole("link", { name: /W\.S\./i });
-    await expect(homeLink).not.toBeAttached();
-
-    // On sub-pages it links to /
     await page.goto("/about");
-    const aboutH1Link = page
-      .locator("header h1")
-      .getByRole("link", { name: /W\.S\./i });
-    await expect(aboutH1Link).toHaveAttribute("href", "/");
-  });
-
-  test("has Narratives link pointing to /narratives", async ({ page }) => {
-    await page.goto("/");
-    const link = page
-      .locator("header")
-      .getByRole("link", { name: "Narratives" });
-    await expect(link).toHaveAttribute("href", "/narratives");
-  });
-
-  test("has Code link pointing to /code", async ({ page }) => {
-    await page.goto("/");
-    const link = page.locator("header").getByRole("link", { name: "Code" });
-    await expect(link).toHaveAttribute("href", "/code");
-  });
-
-  test("has Reading link pointing to /reading", async ({ page }) => {
-    await page.goto("/");
-    const link = page.locator("header").getByRole("link", { name: "Reading" });
-    await expect(link).toHaveAttribute("href", "/reading");
-  });
-
-  test("nav slot order without SLUSHPILE_URL: Narratives, Code, Reading, Resume", async ({
-    page,
-  }) => {
-    await page.goto("/");
-    const navItems = page.locator("header nav ul li");
-    await expect(navItems).toHaveText([
-      "Narratives",
-      "Code",
-      "Reading",
-      "Resume",
-    ]);
-  });
-
-  test("Narratives nav entry marks current page on /narratives", async ({
-    page,
-  }) => {
-    await page.goto("/narratives");
-    // Active entry renders as <span aria-current="page">, not a link, so it
-    // can't be clicked again. Confirm both: the link is absent and the span
-    // is present with the correct aria attribute.
     await expect(
-      page.locator("header").getByRole("link", { name: "Narratives" }),
-    ).toHaveCount(0);
-    await expect(
-      page.locator('header [aria-current="page"]', { hasText: "Narratives" }),
-    ).toBeVisible();
+      page.locator("header").getByRole("link", { name: /W\.S\. Gong, home/i }),
+    ).toHaveAttribute("href", "/");
   });
 
-  test("Code nav entry marks current page on /code", async ({ page }) => {
-    await page.goto("/code");
-    await expect(
-      page.locator("header").getByRole("link", { name: "Code" }),
-    ).toHaveCount(0);
-    await expect(
-      page.locator('header [aria-current="page"]', { hasText: "Code" }),
-    ).toBeVisible();
+  test("nav links are anchors into home sections", async ({ page }) => {
+    await page.goto("/");
+    const nav = page.locator("header nav");
+    for (const [name, href] of [
+      ["Work", "/#work"],
+      ["Writing", "/#writing"],
+      ["Résumé", "/#resume"],
+      ["Contact", "/#contact"],
+    ]) {
+      await expect(nav.getByRole("link", { name })).toHaveAttribute(
+        "href",
+        href,
+      );
+    }
+  });
+
+  test("every nav anchor has a matching section on home", async ({ page }) => {
+    await page.goto("/");
+    const hrefs = await page
+      .locator("header nav a[href^='/#']")
+      .evaluateAll((as) => as.map((a) => a.getAttribute("href")!));
+    for (const href of hrefs) {
+      await expect(page.locator(href.slice(1))).toBeAttached();
+    }
   });
 
   test("nav appears on site pages", async ({ page }) => {
-    for (const route of [
-      "/",
-      "/about",
-      "/narratives",
-      "/code",
-      "/reading",
-      "/contact",
-    ]) {
+    for (const route of ["/", "/about", "/colophon", "/terms"]) {
       await page.goto(route);
       await expect(
         page.locator("header"),
@@ -106,6 +63,16 @@ test.describe("Navigation", () => {
       ).toBeVisible();
     }
   });
+});
+
+test.describe("Folded section pages", () => {
+  for (const [route, anchor] of FOLDED_ROUTES) {
+    test(`${route} redirects to /${anchor}`, async ({ page }) => {
+      await page.goto(route);
+      expect(new URL(page.url()).pathname).toBe("/");
+      expect(new URL(page.url()).hash).toBe(anchor);
+    });
+  }
 });
 
 // ---------------------------------------------------------------------------
