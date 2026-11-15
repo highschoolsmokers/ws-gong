@@ -69,7 +69,10 @@ test.describe("Contact form validation", () => {
 
     await expect(page.getByText(/please enter a valid email/i)).toBeVisible({
       timeout: VALIDATION_TIMEOUT_MS,
-    });
+    }); // A failed send must not wipe what the visitor typed.
+    await expect(page.getByLabel("Message")).toHaveValue(
+      "Test message content here.",
+    );
   });
 
   test("missing message is blocked by browser validation", async ({ page }) => {

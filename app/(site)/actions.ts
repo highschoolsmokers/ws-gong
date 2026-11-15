@@ -2,7 +2,6 @@
 
 import nodemailer from "nodemailer";
 import {
-  MAX_FILE_SIZE,
   MAX_FILES,
   MAX_TOTAL_BYTES,
   isBlockedAttachmentName,
@@ -13,10 +12,17 @@ export type FormState = {
   message: string;
 };
 
-// One generic failure for bot traps, config gaps and SMTP faults alike, so a
-// spammer can't tell which tripped.
-const FAIL: FormState = { status: "error", message: "Something went wrong." };
-const MIN_TIME_MS = 3000;
+// Visitors see one generic failure for bot traps, config gaps and SMTP faults
+// alike; the reason goes to the function log instead.
+const FAIL: FormState = {
+  status: "error",
+  message: "Something went wrong. Please try again.",
+};
+const fail = (reason: string, err?: unknown) => {
+  console.error(`Contact form rejected: ${reason}`, err ?? "");
+  return FAIL;
+};
+const MIN_ELAPSED_MS = 3000;
 const EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const transporter = nodemailer.createTransport({
@@ -31,10 +37,11 @@ export async function sendMessage(
   form: FormData,
 ): Promise<FormState> {
   const field = (k: string) => form.get(k)?.toString().trim() ?? "";
-  // Honeypot filled, or submitted faster than a person types: a bot.
-  const loadedAt = Number(field("_t"));
-  if (field("website") || !loadedAt || Date.now() - loadedAt < MIN_TIME_MS)
-    return FAIL;
+  // Bot traps: the hidden field is filled, or the form went out faster than a
+  // person types. Elapsed time is measured on the visitor's clock alone.
+  if (field("contact_hp")) return fail("honeypot filled");
+  if (!(Number(field("_elapsed")) >= MIN_ELAPSED_MS))
+    return fail("submitted too fast");
 
   const [name, email, subject, message] = [
     "name",
@@ -43,24 +50,22 @@ export async function sendMessage(
     "message",
   ].map(field);
   if (!name || !email || !message)
-    return { status: "error", message: "All fields are required." };
+    return {
+      status: "error",
+      message: "Name, email, and message are required.",
+    };
   if (!EMAIL.test(email))
     return { status: "error", message: "Please enter a valid email address." };
-  if (!process.env.CONTACT_EMAIL) return FAIL;
+  if (!process.env.CONTACT_EMAIL || !process.env.SMTP_HOST)
+    return fail("SMTP not configured");
 
-  // Skip oversized or blocked files but keep checking smaller ones after them.
   const attachments = [];
   let total = 0;
   for (const f of form.getAll("attachments")) {
-    if (
-      !(f instanceof File) ||
-      !f.size ||
-      f.size > MAX_FILE_SIZE ||
-      isBlockedAttachmentName(f.name)
-    )
+    if (!(f instanceof File) || !f.size || isBlockedAttachmentName(f.name))
       continue;
-    if (attachments.length >= MAX_FILES) break;
-    if (total + f.size > MAX_TOTAL_BYTES) continue;
+    if (attachments.length >= MAX_FILES || total + f.size > MAX_TOTAL_BYTES)
+      break;
     total += f.size;
     attachments.push({
       filename: f.name,
@@ -80,7 +85,6 @@ export async function sendMessage(
     });
     return { status: "success", message: "Message sent. Thank you." };
   } catch (err) {
-    console.error("Contact form send failed:", err);
-    return FAIL;
+    return fail("SMTP send failed", err);
   }
 }
