@@ -21,14 +21,14 @@
     "*.{js,jsx,ts,tsx}": "eslint --fix"
   },
   "dependencies": {
-    "@sentry/nextjs": "^10.46.0",
+    "@sentry/nextjs": "^10.78.0",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "next": "16.2.6",
-    "nodemailer": "^8.0.5",
+    "@vercel/speed-insights": "^2.1.0",
+    "next": "16.4.6",
+    "nodemailer": "^10.5.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "zod": "^4.3.6"
+    "zod": "^4.6.7"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -38,20 +38,20 @@
     ]
   },
   "devDependencies": {
-    "@playwright/test": "^1.58.2",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/nodemailer": "^7.0.11",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@playwright/test": "1.59.1",
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^20.19.43",
+    "@types/nodemailer": "^8.0.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vercel/blob": "^2.9.0",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.6",
-    "husky": "^9",
-    "imapflow": "^1.2.18",
-    "lint-staged": "^15",
-    "prettier": "^3.8.1",
-    "tailwindcss": "^4",
-    "typescript": "^5"
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.4.6",
+    "husky": "^9.1.7",
+    "imapflow": "^1.7.8",
+    "lint-staged": "^15.5.2",
+    "prettier": "^3.10.1",
+    "tailwindcss": "^4.3.5",
+    "typescript": "^5.9.3"
   }
 }
