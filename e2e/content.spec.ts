@@ -21,27 +21,34 @@ test.describe("Page content", () => {
     ).toBeGreaterThanOrEqual(2);
   });
 
-  test("about page links to /code and at least one project repo", async ({
-    page,
-  }) => {
+  test("about page links home and to the contact section", async ({ page }) => {
     await page.goto("/about");
     await expect(
-      page.getByRole("link", { name: /the code page/i }),
-    ).toHaveAttribute("href", "/code");
-    // Project mentions in the bio resolve to public GitHub repos.
+      page.getByRole("link", { name: /on the home page/i }),
+    ).toHaveAttribute("href", "/");
     await expect(
-      page.getByRole("link", { name: /document management/i }),
-    ).toHaveAttribute("href", /github\.com\/highschoolsmokers/);
+      page.getByRole("link", { name: /get in touch/i }),
+    ).toHaveAttribute("href", "/#contact");
   });
 
-  test("narratives page has content", async ({ page }) => {
-    await page.goto("/narratives");
-    await expect(page.getByRole("heading").first()).toBeVisible();
+  test("home has Work, Writing, Résumé and Contact sections", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    for (const id of ["work", "writing", "resume", "contact"]) {
+      await expect(page.locator(`section#${id} h2`)).toBeVisible();
+    }
   });
 
-  test("code page has content", async ({ page }) => {
-    await page.goto("/code");
-    await expect(page.getByRole("heading").first()).toBeVisible();
+  test("résumé section links the PDF and LinkedIn", async ({ page }) => {
+    await page.goto("/");
+    const resume = page.locator("section#resume");
+    await expect(
+      resume.getByRole("link", { name: /résumé \(pdf\)/i }),
+    ).toHaveAttribute("href", "/wsgong_tech_writer_resume.pdf");
+    await expect(
+      resume.getByRole("link", { name: /linkedin/i }),
+    ).toHaveAttribute("href", /linkedin\.com\/in\/ws-gong/);
   });
 
   test("terms page has legal sections", async ({ page }) => {
@@ -71,7 +78,9 @@ test.describe("Page content", () => {
 test.describe("Home page", () => {
   test("has intro text", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByText(/fiction editor/i)).toBeVisible();
+    await expect(page.getByRole("region", { name: "Statement" })).toContainText(
+      /fiction editor/i,
+    );
   });
 });
 
@@ -123,9 +132,7 @@ test.describe("Newsletter in footer", () => {
   test("footer has newsletter subscribe link", async ({ page }) => {
     await page.goto("/about");
     await expect(
-      page
-        .locator("footer")
-        .getByRole("link", { name: /subscribe to the newsletter/i }),
+      page.locator("footer").getByRole("link", { name: /subscribe/i }),
     ).toBeAttached();
   });
 });

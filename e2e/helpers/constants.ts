@@ -31,13 +31,18 @@ export const MAX_TAB_STEPS_FORM = 20;
 export const SITE_PAGES = [
   "/",
   "/about",
-  "/narratives",
-  "/code",
-  "/reading",
-  "/contact",
   "/terms",
   "/colophon",
   "/links",
+] as const;
+
+/** Old section pages and the home anchor each now redirects to. */
+export const FOLDED_ROUTES = [
+  ["/code", "#work"],
+  ["/narratives", "#writing"],
+  ["/reading", "#reading"],
+  ["/resume", "#resume"],
+  ["/contact", "#contact"],
 ] as const;
 
 export const STATIC_ROUTES = ["/sitemap.xml", "/robots.txt"] as const;

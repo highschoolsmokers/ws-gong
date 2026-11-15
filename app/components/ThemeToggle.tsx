@@ -1,69 +1,43 @@
 "use client";
 
-import { useEffect, useSyncExternalStore, useCallback } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
-type Theme = "system" | "light" | "dark";
+// system → light → dark. "system" clears the key; the inline script in
+// app/layout.tsx applies a stored choice before first paint.
+const ORDER = ["system", "light", "dark"] as const;
+const LABEL = { system: "Auto", light: "Light", dark: "Dark" };
+type Theme = (typeof ORDER)[number];
 
-function getSnapshot(): Theme {
-  if (typeof window === "undefined") return "system";
-  const stored = localStorage.getItem("theme");
-  if (stored === "light" || stored === "dark") return stored;
-  return "system";
-}
-
-function getServerSnapshot(): Theme {
-  return "system";
-}
-
-function subscribe(callback: () => void) {
-  window.addEventListener("storage", callback);
-  return () => window.removeEventListener("storage", callback);
-}
-
-function applyTheme(t: Theme) {
-  if (t === "system") {
-    document.documentElement.removeAttribute("data-theme");
-  } else {
-    document.documentElement.setAttribute("data-theme", t);
-  }
-}
+const read = (): Theme => {
+  const t = localStorage.getItem("theme");
+  return t === "light" || t === "dark" ? t : "system";
+};
+const subscribe = (cb: () => void) => {
+  addEventListener("storage", cb);
+  return () => removeEventListener("storage", cb);
+};
 
 export default function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-
-  // Apply data-theme attribute on mount and when theme changes. Doing this in
-  // an effect (not during render) keeps React 19's concurrent renderer from
-  // double-invoking the DOM write under StrictMode.
+  const theme = useSyncExternalStore(subscribe, read, (): Theme => "system");
   useEffect(() => {
-    applyTheme(theme);
+    if (theme === "system") delete document.documentElement.dataset.theme;
+    else document.documentElement.dataset.theme = theme;
   }, [theme]);
 
-  const cycle = useCallback(() => {
-    const order: Theme[] = ["system", "light", "dark"];
-    const next = order[(order.indexOf(theme) + 1) % order.length];
-    if (next === "system") {
-      localStorage.removeItem("theme");
-    } else {
-      localStorage.setItem("theme", next);
-    }
-    applyTheme(next);
-    // Trigger re-render via storage event for other tabs
-    window.dispatchEvent(new Event("storage"));
-  }, [theme]);
-
-  const labels: Record<Theme, string> = {
-    system: "Auto",
-    light: "Light",
-    dark: "Dark",
+  const cycle = () => {
+    const next = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length];
+    if (next === "system") localStorage.removeItem("theme");
+    else localStorage.setItem("theme", next);
+    dispatchEvent(new Event("storage")); // storage events don't fire in the writing tab
   };
 
   return (
     <button
       onClick={cycle}
-      className="text-[10px] uppercase tracking-[0.12em] text-neutral-500"
-      aria-label={`Color theme: ${labels[theme]}. Click to change.`}
+      aria-label={`Color theme: ${LABEL[theme]}. Click to change.`}
+      className="text-[10px] uppercase tracking-[0.12em] text-muted"
     >
-      {labels[theme]}
+      {LABEL[theme]}
     </button>
   );
 }

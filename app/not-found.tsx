@@ -1,15 +1,11 @@
 import Link from "next/link";
+import { Section } from "@/app/components/ui";
 
 export default function NotFound() {
   return (
-    <section className="swiss-grid swiss-rule pt-6 pb-12">
-      <h2 className="swiss-label">404</h2>
-      <div className="space-y-4 text-sm">
-        <p>This page does not exist.</p>
-        <Link href="/" className="inline-block">
-          ← Home
-        </Link>
-      </div>
-    </section>
+    <Section title="404">
+      <p>This page does not exist.</p>
+      <Link href="/">← Home</Link>
+    </Section>
   );
 }

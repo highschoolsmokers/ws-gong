@@ -2,61 +2,50 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { orderedBooks } from "@/lib/reading/books";
 
-type NavLink = { href: string; label: string };
+// The home page is the site: nav entries are anchors into its sections.
+const links = [
+  ["/#work", "Work"],
+  ["/#writing", "Writing"],
+  ...(orderedBooks.length ? [["/#reading", "Reading"]] : []),
+  ["/#resume", "Résumé"],
+  ["/#contact", "Contact"],
+];
 
-export default function Nav({
-  slushpileEnabled,
-}: {
-  slushpileEnabled: boolean;
-}) {
-  const pathname = usePathname();
-  const isHome = pathname === "/";
-
-  const links: NavLink[] = [
-    { href: "/narratives", label: "Narratives" },
-    { href: "/code", label: "Code" },
-    ...(slushpileEnabled
-      ? [{ href: "/slushpile", label: "Slushpile" } satisfies NavLink]
-      : []),
-    { href: "/reading", label: "Reading" },
-    { href: "/resume", label: "Resume" },
-  ];
-
+export default function Nav({ slushpile }: { slushpile: boolean }) {
   const masthead = (
-    <span className="swiss-display block text-[3.5rem] md:text-[5rem] lg:text-[6rem]">
+    <span className="masthead swiss-display block">
       W.S.
       <br />
       Gong
     </span>
   );
-
   return (
-    <div className="swiss-grid">
-      <h1 className="col-span-12 md:col-span-8">
-        {isHome ? masthead : <Link href="/">{masthead}</Link>}
-      </h1>
+    <div className="swiss-grid items-end">
+      {usePathname() === "/" ? (
+        <h1 className="col-span-12 md:col-span-7">{masthead}</h1>
+      ) : (
+        <Link
+          href="/"
+          aria-label="W.S. Gong, home"
+          className="col-span-12 hover:!no-underline md:col-span-7"
+        >
+          {masthead}
+        </Link>
+      )}
       <nav
         aria-label="Main navigation"
-        className="col-span-12 md:col-span-4 flex md:justify-end"
+        className="col-span-12 flex md:col-span-5 md:justify-end"
       >
-        <ul className="flex md:flex-col flex-wrap gap-x-6 gap-y-1 text-base md:text-lg font-medium">
-          {links.map((link) => {
-            const isActive =
-              pathname === link.href ||
-              (link.href !== "/" && pathname.startsWith(link.href));
-            return (
-              <li key={link.href}>
-                {isActive ? (
-                  <span aria-current="page" className="pointer-events-none">
-                    {link.label}
-                  </span>
-                ) : (
-                  <Link href={link.href}>{link.label}</Link>
-                )}
+        <ul className="site-nav">
+          {[...links, ...(slushpile ? [["/slushpile", "Slushpile"]] : [])].map(
+            ([href, label]) => (
+              <li key={href}>
+                <Link href={href}>{label}</Link>
               </li>
-            );
-          })}
+            ),
+          )}
         </ul>
       </nav>
     </div>

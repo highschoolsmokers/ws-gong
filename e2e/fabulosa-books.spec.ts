@@ -20,19 +20,12 @@ const tutorialPages = [
 ];
 
 // ---------------------------------------------------------------------------
-// Code page – AI Engineering section links the tutorial
+// Home Work section links the tutorial
 // ---------------------------------------------------------------------------
-test.describe("AI Engineering section", () => {
-  test("has AI Engineering label on /code", async ({ page }) => {
-    await page.goto("/code");
-    // The Swiss redesign uses <span class="swiss-label"> for category names
-    // instead of <h2>, so we assert by text rather than by role=heading.
-    await expect(page.getByText(/AI Engineering/i).first()).toBeVisible();
-  });
-
+test.describe("Work section", () => {
   test("has Fabulosa Books tutorial link", async ({ page }) => {
-    await page.goto("/code");
-    const link = page.locator('a[href^="/fabulosa-books"]');
+    await page.goto("/");
+    const link = page.locator('section#work a[href^="/fabulosa-books"]');
     await expect(link).toBeAttached();
     await expect(link).toContainText(/Fabulosa Books/i);
   });
@@ -54,12 +47,12 @@ test.describe("Fabulosa Books index", () => {
     expect(bg).not.toBe("rgba(0, 0, 0, 0)");
   });
 
-  test("has site nav link back to /code", async ({ page }) => {
+  test("has site nav link back to the Work section", async ({ page }) => {
     await page.goto("/fabulosa-books/");
     const siteNav = page.locator("nav.site-nav");
     await expect(siteNav).toBeVisible();
     const link = siteNav.getByRole("link", { name: /W\.S\. Gong/i });
-    await expect(link).toHaveAttribute("href", "/code");
+    await expect(link).toHaveAttribute("href", "/#work");
   });
 
   test("has links to all 7 parts", async ({ page }) => {
@@ -88,7 +81,7 @@ test.describe("Fabulosa Books part pages", () => {
       await expect(siteNav).toBeVisible();
       await expect(
         siteNav.getByRole("link", { name: /W\.S\. Gong/i }),
-      ).toHaveAttribute("href", "/code");
+      ).toHaveAttribute("href", "/#work");
 
       // Page nav exists
       await expect(page.locator("nav.page-nav")).toBeVisible();
@@ -123,13 +116,13 @@ test.describe("Fabulosa Books part pages", () => {
 // Cross-navigation
 // ---------------------------------------------------------------------------
 test.describe("Fabulosa Books cross-navigation", () => {
-  test("can navigate from /code to tutorial and back", async ({ page }) => {
-    await page.goto("/code");
+  test("can navigate from home to tutorial and back", async ({ page }) => {
+    await page.goto("/");
 
     await page.locator('a[href^="/fabulosa-books"]').click();
     await expect(page).toHaveURL(/\/fabulosa-books/);
 
     await page.locator("nav.site-nav").getByRole("link").click();
-    await expect(page).toHaveURL(/\/code\/?$/);
+    await expect(page).toHaveURL(/\/#work$/);
   });
 });

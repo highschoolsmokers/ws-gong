@@ -1,111 +1,19 @@
 import type { MetadataRoute } from "next";
 
-// Compute once per build, not per request. Per-request `new Date()` makes
-// every URL look freshly modified to crawlers, which trains them to ignore
-// the lastmod signal entirely.
-const buildTime = new Date();
+// One timestamp per build: per-request dates teach crawlers to ignore lastmod.
+const lastModified = new Date();
+const paths = [
+  "",
+  "/about",
+  "/colophon",
+  "/links",
+  "/terms",
+  "/fabulosa-books/",
+].concat([1, 2, 3, 4, 5, 6, 7].map((n) => `/fabulosa-books/part${n}.html`));
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = "https://www.ws-gong.com";
-  const now = buildTime;
-  return [
-    { url: base, lastModified: now, changeFrequency: "monthly", priority: 1 },
-    {
-      url: `${base}/narratives`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/code`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${base}/reading`,
-      lastModified: now,
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/about`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/contact`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.5,
-    },
-    {
-      url: `${base}/colophon`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.4,
-    },
-    {
-      url: `${base}/links`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.4,
-    },
-    {
-      url: `${base}/terms`,
-      lastModified: now,
-      changeFrequency: "yearly",
-      priority: 0.3,
-    },
-    // Fabulosa Books tutorial
-    {
-      url: `${base}/fabulosa-books/`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${base}/fabulosa-books/part1.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${base}/fabulosa-books/part2.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${base}/fabulosa-books/part3.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${base}/fabulosa-books/part4.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${base}/fabulosa-books/part5.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${base}/fabulosa-books/part6.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-    {
-      url: `${base}/fabulosa-books/part7.html`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.6,
-    },
-  ];
+  return paths.map((p) => ({
+    url: `https://www.ws-gong.com${p}`,
+    lastModified,
+  }));
 }

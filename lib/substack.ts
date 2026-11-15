@@ -1,54 +1,32 @@
 import { z } from "zod";
 
-// Canonical Substack subdomain. All Substack call sites (post fetcher,
-// subscribe link, RSS feed) import this rather than re-typing the string.
-export const SUBSTACK_SUBDOMAIN = "highschoolsmokers";
-export const SUBSTACK_BASE_URL = `https://${SUBSTACK_SUBDOMAIN}.substack.com`;
+export const SUBSTACK_BASE_URL = "https://highschoolsmokers.substack.com";
 
-const substackPostSchema = z.object({
+const postSchema = z.object({
   id: z.number(),
   title: z.string(),
   subtitle: z.string().nullable(),
-  slug: z.string(),
   post_date: z.string(),
   canonical_url: z.string(),
-  audience: z.string(),
 });
 
-export type SubstackPost = z.infer<typeof substackPostSchema>;
+export type SubstackPost = z.infer<typeof postSchema>;
 
-const ALLOWED_SUBDOMAIN = /^[a-z0-9][a-z0-9-]{0,62}$/;
-
-export async function getSubstackPosts(
-  subdomain: string,
-  limit = 10,
-): Promise<SubstackPost[]> {
-  if (!ALLOWED_SUBDOMAIN.test(subdomain)) {
-    console.error(`Substack: rejected subdomain ${subdomain}`);
-    return [];
-  }
-
+// Newsletter posts, newest first; [] on any failure so the section just hides.
+// A non-OK response throws inside the try so Next's data cache retries next
+// request instead of caching an empty list for the hour.
+export async function getSubstackPosts(limit = 10): Promise<SubstackPost[]> {
   try {
     const res = await fetch(
-      `https://${subdomain}.substack.com/api/v1/posts?limit=${limit}`,
-      { next: { revalidate: 3600 }, signal: AbortSignal.timeout(5000) },
+      `${SUBSTACK_BASE_URL}/api/v1/posts?limit=${limit}`,
+      {
+        next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(5000),
+      },
     );
-    // Throw on non-OK so the Next data cache treats this as a failed fetch
-    // and retries on the next request, instead of caching [] for a full
-    // hour and silently hiding the newsletter section across the site.
-    if (!res.ok) {
-      throw new Error(`Substack API ${res.status} ${res.statusText}`);
-    }
-    const json = await res.json();
-    if (!Array.isArray(json)) {
-      throw new Error("Substack API: expected array response");
-    }
-    const out: SubstackPost[] = [];
-    for (const item of json) {
-      const parsed = substackPostSchema.safeParse(item);
-      if (parsed.success) out.push(parsed.data);
-    }
-    return out;
+    if (!res.ok) throw new Error(`Substack API ${res.status}`);
+    const posts = z.array(z.unknown()).parse(await res.json());
+    return posts.flatMap((p) => postSchema.safeParse(p).data ?? []);
   } catch (err) {
     console.error("Substack fetch failed:", err);
     return [];

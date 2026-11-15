@@ -90,6 +90,8 @@ test.describe("Keyboard navigation", () => {
     page,
   }) => {
     await page.goto("/contact");
+    // The form sits at the end of the one-page home; start from its first field.
+    await page.getByLabel("Name").focus();
 
     let foundSendBtn = false;
     for (let i = 0; i < MAX_TAB_STEPS_FORM; i++) {
