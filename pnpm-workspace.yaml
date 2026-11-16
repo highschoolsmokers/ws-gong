@@ -5,3 +5,8 @@ allowBuilds:
   "@sentry/cli": true
   sharp: true
   unrs-resolver: true
+
+# GHSA-mrhx-c7xc-m3w5: zod <4.6.6 arrives via @vercel/blob > @vercel/oidc >
+# @vercel/cli-config. Drop once that chain ships a patched zod.
+overrides:
+  "@vercel/cli-config>zod": ">=4.6.6"
