@@ -1,4 +1,4 @@
-// Icons for the profile and Links-page entries, keyed by label (24×24, filled).
+// Icons for the /links page entries, keyed by label (24×24, filled).
 const PATHS: Record<string, string> = {
   // Solid circle with a serif "f" cut out, after the bookstore's favicon.
   "Fabulosa Books":

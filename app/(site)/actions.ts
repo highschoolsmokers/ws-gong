@@ -24,10 +24,11 @@ const fail = (reason: string, err?: unknown): FormState => {
 const MIN_ELAPSED_MS = 3000;
 const EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+const port = Number(process.env.SMTP_PORT) || 465;
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
-  port: Number(process.env.SMTP_PORT) || 465,
-  secure: (Number(process.env.SMTP_PORT) || 465) === 465,
+  port,
+  secure: port === 465,
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 

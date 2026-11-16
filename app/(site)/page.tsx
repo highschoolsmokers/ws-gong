@@ -3,7 +3,7 @@ import { Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/code/projects";
 import { orderedBooks } from "@/lib/reading/books";
 import { profiles, site, SITE_URL } from "@/lib/site/content";
-import { CV_PATH, RESUME_PATH } from "@/lib/site/resume";
+import { PDFS } from "@/lib/site/resume";
 import { getSubstackPosts, SUBSCRIBE_URL } from "@/lib/substack";
 import Image from "next/image";
 import ContactForm from "./ContactForm";
@@ -135,8 +135,8 @@ export default async function Home() {
 
       <Section id="resume" index={++n} title="Résumé">
         <Rows>
-          <Row href={RESUME_PATH} title="Résumé (PDF)" />
-          <Row href={CV_PATH} title="CV (PDF)" />
+          <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
+          <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
           {profiles.map((p) => (
             <Row key={p.label} href={p.url} title={p.label} />
           ))}
