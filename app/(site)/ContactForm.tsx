@@ -69,7 +69,7 @@ function Form({ onReset }: { onReset: () => void }) {
   if (state.status === "success")
     return (
       <div className="space-y-4">
-        <p className="text-2xl font-medium tracking-tight">{state.message}</p>
+        <p className="font-medium">{state.message}</p>
         <button onClick={onReset} className="font-medium">
           Send another message
         </button>
@@ -97,7 +97,7 @@ function Form({ onReset }: { onReset: () => void }) {
       className="space-y-6 pt-4"
     >
       {dragging && (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-center border border-background bg-foreground/90 text-4xl font-medium text-background">
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center bg-foreground/90 text-4xl font-medium text-background">
           <div className="swiss-container w-full">Drop to attach</div>
         </div>
       )}
@@ -172,7 +172,7 @@ function Form({ onReset }: { onReset: () => void }) {
             type="button"
             onClick={() => setFiles(files.filter((f) => f.id !== id))}
             aria-label={`Remove ${file.name}`}
-            className="hover:text-red-600"
+            className="hover:text-error"
           >
             ×
           </button>
@@ -188,7 +188,7 @@ function Form({ onReset }: { onReset: () => void }) {
           {pending ? "Sending…" : "Send"}
         </button>
         {state.status === "error" && (
-          <span className="text-red-600">{state.message}</span>
+          <span className="text-error">{state.message}</span>
         )}
       </div>
     </form>

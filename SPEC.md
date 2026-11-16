@@ -20,7 +20,7 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm.
 | `/colophon`, `/terms`                              | `app/(site)/…`           | Static pages                                                                  |
 | `/links`                                           | `app/(bare)/links`       | Instagram link-in-bio page on the grid; no site chrome, not in nav or sitemap |
 | `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts, cached 1 h                                         |
-| `/fabulosa-books/*`                                | `public/fabulosa-books/` | Static seven-part tutorial                                                    |
+| `/fabulosa-books/*`                                | `public/fabulosa-books/` | Static seven-part tutorial; `/fabulosa-books` rewrites to its index           |
 | `/slushpile/*`                                     | rewrite                  | Separate app at `SLUSHPILE_URL` (basePath `/slushpile`); 404 when unset       |
 | `/wsgong_tech_writer_resume.pdf`, `/wsgong_cv.pdf` | rewrite                  | Résumé and public CV PDFs in public Vercel Blob storage                       |
 | sitemap, robots, manifest, OG image                | `app/*.ts(x)`            | Standard metadata routes                                                      |
@@ -47,8 +47,8 @@ numbered sections, each a label column (4 of 12) and a content column (8).
 Section 00 is fixed; the rest count up from 01, and an omitted section leaves
 no gap in the numbering.
 
-- **00 About** `#about` — the portrait (columns 2–3, top-aligned with the
-  text) and the writer bio, `site.bio[0]`. The former `/about` page folded in here.
+- **00 About** `#about` — the portrait at the text block's width, directly
+  above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
 - **Writing** `#writing` — fiction from `site.json`, the five latest
   Substack posts, a subscribe link.
 - **Work** `#work` — one list, `lib/code/projects.ts` in array order
@@ -122,7 +122,8 @@ binding; §6.3 lists the guards that enforce them.
 ### 6.2 Tokens and theming
 
 Tokens live in `app/globals.css` as `light-dark()` values: white and
-near-black, one muted gray, one soft rule color, Geist. `ThemeToggle` cycles
+near-black, one muted gray, one soft rule color, one error red (errors
+only), Geist. `ThemeToggle` cycles
 system → light → dark, stores the choice in `localStorage.theme`, and sets
 `data-theme` on `<html>`, which pins `color-scheme`. An inline script in
 `app/layout.tsx` applies a stored choice before first paint. Print styles hide
@@ -136,8 +137,9 @@ the chrome and the form.
   and `/links`, at 1280 px and 375 px, the masthead, nav, footer, and section
   content start on a grid column line and end inside the grid, and no list
   draws a rule above its first row or below its last.
-- **Review hook** (`.claude/settings.json`): a Swiss-style review prompt runs
-  after every edit; it ignores non-layout files and flags violations of §6.1.
+- **Hooks** (`.claude/settings.json`): after every edit, a Swiss-style review
+  prompt flags violations of §6.1 in layout files, and a command hook flags
+  e2e anti-patterns (fixed waits, `.nth()`, silent `.catch`).
 - **Audit** (`.claude/commands/audit.md`, `/audit`): the full code, spec,
   design, and live-site audit.
 
@@ -182,7 +184,11 @@ runner over `lib/**/*.test.ts`: book ordering, the §13 shape guards, and the
 §6.3 static Swiss guard),
 `pnpm test:e2e` (Playwright on chromium, firefox, and webkit), and
 `pnpm sync:resume` (§14). CI runs lint, typecheck, unit tests, a Prettier
-check, the build, and `pnpm audit`.
+check, the build, and `pnpm audit --audit-level=high`. The E2E workflow runs
+the Playwright suite against a local production build on every PR and push to
+main (CLI deploys send GitHub no deployment event). Tests tagged `@smtp` or
+`@infra` send mail, so they run only on a manual dispatch against a deployed
+URL.
 
 ## 11. Layout
 
@@ -192,9 +198,11 @@ app/(site)/        page.tsx (home), Nav, layout, ContactForm + actions, error,
 app/(bare)/links/  Linktree page
 app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
-                   opengraph-image, not-found
-lib/               code/projects, reading/books, site/{content,content-schema,
-                   env,resume}, substack, upload
+                   opengraph-image, not-found, favicon.ico
+lib/               code/projects, reading/books (+ test), site/{content,
+                   content-schema, env, resume, shape.test}, substack, upload
+public/            fabulosa-books/ (static tutorial; its own styles, outside
+                   §6.1), apple-touch-icon.png
 content/site.json  synced copy (§14)
 scripts/           sync-resume.ts
 e2e/               Playwright specs + helpers

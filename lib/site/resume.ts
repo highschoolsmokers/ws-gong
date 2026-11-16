@@ -5,6 +5,4 @@ export const PDFS = {
   resume: "wsgong_tech_writer_resume.pdf",
   cv: "wsgong_cv.pdf",
 };
-export const RESUME_PATH = `/${PDFS.resume}`;
-export const CV_PATH = `/${PDFS.cv}`;
 export const blobUrl = (name: string) => `${BLOB}/${name}`;

@@ -8,7 +8,7 @@ const csp = [
   // React's development build needs eval for its debug call stacks; production never does.
   `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://va.vercel-scripts.com`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https:",
+  "img-src 'self' data:",
   "font-src 'self'",
   "connect-src 'self' https://va.vercel-scripts.com",
   "frame-ancestors 'none'",

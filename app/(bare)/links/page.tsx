@@ -17,10 +17,10 @@ const links = [
 
 export default function Links() {
   return (
-    <div className="swiss-container py-12">
-      <Link href="/" className="swiss-display mb-12 block text-3xl">
-        W.S. Gong
-      </Link>
+    <div className="swiss-container pb-24">
+      <h1 className="site-header swiss-display text-3xl">
+        <Link href="/">W.S. Gong</Link>
+      </h1>
       <Section title="Links">
         <Rows>
           {links.map((l) => (

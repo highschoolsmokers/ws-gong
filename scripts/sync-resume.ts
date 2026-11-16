@@ -54,7 +54,10 @@ if (before === text) {
 
 if (process.argv.includes("--no-pdf")) process.exit(0);
 
-const pdfs = { "resume.pdf": PDFS.resume, "cv.pdf": PDFS.cv };
+// resume.pdf → PDFS.resume, cv.pdf → PDFS.cv
+const pdfs = Object.fromEntries(
+  Object.entries(PDFS).map(([key, name]) => [`${key}.pdf`, name]),
+);
 for (const file of Object.keys(pdfs))
   if (!existsSync(join(src, file))) fail(`no ${join(src, file)}`);
 if (!process.env.BLOB_READ_WRITE_TOKEN) {

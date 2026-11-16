@@ -24,8 +24,7 @@ export default function Terms() {
         </p>
         <p>
           Automated access, scraping, crawling, or data extraction of any kind
-          is prohibited. This site actively blocks bots and unauthorized
-          automated access.
+          is prohibited.
         </p>
       </Section>
 

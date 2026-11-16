@@ -89,7 +89,7 @@ test.describe("Contact form validation", () => {
 // Submission (requires SMTP)
 // ---------------------------------------------------------------------------
 test.describe("Contact form submission", () => {
-  test("submission without optional subject", async ({ page }) => {
+  test("submission without optional subject @smtp", async ({ page }) => {
     requireEnv("SMTP_HOST");
     await page.goto("/contact");
 

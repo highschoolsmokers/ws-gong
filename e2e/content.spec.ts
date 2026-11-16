@@ -38,25 +38,17 @@ test.describe("Page content", () => {
     ).toHaveAttribute("href", /linkedin\.com\/in\/ws-gong/);
   });
 
-  test("terms page has legal sections", async ({ page }) => {
-    await page.goto("/terms");
-    expect(
-      await page.getByRole("heading").count(),
-      "Terms page should have at least 3 headings",
-    ).toBeGreaterThanOrEqual(3);
-  });
-
-  test("colophon page has sections and external links", async ({ page }) => {
-    await page.goto("/colophon");
-    expect(
-      await page.getByRole("heading").count(),
-      "Colophon should have at least 4 headings",
-    ).toBeGreaterThanOrEqual(4);
-    expect(
-      await page.locator("a[target='_blank']").count(),
-      "Colophon should have at least 1 external link",
-    ).toBeGreaterThanOrEqual(1);
-  });
+  for (const [path, headings] of [
+    ["/terms", ["Overview", "DMCA Policy", "AI / ML Training"]],
+    ["/colophon", ["Typography", "Design", "Stack", "Tools", "Source"]],
+  ] as const)
+    test(`${path} has its sections`, async ({ page }) => {
+      await page.goto(path);
+      for (const name of headings)
+        await expect(
+          page.getByRole("heading", { name, exact: true }),
+        ).toBeVisible();
+    });
 });
 
 // ---------------------------------------------------------------------------
