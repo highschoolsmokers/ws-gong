@@ -32,10 +32,14 @@ async function audit(page: Page) {
     document
       .querySelectorAll(".masthead, header nav a, footer a, footer button")
       .forEach((el) => check(el, `"${el.textContent?.trim()}"`));
+    // Every block placed on the grid: section heads and bodies, the
+    // statement, any other grid child, and page titles.
     document
-      .querySelectorAll("main .section > *, main .statement > *")
+      .querySelectorAll(
+        "main .section > *, main .statement > *, main .swiss-grid > *, main h1, .swiss-container > h1",
+      )
       .forEach((el, i) =>
-        check(el, `section block ${i + 1} <${el.tagName.toLowerCase()}>`),
+        check(el, `block ${i + 1} <${el.tagName.toLowerCase()}>`),
       );
     document.querySelectorAll("main .row-list").forEach((ul, i) => {
       const first = ul.firstElementChild;

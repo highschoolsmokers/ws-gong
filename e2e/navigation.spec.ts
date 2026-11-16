@@ -81,8 +81,11 @@ test.describe("Links page", () => {
     ).toBeGreaterThanOrEqual(5);
   });
 
-  test("author name links to home", async ({ page }) => {
+  test("author name is the h1 and links to home", async ({ page }) => {
     await page.goto("/links");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "W.S. Gong",
+    );
     await expect(page.getByRole("link", { name: /gong/i })).toHaveAttribute(
       "href",
       "/",

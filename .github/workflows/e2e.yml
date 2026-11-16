@@ -1,18 +1,30 @@
-name: E2E Smoke Tests
+name: E2E
 
+# Deploys go out through the Vercel CLI, which sends GitHub no deployment
+# event, so the suite runs against a local production build on every PR and
+# push to main. Mail-sending tests (@smtp, @infra) run only by hand against a
+# deployed URL, so no PR sends mail.
 on:
-  deployment_status:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: "Deployed URL to test, including mail delivery"
+        required: true
+        default: "https://www.ws-gong.com"
 
 concurrency:
-  # Group by deployment target so preview deploys on the same SHA don't
-  # cancel each other across environments.
-  group: e2e-${{ github.event.deployment_status.environment }}-${{ github.event.deployment.sha || github.sha }}
+  group: e2e-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   e2e:
-    if: github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
+    env:
+      BASE_URL: ${{ inputs.base_url || 'http://localhost:3000' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -29,23 +41,21 @@ jobs:
 
       - run: pnpm exec playwright install --with-deps
 
-      - name: Core e2e tests
-        run: pnpm exec playwright test --grep-invert @infra
-        env:
-          BASE_URL: ${{ github.event.deployment_status.target_url }}
-          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          CONTACT_EMAIL: ${{ secrets.CONTACT_EMAIL }}
+      - name: Build and start
+        if: ${{ !inputs.base_url }}
+        run: |
+          pnpm build
+          pnpm start &
+          npx --yes wait-on@8.0.3 --timeout 60000 http://localhost:3000
 
-      - name: Infra e2e tests (email delivery)
-        if: always()
+      - name: Core e2e tests
+        run: pnpm exec playwright test --grep-invert "@infra|@smtp"
+
+      - name: Mail e2e tests
+        if: ${{ inputs.base_url }}
         continue-on-error: true
-        run: pnpm exec playwright test --grep @infra
+        run: pnpm exec playwright test --grep "@infra|@smtp"
         env:
-          BASE_URL: ${{ github.event.deployment_status.target_url }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}

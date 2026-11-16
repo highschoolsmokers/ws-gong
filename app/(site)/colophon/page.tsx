@@ -30,8 +30,8 @@ export default function Colophon() {
       <Section title="Design">
         <p>
           Informed by the Swiss International Typographic Style. Asymmetric
-          grid, black-and-white palette, strong hierarchy through weight and
-          scale. Responsive across breakpoints.
+          grid, black-and-white palette with red for errors only, strong
+          hierarchy through weight and scale. Responsive across breakpoints.
         </p>
       </Section>
       <Section title="Stack">

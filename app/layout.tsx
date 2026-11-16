@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { SITE_URL, profiles, site } from "@/lib/site/content";
+import {
+  JOB_TITLE,
+  KNOWS_ABOUT,
+  SITE_URL,
+  profiles,
+  site,
+} from "@/lib/site/content";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -22,15 +28,9 @@ const jsonLd = {
   "@type": "Person",
   name: "W.S. Gong",
   url: SITE_URL,
-  jobTitle: "Developer and Technical Writer",
+  jobTitle: JOB_TITLE,
   sameAs: profiles.map((p) => p.url),
-  knowsAbout: [
-    "Fiction Writing",
-    "Technical Writing",
-    "AI Tooling",
-    "Model Context Protocol",
-    "Developer Documentation",
-  ],
+  knowsAbout: KNOWS_ABOUT,
 };
 
 // The inline script applies a stored theme before first paint (no flash);

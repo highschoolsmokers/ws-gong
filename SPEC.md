@@ -122,7 +122,8 @@ binding; §6.3 lists the guards that enforce them.
 ### 6.2 Tokens and theming
 
 Tokens live in `app/globals.css` as `light-dark()` values: white and
-near-black, one muted gray, one soft rule color, Geist. `ThemeToggle` cycles
+near-black, one muted gray, one soft rule color, one error red (errors
+only), Geist. `ThemeToggle` cycles
 system → light → dark, stores the choice in `localStorage.theme`, and sets
 `data-theme` on `<html>`, which pins `color-scheme`. An inline script in
 `app/layout.tsx` applies a stored choice before first paint. Print styles hide
@@ -183,7 +184,11 @@ runner over `lib/**/*.test.ts`: book ordering, the §13 shape guards, and the
 §6.3 static Swiss guard),
 `pnpm test:e2e` (Playwright on chromium, firefox, and webkit), and
 `pnpm sync:resume` (§14). CI runs lint, typecheck, unit tests, a Prettier
-check, the build, and `pnpm audit --audit-level=high`.
+check, the build, and `pnpm audit --audit-level=high`. The E2E workflow runs
+the Playwright suite against a local production build on every PR and push to
+main (CLI deploys send GitHub no deployment event). Tests tagged `@smtp` or
+`@infra` send mail, so they run only on a manual dispatch against a deployed
+URL.
 
 ## 11. Layout
 

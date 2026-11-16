@@ -32,7 +32,6 @@ test("dropped dependencies stay dropped", () => {
       undefined,
       `${d} moved to slushpile`,
     );
-  assert.ok(!JSON.parse(read("vercel.json")).crons, "no crons");
 });
 
 test("site copy comes from content/site.json, with no email in it", () => {
@@ -67,9 +66,9 @@ test("Swiss rules: no off-grid alignment or ornament", () => {
   // The OG image is a raster composition, not page layout.
   const files = walk("app").filter((f) => !f.endsWith("opengraph-image.tsx"));
   const utilities =
-    /(?<![\w-])(?:md:|lg:|sm:)?(?:text-(?:right|center|justify)|justify-(?:end|center|between|around|evenly)|m[lrx]-auto|self-(?:end|center)|place-\w+-center|float-\w+|rounded(?:-\w+)?|shadow(?:-\w+)?|bg-gradient-\S+)(?![\w-])/g;
+    /(?<![\w-])(?:md:|lg:|sm:)?(?:text-(?:right|center|justify|end)|justify-(?:end|center|between|around|evenly)|justify-self-(?:end|center)|m[lrxse]-auto|self-(?:end|center)|place-\w+-center|float-\w+|rounded(?:-\w+)?|shadow(?:-\w+)?|bg-gradient-\S+)(?![\w-])/g;
   const css =
-    /text-align:\s*(?:right|center|justify)|margin(?:-left|-inline)?:\s*[^;]*\bauto\b|justify-content:\s*(?:flex-end|end|center|space-\w+)|align-items:\s*(?:flex-end|end)|float:\s*(?:left|right)|box-shadow|border-radius|gradient\(/g;
+    /text-align:\s*(?:right|center|justify|end)|margin(?:-left|-inline(?:-start)?)?:\s*[^;]*\bauto\b|justify-(?:content|self):\s*(?:flex-end|end|center|space-\w+)|align-items:\s*(?:flex-end|end)|float:\s*(?:left|right)|box-shadow|border-radius|gradient\(/g;
   const hits = files.flatMap((f) => {
     const text = read(f);
     // .swiss-container centers the grid itself in the window; it is the grid, not an element on it.

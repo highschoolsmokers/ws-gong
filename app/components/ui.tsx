@@ -79,9 +79,12 @@ export function Row({
       <span className="row-title">
         {title}
         {external && (
-          <span aria-hidden className="ml-[0.35em] font-normal text-muted">
-            ↗
-          </span>
+          <>
+            {" "}
+            <span aria-hidden className="font-normal text-muted">
+              ↗
+            </span>
+          </>
         )}
       </span>
       {children && <span className="row-body">{children}</span>}
