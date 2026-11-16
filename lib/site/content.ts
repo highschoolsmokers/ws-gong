@@ -5,7 +5,7 @@ import { siteContentSchema } from "./content-schema";
 export const SITE_URL = "https://www.ws-gong.com";
 
 // Copy that site.json doesn't carry: structured data and the feed.
-export const JOB_TITLE = "Developer and Technical Writer";
+export const JOB_TITLE = "Writer, Editor, and Developer";
 export const KNOWS_ABOUT = [
   "Fiction Writing",
   "Technical Writing",
@@ -14,7 +14,7 @@ export const KNOWS_ABOUT = [
   "Developer Documentation",
 ];
 export const FEED_DESCRIPTION =
-  "Writing by W.S. Gong — fiction, essays, and notes from the editorial desk.";
+  "Writing by W.S. Gong: fiction, essays, and notes.";
 
 // Parsed at build time; a malformed site.json fails the build, not a page.
 export const site = siteContentSchema.parse(raw);
