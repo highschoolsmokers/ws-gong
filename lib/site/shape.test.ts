@@ -1,8 +1,9 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { featuredProjects } from "../code/projects.ts";
+import { projects } from "../code/projects.ts";
+import { PDFS, blobUrl } from "./resume.ts";
 
 // Pins deliberate deletions (SPEC §13) so they don't creep back.
 const r = (p: string) => join(import.meta.dirname, "..", "..", p);
@@ -11,7 +12,7 @@ const read = (p: string) => readFileSync(r(p), "utf8");
 test("removed surfaces stay removed", () => {
   for (const p of [
     // Section pages folded into the one-page home; next.config.ts redirects them.
-    ...["code", "narratives", "reading", "resume", "contact"].map(
+    ...["about", "code", "narratives", "reading", "resume", "contact"].map(
       (s) => `app/(site)/${s}`,
     ),
     "app/(site)/slushpile", // mounted by rewrite from its own repo
@@ -36,7 +37,7 @@ test("dropped dependencies stay dropped", () => {
 
 test("site copy comes from content/site.json, with no email in it", () => {
   assert.doesNotMatch(read("content/site.json"), /[\w.+-]+@[\w-]+\.\w/);
-  for (const p of ["app/(site)/page.tsx", "app/(site)/about/page.tsx"])
+  for (const p of ["app/(site)/page.tsx", "app/layout.tsx"])
     assert.match(
       read(p),
       /@\/lib\/site\/content/,
@@ -44,10 +45,50 @@ test("site copy comes from content/site.json, with no email in it", () => {
     );
 });
 
-test("résumé PDF points at public Blob storage; a project is featured", () => {
-  assert.match(
-    read("lib/site/resume.ts"),
-    /public\.blob\.vercel-storage\.com\//,
-  );
-  assert.ok(featuredProjects.length > 0);
+test("résumé and CV PDFs point at public Blob storage", () => {
+  for (const name of Object.values(PDFS))
+    assert.match(
+      blobUrl(name),
+      /^https:\/\/[\w-]+\.public\.blob\.vercel-storage\.com\/[\w-]+\.pdf$/,
+    );
+});
+
+// SPEC §6.1: everything on a grid column line, flush left, no ornament.
+// Off-grid alignment and decoration are banned in site code and styles.
+test("Swiss rules: no off-grid alignment or ornament", () => {
+  const walk = (dir: string): string[] =>
+    readdirSync(r(dir), { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory()
+        ? walk(join(dir, e.name))
+        : /\.(tsx|css)$/.test(e.name)
+          ? [join(dir, e.name)]
+          : [],
+    );
+  // The OG image is a raster composition, not page layout.
+  const files = walk("app").filter((f) => !f.endsWith("opengraph-image.tsx"));
+  const utilities =
+    /(?<![\w-])(?:md:|lg:|sm:)?(?:text-(?:right|center|justify)|justify-(?:end|center|between|around|evenly)|m[lrx]-auto|self-(?:end|center)|place-\w+-center|float-\w+|rounded(?:-\w+)?|shadow(?:-\w+)?|bg-gradient-\S+)(?![\w-])/g;
+  const css =
+    /text-align:\s*(?:right|center|justify)|margin(?:-left|-inline)?:\s*[^;]*\bauto\b|justify-content:\s*(?:flex-end|end|center|space-\w+)|align-items:\s*(?:flex-end|end)|float:\s*(?:left|right)|box-shadow|border-radius|gradient\(/g;
+  const hits = files.flatMap((f) => {
+    const text = read(f);
+    // .swiss-container centers the grid itself in the window; it is the grid, not an element on it.
+    const found = f.endsWith(".css")
+      ? (text
+          .replace(/\/\*[\s\S]*?\*\//g, "")
+          .replace(/\.swiss-container\s*\{[^}]*\}/, "")
+          .match(css) ?? [])
+      : (text.match(utilities) ?? []);
+    return found.map((h) => `${f}: ${h}`);
+  });
+  assert.deepEqual(hits, [], "off-grid alignment or ornament (SPEC §6.1)");
+});
+
+test("Work is one flat list: no featured tier, categories, or sub-pages", () => {
+  for (const p of projects)
+    assert.deepEqual(
+      Object.keys(p).sort(),
+      ["description", "href", "stack", "title"],
+      p.title,
+    );
 });

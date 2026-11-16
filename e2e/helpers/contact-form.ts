@@ -1,6 +1,4 @@
 import type { Page } from "@playwright/test";
-import path from "path";
-import fs from "fs";
 import { ANTI_SPAM_DELAY_MS } from "./constants";
 
 interface ContactFormData {
@@ -32,22 +30,4 @@ export async function fillContactForm(
 export async function submitContactForm(page: Page): Promise<void> {
   await page.waitForTimeout(ANTI_SPAM_DELAY_MS);
   await page.getByRole("button", { name: /send/i }).click();
-}
-
-/**
- * Create a temporary file, run a callback with the file path,
- * and clean up afterward — regardless of test outcome.
- */
-export async function withTempFile(
-  filename: string,
-  content: string,
-  fn: (filePath: string) => Promise<void>,
-): Promise<void> {
-  const filePath = path.join(__dirname, "..", filename);
-  fs.writeFileSync(filePath, content);
-  try {
-    await fn(filePath);
-  } finally {
-    fs.unlinkSync(filePath);
-  }
 }

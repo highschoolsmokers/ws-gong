@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { PageTitle, Section, ext } from "@/app/components/ui";
 
-const description = "Typography, tools, and technology behind ws-gong.com.";
 export const metadata: Metadata = {
   title: "Colophon",
-  description,
-  openGraph: { title: "Colophon — W.S. Gong", description },
+  description: "Typography, tools, and technology behind ws-gong.com.",
 };
 
 const list = (items: string[]) => (

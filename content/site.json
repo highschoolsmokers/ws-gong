@@ -1,43 +1,29 @@
 {
   "statement": [
-    "Former fiction editor at The Rumpus.",
-    "Developer and technical writer.",
-    "Building tools at the intersection of language models and the craft of writing."
+    "Writer.",
+    "Editor.",
+    "Developer."
   ],
   "bio": [
-    "W.S. Gong is a former fiction editor at The Rumpus. His fiction appears in The Rumpus and Fourteen Hills. He is an alumnus of Bread Loaf, Sewanee, Tin House, and Kenyon, and a resident fellow of the Virginia Center for the Creative Arts.",
+    "W.S. Gong is a writer, editor, and software developer based in San Francisco, CA. His fiction appears in The Rumpus and Fourteen Hills. He is an alumnus of Bread Loaf, Sewanee, Tin House, and Kenyon, and a resident fellow of the Virginia Center for the Creative Arts.",
     "A developer and technical writer, he builds and documents open-source tools on the Anthropic stack: MCP servers, Claude Code plugins, and agents."
   ],
   "published": [
     {
-      "kind": "Fiction",
       "title": "Their Clear Unobstructed View",
       "venue": "The Rumpus",
       "detail": "September 9, 2026",
-      "year": "2026",
       "url": "https://therumpus.net/2026/09/09/their-clear-unobstructed-view/"
     },
     {
-      "kind": "Fiction",
       "title": "How to Say 'Scared' in Korean",
       "venue": "Fourteen Hills",
-      "detail": "30 (Spring 2024)",
-      "year": "2024"
+      "detail": "30 (Spring 2024)"
     },
     {
-      "kind": "Fiction",
       "title": "Daisy 880",
       "venue": "Know the Names of Things",
-      "detail": "San Francisco: Kearny Street Workshop, 2010",
-      "year": "2010"
-    }
-  ],
-  "editing": [
-    {
-      "title": "Fiction Editor",
-      "org": "The Rumpus",
-      "dates": "2024–2026",
-      "summary": "Ran the editorial pipeline from intake to production under Editor-in-Chief Roxane Gay: hundreds of submissions per cycle."
+      "detail": "San Francisco: Kearny Street Workshop, 2010"
     }
   ],
   "links": {

@@ -69,7 +69,7 @@ function Form({ onReset }: { onReset: () => void }) {
   if (state.status === "success")
     return (
       <div className="space-y-4">
-        <p className="text-2xl font-bold tracking-tight">{state.message}</p>
+        <p className="text-2xl font-medium tracking-tight">{state.message}</p>
         <button onClick={onReset} className="font-medium">
           Send another message
         </button>
@@ -97,8 +97,8 @@ function Form({ onReset }: { onReset: () => void }) {
       className="space-y-6 pt-4"
     >
       {dragging && (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center border-4 border-dashed border-background bg-foreground/90 text-4xl font-bold text-background">
-          Drop to Attach
+        <div className="pointer-events-none fixed inset-0 z-50 flex items-center border border-background bg-foreground/90 text-4xl font-medium text-background">
+          <div className="swiss-container w-full">Drop to attach</div>
         </div>
       )}
       {/* Bot trap. The name and the ignore attributes keep browser autofill and password managers out of it. */}
@@ -112,7 +112,7 @@ function Form({ onReset }: { onReset: () => void }) {
         data-form-type="other"
         className="absolute -left-[9999px] h-0 opacity-0"
       />
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-[var(--gutter)]">
         <input
           name="name"
           required
@@ -183,7 +183,7 @@ function Form({ onReset }: { onReset: () => void }) {
         <button
           type="submit"
           disabled={pending}
-          className="text-xl font-medium tracking-tight hover:underline disabled:opacity-40"
+          className="border border-foreground px-5 py-2 text-xl font-medium tracking-tight transition-colors hover:bg-foreground hover:text-background disabled:pointer-events-none disabled:opacity-40"
         >
           {pending ? "Sending…" : "Send"}
         </button>

@@ -14,13 +14,12 @@ export type FormState = {
 
 // Visitors see one generic failure for bot traps, config gaps and SMTP faults
 // alike; the reason goes to the function log instead.
-const FAIL: FormState = {
-  status: "error",
-  message: "Something went wrong. Please try again.",
-};
-const fail = (reason: string, err?: unknown) => {
+const fail = (reason: string, err?: unknown): FormState => {
   console.error(`Contact form rejected: ${reason}`, err ?? "");
-  return FAIL;
+  return {
+    status: "error",
+    message: "Something went wrong. Please try again.",
+  };
 };
 const MIN_ELAPSED_MS = 3000;
 const EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -28,7 +27,7 @@ const EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
   port: Number(process.env.SMTP_PORT) || 465,
-  secure: true,
+  secure: (Number(process.env.SMTP_PORT) || 465) === 465,
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 

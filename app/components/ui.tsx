@@ -33,7 +33,7 @@ export function Section({
         id={id && `${id}-title`}
         className="swiss-label col-span-12 md:col-span-4"
       >
-        {index && (
+        {index !== undefined && (
           <span className="section-index" aria-hidden>
             {String(index).padStart(2, "0")}
           </span>

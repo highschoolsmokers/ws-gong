@@ -1,5 +1,8 @@
-// Brand marks for the profile links, keyed by label (24×24, filled).
+// Icons for the profile and Links-page entries, keyed by label (24×24, filled).
 const PATHS: Record<string, string> = {
+  // Solid circle with a serif "f" cut out, after the bookstore's favicon.
+  "Fabulosa Books":
+    "M12 1a11 11 0 1 0 0 22a11 11 0 1 0 0-22zM8.15 18.6H13.75V17.5H12.05V11.6H14.35V10.2H12.05V8.7C12.05 7.1 12.65 6.3 13.65 6.3C14.15 6.3 14.45 6.5 14.75 6.8C15.45 7.3 16.35 6.9 16.35 6.1C16.35 5.2 15.35 4.6 13.95 4.6C11.35 4.6 9.75 6.1 9.75 8.6V10.2H7.65V11.6H9.75V17.5H8.15Z",
   Substack:
     "M22.539 8.242H1.46V5.406h21.08v2.836zM1.46 10.812V24L12 18.11 22.54 24V10.812H1.46zM22.54 0H1.46v2.836h21.08V0z",
   Instagram:
@@ -20,7 +23,11 @@ export function Icon({ name }: { name: string }) {
       fill="currentColor"
       aria-hidden
     >
-      <path d={d} />
+      {/* evenodd cuts the "f" out of the Fabulosa circle; brand marks keep nonzero. */}
+      <path
+        d={d}
+        fillRule={name === "Fabulosa Books" ? "evenodd" : undefined}
+      />
     </svg>
   ) : null;
 }

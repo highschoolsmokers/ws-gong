@@ -30,7 +30,7 @@ export default async function Image() {
   return new ImageResponse(
     <div
       style={{
-        background: "#f3efe7",
+        background: "#ffffff",
         color: ink,
         width: "100%",
         height: "100%",

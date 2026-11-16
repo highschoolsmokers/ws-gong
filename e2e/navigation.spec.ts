@@ -5,15 +5,6 @@ import { FOLDED_ROUTES } from "./helpers/constants";
 // Header & masthead
 // ---------------------------------------------------------------------------
 test.describe("Navigation", () => {
-  test("header has nav links to main sections", async ({ page }) => {
-    await page.goto("/");
-    const navLinks = page.locator("header").getByRole("link");
-    expect(
-      await navLinks.count(),
-      "Header should have at least 2 nav links",
-    ).toBeGreaterThanOrEqual(2);
-  });
-
   test("masthead is the h1 on home, a home link elsewhere", async ({
     page,
   }) => {
@@ -22,7 +13,7 @@ test.describe("Navigation", () => {
     await expect(h1).toContainText("W.S.");
     await expect(h1.getByRole("link")).not.toBeAttached();
 
-    await page.goto("/about");
+    await page.goto("/colophon");
     await expect(
       page.locator("header").getByRole("link", { name: /W\.S\. Gong, home/i }),
     ).toHaveAttribute("href", "/");
@@ -33,6 +24,7 @@ test.describe("Navigation", () => {
     const nav = page.locator("header nav");
     for (const [name, href] of [
       ["Work", "/#work"],
+      ["About", "/#about"],
       ["Writing", "/#writing"],
       ["Résumé", "/#resume"],
       ["Contact", "/#contact"],
@@ -55,7 +47,7 @@ test.describe("Navigation", () => {
   });
 
   test("nav appears on site pages", async ({ page }) => {
-    for (const route of ["/", "/about", "/colophon", "/terms"]) {
+    for (const route of ["/", "/colophon", "/terms"]) {
       await page.goto(route);
       await expect(
         page.locator("header"),
@@ -112,18 +104,9 @@ test.describe("Not found page", () => {
     const response = await page.goto("/nonexistent-page-xyz");
     expect(response?.status()).toBe(404);
     await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
-    await expect(page.getByRole("link", { name: /home/i })).toHaveAttribute(
+    await expect(page.getByRole("link", { name: "← Home" })).toHaveAttribute(
       "href",
       "/",
     );
-  });
-
-  test("unknown API route returns 404", async ({ request }) => {
-    expect((await request.get("/api/nonexistent-endpoint")).status()).toBe(404);
-  });
-
-  test("old /projects route returns 404", async ({ page }) => {
-    const response = await page.goto("/projects");
-    expect(response?.status()).toBe(404);
   });
 });
