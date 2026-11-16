@@ -51,9 +51,9 @@ no gap in the numbering.
   above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
 - **Writing** `#writing` — fiction from `site.json`, the five latest
   Substack posts, a subscribe link.
-- **Work** `#work` — one list, `lib/code/projects.ts` in array order
+- **Work** `#work` — one list, `lib/projects.ts` in array order
   (hand-maintained); emits an `ItemList` JSON-LD.
-- **Reading** `#reading` — up to five of `lib/reading/books.ts`, currently
+- **Reading** `#reading` — up to five of `lib/books.ts`, currently
   reading first; section and nav entry hidden while the log is empty.
 - **Résumé** `#resume` — résumé PDF, CV PDF, then the profiles (LinkedIn,
   GitHub, Substack, Instagram).
@@ -68,8 +68,8 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
   against `lib/site/content-schema.ts`. It also exports `profiles` (LinkedIn,
   GitHub, Substack, Instagram), the one list behind the Résumé rows, the
   `/links` page, and the Person JSON-LD `sameAs`.
-- `lib/code/projects.ts`: `{ href, title, description, stack }[]`, shown in array order.
-- `lib/reading/books.ts`: `{ title, author, finished: "YYYY-MM-DD" | "reading", note?, link? }[]`.
+- `lib/projects.ts`: `{ href, title, description, stack }[]`, shown in array order.
+- `lib/books.ts`: `{ title, author, finished: "YYYY-MM-DD" | "reading", note?, link? }[]`.
 - `lib/substack.ts`: `getSubstackPosts(limit)`, revalidated hourly, 5 s
   timeout. Returns `[]` on any failure so its section hides; a non-OK response
   throws first so the data cache retries rather than caching the empty list.
@@ -131,7 +131,7 @@ the chrome and the form.
 
 ### 6.3 Guards
 
-- **Static** (`lib/site/shape.test.ts`, unit tests and CI): no off-grid
+- **Static** (`lib/shape.test.ts`, unit tests and CI): no off-grid
   alignment utilities in `app/` and no edge-pushing values in `globals.css`.
 - **Rendered** (`e2e/swiss.spec.ts`, Playwright): on every page, the 404,
   and `/links`, at 1280 px and 375 px, the masthead, nav, footer, and section
@@ -199,8 +199,8 @@ app/(bare)/links/  Linktree page
 app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
-lib/               code/projects, reading/books (+ test), site/{content,
-                   content-schema, env, resume, shape.test}, substack, upload
+lib/               projects, books (+ test), shape.test, site/{content,
+                   content-schema, env, resume}, substack, upload
 public/            fabulosa-books/ (static tutorial; its own styles, outside
                    §6.1), apple-touch-icon.png
 content/site.json  synced copy (§14)
@@ -220,7 +220,7 @@ e2e/               Playwright specs + helpers
 
 ## 13. Intentional decisions
 
-`lib/site/shape.test.ts` pins these.
+`lib/shape.test.ts` pins these.
 
 - **One page, not five.** Section pages folded into the home page (2026-11);
   add a section rather than a page.

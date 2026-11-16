@@ -1,3 +1,8 @@
+// Contact-form limits, shared by the form, the server action, and e2e.
+
+// Submissions faster than this, on the visitor's clock, are treated as bots.
+export const MIN_ELAPSED_MS = 3000;
+
 export const MAX_FILES = 5;
 // Vercel caps a function request body at 4.5 MB, and next.config.ts raises
 // Next's 1 MB server-action limit to match, so attachments share 4 MB.

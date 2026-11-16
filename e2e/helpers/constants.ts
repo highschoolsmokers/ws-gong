@@ -3,8 +3,10 @@
  * Keep magic numbers here with explanations so tests stay readable.
  */
 
-/** Server-side anti-spam timer — form submissions within this window are rejected. */
-export const ANTI_SPAM_DELAY_MS = 3500;
+import { MIN_ELAPSED_MS } from "../../lib/upload";
+
+/** Wait past the server's anti-spam minimum, with margin, before submitting. */
+export const ANTI_SPAM_DELAY_MS = MIN_ELAPSED_MS + 500;
 
 /** Max time to wait for the "message sent" confirmation after form submit. */
 export const SUBMISSION_TIMEOUT_MS = 15_000;
@@ -20,7 +22,7 @@ export const MAX_TAB_STEPS_NAV = 10;
 export const MAX_TAB_STEPS_FORM = 20;
 
 /**
- * All publicly routable pages — used by smoke tests and OG metadata checks.
+ * All publicly routable pages — OG metadata and Swiss grid checks.
  */
 export const SITE_PAGES = ["/", "/terms", "/colophon", "/links"] as const;
 
@@ -28,6 +30,8 @@ export const SITE_PAGES = ["/", "/terms", "/colophon", "/links"] as const;
 export const FOLDED_ROUTES = [
   ["/about", "#about"],
   ["/code", "#work"],
+  ["/code/colophon-mcp", "#work"],
+  ["/narratives-code/colophon-mcp", "#work"],
   ["/narratives", "#writing"],
   ["/reading", "#reading"],
   ["/resume", "#resume"],

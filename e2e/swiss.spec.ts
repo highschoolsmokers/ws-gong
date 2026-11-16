@@ -1,8 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
+import { SITE_PAGES } from "./helpers/constants";
 
 // SPEC §6.1, checked on the rendered page: elements start on a grid column
 // line and end inside the grid; lists draw rules between rows only.
-const PAGES = ["/", "/colophon", "/terms", "/links", "/no-such-page"];
+const PAGES = [...SITE_PAGES, "/no-such-page"];
 
 async function audit(page: Page) {
   return page.evaluate(() => {

@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { orderedBooks } from "../lib/reading/books";
+import { orderedBooks } from "../lib/books";
 
 test.describe("Reading", () => {
   test("home Reading section and nav entry follow the books seed", async ({

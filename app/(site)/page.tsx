@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Row, Rows, Section, ext } from "@/app/components/ui";
-import { projects } from "@/lib/code/projects";
-import { orderedBooks } from "@/lib/reading/books";
+import { projects } from "@/lib/projects";
+import { orderedBooks } from "@/lib/books";
 import { profiles, site, SITE_URL } from "@/lib/site/content";
 import { PDFS } from "@/lib/site/resume";
 import { getSubstackPosts, SUBSCRIBE_URL } from "@/lib/substack";
