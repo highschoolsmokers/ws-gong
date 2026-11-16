@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 export const SUBSTACK_BASE_URL = "https://highschoolsmokers.substack.com";
+export const SUBSCRIBE_URL = `${SUBSTACK_BASE_URL}/subscribe`;
 
 const postSchema = z.object({
   id: z.number(),

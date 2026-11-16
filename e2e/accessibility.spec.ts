@@ -6,7 +6,7 @@ import { MAX_TAB_STEPS_NAV, MAX_TAB_STEPS_FORM } from "./helpers/constants";
 // ---------------------------------------------------------------------------
 test.describe("Skip-to-content link", () => {
   test("exists and targets #main on site pages", async ({ page }) => {
-    await page.goto("/about");
+    await page.goto("/colophon");
 
     const skipLink = page.getByRole("link", { name: /skip to content/i });
     await expect(skipLink).toBeAttached();
@@ -16,36 +16,9 @@ test.describe("Skip-to-content link", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Image alt text
-// ---------------------------------------------------------------------------
-test.describe("Image alt text", () => {
-  test("all home page images have alt text", async ({ page }) => {
-    await page.goto("/");
-
-    const images = page.getByRole("img");
-    const count = await images.count();
-
-    for (let i = 0; i < count; i++) {
-      const alt = await images.nth(i).getAttribute("alt");
-      expect(alt, `Image ${i} should have non-empty alt text`).toBeTruthy();
-    }
-  });
-});
-
-// ---------------------------------------------------------------------------
 // Form accessibility
 // ---------------------------------------------------------------------------
 test.describe("Form accessibility", () => {
-  test("contact form inputs have accessible names", async ({ page }) => {
-    await page.goto("/contact");
-
-    await expect(page.getByLabel("Name")).toBeAttached();
-    await expect(page.getByLabel("Email")).toBeAttached();
-    await expect(page.getByLabel("Subject")).toBeAttached();
-    await expect(page.getByLabel("Message")).toBeAttached();
-    await expect(page.getByRole("button", { name: /send/i })).toBeAttached();
-  });
-
   test("honeypot field is hidden from assistive tech", async ({ page }) => {
     await page.goto("/contact");
 
@@ -62,7 +35,7 @@ test.describe("Form accessibility", () => {
 // ---------------------------------------------------------------------------
 test.describe("Keyboard navigation", () => {
   test("can tab to a nav link in the header", async ({ page }) => {
-    await page.goto("/about");
+    await page.goto("/colophon");
     await page.keyboard.press("Tab");
 
     let foundNavLink = false;

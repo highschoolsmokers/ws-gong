@@ -10,22 +10,10 @@ export const siteContentSchema = z
     published: z.array(
       z
         .object({
-          kind: z.literal("Fiction"),
           title: z.string().min(1),
           venue: z.string(),
           detail: z.string(),
-          year: z.string(),
           url: z.url().optional(),
-        })
-        .strict(),
-    ),
-    editing: z.array(
-      z
-        .object({
-          title: z.string().min(1),
-          org: z.string().min(1),
-          dates: z.string(),
-          summary: z.string(),
         })
         .strict(),
     ),
@@ -37,5 +25,3 @@ export const siteContentSchema = z
       .strict(),
   })
   .strict();
-
-export type SiteContent = z.infer<typeof siteContentSchema>;

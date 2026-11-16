@@ -3,10 +3,10 @@
 /* Tokens. light-dark() follows color-scheme, which ThemeToggle pins via data-theme. */
 :root {
   color-scheme: light dark;
-  --background: light-dark(#f3efe7, #101010);
+  --background: light-dark(#ffffff, #101010);
   --foreground: light-dark(#161616, #ebebeb);
-  --muted: light-dark(#6a665f, #9b9b9b);
-  --rule-soft: light-dark(#d8d2c6, #2e2e2e);
+  --muted: light-dark(#6b6b6b, #9b9b9b);
+  --rule-soft: light-dark(#e5e5e5, #2e2e2e);
   --gutter: 1.5rem;
   --margin: 2rem;
 }
@@ -27,7 +27,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
-  --color-rule-soft: var(--rule-soft);
   --font-sans: var(--font-geist-sans);
 }
 
@@ -35,7 +34,6 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-feature-settings: "ss01", "tnum", "kern";
-  line-height: 1.5;
 }
 a {
   text-underline-offset: 0.2em;
@@ -94,8 +92,8 @@ a:hover {
 }
 .site-nav {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 1.25rem;
+  flex-direction: column;
+  gap: 0.25rem;
   font-weight: 500;
   line-height: 1.1;
 }
@@ -116,8 +114,6 @@ a.row {
     padding-block: 3rem 6rem;
   }
   .site-nav {
-    flex-direction: column;
-    align-items: flex-end;
     font-size: 1.25rem;
   }
 }
@@ -144,11 +140,12 @@ a.row {
   margin-bottom: 0.75rem;
   color: var(--muted);
 }
-.row-list {
+/* Hairlines between rows only; the first row sits level with the section label. */
+.row-list > li + li {
   border-top: 1px solid var(--rule-soft);
 }
-.row-list > li {
-  border-bottom: 1px solid var(--rule-soft);
+.row-list > li:first-child .row {
+  padding-top: 0;
 }
 .row {
   display: block;

@@ -6,8 +6,9 @@ import { orderedBooks } from "@/lib/reading/books";
 
 // The home page is the site: nav entries are anchors into its sections.
 const links = [
-  ["/#work", "Work"],
+  ["/#about", "About"],
   ["/#writing", "Writing"],
+  ["/#work", "Work"],
   ...(orderedBooks.length ? [["/#reading", "Reading"]] : []),
   ["/#resume", "Résumé"],
   ["/#contact", "Contact"],
@@ -36,7 +37,7 @@ export default function Nav({ slushpile }: { slushpile: boolean }) {
       )}
       <nav
         aria-label="Main navigation"
-        className="col-span-12 flex md:col-span-5 md:justify-end"
+        className="col-span-12 md:col-span-2 md:col-start-11"
       >
         <ul className="site-nav">
           {[...links, ...(slushpile ? [["/slushpile", "Slushpile"]] : [])].map(

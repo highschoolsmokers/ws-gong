@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
 import { Row, Rows, Section, ext } from "@/app/components/ui";
-import {
-  featuredProjects,
-  listedProjects,
-  projects,
-} from "@/lib/code/projects";
+import { projects } from "@/lib/code/projects";
 import { orderedBooks } from "@/lib/reading/books";
-import { site } from "@/lib/site/content";
-import { RESUME_PATH } from "@/lib/site/resume";
-import { getSubstackPosts, SUBSTACK_BASE_URL } from "@/lib/substack";
+import { profiles, site, SITE_URL } from "@/lib/site/content";
+import { CV_PATH, RESUME_PATH } from "@/lib/site/resume";
+import { getSubstackPosts, SUBSCRIBE_URL } from "@/lib/substack";
+import Image from "next/image";
 import ContactForm from "./ContactForm";
+import portrait from "./portrait.png";
 
-const title = "W.S. Gong — Stories & Systems";
-const description = site.statement.join(" ");
 export const metadata: Metadata = {
-  title,
-  description,
-  openGraph: { title, description },
+  title: { absolute: "W.S. Gong — Stories & Systems" },
+  description: site.statement.join(" "),
 };
 
 const projectsLd = {
@@ -30,33 +25,11 @@ const projectsLd = {
       "@type": "CreativeWork",
       name: p.title,
       description: p.description,
-      url: new URL(p.href, "https://www.ws-gong.com").href,
+      url: new URL(p.href, SITE_URL).href,
       keywords: p.stack,
     },
   })),
 };
-
-const ProjectRows = ({
-  title,
-  list,
-}: {
-  title: string;
-  list: typeof projects;
-}) =>
-  list.length > 0 && (
-    <Rows title={title}>
-      {list.map((p) => (
-        <Row
-          key={p.href}
-          href={p.href}
-          title={p.title}
-          meta={p.stack.join(" / ")}
-        >
-          {p.description}
-        </Row>
-      ))}
-    </Rows>
-  );
 
 export default async function Home() {
   const posts = await getSubstackPosts(5);
@@ -80,10 +53,16 @@ export default async function Home() {
         </p>
       </section>
 
-      <Section id="work" index={++n} title="Work">
-        <div className="space-y-14">
-          <ProjectRows title="Featured" list={featuredProjects} />
-          <ProjectRows title="Index" list={listedProjects} />
+      <Section id="about" index={0} title="About">
+        {/* The portrait spans the text block's width, directly above the bio. */}
+        <div className="max-w-prose space-y-4">
+          <Image
+            src={portrait}
+            alt="Illustrated portrait of W.S. Gong"
+            sizes="(min-width: 768px) 40vw, 100vw"
+            className="h-auto w-full"
+          />
+          <p>{site.bio[0]}</p>
         </div>
       </Section>
 
@@ -97,13 +76,6 @@ export default async function Home() {
                 title={p.title}
                 meta={[p.venue, p.detail].filter(Boolean).join(" · ")}
               />
-            ))}
-          </Rows>
-          <Rows title="Editing">
-            {site.editing.map((e) => (
-              <Row key={e.org} title={`${e.title}, ${e.org}`} meta={e.dates}>
-                {e.summary}
-              </Row>
             ))}
           </Rows>
           {posts.length > 0 && (
@@ -123,14 +95,25 @@ export default async function Home() {
               ))}
             </Rows>
           )}
-          <a
-            href={`${SUBSTACK_BASE_URL}/subscribe`}
-            className="block font-medium"
-            {...ext}
-          >
+          <a href={SUBSCRIBE_URL} className="block font-medium" {...ext}>
             Subscribe on Substack →
           </a>
         </div>
+      </Section>
+
+      <Section id="work" index={++n} title="Work">
+        <Rows>
+          {projects.map((p) => (
+            <Row
+              key={p.href}
+              href={p.href}
+              title={p.title}
+              meta={p.stack.join(" / ")}
+            >
+              {p.description}
+            </Row>
+          ))}
+        </Rows>
       </Section>
 
       {books.length > 0 && (
@@ -153,15 +136,14 @@ export default async function Home() {
       <Section id="resume" index={++n} title="Résumé">
         <Rows>
           <Row href={RESUME_PATH} title="Résumé (PDF)" />
-          <Row href={site.links.linkedin} title="LinkedIn" />
-          <Row href={site.links.github} title="GitHub" />
+          <Row href={CV_PATH} title="CV (PDF)" />
+          {profiles.map((p) => (
+            <Row key={p.label} href={p.url} title={p.label} />
+          ))}
         </Rows>
       </Section>
 
       <Section id="contact" index={++n} title="Contact">
-        <p className="text-base">
-          For readings, panels, workshops, or any other inquiries, get in touch.
-        </p>
         <ContactForm />
       </Section>
     </>

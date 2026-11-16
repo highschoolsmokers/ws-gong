@@ -7,7 +7,8 @@ const IMAP_CONFIG = {
   port: 993,
   secure: true,
   auth: {
-    user: process.env.IMAP_USER ?? "billygong@me.com",
+    // The form delivers to CONTACT_EMAIL, so that is the inbox to watch.
+    user: process.env.IMAP_USER ?? process.env.CONTACT_EMAIL ?? "",
     pass: process.env.IMAP_PASS ?? "",
   },
   logger: false as const,
@@ -34,8 +35,8 @@ async function ensureFolder(client: ImapFlow): Promise<void> {
  */
 export async function waitForEmail(
   subjectQuery: string,
-  { maxRetries = 6, delayMs = 5000 } = {},
-): Promise<{ subject: string; from: string; date: Date } | null> {
+  { maxRetries = 20, delayMs = 5000 } = {},
+): Promise<string | null> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     const client = new ImapFlow(IMAP_CONFIG);
     try {
@@ -53,13 +54,7 @@ export async function waitForEmail(
           // Move all matching emails to E2E folder
           await client.messageMove(uids, E2E_FOLDER);
 
-          if (msg && msg.envelope) {
-            return {
-              subject: msg.envelope.subject ?? "",
-              from: msg.envelope.from?.[0]?.address ?? "",
-              date: msg.envelope.date ?? new Date(),
-            };
-          }
+          if (msg && msg.envelope) return msg.envelope.subject ?? "";
         }
       } finally {
         lock.release();
@@ -80,9 +75,8 @@ export async function waitForEmail(
  * Delete all emails whose subject contains the given query string
  * from the E2E folder.
  */
-export async function deleteEmails(subjectQuery: string): Promise<number> {
+export async function deleteEmails(subjectQuery: string): Promise<void> {
   const client = new ImapFlow(IMAP_CONFIG);
-  let deleted = 0;
   try {
     await client.connect();
     await ensureFolder(client);
@@ -92,7 +86,6 @@ export async function deleteEmails(subjectQuery: string): Promise<number> {
       const uids = await client.search({ subject: subjectQuery });
       if (Array.isArray(uids) && uids.length > 0) {
         await client.messageDelete(uids);
-        deleted = uids.length;
       }
     } finally {
       lock.release();
@@ -101,5 +94,4 @@ export async function deleteEmails(subjectQuery: string): Promise<number> {
   } catch {
     // ignore cleanup errors
   }
-  return deleted;
 }

@@ -1,23 +1,24 @@
-// pnpm sync:resume — pull the site copy and résumé PDF from resumes-cvs (SPEC §14).
+// pnpm sync:resume — pull the site copy, résumé, and CV from resumes-cvs (SPEC §14).
 //
-// Reads $RESUMES_CVS_DIR/private/out/web/{site.json,resume.pdf} (build them there
-// with `.venv/bin/python -m resumekit web`), validates site.json, writes
-// content/site.json, and uploads resume.pdf to the public Blob store at the fixed
-// pathname the site rewrites to. Prints the diff. Never commits or deploys.
+// Reads $RESUMES_CVS_DIR/private/out/web/{site.json,resume.pdf,cv.pdf} (build
+// them there with `.venv/bin/python -m resumekit web`), validates site.json,
+// writes content/site.json, and uploads both PDFs to the public Blob store at
+// the fixed pathnames the site rewrites to. Prints the diff. Never commits or
+// deploys.
 //
-//   pnpm sync:resume            content + PDF (needs BLOB_READ_WRITE_TOKEN)
+//   pnpm sync:resume            content + PDFs (needs BLOB_READ_WRITE_TOKEN)
 //   pnpm sync:resume --no-pdf   content only
 
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { siteContentSchema } from "../lib/site/content-schema.ts";
+import { PDFS } from "../lib/site/resume.ts";
 
 const root = resolve(import.meta.dirname, "..");
 const cvs = resolve(root, process.env.RESUMES_CVS_DIR ?? "../resumes-cvs");
 const src = join(cvs, "private", "out", "web");
 const dest = join(root, "content", "site.json");
-const PDF_PATHNAME = "wsgong_tech_writer_resume.pdf";
 
 function fail(message: string): never {
   console.error(`sync:resume: ${message}`);
@@ -53,19 +54,22 @@ if (before === text) {
 
 if (process.argv.includes("--no-pdf")) process.exit(0);
 
-const pdf = join(src, "resume.pdf");
-if (!existsSync(pdf)) fail(`no ${pdf}`);
+const pdfs = { "resume.pdf": PDFS.resume, "cv.pdf": PDFS.cv };
+for (const file of Object.keys(pdfs))
+  if (!existsSync(join(src, file))) fail(`no ${join(src, file)}`);
 if (!process.env.BLOB_READ_WRITE_TOKEN) {
   fail(
     "BLOB_READ_WRITE_TOKEN is unset (put it in .env.local); or pass --no-pdf",
   );
 }
 const { put } = await import("@vercel/blob");
-const blob = await put(PDF_PATHNAME, readFileSync(pdf), {
-  access: "public",
-  addRandomSuffix: false,
-  allowOverwrite: true,
-  contentType: "application/pdf",
-  cacheControlMaxAge: 300,
-});
-console.log(`resume.pdf → ${blob.url}`);
+for (const [file, pathname] of Object.entries(pdfs)) {
+  const blob = await put(pathname, readFileSync(join(src, file)), {
+    access: "public",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/pdf",
+    cacheControlMaxAge: 300,
+  });
+  console.log(`${file} → ${blob.url}`);
+}

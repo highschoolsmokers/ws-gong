@@ -35,7 +35,7 @@ export default function ThemeToggle() {
     <button
       onClick={cycle}
       aria-label={`Color theme: ${LABEL[theme]}. Click to change.`}
-      className="text-[10px] uppercase tracking-[0.12em] text-muted"
+      className="swiss-label"
     >
       {LABEL[theme]}
     </button>

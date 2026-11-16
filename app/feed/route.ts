@@ -1,6 +1,5 @@
+import { SITE_URL as site } from "@/lib/site/content";
 import { getSubstackPosts } from "@/lib/substack";
-
-const site = "https://www.ws-gong.com";
 // "]]>" can't appear inside CDATA; split it across two sections.
 const cdata = (s: string) =>
   `<![CDATA[${s.replaceAll("]]>", "]]]]><![CDATA[>")}]]>`;

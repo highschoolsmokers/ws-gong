@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { PageTitle, Section } from "@/app/components/ui";
 
-const description = "Terms of use and DMCA policy for ws-gong.com.";
 export const metadata: Metadata = {
   title: "Terms of Use",
-  description,
-  openGraph: { title: "Terms of Use — W.S. Gong", description },
+  description: "Terms of use and DMCA policy for ws-gong.com.",
 };
 
 export default function Terms() {
@@ -38,7 +36,7 @@ export default function Terms() {
           on this site infringes your copyright, please send a DMCA takedown
           notice to the contact email below with the following information:
         </p>
-        <ul className="list-disc pl-5 space-y-1">
+        <ul className="space-y-1">
           <li>
             Identification of the copyrighted work you claim has been infringed.
           </li>
