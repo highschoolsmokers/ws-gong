@@ -9,3 +9,11 @@ allowBuilds:
 # @vercel/cli-config. Drop once that chain ships a patched zod.
 overrides:
   "@vercel/cli-config>zod": ">=4.6.6"
+
+# GHSA-fc5q-39xc-vjpf: picomatch <=4.0.7 ReDoS on repeated extglobs, with no
+# patched release yet. It only runs at build/lint time (eslint, lint-staged,
+# Sentry's rollup plugin) on our own config globs, never on visitor input.
+# Drop once picomatch ships a fix, and bump it via an override instead.
+auditConfig:
+  ignoreGhsas:
+    - GHSA-fc5q-39xc-vjpf
