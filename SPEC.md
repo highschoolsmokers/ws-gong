@@ -25,9 +25,10 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm.
 | `/wsgong_tech_writer_resume.pdf`, `/wsgong_cv.pdf` | rewrite                  | Résumé and public CV PDFs in public Vercel Blob storage                       |
 | sitemap, robots, manifest, OG image                | `app/*.ts(x)`            | Standard metadata routes                                                      |
 
-Redirects (temporary while the one-page layout settles): `/code/*` and
-`/narratives-code/*` → `/#work`; `/about` → `/#about`; `/narratives` → `/#writing`; `/reading`,
-`/resume`, `/contact` → their anchors; `/residencies` → `/slushpile`.
+Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#work`;
+`/about` → `/#about`; `/narratives` → `/#writing`; `/resume`, `/contact` →
+their anchors; `/reading` → `/#reading`, or `/` while the reading log is empty;
+`/residencies` → `/slushpile`.
 
 `app/(site)/layout.tsx` wraps every page but `/links` in the masthead, the
 anchor nav (`Nav.tsx`, stacked in columns 11–12), and a footer: the copyright

@@ -1,5 +1,6 @@
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
+import { orderedBooks } from "./lib/books";
 import { slushpileUrl } from "./lib/site/env";
 import { PDFS, blobUrl } from "./lib/site/resume";
 
@@ -14,18 +15,19 @@ const csp = [
   "frame-ancestors 'none'",
 ].join("; ");
 
-// The site is one page: old section pages land on their anchors (temporary
-// while the layout settles). /residencies became the slushpile app.
+// The site is one page: old section pages land on their anchors, permanently.
+// /reading lands on home while the log is empty (its section is hidden).
+// /residencies became the slushpile app.
 const redirects = Object.entries({
   "/code/:slug*": "/#work",
   "/narratives-code/:slug*": "/#work",
   "/about": "/#about",
   "/narratives": "/#writing",
-  "/reading": "/#reading",
+  "/reading": orderedBooks.length ? "/#reading" : "/",
   "/resume": "/#resume",
   "/contact": "/#contact",
   "/residencies": "/slushpile",
-}).map(([source, destination]) => ({ source, destination, permanent: false }));
+}).map(([source, destination]) => ({ source, destination, permanent: true }));
 
 const nextConfig: NextConfig = {
   // Public source maps so Lighthouse and the console resolve minified frames.
