@@ -20,7 +20,7 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
 | `/`                                                | `app/(site)/page.tsx`    | The site (§3)                                                                 |
 | `/colophon`, `/terms`                              | `app/(site)/…`           | Static pages                                                                  |
 | `/links`                                           | `app/(bare)/links`       | Instagram link-in-bio page on the grid; no site chrome, not in nav or sitemap |
-| `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts, cached 1 h                                         |
+| `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts (category `Substack`), cached 1 h                   |
 | `/fabulosa-books/*`                                | `public/fabulosa-books/` | Static seven-part tutorial; `/fabulosa-books` rewrites to its index           |
 | `/slushpile/*`                                     | rewrite                  | Separate app at `SLUSHPILE_URL` (basePath `/slushpile`); 404 when unset       |
 | `/wsgong_tech_writer_resume.pdf`, `/wsgong_cv.pdf` | rewrite                  | Résumé and public CV PDFs in public Vercel Blob storage                       |
@@ -51,8 +51,9 @@ no gap in the numbering.
 
 - **00 About** `#about` — the portrait at the text block's width, directly
   above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
-- **Writing** `#writing` — fiction from `site.json`, the five latest
-  Substack posts, a subscribe link.
+- **Writing** `#writing` — two lists, **Fiction** (credits from `site.json`)
+  and **Substack** (the five latest posts; hidden when the fetch fails), then
+  a subscribe link.
 - **Work** `#work` — one list, `lib/projects.ts` in array order
   (hand-maintained); emits an `ItemList` JSON-LD.
 - **Reading** `#reading` — up to five of `lib/books.ts`, currently
@@ -69,10 +70,14 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 - `content/site.json` (§14), parsed at build time by `lib/site/content.ts`
   against `lib/site/content-schema.ts`. It also exports `profiles` (LinkedIn,
   GitHub, Substack, Instagram), the one list behind the Résumé rows, the
-  `/links` page, and the Person JSON-LD `sameAs`.
+  `/links` page, and the Person JSON-LD `sameAs`. Copy that `site.json`
+  doesn't carry lives beside it: `JOB_TITLE` and `KNOWS_ABOUT` (Person
+  JSON-LD) and `FEED_DESCRIPTION` (the RSS channel); keep them in step with
+  the statement.
 - `lib/projects.ts`: `{ href, title, description, stack }[]`, shown in array order.
 - `lib/books.ts`: `{ title, author, finished: "YYYY-MM-DD" | "reading", note?, link? }[]`.
-- `lib/substack.ts`: `getSubstackPosts(limit)`, revalidated hourly, 5 s
+- `lib/substack.ts`: `getSubstackPosts(limit)` over
+  `/api/v1/posts`, which returns `{ posts, nextCursor }`; revalidated hourly, 5 s
   timeout. Returns `[]` on any failure so its section hides; a non-OK response
   throws first so the data cache retries rather than caching the empty list.
 
@@ -82,7 +87,8 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 the visitor's text) to the server action `app/(site)/actions.ts`. Spam
 guards: a hidden `contact_hp` field that autofill and password managers are
 told to skip, and a 3-second minimum measured on the visitor's own clock
-(`_elapsed`). Visitors see one generic failure for guard, config, and SMTP
+(`_elapsed`; `MIN_ELAPSED_MS` in `lib/upload.ts`, which the e2e helpers also
+read). Visitors see one generic failure for guard, config, and SMTP
 faults; the function log records the reason (`Contact form rejected: …`).
 Attachments: up to 5 files, 4 MB total, executable extensions refused
 (`lib/upload.ts`); `next.config.ts` raises the server-action body limit to
@@ -181,16 +187,21 @@ pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
 
 ## 10. Scripts and tests
 
-`pnpm dev | build | start | lint | typecheck`, `pnpm test:unit` (Node test
+`pnpm dev | build | start | lint | typecheck` (`next typegen && tsc`, so
+route types exist on a clean checkout; delete a stale `.next/dev` if it
+fails), `pnpm test:unit` (Node test
 runner over `lib/**/*.test.ts`: book ordering, the §13 shape guards, and the
 §6.3 static Swiss guard),
 `pnpm test:e2e` (Playwright on chromium, firefox, and webkit), and
 `pnpm sync:resume` (§14). CI runs lint, typecheck, unit tests, a Prettier
-check, the build, and `pnpm audit --audit-level=high`. The E2E workflow runs
+check, the build, and `pnpm audit --audit-level=high`
+(`.github/workflows/checks.yml`). The E2E workflow (`browser.yml`) runs
 the Playwright suite against a local production build on every PR and push to
 main (CLI deploys send GitHub no deployment event). Tests tagged `@smtp` or
 `@infra` send mail, so they run only on a manual dispatch against a deployed
-URL.
+URL. Husky: `commit-msg` requires a conventional type (`feat`, `fix`,
+`docs`, `refactor`, `chore`, …), `pre-commit` runs lint-staged, and `pre-push`
+blocks pushes from `main` and runs lint and typecheck.
 
 ## 11. Layout
 
