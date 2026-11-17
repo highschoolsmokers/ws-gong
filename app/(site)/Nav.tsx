@@ -2,19 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { orderedBooks } from "@/lib/books";
 
 // The home page is the site: nav entries are anchors into its sections.
-const links = [
-  ["/#about", "About"],
-  ["/#writing", "Writing"],
-  ["/#work", "Work"],
-  ...(orderedBooks.length ? [["/#reading", "Reading"]] : []),
-  ["/#resume", "Résumé"],
-  ["/#contact", "Contact"],
-];
-
-export default function Nav({ slushpile }: { slushpile: boolean }) {
+// Optional sections pass their flag in from the server layout, which can read
+// content files; this client component can't.
+export default function Nav({
+  slushpile,
+  reading,
+}: {
+  slushpile: boolean;
+  reading: boolean;
+}) {
+  const links = [
+    ["/#about", "About"],
+    ["/#writing", "Writing"],
+    ...(reading ? [["/#reading", "Reading"]] : []),
+    ["/#code", "Code"],
+    ["/#resume", "Résumé"],
+    ["/#contact", "Contact"],
+    ...(slushpile ? [["/slushpile", "Slushpile"]] : []),
+  ];
   const masthead = (
     <span className="masthead swiss-display block">
       W.S.
@@ -40,13 +47,11 @@ export default function Nav({ slushpile }: { slushpile: boolean }) {
         className="col-span-12 md:col-span-2 md:col-start-11"
       >
         <ul className="site-nav">
-          {[...links, ...(slushpile ? [["/slushpile", "Slushpile"]] : [])].map(
-            ([href, label]) => (
-              <li key={href}>
-                <Link href={href}>{label}</Link>
-              </li>
-            ),
-          )}
+          {links.map(([href, label]) => (
+            <li key={href}>
+              <Link href={href}>{label}</Link>
+            </li>
+          ))}
         </ul>
       </nav>
     </div>

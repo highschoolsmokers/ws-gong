@@ -3,7 +3,7 @@
  * Keep magic numbers here with explanations so tests stay readable.
  */
 
-import { orderedBooks } from "../../lib/books";
+import { orderedBooks, reviewed } from "../../lib/books";
 import { MIN_ELAPSED_MS } from "../../lib/upload";
 
 /** Wait past the server's anti-spam minimum, with margin, before submitting. */
@@ -25,16 +25,24 @@ export const MAX_TAB_STEPS_FORM = 20;
 /**
  * All publicly routable pages — OG metadata and Swiss grid checks.
  */
-export const SITE_PAGES = ["/", "/terms", "/colophon", "/links"] as const;
+export const SITE_PAGES = [
+  "/",
+  "/terms",
+  "/colophon",
+  "/links",
+  ...(orderedBooks.length ? ["/reading"] : []),
+  ...reviewed.slice(0, 1).map((b) => `/reading/${b.slug}`),
+];
 
 /** Old section pages and the home anchor each now redirects to ("" = top). */
 export const FOLDED_ROUTES = [
   ["/about", "#about"],
-  ["/code", "#work"],
-  ["/code/colophon-mcp", "#work"],
-  ["/narratives-code/colophon-mcp", "#work"],
+  ["/code", "#code"],
+  ["/code/colophon-mcp", "#code"],
+  ["/narratives-code/colophon-mcp", "#code"],
   ["/narratives", "#writing"],
-  ["/reading", orderedBooks.length ? "#reading" : ""],
+  // /reading folds to the top of home only while the log is empty.
+  ...(orderedBooks.length ? [] : [["/reading", ""] as const]),
   ["/resume", "#resume"],
   ["/contact", "#contact"],
 ] as const;

@@ -17,6 +17,7 @@ export const siteContentSchema = z
         })
         .strict(),
     ),
+    now: z.string().min(1).optional(),
     links: z
       .object({
         linkedin: z.url(),

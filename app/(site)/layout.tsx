@@ -1,5 +1,6 @@
 import ThemeToggle from "@/app/components/ThemeToggle";
 import { ext } from "@/app/components/ui";
+import { orderedBooks } from "@/lib/books";
 import { slushpileUrl } from "@/lib/site/env";
 import { SUBSCRIBE_URL } from "@/lib/substack";
 import Nav from "./Nav";
@@ -15,7 +16,10 @@ export default function SiteLayout({
         Skip to content
       </a>
       <header className="site-header">
-        <Nav slushpile={slushpileUrl !== null} />
+        <Nav
+          slushpile={slushpileUrl !== null}
+          reading={orderedBooks.length > 0}
+        />
       </header>
       <main id="main" className="pb-24">
         {children}

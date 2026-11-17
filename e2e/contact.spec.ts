@@ -15,13 +15,27 @@ test.describe("Contact form fields", () => {
   test("renders required fields and submit button", async ({ page }) => {
     await page.goto("/#contact");
 
-    await expect(page.getByLabel("Name")).toBeAttached();
-    await expect(page.getByLabel("Name")).toHaveAttribute("required", "");
-    await expect(page.getByLabel("Email")).toBeAttached();
-    await expect(page.getByLabel("Email")).toHaveAttribute("required", "");
-    await expect(page.getByLabel("Message")).toBeAttached();
-    await expect(page.getByLabel("Message")).toHaveAttribute("required", "");
-    await expect(page.getByLabel("Subject")).toBeAttached();
+    await expect(
+      page.locator("section#contact").getByLabel("Name"),
+    ).toBeAttached();
+    await expect(
+      page.locator("section#contact").getByLabel("Name"),
+    ).toHaveAttribute("required", "");
+    await expect(
+      page.locator("section#contact").getByLabel("Email"),
+    ).toBeAttached();
+    await expect(
+      page.locator("section#contact").getByLabel("Email"),
+    ).toHaveAttribute("required", "");
+    await expect(
+      page.locator("section#contact").getByLabel("Message"),
+    ).toBeAttached();
+    await expect(
+      page.locator("section#contact").getByLabel("Message"),
+    ).toHaveAttribute("required", "");
+    await expect(
+      page.locator("section#contact").getByLabel("Subject"),
+    ).toBeAttached();
     await expect(page.getByRole("button", { name: /send/i })).toBeAttached();
   });
 });
@@ -43,6 +57,7 @@ test.describe("Contact form validation", () => {
     await expect(page.getByText(/please enter/i)).not.toBeVisible();
 
     const nameValid = await page
+      .locator("section#contact")
       .getByLabel("Name")
       .evaluate((el: HTMLInputElement) => el.validity.valid);
     expect(nameValid, "Name field should be invalid when empty").toBe(false);
@@ -51,7 +66,7 @@ test.describe("Contact form validation", () => {
   test("invalid email shows server validation error", async ({ page }) => {
     // Bypass browser validation so the server can respond
     await page
-      .locator("form")
+      .locator("section#contact form")
       .evaluate((el: HTMLFormElement) => el.setAttribute("novalidate", ""));
 
     await fillContactForm(page, {
@@ -65,18 +80,22 @@ test.describe("Contact form validation", () => {
     await expect(page.getByText(/please enter a valid email/i)).toBeVisible({
       timeout: VALIDATION_TIMEOUT_MS,
     }); // A failed send must not wipe what the visitor typed.
-    await expect(page.getByLabel("Message")).toHaveValue(
-      "Test message content here.",
-    );
+    await expect(
+      page.locator("section#contact").getByLabel("Message"),
+    ).toHaveValue("Test message content here.");
   });
 
   test("missing message is blocked by browser validation", async ({ page }) => {
-    await page.getByLabel("Name").fill("Test User");
-    await page.getByLabel("Email").fill("test@example.com");
+    await page.locator("section#contact").getByLabel("Name").fill("Test User");
+    await page
+      .locator("section#contact")
+      .getByLabel("Email")
+      .fill("test@example.com");
 
     await page.getByRole("button", { name: /send/i }).click();
 
     const messageValid = await page
+      .locator("section#contact")
       .getByLabel("Message")
       .evaluate((el: HTMLTextAreaElement) => el.validity.valid);
     expect(messageValid, "Message field should be invalid when empty").toBe(
