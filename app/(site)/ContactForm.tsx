@@ -183,7 +183,7 @@ function Form({ onReset }: { onReset: () => void }) {
         <button
           type="submit"
           disabled={pending}
-          className="border border-foreground px-5 py-2 text-xl font-medium tracking-tight transition-colors hover:bg-foreground hover:text-background disabled:pointer-events-none disabled:opacity-40"
+          className="border border-foreground px-(--gutter) py-[calc(var(--gutter)/4)] text-xl font-medium tracking-tight transition-colors hover:bg-foreground hover:text-background disabled:pointer-events-none disabled:opacity-40"
         >
           {pending ? "Sending…" : "Send"}
         </button>
