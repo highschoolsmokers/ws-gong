@@ -27,7 +27,7 @@ is a finding; name why it skipped.
 **2. Code against SPEC.md.** Every factual claim in SPEC.md must match the code:
 the routes table vs `app/`; redirects, rewrites, and headers vs `next.config.ts`;
 the environment table vs every `process.env` read; scripts vs `package.json`; the
-layout tree vs the files on disk; §13 decisions vs `lib/site/shape.test.ts`.
+layout tree vs the files on disk; §13 decisions vs `lib/shape.test.ts`.
 Also the reverse: behavior in code that SPEC.md doesn't describe.
 
 **3. Code-level minimization.** Goal: the fewest lines that do the job.
@@ -37,8 +37,8 @@ with one caller, defensive code against states the types rule out, stale
 comments, and config with one setting. For each, give the consolidated form and
 the lines saved.
 
-**4. Design against SPEC.md §6.1.** Render `/`, `/about`, `/colophon`, `/terms`,
-`/links` at 1280 px and 375 px, light and dark. Check every element against the
+**4. Design against SPEC.md §6.1.** Render `/`, `/colophon`, `/terms`, `/links`,
+a 404 at 1280 px and 375 px, light and dark. Check every element against the
 seven rules — grid column lines, nothing in the margin, flush left, asymmetry,
 weights 700/500/400, rules between rows only, token spacing — including what the
 automated guards can't reach (footer, `/links`, overlays, error and 404 pages).
@@ -60,7 +60,7 @@ fewest lines.
 
 Prove it changed nothing a visitor sees:
 1. Before editing, with the production build running, save each page's
-   rendered HTML text and a 1280 px and 375 px screenshot (`/`, `/about`,
+   rendered HTML text and a 1280 px and 375 px screenshot (`/`,
    `/colophon`, `/terms`, `/links`, a 404), plus the response headers.
 2. After editing, rebuild, rerun step 1, and capture the same set.
 3. Any difference in text, markup structure, screenshots, or headers means a

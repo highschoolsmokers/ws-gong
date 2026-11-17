@@ -46,6 +46,7 @@ next-env.d.ts
 
 # local notes
 TODO.md
+.playwright-mcp/
 
 # Personal: résumé documents never enter git (SPEC §12, §14)
 /private/

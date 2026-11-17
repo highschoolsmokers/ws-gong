@@ -13,7 +13,7 @@ import { requireEnv } from "./helpers/required-env";
 // ---------------------------------------------------------------------------
 test.describe("Contact form fields", () => {
   test("renders required fields and submit button", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/#contact");
 
     await expect(page.getByLabel("Name")).toBeAttached();
     await expect(page.getByLabel("Name")).toHaveAttribute("required", "");
@@ -31,7 +31,7 @@ test.describe("Contact form fields", () => {
 // ---------------------------------------------------------------------------
 test.describe("Contact form validation", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/#contact");
   });
 
   test("required fields block empty submission via browser validation", async ({
@@ -91,7 +91,7 @@ test.describe("Contact form validation", () => {
 test.describe("Contact form submission", () => {
   test("submission without optional subject @smtp", async ({ page }) => {
     requireEnv("SMTP_HOST");
-    await page.goto("/contact");
+    await page.goto("/#contact");
 
     await fillContactForm(page, {
       name: "E2E No Subject",
@@ -116,7 +116,7 @@ test.describe("Contact form email delivery", () => {
     test.setTimeout(EMAIL_DELIVERY_TIMEOUT_MS);
 
     const token = `e2e-${Date.now()}`;
-    await page.goto("/contact");
+    await page.goto("/#contact");
 
     await fillContactForm(page, {
       name: "E2E Delivery",
@@ -141,7 +141,7 @@ test.describe("Contact form email delivery", () => {
 // ---------------------------------------------------------------------------
 test.describe("Contact form file attachments", () => {
   test("attaching a file shows it in the list", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/#contact");
 
     await page.locator("input[type='file']").setInputFiles({
       name: "test-upload.txt",
@@ -152,7 +152,7 @@ test.describe("Contact form file attachments", () => {
   });
 
   test("removing an attached file", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/#contact");
 
     await page.locator("input[type='file']").setInputFiles({
       name: "test-remove.txt",

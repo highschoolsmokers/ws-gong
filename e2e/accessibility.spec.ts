@@ -20,7 +20,7 @@ test.describe("Skip-to-content link", () => {
 // ---------------------------------------------------------------------------
 test.describe("Form accessibility", () => {
   test("honeypot field is hidden from assistive tech", async ({ page }) => {
-    await page.goto("/contact");
+    await page.goto("/#contact");
 
     const honeypot = page.locator("input[name='contact_hp']");
     await expect(honeypot).toHaveAttribute("aria-hidden", "true");
@@ -64,7 +64,7 @@ test.describe("Keyboard navigation", () => {
   test("send button is keyboard-reachable on contact form", async ({
     page,
   }) => {
-    await page.goto("/contact");
+    await page.goto("/#contact");
     // The form sits at the end of the one-page home; start from its first field.
     await page.getByLabel("Name").focus();
 

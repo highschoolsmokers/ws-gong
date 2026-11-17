@@ -3,6 +3,7 @@
 import nodemailer from "nodemailer";
 import {
   MAX_FILES,
+  MIN_ELAPSED_MS,
   MAX_TOTAL_BYTES,
   isBlockedAttachmentName,
 } from "@/lib/upload";
@@ -21,7 +22,6 @@ const fail = (reason: string, err?: unknown): FormState => {
     message: "Something went wrong. Please try again.",
   };
 };
-const MIN_ELAPSED_MS = 3000;
 const EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const port = Number(process.env.SMTP_PORT) || 465;

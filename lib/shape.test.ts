@@ -2,11 +2,11 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { projects } from "../code/projects.ts";
-import { PDFS, blobUrl } from "./resume.ts";
+import { projects } from "./projects.ts";
+import { PDFS, blobUrl } from "./site/resume.ts";
 
 // Pins deliberate deletions (SPEC §13) so they don't creep back.
-const r = (p: string) => join(import.meta.dirname, "..", "..", p);
+const r = (p: string) => join(import.meta.dirname, "..", p);
 const read = (p: string) => readFileSync(r(p), "utf8");
 
 test("removed surfaces stay removed", () => {

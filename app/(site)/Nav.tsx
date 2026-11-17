@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { orderedBooks } from "@/lib/reading/books";
+import { orderedBooks } from "@/lib/books";
 
 // The home page is the site: nav entries are anchors into its sections.
 const links = [
