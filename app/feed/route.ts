@@ -7,7 +7,7 @@ const cdata = (s: string) =>
 export async function GET() {
   const items = (await getSubstackPosts()).map(
     (p) =>
-      `<item><title>${cdata(p.title)}</title><link>${p.canonical_url}</link><guid isPermaLink="true">${p.canonical_url}</guid><pubDate>${new Date(p.post_date).toUTCString()}</pubDate>${p.subtitle ? `<description>${cdata(p.subtitle)}</description>` : ""}<category>Newsletter</category></item>`,
+      `<item><title>${cdata(p.title)}</title><link>${p.canonical_url}</link><guid isPermaLink="true">${p.canonical_url}</guid><pubDate>${new Date(p.post_date).toUTCString()}</pubDate>${p.subtitle ? `<description>${cdata(p.subtitle)}</description>` : ""}<category>Substack</category></item>`,
   );
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>W.S. Gong</title><link>${site}</link><description>${FEED_DESCRIPTION}</description><language>en-us</language><atom:link href="${site}/feed" rel="self" type="application/rss+xml"/>
