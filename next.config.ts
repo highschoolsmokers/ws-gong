@@ -1,4 +1,4 @@
-import { withSentryConfig } from "@sentry/nextjs";
+import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 import { orderedBooks } from "./lib/books";
 import { slushpileUrl } from "./lib/site/env";
