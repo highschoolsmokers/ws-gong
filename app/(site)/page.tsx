@@ -61,6 +61,9 @@ export default async function Home() {
             alt="Illustrated portrait of W.S. Gong"
             sizes="(min-width: 768px) 40vw, 100vw"
             className="h-auto w-full"
+            // In the first viewport on most screens and the page's LCP element.
+            loading="eager"
+            fetchPriority="high"
           />
           <p>{site.bio[0]}</p>
         </div>
