@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Applies the main site's stored light/dark choice before first paint -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <title>Part 7: Making It Real</title>
     <meta
       name="description"
@@ -15,36 +23,32 @@
     />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="W.S. Gong" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta
+      property="og:url"
+      content="https://www.ws-gong.com/fabulosa-books/part7.html"
+    />
+    <meta
+      property="og:image"
+      content="https://www.ws-gong.com/fabulosa-books/images/fabulosa-storefront.jpg"
+    />
+    <link
+      rel="canonical"
+      href="https://www.ws-gong.com/fabulosa-books/part7.html"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/fabulosa-books/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
-    />
-    <script
-      defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
-    ></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
-    </script>
   </head>
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
       <nav class="site-nav">
-        <a href="/#work">&larr; W.S. Gong / Work</a>
+        <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
       <nav class="page-nav">
-        <a href="/fabulosa-books/part6.html">&larr; Previous</a>
-        <span class="disabled">Next &rarr;</span>
+        <a href="/fabulosa-books/part6.html">&larr; The Specialist Team</a>
+        <a href="/fabulosa-books">Back to Contents &rarr;</a>
       </nav>
       <header>
         <div class="part-label">Part 7</div>
@@ -63,69 +67,74 @@
 
             <div class="step">Step 50: Create the Communication Agent</div>
             <p>Create <code>lib/tools/communication-tools.ts</code>:</p>
-            <pre><code>// lib/tools/communication-tools.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/communication-tools.ts</span>
 
-export const formatWeekSummaryTool = tool({
-  description: 'Generate a formatted summary of a week\'s schedule,
-    suitable for posting or sending to the team.',
-  inputSchema: z.object({
-    weekStart: z.string().describe('Week start date in YYYY-MM-DD format'),
+<span class="hljs-keyword">import</span> { tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
+<span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+<span class="hljs-keyword">import</span> { getAllEmployees, getWeekSchedule } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/db&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-variable constant_">DAYS_OF_WEEK</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/utils&#x27;</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> formatWeekSummaryTool = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>:
+    <span class="hljs-string">&quot;Generate a formatted summary of a week&#x27;s schedule, suitable for posting or sending to the team.&quot;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({
+    <span class="hljs-attr">weekStart</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#x27;Week start date in YYYY-MM-DD format&#x27;</span>),
   }),
-  execute: async ({ weekStart }) =&gt; {
-    const [schedule, employees] = await Promise.all([
-      getWeekSchedule(weekStart), getAllEmployees(),
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> ({ weekStart }) =&gt; {
+    <span class="hljs-keyword">const</span> [schedule, employees] = <span class="hljs-keyword">await</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">all</span>([
+      <span class="hljs-title function_">getWeekSchedule</span>(weekStart), <span class="hljs-title function_">getAllEmployees</span>(),
     ])
 
-    const byDay: Record&lt;number, Record&lt;string, string&gt;&gt; = {}
-    for (let d = 0; d &lt; 7; d++) {
+    <span class="hljs-keyword">const</span> <span class="hljs-attr">byDay</span>: <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">number</span>, <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;&gt; = {}
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> d = <span class="hljs-number">0</span>; d &lt; <span class="hljs-number">7</span>; d++) {
       byDay[d] = {}
-      for (const shift of ['opening', 'mid', 'closing']) {
-        const entry = schedule.find(
-          s =&gt; s.day_of_week === d &amp;&amp; s.shift_type === shift
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> shift <span class="hljs-keyword">of</span> [<span class="hljs-string">&#x27;opening&#x27;</span>, <span class="hljs-string">&#x27;mid&#x27;</span>, <span class="hljs-string">&#x27;closing&#x27;</span>]) {
+        <span class="hljs-keyword">const</span> entry = schedule.<span class="hljs-title function_">find</span>(
+          <span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.<span class="hljs-property">day_of_week</span> === d &amp;&amp; s.<span class="hljs-property">shift_type</span> === shift
         )
-        byDay[d][shift] = entry?.employee_name || '(unassigned)'
+        byDay[d][shift] = entry?.<span class="hljs-property">employee_name</span> || <span class="hljs-string">&#x27;(unassigned)&#x27;</span>
       }
     }
 
-    return {
+    <span class="hljs-keyword">return</span> {
       weekStart,
-      scheduleByDay: Object.entries(byDay).map(([day, shifts]) =&gt; ({
-        day: DAYS_OF_WEEK[Number(day)],
-        opening: shifts.opening,
-        mid: shifts.mid,
-        closing: shifts.closing,
+      <span class="hljs-attr">scheduleByDay</span>: <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">entries</span>(byDay).<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">[day, shifts]</span>) =&gt;</span> ({
+        <span class="hljs-attr">day</span>: <span class="hljs-variable constant_">DAYS_OF_WEEK</span>[<span class="hljs-title class_">Number</span>(day)],
+        <span class="hljs-attr">opening</span>: shifts.<span class="hljs-property">opening</span>,
+        <span class="hljs-attr">mid</span>: shifts.<span class="hljs-property">mid</span>,
+        <span class="hljs-attr">closing</span>: shifts.<span class="hljs-property">closing</span>,
       })),
-      totalAssigned: schedule.filter(s =&gt; s.employee_name).length,
-      gaps: 21 - schedule.filter(s =&gt; s.employee_name).length,
+      <span class="hljs-attr">totalAssigned</span>: schedule.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.<span class="hljs-property">employee_name</span>).<span class="hljs-property">length</span>,
+      <span class="hljs-attr">gaps</span>: <span class="hljs-number">21</span> - schedule.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.<span class="hljs-property">employee_name</span>).<span class="hljs-property">length</span>,
     }
   },
 })
 
-export const getEmployeeScheduleTool = tool({
-  description: 'Get a specific employee\'s shifts for the week.',
-  inputSchema: z.object({
-    employeeName: z.string(),
-    weekStart: z.string(),
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getEmployeeScheduleTool = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Get a specific employee\&#x27;s shifts for the week.&#x27;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({
+    <span class="hljs-attr">employeeName</span>: z.<span class="hljs-title function_">string</span>(),
+    <span class="hljs-attr">weekStart</span>: z.<span class="hljs-title function_">string</span>(),
   }),
-  execute: async ({ employeeName, weekStart }) =&gt; {
-    const schedule = await getWeekSchedule(weekStart)
-    const shifts = schedule
-      .filter(s =&gt; s.employee_name === employeeName)
-      .map(s =&gt; ({
-        day: DAYS_OF_WEEK[s.day_of_week],
-        shift: s.shift_type,
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> ({ employeeName, weekStart }) =&gt; {
+    <span class="hljs-keyword">const</span> schedule = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getWeekSchedule</span>(weekStart)
+    <span class="hljs-keyword">const</span> shifts = schedule
+      .<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.<span class="hljs-property">employee_name</span> === employeeName)
+      .<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> ({
+        <span class="hljs-attr">day</span>: <span class="hljs-variable constant_">DAYS_OF_WEEK</span>[s.<span class="hljs-property">day_of_week</span>],
+        <span class="hljs-attr">shift</span>: s.<span class="hljs-property">shift_type</span>,
       }))
 
-    return { employee: employeeName, weekStart, shifts, totalShifts: shifts.length }
+    <span class="hljs-keyword">return</span> { <span class="hljs-attr">employee</span>: employeeName, weekStart, shifts, <span class="hljs-attr">totalShifts</span>: shifts.<span class="hljs-property">length</span> }
   },
 })</code></pre>
 
             <p>Create <code>lib/agents/communication-agent.ts</code>:</p>
-            <pre><code>// lib/agents/communication-agent.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/communication-agent.ts</span>
 
-export const communicationAgent = new ToolLoopAgent({
-  model: 'anthropic/claude-sonnet-4.5',
-  instructions: `You are the Communication Agent for Fabulosa Books.
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> communicationAgent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ToolLoopAgent</span>({
+  <span class="hljs-attr">model</span>: <span class="hljs-string">&#x27;anthropic/claude-sonnet-5.5&#x27;</span>,
+  <span class="hljs-attr">instructions</span>: <span class="hljs-string">`You are the Communication Agent for Fabulosa Books.
 
 Your job is to create clear, friendly, human-readable schedule
 communications. You draft messages that could be posted in the
@@ -138,12 +147,12 @@ Tone guidelines:
 - For individual schedules, mention notable details
 - For weekly summaries, format as a clean, readable table
 
-Example tone: "Hey team! Here's next week's schedule. Marcus, you've
+Example tone: &quot;Hey team! Here&#x27;s next week&#x27;s schedule. Marcus, you&#x27;ve
 got Saturday closing (2-9pm) — thanks for taking that one. Let Alvin
-know ASAP if anything doesn't work."`,
-  tools: {
-    formatWeekSummary: formatWeekSummaryTool,
-    getEmployeeSchedule: getEmployeeScheduleTool,
+know ASAP if anything doesn&#x27;t work.&quot;`</span>,
+  <span class="hljs-attr">tools</span>: {
+    <span class="hljs-attr">formatWeekSummary</span>: formatWeekSummaryTool,
+    <span class="hljs-attr">getEmployeeSchedule</span>: getEmployeeScheduleTool,
   },
 })</code></pre>
 
@@ -154,31 +163,36 @@ know ASAP if anything doesn't work."`,
               Update <code>lib/agents/coordinator-agent.ts</code> to include the
               new subagent:
             </p>
-            <pre><code>// Add to the coordinator's tools:
-const draftCommunicationSubagent = tool({
-  description: 'Ask the Communication Agent to draft a human-readable
-    schedule summary, notification, or message for the team.',
-  inputSchema: z.object({
-    question: z.string().describe('What to draft or format'),
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// Add to the coordinator&#x27;s tools:</span>
+<span class="hljs-keyword">const</span> draftCommunicationSubagent = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>:
+    <span class="hljs-string">&#x27;Ask the Communication Agent to draft a human-readable schedule summary, notification, or message for the team.&#x27;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({
+    <span class="hljs-attr">question</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#x27;What to draft or format&#x27;</span>),
   }),
-  execute: async ({ question }) =&gt; {
-    const result = await communicationAgent.generate({
-      messages: [{ role: 'user', content: question }],
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> ({ question }) =&gt; {
+    <span class="hljs-keyword">const</span> result = <span class="hljs-keyword">await</span> communicationAgent.<span class="hljs-title function_">generate</span>({
+      <span class="hljs-attr">messages</span>: [{ <span class="hljs-attr">role</span>: <span class="hljs-string">&#x27;user&#x27;</span>, <span class="hljs-attr">content</span>: question }],
     })
-    return { answer: result.text }
+    <span class="hljs-keyword">return</span> { <span class="hljs-attr">answer</span>: result.<span class="hljs-property">text</span> }
   },
 })
 
-// Updated coordinator instructions mention four specialists:
-// 1. Availability Agent
-// 2. Fairness Agent
-// 3. Coverage Agent
-// 4. Communication Agent</code></pre>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/agent-architecture.svg"
-              alt="Updated architecture with four specialist agents"
-            />
+<span class="hljs-comment">// Updated coordinator instructions mention four specialists:</span>
+<span class="hljs-comment">// 1. Availability Agent</span>
+<span class="hljs-comment">// 2. Fairness Agent</span>
+<span class="hljs-comment">// 3. Coverage Agent</span>
+<span class="hljs-comment">// 4. Communication Agent</span></code></pre>
+            <a
+              href="/fabulosa-books/images/agent-architecture.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/agent-architecture.svg"
+                alt="Updated architecture with four specialist agents"
+              />
+            </a>
 
             <div class="step">Step 52: Test the Communication Agent</div>
             <p>Try:</p>
@@ -216,16 +230,11 @@ const draftCommunicationSubagent = tool({
               couldn't solve and <em>why</em>, rather than failing silently.
             </p>
             <p>Add to the coordinator's instructions:</p>
-            <pre><code>When you cannot create a complete schedule:
+            <pre><code class="hljs language-plaintext">When you cannot create a complete schedule:
 - Explain which constraints conflict
 - Fill what you can and clearly mark remaining gaps
-- Suggest solutions: "Consider asking Johnny Ray or Carly for extra on-call shifts"
+- Suggest solutions: &quot;Consider asking Johnny Ray or Carly for extra on-call shifts&quot;
 - Never silently leave shifts unassigned — always flag gaps explicitly</code></pre>
-            <div class="image-placeholder">
-              The coordinator gracefully handling a difficult week &mdash;
-              explaining "I was able to fill 18 of 21 shifts. The remaining 3
-              gaps are..." with specific suggestions
-            </div>
           </div>
         </div>
 
@@ -243,12 +252,12 @@ const draftCommunicationSubagent = tool({
               <li>
                 The coordinator needs the most capable model since it
                 orchestrates complex reasoning.
-                <code>anthropic/claude-sonnet-4.5</code> is a good default.
+                <code>anthropic/claude-sonnet-5.5</code> is a good default.
               </li>
               <li>
                 For simpler agents (Coverage Agent, which mostly validates
                 rules), you could use a faster, cheaper model like
-                <code>anthropic/claude-haiku-4.5</code>.
+                <code>anthropic/claude-haiku-5.5</code>.
               </li>
               <li>
                 The AI Gateway tracks usage across all providers. Check your
@@ -259,15 +268,11 @@ const draftCommunicationSubagent = tool({
               To use a cheaper model for a specific agent, just change the model
               string:
             </p>
-            <pre><code>// In coverage-agent.ts — this agent's job is simple enough for Haiku
-export const coverageAgent = new ToolLoopAgent({
-  model: 'anthropic/claude-haiku-4.5',
-  // ... rest stays the same
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// In coverage-agent.ts — this agent&#x27;s job is simple enough for Haiku</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> coverageAgent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ToolLoopAgent</span>({
+  <span class="hljs-attr">model</span>: <span class="hljs-string">&#x27;anthropic/claude-haiku-5.5&#x27;</span>,
+  <span class="hljs-comment">// ... rest stays the same</span>
 })</code></pre>
-            <div class="image-placeholder">
-              Vercel AI Gateway usage dashboard showing model usage breakdown by
-              agent
-            </div>
           </div>
         </div>
 
@@ -275,18 +280,23 @@ export const coverageAgent = new ToolLoopAgent({
           <h2>Deploy the Final Version</h2>
           <div class="section-content">
             <div class="step">Step 55: Push the complete system</div>
-            <pre><code>git add -A
-git commit -m "Complete multi-agent system: Communication Agent, error handling, cost optimization"
+            <pre><code class="hljs language-bash">git add -A
+git commit -m <span class="hljs-string">&quot;Complete multi-agent system: Communication Agent, error handling, cost optimization&quot;</span>
 git push</code></pre>
             <p>
               Vercel deploys automatically. Your complete multi-agent scheduling
               system is live.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/complete-architecture.svg"
-              alt="The complete multi-agent scheduling system"
-            />
+            <a
+              href="/fabulosa-books/images/complete-architecture.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/complete-architecture.svg"
+                alt="The complete multi-agent scheduling system"
+              />
+            </a>
           </div>
         </div>
 
@@ -420,7 +430,7 @@ git push</code></pre>
       </main>
       <nav class="bottom-nav">
         <a href="/fabulosa-books/part6.html">&larr; The Specialist Team</a>
-        <a href="/fabulosa-books/index.html">Back to Contents &rarr;</a>
+        <a href="/fabulosa-books">Back to Contents &rarr;</a>
       </nav>
       <footer>
         Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the
