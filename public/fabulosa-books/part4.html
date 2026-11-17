@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Applies the main site's stored light/dark choice before first paint -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <title>Part 4: The Foundation &mdash; Data and Database</title>
     <meta
       name="description"
@@ -18,36 +26,32 @@
     />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="W.S. Gong" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta
+      property="og:url"
+      content="https://www.ws-gong.com/fabulosa-books/part4.html"
+    />
+    <meta
+      property="og:image"
+      content="https://www.ws-gong.com/fabulosa-books/images/fabulosa-storefront.jpg"
+    />
+    <link
+      rel="canonical"
+      href="https://www.ws-gong.com/fabulosa-books/part4.html"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/fabulosa-books/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
-    />
-    <script
-      defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
-    ></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
-    </script>
   </head>
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
       <nav class="site-nav">
-        <a href="/#work">&larr; W.S. Gong / Work</a>
+        <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
       <nav class="page-nav">
-        <a href="/fabulosa-books/part3.html">&larr; Previous</a>
-        <a href="/fabulosa-books/part5.html">Next &rarr;</a>
+        <a href="/fabulosa-books/part3.html">&larr; Setting Up Shop</a>
+        <a href="/fabulosa-books/part5.html">Your First Agent &rarr;</a>
       </nav>
       <header>
         <div class="part-label">Part 4</div>
@@ -74,26 +78,26 @@
               Create a <code>types</code> folder in your project root with an
               <code>index.ts</code> file:
             </p>
-            <pre><code>// types/index.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// types/index.ts</span>
 
-export interface Employee {
-  id: number
-  name: string
-  is_on_call: number
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Employee</span> {
+  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>
+  <span class="hljs-attr">name</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">is_on_call</span>: <span class="hljs-built_in">boolean</span>
 }
 
-export interface ScheduleEntry {
-  id: number
-  day_of_week: number
-  shift_type: string
-  employee_name: string | null
-  week_start_date: string
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ScheduleEntry</span> {
+  <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>
+  <span class="hljs-attr">day_of_week</span>: <span class="hljs-built_in">number</span>
+  <span class="hljs-attr">shift_type</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">employee_name</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>
+  <span class="hljs-attr">week_start_date</span>: <span class="hljs-built_in">string</span>
 }
 
-export interface ShiftSlot {
-  dayOfWeek: number
-  shiftType: string
-  employeeName: string | null
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ShiftSlot</span> {
+  <span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span>
+  <span class="hljs-attr">shiftType</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">employeeName</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>
 }</code></pre>
             <p>
               An <code>Employee</code> has an id, a name, and a flag for whether
@@ -102,11 +106,13 @@ export interface ShiftSlot {
               <code>string | null</code> means the employee name can be
               empty&mdash;because sometimes a shift hasn't been assigned yet.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/data-model.svg"
-              alt="Diagram showing the relationship between the three types — Employee feeds into ScheduleEntry (via employee_name), ShiftSlot is a simplified view for the UI"
-            />
+            <a href="/fabulosa-books/images/data-model.svg" class="diagram">
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/data-model.svg"
+                alt="Diagram showing the relationship between the three types — Employee feeds into ScheduleEntry (via employee_name), ShiftSlot is a simplified view for the UI"
+              />
+            </a>
           </div>
         </div>
 
@@ -115,50 +121,55 @@ export interface ShiftSlot {
           <div class="section-content">
             <div class="step">Step 23: Create helper functions</div>
             <p>Create <code>lib/utils.ts</code>:</p>
-            <pre><code>// lib/utils.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/utils.ts</span>
 
-export const DAYS_OF_WEEK = [
-  'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-  'Thursday', 'Friday', 'Saturday'
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">DAYS_OF_WEEK</span> = [
+  <span class="hljs-string">&#x27;Sunday&#x27;</span>, <span class="hljs-string">&#x27;Monday&#x27;</span>, <span class="hljs-string">&#x27;Tuesday&#x27;</span>, <span class="hljs-string">&#x27;Wednesday&#x27;</span>,
+  <span class="hljs-string">&#x27;Thursday&#x27;</span>, <span class="hljs-string">&#x27;Friday&#x27;</span>, <span class="hljs-string">&#x27;Saturday&#x27;</span>
 ]
 
-export const SHIFTS = [
-  { type: 'opening', label: 'Opening', start: '10am', end: '4pm' },
-  { type: 'mid', label: 'Mid', start: '12pm', end: '6pm' },
-  { type: 'closing', label: 'Closing', start: '2pm', end: '8pm' },
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">SHIFTS</span> = [
+  { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;opening&#x27;</span>, <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Opening&#x27;</span>, <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;10am&#x27;</span>, <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;4pm&#x27;</span> },
+  { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;mid&#x27;</span>, <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Mid&#x27;</span>, <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;12pm&#x27;</span>, <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;6pm&#x27;</span> },
+  { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;closing&#x27;</span>, <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Closing&#x27;</span>, <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;2pm&#x27;</span>, <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;8pm&#x27;</span> },
 ]
 
-export const SHIFTS_SATURDAY = [
-  { type: 'opening', label: 'Opening', start: '10am', end: '4pm' },
-  { type: 'mid', label: 'Mid', start: '12pm', end: '6pm' },
-  { type: 'closing', label: 'Closing', start: '2pm', end: '9pm' },
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">SHIFTS_SATURDAY</span> = [
+  { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;opening&#x27;</span>, <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Opening&#x27;</span>, <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;10am&#x27;</span>, <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;4pm&#x27;</span> },
+  { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;mid&#x27;</span>, <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Mid&#x27;</span>, <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;12pm&#x27;</span>, <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;6pm&#x27;</span> },
+  { <span class="hljs-attr">type</span>: <span class="hljs-string">&#x27;closing&#x27;</span>, <span class="hljs-attr">label</span>: <span class="hljs-string">&#x27;Closing&#x27;</span>, <span class="hljs-attr">start</span>: <span class="hljs-string">&#x27;2pm&#x27;</span>, <span class="hljs-attr">end</span>: <span class="hljs-string">&#x27;9pm&#x27;</span> },
 ]
 
-export function getShiftsForDay(dayOfWeek: number) {
-  return dayOfWeek === 6 ? SHIFTS_SATURDAY : SHIFTS
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getShiftsForDay</span>(<span class="hljs-params"><span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span></span>) {
+  <span class="hljs-keyword">return</span> dayOfWeek === <span class="hljs-number">6</span> ? <span class="hljs-variable constant_">SHIFTS_SATURDAY</span> : <span class="hljs-variable constant_">SHIFTS</span>
 }
 
-export function getWeekStartDate(date?: Date): string {
-  const d = date ? new Date(date) : new Date()
-  const day = d.getDay()
-  const diff = d.getDate() - day
-  const weekStart = new Date(d.setDate(diff))
-  return weekStart.toISOString().split('T')[0]
+<span class="hljs-comment">// Dates are local (the store&#x27;s time zone). toISOString() would convert to UTC</span>
+<span class="hljs-comment">// and, on a San Francisco evening, return tomorrow&#x27;s date.</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">toYMD</span>(<span class="hljs-params"><span class="hljs-attr">d</span>: <span class="hljs-title class_">Date</span></span>): <span class="hljs-built_in">string</span> {
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">pad</span> = (<span class="hljs-params"><span class="hljs-attr">n</span>: <span class="hljs-built_in">number</span></span>) =&gt; <span class="hljs-title class_">String</span>(n).<span class="hljs-title function_">padStart</span>(<span class="hljs-number">2</span>, <span class="hljs-string">&#x27;0&#x27;</span>)
+  <span class="hljs-keyword">return</span> <span class="hljs-string">`<span class="hljs-subst">${d.getFullYear()}</span>-<span class="hljs-subst">${pad(d.getMonth() + <span class="hljs-number">1</span>)}</span>-<span class="hljs-subst">${pad(d.getDate())}</span>`</span>
 }
 
-export function getDateFromDayOfWeek(
-  weekStart: string,
-  dayOfWeek: number
-): Date {
-  const date = new Date(weekStart)
-  date.setDate(date.getDate() + dayOfWeek)
-  return date
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getWeekStartDate</span>(<span class="hljs-params"><span class="hljs-attr">date</span>?: <span class="hljs-title class_">Date</span></span>): <span class="hljs-built_in">string</span> {
+  <span class="hljs-keyword">const</span> d = date ? <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(date) : <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()
+  d.<span class="hljs-title function_">setDate</span>(d.<span class="hljs-title function_">getDate</span>() - d.<span class="hljs-title function_">getDay</span>()) <span class="hljs-comment">// back to Sunday</span>
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">toYMD</span>(d)
 }
 
-export function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getDateFromDayOfWeek</span>(<span class="hljs-params">
+  <span class="hljs-attr">weekStart</span>: <span class="hljs-built_in">string</span>,
+  <span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span>
+</span>): <span class="hljs-title class_">Date</span> {
+  <span class="hljs-comment">// new Date(&#x27;2026-11-15&#x27;) would parse as UTC midnight: the day before, locally.</span>
+  <span class="hljs-keyword">const</span> [y, m, d] = weekStart.<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;-&#x27;</span>).<span class="hljs-title function_">map</span>(<span class="hljs-title class_">Number</span>)
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(y, m - <span class="hljs-number">1</span>, d + dayOfWeek)
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">formatDate</span>(<span class="hljs-params"><span class="hljs-attr">date</span>: <span class="hljs-title class_">Date</span></span>): <span class="hljs-built_in">string</span> {
+  <span class="hljs-keyword">return</span> date.<span class="hljs-title function_">toLocaleDateString</span>(<span class="hljs-string">&#x27;en-US&#x27;</span>, {
+    <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;short&#x27;</span>,
+    <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;numeric&#x27;</span>,
   })
 }</code></pre>
             <p>
@@ -181,31 +192,31 @@ export function formatDate(date: Date): string {
               automatically uses the right one based on whether
               <code>DATABASE_URL</code> exists.
             </p>
-            <pre><code>// lib/db.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/db.ts</span>
 
-import { neon } from '@neondatabase/serverless'
+<span class="hljs-keyword">import</span> { neon } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@neondatabase/serverless&#x27;</span>
 
-// ---- Neon (production) helpers ----
+<span class="hljs-comment">// ---- Neon (production) helpers ----</span>
 
-function getSQL() {
-  const url = process.env.DATABASE_URL
-  if (!url) throw new Error('DATABASE_URL is not set')
-  return neon(url)
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">getSQL</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> url = process.<span class="hljs-property">env</span>.<span class="hljs-property">DATABASE_URL</span>
+  <span class="hljs-keyword">if</span> (!url) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">Error</span>(<span class="hljs-string">&#x27;DATABASE_URL is not set&#x27;</span>)
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">neon</span>(url)
 }
 
-async function initializeNeonSchema() {
-  const sql = getSQL()
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">initializeNeonSchema</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> sql = <span class="hljs-title function_">getSQL</span>()
 
-  await sql`
+  <span class="hljs-keyword">await</span> sql<span class="hljs-string">`
     CREATE TABLE IF NOT EXISTS employees (
       id SERIAL PRIMARY KEY,
       name TEXT NOT NULL UNIQUE,
       is_on_call BOOLEAN DEFAULT false,
       created_at TIMESTAMPTZ DEFAULT NOW()
     )
-  `
+  `</span>
 
-  await sql`
+  <span class="hljs-keyword">await</span> sql<span class="hljs-string">`
     CREATE TABLE IF NOT EXISTS schedule (
       id SERIAL PRIMARY KEY,
       day_of_week INTEGER NOT NULL,
@@ -216,27 +227,27 @@ async function initializeNeonSchema() {
       updated_at TIMESTAMPTZ DEFAULT NOW(),
       UNIQUE(week_start_date, day_of_week, shift_type)
     )
-  `
+  `</span>
 
-  // Seed employees if table is empty
-  const existing = await sql`SELECT count(*) as cnt FROM employees`
-  if (Number(existing[0].cnt) === 0) {
-    const employees = [
-      { name: 'Alvin', isOnCall: false },
-      { name: 'Melissa', isOnCall: false },
-      { name: 'Marcus', isOnCall: false },
-      { name: 'Dylan', isOnCall: false },
-      { name: 'Joel', isOnCall: false },
-      { name: 'Billy', isOnCall: false },
-      { name: 'Johnny Ray', isOnCall: true },
-      { name: 'Carly', isOnCall: true },
+  <span class="hljs-comment">// Seed employees if table is empty</span>
+  <span class="hljs-keyword">const</span> existing = <span class="hljs-keyword">await</span> sql<span class="hljs-string">`SELECT count(*) as cnt FROM employees`</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-title class_">Number</span>(existing[<span class="hljs-number">0</span>].<span class="hljs-property">cnt</span>) === <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">const</span> employees = [
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Alvin&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">false</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Melissa&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">false</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Marcus&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">false</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Dylan&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">false</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Joel&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">false</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Billy&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">false</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Johnny Ray&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">true</span> },
+      { <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;Carly&#x27;</span>, <span class="hljs-attr">isOnCall</span>: <span class="hljs-literal">true</span> },
     ]
-    for (const emp of employees) {
-      await sql`
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> emp <span class="hljs-keyword">of</span> employees) {
+      <span class="hljs-keyword">await</span> sql<span class="hljs-string">`
         INSERT INTO employees (name, is_on_call)
-        VALUES (${emp.name}, ${emp.isOnCall})
+        VALUES (<span class="hljs-subst">${emp.name}</span>, <span class="hljs-subst">${emp.isOnCall}</span>)
         ON CONFLICT (name) DO NOTHING
-      `
+      `</span>
     }
   }
 }</code></pre>
@@ -251,44 +262,44 @@ async function initializeNeonSchema() {
               Below the Neon code in <code>lib/db.ts</code>, add the SQLite
               fallback for local development:
             </p>
-            <pre><code>// ---- sql.js (local dev) helpers ----
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// ---- sql.js (local dev) helpers ----</span>
 
-import initSqlJs, { Database as SqlJsDatabase } from 'sql.js'
-import fs from 'fs'
-import path from 'path'
+<span class="hljs-keyword">import</span> initSqlJs, { <span class="hljs-title class_">Database</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">SqlJsDatabase</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;sql.js&#x27;</span>
+<span class="hljs-keyword">import</span> fs <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;fs&#x27;</span>
+<span class="hljs-keyword">import</span> path <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;path&#x27;</span>
 
-let localDb: SqlJsDatabase | null = null
+<span class="hljs-keyword">let</span> <span class="hljs-attr">localDb</span>: <span class="hljs-title class_">SqlJsDatabase</span> | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>
 
-const getDbPath = () => {
-  const dbDir = path.join(process.cwd(), 'data')
-  const dbFile = path.join(dbDir, 'schedule.db.json')
-  return { dbDir, dbFile }
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">getDbPath</span> = (<span class="hljs-params"></span>) =&gt; {
+  <span class="hljs-keyword">const</span> dbDir = path.<span class="hljs-title function_">join</span>(process.<span class="hljs-title function_">cwd</span>(), <span class="hljs-string">&#x27;data&#x27;</span>)
+  <span class="hljs-keyword">const</span> dbFile = path.<span class="hljs-title function_">join</span>(dbDir, <span class="hljs-string">&#x27;schedule.db.json&#x27;</span>)
+  <span class="hljs-keyword">return</span> { dbDir, dbFile }
 }
 
-function saveLocalDb() {
-  if (!localDb) return
-  const { dbDir, dbFile } = getDbPath()
-  if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true })
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">saveLocalDb</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">if</span> (!localDb) <span class="hljs-keyword">return</span>
+  <span class="hljs-keyword">const</span> { dbDir, dbFile } = <span class="hljs-title function_">getDbPath</span>()
+  <span class="hljs-keyword">if</span> (!fs.<span class="hljs-title function_">existsSync</span>(dbDir)) {
+    fs.<span class="hljs-title function_">mkdirSync</span>(dbDir, { <span class="hljs-attr">recursive</span>: <span class="hljs-literal">true</span> })
   }
-  const data = localDb.export()
-  const buffer = Buffer.from(data)
-  fs.writeFileSync(dbFile, JSON.stringify(Array.from(buffer)))
+  <span class="hljs-keyword">const</span> data = localDb.<span class="hljs-title function_">export</span>()
+  <span class="hljs-keyword">const</span> buffer = <span class="hljs-title class_">Buffer</span>.<span class="hljs-title function_">from</span>(data)
+  fs.<span class="hljs-title function_">writeFileSync</span>(dbFile, <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>(<span class="hljs-title class_">Array</span>.<span class="hljs-title function_">from</span>(buffer)))
 }
 
-function initializeLocalSchema() {
-  if (!localDb) return
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">initializeLocalSchema</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">if</span> (!localDb) <span class="hljs-keyword">return</span>
 
-  localDb.run(`
+  localDb.<span class="hljs-title function_">run</span>(<span class="hljs-string">`
     CREATE TABLE IF NOT EXISTS employees (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL UNIQUE,
       is_on_call BOOLEAN DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
-  `)
+  `</span>)
 
-  localDb.run(`
+  localDb.<span class="hljs-title function_">run</span>(<span class="hljs-string">`
     CREATE TABLE IF NOT EXISTS schedule (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       day_of_week INTEGER NOT NULL,
@@ -299,44 +310,152 @@ function initializeLocalSchema() {
       updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       UNIQUE(week_start_date, day_of_week, shift_type)
     )
-  `)
+  `</span>)
 
-  // ... seed employees same as Neon version
-  saveLocalDb()
+  <span class="hljs-comment">// Seed the same eight employees as the Neon version</span>
+  <span class="hljs-keyword">const</span> [{ values }] = localDb.<span class="hljs-title function_">exec</span>(<span class="hljs-string">&#x27;SELECT count(*) FROM employees&#x27;</span>)
+  <span class="hljs-keyword">if</span> (values[<span class="hljs-number">0</span>][<span class="hljs-number">0</span>] === <span class="hljs-number">0</span>) {
+    <span class="hljs-keyword">const</span> <span class="hljs-attr">employees</span>: [<span class="hljs-built_in">string</span>, <span class="hljs-built_in">number</span>][] = [
+      [<span class="hljs-string">&#x27;Alvin&#x27;</span>, <span class="hljs-number">0</span>], [<span class="hljs-string">&#x27;Melissa&#x27;</span>, <span class="hljs-number">0</span>], [<span class="hljs-string">&#x27;Marcus&#x27;</span>, <span class="hljs-number">0</span>], [<span class="hljs-string">&#x27;Dylan&#x27;</span>, <span class="hljs-number">0</span>],
+      [<span class="hljs-string">&#x27;Joel&#x27;</span>, <span class="hljs-number">0</span>], [<span class="hljs-string">&#x27;Billy&#x27;</span>, <span class="hljs-number">0</span>], [<span class="hljs-string">&#x27;Johnny Ray&#x27;</span>, <span class="hljs-number">1</span>], [<span class="hljs-string">&#x27;Carly&#x27;</span>, <span class="hljs-number">1</span>],
+    ]
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> [name, onCall] <span class="hljs-keyword">of</span> employees) {
+      localDb.<span class="hljs-title function_">run</span>(<span class="hljs-string">&#x27;INSERT INTO employees (name, is_on_call) VALUES (?, ?)&#x27;</span>, [name, onCall])
+    }
+  }
+  <span class="hljs-title function_">saveLocalDb</span>()
+}
+
+<span class="hljs-comment">// Open the saved file if there is one, otherwise start a fresh database.</span>
+<span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getLocalDb</span>(<span class="hljs-params"></span>): <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-title class_">SqlJsDatabase</span>&gt; {
+  <span class="hljs-keyword">if</span> (localDb) <span class="hljs-keyword">return</span> localDb
+  <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">SQL</span> = <span class="hljs-keyword">await</span> <span class="hljs-title function_">initSqlJs</span>()
+  <span class="hljs-keyword">const</span> { dbFile } = <span class="hljs-title function_">getDbPath</span>()
+  localDb = fs.<span class="hljs-title function_">existsSync</span>(dbFile)
+    ? <span class="hljs-keyword">new</span> <span class="hljs-variable constant_">SQL</span>.<span class="hljs-title class_">Database</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Uint8Array</span>(<span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(fs.<span class="hljs-title function_">readFileSync</span>(dbFile, <span class="hljs-string">&#x27;utf8&#x27;</span>))))
+    : <span class="hljs-keyword">new</span> <span class="hljs-variable constant_">SQL</span>.<span class="hljs-title class_">Database</span>()
+  <span class="hljs-title function_">initializeLocalSchema</span>()
+  <span class="hljs-keyword">return</span> localDb
 }</code></pre>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/dual-database.svg"
-              alt="Dual-database architecture: SQLite for dev, Neon for production"
-            />
+            <a href="/fabulosa-books/images/dual-database.svg" class="diagram">
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/dual-database.svg"
+                alt="Dual-database architecture: SQLite for dev, Neon for production"
+              />
+            </a>
+            <p>
+              One more setting: sql.js runs SQLite as WebAssembly and loads its
+              <code>.wasm</code> file at runtime. Tell Next.js not to bundle it,
+              in <code>next.config.ts</code>:
+            </p>
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// next.config.ts</span>
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">NextConfig</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next&#x27;</span>
+
+<span class="hljs-keyword">const</span> <span class="hljs-attr">nextConfig</span>: <span class="hljs-title class_">NextConfig</span> = {
+  <span class="hljs-comment">// sql.js loads a .wasm file from its own folder at runtime, so keep it out</span>
+  <span class="hljs-comment">// of the server bundle.</span>
+  <span class="hljs-attr">serverExternalPackages</span>: [<span class="hljs-string">&#x27;sql.js&#x27;</span>],
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> nextConfig</code></pre>
 
             <div class="step">Step 26: Add the public API functions</div>
             <p>
               These are the functions the rest of the app (and our agents) will
               use:
             </p>
-            <pre><code>// ---- Public API ----
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// ---- Public API ----</span>
 
-export async function getAllEmployees() {
-  if (useNeon) {
-    await ensureNeonSchema()
-    const sql = getSQL()
-    const rows = await sql`SELECT id, name, is_on_call FROM employees ORDER BY name`
-    return rows.map((r: any) => ({
-      id: r.id, name: r.name, is_on_call: r.is_on_call,
+<span class="hljs-comment">// Neon when DATABASE_URL is set (on Vercel, and locally after `vercel env pull`);</span>
+<span class="hljs-comment">// the local sql.js file otherwise.</span>
+<span class="hljs-keyword">const</span> useNeon = <span class="hljs-title class_">Boolean</span>(process.<span class="hljs-property">env</span>.<span class="hljs-property">DATABASE_URL</span>)
+
+<span class="hljs-comment">// Create the tables once per server instance, not on every query.</span>
+<span class="hljs-keyword">let</span> <span class="hljs-attr">neonReady</span>: <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; | <span class="hljs-literal">null</span> = <span class="hljs-literal">null</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">ensureNeonSchema</span>(<span class="hljs-params"></span>) {
+  neonReady ??= <span class="hljs-title function_">initializeNeonSchema</span>()
+  <span class="hljs-keyword">return</span> neonReady
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">ScheduleRow</span> {
+  <span class="hljs-attr">day_of_week</span>: <span class="hljs-built_in">number</span>
+  <span class="hljs-attr">shift_type</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">employee_name</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getAllEmployees</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">if</span> (useNeon) {
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">ensureNeonSchema</span>()
+    <span class="hljs-keyword">const</span> sql = <span class="hljs-title function_">getSQL</span>()
+    <span class="hljs-keyword">const</span> rows = <span class="hljs-keyword">await</span> sql<span class="hljs-string">`SELECT id, name, is_on_call FROM employees ORDER BY name`</span>
+    <span class="hljs-keyword">return</span> rows.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">r</span>: <span class="hljs-built_in">any</span></span>) =&gt;</span> ({
+      <span class="hljs-attr">id</span>: r.<span class="hljs-property">id</span>, <span class="hljs-attr">name</span>: r.<span class="hljs-property">name</span>, <span class="hljs-attr">is_on_call</span>: <span class="hljs-title class_">Boolean</span>(r.<span class="hljs-property">is_on_call</span>),
     }))
-  } else {
-    const db = await getLocalDb()
-    const result = db.exec('SELECT id, name, is_on_call FROM employees ORDER BY name')
-    if (result.length === 0) return []
-    return result[0].values.map((row: any) => ({
-      id: row[0], name: row[1], is_on_call: row[2],
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getLocalDb</span>()
+    <span class="hljs-keyword">const</span> result = db.<span class="hljs-title function_">exec</span>(<span class="hljs-string">&#x27;SELECT id, name, is_on_call FROM employees ORDER BY name&#x27;</span>)
+    <span class="hljs-keyword">if</span> (result.<span class="hljs-property">length</span> === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> []
+    <span class="hljs-keyword">return</span> result[<span class="hljs-number">0</span>].<span class="hljs-property">values</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">row</span>: <span class="hljs-built_in">any</span></span>) =&gt;</span> ({
+      <span class="hljs-comment">// SQLite stores booleans as 0 and 1</span>
+      <span class="hljs-attr">id</span>: row[<span class="hljs-number">0</span>], <span class="hljs-attr">name</span>: row[<span class="hljs-number">1</span>], <span class="hljs-attr">is_on_call</span>: <span class="hljs-title class_">Boolean</span>(row[<span class="hljs-number">2</span>]),
     }))
   }
 }
 
-export async function getWeekSchedule(weekStartDate: string) { /* ... */ }
-export async function updateSchedule(weekStartDate, dayOfWeek, shiftType, employeeName) { /* ... */ }</code></pre>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getWeekSchedule</span>(<span class="hljs-params"><span class="hljs-attr">weekStartDate</span>: <span class="hljs-built_in">string</span></span>): <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-title class_">ScheduleRow</span>[]&gt; {
+  <span class="hljs-keyword">if</span> (useNeon) {
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">ensureNeonSchema</span>()
+    <span class="hljs-keyword">const</span> sql = <span class="hljs-title function_">getSQL</span>()
+    <span class="hljs-keyword">const</span> rows = <span class="hljs-keyword">await</span> sql<span class="hljs-string">`
+      SELECT day_of_week, shift_type, employee_name FROM schedule
+      WHERE week_start_date = <span class="hljs-subst">${weekStartDate}</span>
+      ORDER BY day_of_week, shift_type
+    `</span>
+    <span class="hljs-keyword">return</span> rows <span class="hljs-keyword">as</span> <span class="hljs-title class_">ScheduleRow</span>[]
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getLocalDb</span>()
+    <span class="hljs-keyword">const</span> result = db.<span class="hljs-title function_">exec</span>(
+      <span class="hljs-string">`SELECT day_of_week, shift_type, employee_name FROM schedule
+       WHERE week_start_date = ? ORDER BY day_of_week, shift_type`</span>,
+      [weekStartDate]
+    )
+    <span class="hljs-keyword">if</span> (result.<span class="hljs-property">length</span> === <span class="hljs-number">0</span>) <span class="hljs-keyword">return</span> []
+    <span class="hljs-keyword">return</span> result[<span class="hljs-number">0</span>].<span class="hljs-property">values</span>.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">row</span>: <span class="hljs-built_in">any</span></span>) =&gt;</span> ({
+      <span class="hljs-attr">day_of_week</span>: row[<span class="hljs-number">0</span>], <span class="hljs-attr">shift_type</span>: row[<span class="hljs-number">1</span>], <span class="hljs-attr">employee_name</span>: row[<span class="hljs-number">2</span>],
+    }))
+  }
+}
+
+<span class="hljs-comment">// Assign (or, with null, clear) one shift. The UNIQUE constraint turns a</span>
+<span class="hljs-comment">// second assignment to the same slot into an update instead of a duplicate.</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">updateSchedule</span>(<span class="hljs-params">
+  <span class="hljs-attr">weekStartDate</span>: <span class="hljs-built_in">string</span>,
+  <span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span>,
+  <span class="hljs-attr">shiftType</span>: <span class="hljs-built_in">string</span>,
+  <span class="hljs-attr">employeeName</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>
+</span>): <span class="hljs-title class_">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; {
+  <span class="hljs-keyword">if</span> (useNeon) {
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">ensureNeonSchema</span>()
+    <span class="hljs-keyword">const</span> sql = <span class="hljs-title function_">getSQL</span>()
+    <span class="hljs-keyword">await</span> sql<span class="hljs-string">`
+      INSERT INTO schedule (week_start_date, day_of_week, shift_type, employee_name)
+      VALUES (<span class="hljs-subst">${weekStartDate}</span>, <span class="hljs-subst">${dayOfWeek}</span>, <span class="hljs-subst">${shiftType}</span>, <span class="hljs-subst">${employeeName}</span>)
+      ON CONFLICT (week_start_date, day_of_week, shift_type)
+      DO UPDATE SET employee_name = EXCLUDED.employee_name, updated_at = NOW()
+    `</span>
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">const</span> db = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getLocalDb</span>()
+    db.<span class="hljs-title function_">run</span>(
+      <span class="hljs-string">`INSERT INTO schedule (week_start_date, day_of_week, shift_type, employee_name)
+       VALUES (?, ?, ?, ?)
+       ON CONFLICT (week_start_date, day_of_week, shift_type)
+       DO UPDATE SET employee_name = excluded.employee_name, updated_at = CURRENT_TIMESTAMP`</span>,
+      [weekStartDate, dayOfWeek, shiftType, employeeName]
+    )
+    <span class="hljs-title function_">saveLocalDb</span>()
+  }
+}</code></pre>
           </div>
         </div>
 
@@ -344,63 +463,68 @@ export async function updateSchedule(weekStartDate, dayOfWeek, shiftType, employ
           <h2>The API Routes</h2>
           <div class="section-content">
             <div class="step">Step 27: Create the employees API route</div>
-            <pre><code>// app/api/employees/route.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/employees/route.ts</span>
 
-import { getAllEmployees } from '@/lib/db'
-import { NextResponse } from 'next/server'
+<span class="hljs-keyword">import</span> { getAllEmployees } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/db&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">NextResponse</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/server&#x27;</span>
 
-export const dynamic = 'force-dynamic'
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> dynamic = <span class="hljs-string">&#x27;force-dynamic&#x27;</span>
 
-export async function GET() {
-  try {
-    const employees = await getAllEmployees()
-    return NextResponse.json(
-      employees.map((emp: any) => ({
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">GET</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> employees = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getAllEmployees</span>()
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">json</span>(
+      employees.<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">emp</span>: <span class="hljs-built_in">any</span></span>) =&gt;</span> ({
         ...emp,
-        is_on_call: Boolean(emp.is_on_call),
+        <span class="hljs-attr">is_on_call</span>: <span class="hljs-title class_">Boolean</span>(emp.<span class="hljs-property">is_on_call</span>),
       }))
     )
-  } catch (error) {
-    console.error('Error fetching employees:', error)
-    return NextResponse.json({ error: 'Failed to fetch employees' }, { status: 500 })
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">error</span>(<span class="hljs-string">&#x27;Error fetching employees:&#x27;</span>, error)
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">json</span>({ <span class="hljs-attr">error</span>: <span class="hljs-string">&#x27;Failed to fetch employees&#x27;</span> }, { <span class="hljs-attr">status</span>: <span class="hljs-number">500</span> })
   }
 }</code></pre>
 
             <div class="step">Step 28: Create the schedule API route</div>
-            <pre><code>// app/api/schedule/route.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/schedule/route.ts</span>
 
-import { NextRequest, NextResponse } from 'next/server'
-import { getWeekSchedule, updateSchedule } from '@/lib/db'
-import { getWeekStartDate } from '@/lib/utils'
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">NextRequest</span>, <span class="hljs-title class_">NextResponse</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/server&#x27;</span>
+<span class="hljs-keyword">import</span> { getWeekSchedule, updateSchedule } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/db&#x27;</span>
+<span class="hljs-keyword">import</span> { getWeekStartDate } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/utils&#x27;</span>
 
-export const dynamic = 'force-dynamic'
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> dynamic = <span class="hljs-string">&#x27;force-dynamic&#x27;</span>
 
-export async function GET(request: NextRequest) {
-  try {
-    const searchParams = request.nextUrl.searchParams
-    const weekStart = searchParams.get('weekStart') || getWeekStartDate()
-    const schedule = await getWeekSchedule(weekStart)
-    return NextResponse.json({ schedule, weekStart })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch schedule' }, { status: 500 })
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">GET</span>(<span class="hljs-params"><span class="hljs-attr">request</span>: <span class="hljs-title class_">NextRequest</span></span>) {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> searchParams = request.<span class="hljs-property">nextUrl</span>.<span class="hljs-property">searchParams</span>
+    <span class="hljs-keyword">const</span> weekStart = searchParams.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;weekStart&#x27;</span>) || <span class="hljs-title function_">getWeekStartDate</span>()
+    <span class="hljs-keyword">const</span> schedule = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getWeekSchedule</span>(weekStart)
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">json</span>({ schedule, weekStart })
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">json</span>({ <span class="hljs-attr">error</span>: <span class="hljs-string">&#x27;Failed to fetch schedule&#x27;</span> }, { <span class="hljs-attr">status</span>: <span class="hljs-number">500</span> })
   }
 }
 
-export async function PUT(request: NextRequest) {
-  try {
-    const body = await request.json()
-    const { weekStart, dayOfWeek, shiftType, employeeName } = body
-    await updateSchedule(weekStart, dayOfWeek, shiftType, employeeName || null)
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to update schedule' }, { status: 500 })
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">PUT</span>(<span class="hljs-params"><span class="hljs-attr">request</span>: <span class="hljs-title class_">NextRequest</span></span>) {
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> body = <span class="hljs-keyword">await</span> request.<span class="hljs-title function_">json</span>()
+    <span class="hljs-keyword">const</span> { weekStart, dayOfWeek, shiftType, employeeName } = body
+    <span class="hljs-keyword">await</span> <span class="hljs-title function_">updateSchedule</span>(weekStart, dayOfWeek, shiftType, employeeName || <span class="hljs-literal">null</span>)
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">json</span>({ <span class="hljs-attr">success</span>: <span class="hljs-literal">true</span> })
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">json</span>({ <span class="hljs-attr">error</span>: <span class="hljs-string">&#x27;Failed to update schedule&#x27;</span> }, { <span class="hljs-attr">status</span>: <span class="hljs-number">500</span> })
   }
 }</code></pre>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/api-architecture.svg"
-              alt="API architecture: Browser makes GET/PUT requests to API Routes, which call the Database Layer, which connects to Neon or SQLite"
-            />
+            <a
+              href="/fabulosa-books/images/api-architecture.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/api-architecture.svg"
+                alt="API architecture: Browser makes GET/PUT requests to API Routes, which call the Database Layer, which connects to Neon or SQLite"
+              />
+            </a>
           </div>
         </div>
 
@@ -413,44 +537,44 @@ export async function PUT(request: NextRequest) {
               the schedule grid is its own component. When you click it, a
               dropdown shows all employees:
             </p>
-            <pre><code>// components/ShiftCell.tsx
-'use client'
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ShiftCell.tsx</span>
+<span class="hljs-string">&#x27;use client&#x27;</span>
 
-import { Employee } from '@/types'
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Employee</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/types&#x27;</span>
 
-interface ShiftCellProps {
-  dayOfWeek: number
-  shiftType: string
-  currentEmployee: string | null
-  employees: Employee[]
-  onUpdate: (dayOfWeek: number, shiftType: string, employeeName: string | null) => void
-  isSaturday: boolean
+<span class="hljs-keyword">interface</span> <span class="hljs-title class_">ShiftCellProps</span> {
+  <span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span>
+  <span class="hljs-attr">shiftType</span>: <span class="hljs-built_in">string</span>
+  <span class="hljs-attr">currentEmployee</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>
+  <span class="hljs-attr">employees</span>: <span class="hljs-title class_">Employee</span>[]
+  <span class="hljs-attr">onUpdate</span>: <span class="hljs-function">(<span class="hljs-params"><span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span>, <span class="hljs-attr">shiftType</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">employeeName</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span></span>) =&gt;</span> <span class="hljs-built_in">void</span>
+  <span class="hljs-attr">isSaturday</span>: <span class="hljs-built_in">boolean</span>
 }
 
-export default function ShiftCell({
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ShiftCell</span>(<span class="hljs-params">{
   dayOfWeek, shiftType, currentEmployee, employees, onUpdate, isSaturday,
-}: ShiftCellProps) {
-  const regularEmployees = employees.filter(e => !e.is_on_call)
-  const onCallEmployees = employees.filter(e => e.is_on_call)
+}: <span class="hljs-title class_">ShiftCellProps</span></span>) {
+  <span class="hljs-keyword">const</span> regularEmployees = employees.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> !e.<span class="hljs-property">is_on_call</span>)
+  <span class="hljs-keyword">const</span> onCallEmployees = employees.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> e.<span class="hljs-property">is_on_call</span>)
 
-  return (
-    &lt;select
-      value={currentEmployee || ''}
-      onChange={(e) => onUpdate(dayOfWeek, shiftType, e.target.value || null)}
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">select</span>
+      <span class="hljs-attr">value</span>=<span class="hljs-string">{currentEmployee</span> || &#x27;&#x27;}
+      <span class="hljs-attr">onChange</span>=<span class="hljs-string">{(e)</span> =&gt;</span> onUpdate(dayOfWeek, shiftType, e.target.value || null)}
       className={`w-full p-2 rounded text-sm font-medium cursor-pointer ...`}
     &gt;
-      &lt;option value=""&gt;Unassigned&lt;/option&gt;
-      &lt;optgroup label="Regular"&gt;
-        {regularEmployees.map(emp => (
-          &lt;option key={emp.id} value={emp.name}&gt;{emp.name}&lt;/option&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;&quot;</span>&gt;</span>Unassigned<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">optgroup</span> <span class="hljs-attr">label</span>=<span class="hljs-string">&quot;Regular&quot;</span>&gt;</span>
+        {regularEmployees.map(emp =&gt; (
+          <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{emp.id}</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{emp.name}</span>&gt;</span>{emp.name}<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
         ))}
-      &lt;/optgroup&gt;
-      &lt;optgroup label="On-Call"&gt;
-        {onCallEmployees.map(emp => (
-          &lt;option key={emp.id} value={emp.name}&gt;{emp.name}&lt;/option&gt;
+      <span class="hljs-tag">&lt;/<span class="hljs-name">optgroup</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">optgroup</span> <span class="hljs-attr">label</span>=<span class="hljs-string">&quot;On-Call&quot;</span>&gt;</span>
+        {onCallEmployees.map(emp =&gt; (
+          <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{emp.id}</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{emp.name}</span>&gt;</span>{emp.name}<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
         ))}
-      &lt;/optgroup&gt;
-    &lt;/select&gt;
+      <span class="hljs-tag">&lt;/<span class="hljs-name">optgroup</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span></span>
   )
 }</code></pre>
 
@@ -460,39 +584,167 @@ export default function ShiftCell({
               grid with week navigation and shift cells for all 21 slots (3
               shifts &times; 7 days).
             </p>
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ScheduleGrid.tsx</span>
+<span class="hljs-string">&#x27;use client&#x27;</span>
+
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Fragment</span>, useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">ShiftCell</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;./ShiftCell&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">Employee</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/types&#x27;</span>
+<span class="hljs-keyword">import</span> {
+  <span class="hljs-variable constant_">DAYS_OF_WEEK</span>, <span class="hljs-variable constant_">SHIFTS</span>, getShiftsForDay, getWeekStartDate,
+  getDateFromDayOfWeek, formatDate,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/utils&#x27;</span>
+
+<span class="hljs-comment">// Who works each slot this week, keyed &quot;day-shift&quot;, e.g. &quot;4-closing&quot;</span>
+<span class="hljs-keyword">type</span> <span class="hljs-title class_">Assignments</span> = <span class="hljs-title class_">Record</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>&gt;
+<span class="hljs-keyword">const</span> <span class="hljs-title function_">slot</span> = (<span class="hljs-params"><span class="hljs-attr">day</span>: <span class="hljs-built_in">number</span>, <span class="hljs-attr">shiftType</span>: <span class="hljs-built_in">string</span></span>) =&gt; <span class="hljs-string">`<span class="hljs-subst">${day}</span>-<span class="hljs-subst">${shiftType}</span>`</span>
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ScheduleGrid</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-comment">// Set after mount: &quot;this week&quot; depends on the browser&#x27;s clock and time</span>
+  <span class="hljs-comment">// zone, which the server doesn&#x27;t share.</span>
+  <span class="hljs-keyword">const</span> [weekStart, setWeekStart] = useState&lt;<span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>&gt;(<span class="hljs-literal">null</span>)
+  <span class="hljs-keyword">const</span> [employees, setEmployees] = useState&lt;<span class="hljs-title class_">Employee</span>[]&gt;([])
+  <span class="hljs-keyword">const</span> [assignments, setAssignments] = useState&lt;<span class="hljs-title class_">Assignments</span>&gt;({})
+  <span class="hljs-keyword">const</span> [error, setError] = useState&lt;<span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>&gt;(<span class="hljs-literal">null</span>)
+
+  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-title function_">setWeekStart</span>(<span class="hljs-title function_">getWeekStartDate</span>())
+    <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/employees&#x27;</span>).<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> res.<span class="hljs-title function_">json</span>()).<span class="hljs-title function_">then</span>(setEmployees)
+  }, [])
+
+  <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">if</span> (!weekStart) <span class="hljs-keyword">return</span>
+    <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`/api/schedule?weekStart=<span class="hljs-subst">${weekStart}</span>`</span>)
+      .<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> res.<span class="hljs-title function_">json</span>())
+      .<span class="hljs-title function_">then</span>(<span class="hljs-function">(<span class="hljs-params">{ schedule }</span>) =&gt;</span> {
+        <span class="hljs-keyword">const</span> <span class="hljs-attr">next</span>: <span class="hljs-title class_">Assignments</span> = {}
+        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">const</span> row <span class="hljs-keyword">of</span> schedule) {
+          next[<span class="hljs-title function_">slot</span>(row.<span class="hljs-property">day_of_week</span>, row.<span class="hljs-property">shift_type</span>)] = row.<span class="hljs-property">employee_name</span>
+        }
+        <span class="hljs-title function_">setAssignments</span>(next)
+      })
+  }, [weekStart])
+
+  <span class="hljs-keyword">if</span> (!weekStart) <span class="hljs-keyword">return</span> <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-stone-500&quot;</span>&gt;</span>Loading schedule…<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span></span>
+
+  <span class="hljs-comment">// Day 7 of this week is next Sunday; day -7 is last Sunday.</span>
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">moveWeek</span> = (<span class="hljs-params"><span class="hljs-attr">weeks</span>: <span class="hljs-built_in">number</span></span>) =&gt;
+    <span class="hljs-title function_">setWeekStart</span>(<span class="hljs-title function_">getWeekStartDate</span>(<span class="hljs-title function_">getDateFromDayOfWeek</span>(weekStart, weeks * <span class="hljs-number">7</span>)))
+
+  <span class="hljs-comment">// Show the change at once, then save it; undo it if the save fails.</span>
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleUpdate</span> = <span class="hljs-keyword">async</span> (<span class="hljs-params">
+    <span class="hljs-attr">dayOfWeek</span>: <span class="hljs-built_in">number</span>, <span class="hljs-attr">shiftType</span>: <span class="hljs-built_in">string</span>, <span class="hljs-attr">employeeName</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">null</span>
+  </span>) =&gt; {
+    <span class="hljs-keyword">const</span> key = <span class="hljs-title function_">slot</span>(dayOfWeek, shiftType)
+    <span class="hljs-keyword">const</span> previous = assignments[key] ?? <span class="hljs-literal">null</span>
+    <span class="hljs-title function_">setAssignments</span>(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> ({ ...a, [key]: employeeName }))
+    <span class="hljs-title function_">setError</span>(<span class="hljs-literal">null</span>)
+    <span class="hljs-keyword">const</span> res = <span class="hljs-keyword">await</span> <span class="hljs-title function_">fetch</span>(<span class="hljs-string">&#x27;/api/schedule&#x27;</span>, {
+      <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;PUT&#x27;</span>,
+      <span class="hljs-attr">headers</span>: { <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span> },
+      <span class="hljs-attr">body</span>: <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">stringify</span>({ weekStart, dayOfWeek, shiftType, employeeName }),
+    })
+    <span class="hljs-keyword">if</span> (!res.<span class="hljs-property">ok</span>) {
+      <span class="hljs-title function_">setAssignments</span>(<span class="hljs-function"><span class="hljs-params">a</span> =&gt;</span> ({ ...a, [key]: previous }))
+      <span class="hljs-title function_">setError</span>(<span class="hljs-string">&#x27;That change didn’t save. Try again.&#x27;</span>)
+    }
+  }
+
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;bg-white rounded-lg border border-stone-200 p-4&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;flex items-center justify-between mb-4&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> moveWeek(-1)}&gt;← Previous week<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h2</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;font-semibold text-stone-800&quot;</span>&gt;</span>
+          Week of {formatDate(getDateFromDayOfWeek(weekStart, 0))}
+        <span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{()</span> =&gt;</span> moveWeek(1)}&gt;Next week →<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      {error &amp;&amp; <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-red-600 text-sm mb-2&quot;</span>&gt;</span>{error}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>}
+
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;grid grid-cols-8 gap-2 text-sm&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> /&gt;</span>
+        {DAYS_OF_WEEK.map((day, d) =&gt; (
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{day}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;font-semibold text-stone-700&quot;</span>&gt;</span>
+            {day.slice(0, 3)}{&#x27; &#x27;}
+            <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;font-normal text-stone-400&quot;</span>&gt;</span>
+              {formatDate(getDateFromDayOfWeek(weekStart, d))}
+            <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        ))}
+
+        {SHIFTS.map(shift =&gt; (
+          <span class="hljs-tag">&lt;<span class="hljs-name">Fragment</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{shift.type}</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;font-medium text-stone-600&quot;</span>&gt;</span>{shift.label}<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            {DAYS_OF_WEEK.map((_, d) =&gt; {
+              // Saturday&#x27;s closing shift runs an hour later
+              const hours = getShiftsForDay(d).find(s =&gt; s.type === shift.type)!
+              return (
+                <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{d}</span>&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">ShiftCell</span>
+                    <span class="hljs-attr">dayOfWeek</span>=<span class="hljs-string">{d}</span>
+                    <span class="hljs-attr">shiftType</span>=<span class="hljs-string">{shift.type}</span>
+                    <span class="hljs-attr">currentEmployee</span>=<span class="hljs-string">{assignments[slot(d,</span> <span class="hljs-attr">shift.type</span>)] ?? <span class="hljs-attr">null</span>}
+                    <span class="hljs-attr">employees</span>=<span class="hljs-string">{employees}</span>
+                    <span class="hljs-attr">onUpdate</span>=<span class="hljs-string">{handleUpdate}</span>
+                    <span class="hljs-attr">isSaturday</span>=<span class="hljs-string">{d</span> === <span class="hljs-string">6}</span>
+                  /&gt;</span>
+                  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-xs text-stone-400 mt-1&quot;</span>&gt;</span>
+                    {hours.start}–{hours.end}
+                  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+              )
+            })}
+          <span class="hljs-tag">&lt;/<span class="hljs-name">Fragment</span>&gt;</span>
+        ))}
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+  )
+}</code></pre>
+            <p>
+              The grid keeps one map of who works each slot. Picking a name
+              updates the screen first and saves second (an
+              <em>optimistic update</em>), so the grid feels instant; if the
+              save fails, the cell goes back to what it was and an error
+              appears.
+            </p>
 
             <div class="step">Step 31: Wire up the main page</div>
             <p>Replace <code>app/page.tsx</code>:</p>
-            <pre><code>// app/page.tsx
-import ScheduleGrid from '@/components/ScheduleGrid'
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">ScheduleGrid</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/ScheduleGrid&#x27;</span>
 
-export default function Home() {
-  return (
-    &lt;main className="min-h-screen bg-stone-50 p-8"&gt;
-      &lt;div className="max-w-7xl mx-auto"&gt;
-        &lt;header className="mb-8"&gt;
-          &lt;h1 className="text-3xl font-bold text-stone-800"&gt;Fabulosa Books&lt;/h1&gt;
-          &lt;p className="text-stone-500 mt-1"&gt;Employee Schedule&lt;/p&gt;
-        &lt;/header&gt;
-        &lt;ScheduleGrid /&gt;
-      &lt;/div&gt;
-    &lt;/main&gt;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">Home</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">main</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;min-h-screen bg-stone-50 p-8&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;max-w-7xl mx-auto&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">header</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-8&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-3xl font-bold text-stone-800&quot;</span>&gt;</span>Fabulosa Books<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-stone-500 mt-1&quot;</span>&gt;</span>Employee Schedule<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">header</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">ScheduleGrid</span> /&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">main</span>&gt;</span></span>
   )
 }</code></pre>
 
             <div class="step">Step 32: Run and verify</div>
-            <pre><code>npm run dev</code></pre>
+            <pre><code class="hljs language-bash">npm run dev</code></pre>
             <p>
               Open <code>http://localhost:3000</code>. You should see the
               schedule grid with week navigation and 21 "Unassigned" cells.
               Click any cell and pick an employee to verify the assignment
               works.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/schedule-grid-mockup.svg"
-              alt="The schedule grid UI with week navigation and shift assignments"
-            />
+            <a
+              href="/fabulosa-books/images/schedule-grid-mockup.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/schedule-grid-mockup.svg"
+                alt="The schedule grid UI with week navigation and shift assignments"
+              />
+            </a>
           </div>
         </div>
 

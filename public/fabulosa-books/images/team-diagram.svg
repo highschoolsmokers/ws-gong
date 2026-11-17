@@ -2,7 +2,6 @@
   <rect width="700" height="280" fill="#FFF8F0"/>
   <text x="350" y="35" font-size="22" font-weight="bold" text-anchor="middle" fill="#6B2D3E" font-family="system-ui, -apple-system, sans-serif">The Fabulosa Books Team</text>
 
-  <!-- Regular Staff -->
   <text x="220" y="70" font-size="12" font-weight="bold" text-anchor="middle" fill="#8B6F5C" font-family="system-ui, -apple-system, sans-serif">REGULAR STAFF</text>
   <g font-family="system-ui, -apple-system, sans-serif">
     <g transform="translate(60,100)">
@@ -39,7 +38,6 @@
     </g>
   </g>
 
-  <!-- On-Call Staff -->
   <text x="350" y="210" font-size="12" font-weight="bold" text-anchor="middle" fill="#5B8A8A" font-family="system-ui, -apple-system, sans-serif">ON-CALL STAFF</text>
   <g font-family="system-ui, -apple-system, sans-serif">
     <g transform="translate(280,240)">

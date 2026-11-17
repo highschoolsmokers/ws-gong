@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Applies the main site's stored light/dark choice before first paint -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <title>Part 2: How Agents Think</title>
     <meta
       name="description"
@@ -15,36 +23,34 @@
     />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="W.S. Gong" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta
+      property="og:url"
+      content="https://www.ws-gong.com/fabulosa-books/part2.html"
+    />
+    <meta
+      property="og:image"
+      content="https://www.ws-gong.com/fabulosa-books/images/fabulosa-storefront.jpg"
+    />
+    <link
+      rel="canonical"
+      href="https://www.ws-gong.com/fabulosa-books/part2.html"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/fabulosa-books/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
-    />
-    <script
-      defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
-    ></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
-    </script>
   </head>
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
       <nav class="site-nav">
-        <a href="/#work">&larr; W.S. Gong / Work</a>
+        <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
       <nav class="page-nav">
-        <a href="/fabulosa-books/part1.html">&larr; Previous</a>
-        <a href="/fabulosa-books/part3.html">Next &rarr;</a>
+        <a href="/fabulosa-books/part1.html"
+          >&larr; Welcome to Fabulosa Books</a
+        >
+        <a href="/fabulosa-books/part3.html">Setting Up Shop &rarr;</a>
       </nav>
       <header>
         <div class="part-label">Part 2</div>
@@ -72,11 +78,16 @@
               But unlike a typical web app where all the logic is hand-coded,
               ours will have AI agents that <em>reason</em> about the schedule.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/web-app-explained.svg"
-              alt="What is a web app — works on any device, no installation required"
-            />
+            <a
+              href="/fabulosa-books/images/web-app-explained.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/web-app-explained.svg"
+                alt="What is a web app — works on any device, no installation required"
+              />
+            </a>
           </div>
         </div>
 
@@ -116,25 +127,30 @@
               chatbot. An agent <em>with</em> tools can look things up, validate
               data, and take actions.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/chatbot-vs-agent.svg"
-              alt="Chatbot vs Agent comparison diagram"
-            />
-            <pre><code>Chatbot:
-  User: "Who's free Thursday?"
-  AI: "I'd need to check your schedule system."
+            <a
+              href="/fabulosa-books/images/chatbot-vs-agent.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/chatbot-vs-agent.svg"
+                alt="Chatbot vs Agent comparison diagram"
+              />
+            </a>
+            <pre><code class="hljs language-plaintext">Chatbot:
+  User: &quot;Who&#x27;s free Thursday?&quot;
+  AI: &quot;I&#x27;d need to check your schedule system.&quot;
 
 Agent:
-  User: "Who's free Thursday?"
-  AI thinks: "I need to check the schedule database."
+  User: &quot;Who&#x27;s free Thursday?&quot;
+  AI thinks: &quot;I need to check the schedule database.&quot;
   AI calls tool: getSchedule(thursday)
   AI observes: Marcus=opening, Billy=mid, unassigned=closing
-  AI thinks: "Now I need the full employee list to find who's NOT scheduled."
+  AI thinks: &quot;Now I need the full employee list to find who&#x27;s NOT scheduled.&quot;
   AI calls tool: getEmployees()
   AI observes: [Alvin, Melissa, Marcus, Dylan, Joel, Billy, Johnny Ray, Carly]
-  AI responds: "Dylan, Joel, Alvin, Melissa, Johnny Ray, and Carly are
-               available Thursday. Marcus has opening and Billy has mid."</code></pre>
+  AI responds: &quot;Dylan, Joel, Alvin, Melissa, Johnny Ray, and Carly are
+               available Thursday. Marcus has opening and Billy has mid.&quot;</code></pre>
           </div>
         </div>
 
@@ -180,11 +196,16 @@ Agent:
                 touching the others.
               </li>
             </ul>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/specialization-vs-monolith.svg"
-              alt="Specialization beats monolithic design"
-            />
+            <a
+              href="/fabulosa-books/images/specialization-vs-monolith.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/specialization-vs-monolith.svg"
+                alt="Specialization beats monolithic design"
+              />
+            </a>
           </div>
         </div>
 
@@ -216,21 +237,21 @@ Agent:
               In the Vercel AI SDK, this pattern is implemented naturally: the
               coordinator is an agent whose <em>tools</em> are the other agents.
             </p>
-            <pre><code>User: "Schedule next week"
+            <pre><code class="hljs language-plaintext">User: &quot;Schedule next week&quot;
 
-Coordinator thinks: "I need to build a schedule. Let me check availability first."
+Coordinator thinks: &quot;I need to build a schedule. Let me check availability first.&quot;
   → calls Availability Agent
-  ← "Here's who's available each day: ..."
+  ← &quot;Here&#x27;s who&#x27;s available each day: ...&quot;
 
-Coordinator thinks: "Now let me check if the current distribution is fair."
+Coordinator thinks: &quot;Now let me check if the current distribution is fair.&quot;
   → calls Fairness Agent
-  ← "Marcus has had 3 closing shifts in a row. Dylan hasn't worked Saturday in a month."
+  ← &quot;Marcus has had 3 closing shifts in a row. Dylan hasn&#x27;t worked Saturday in a month.&quot;
 
-Coordinator thinks: "Let me draft a schedule accounting for fairness, then validate coverage."
-  → calls Coverage Agent with proposed schedule
-  ← "All shifts covered. Saturday closing correctly set to 2pm-9pm."
+Coordinator thinks: &quot;Let me draft a schedule accounting for fairness, then validate coverage.&quot;
+  → assigns the shifts, then calls Coverage Agent to check them
+  ← &quot;All shifts covered. Saturday closing correctly set to 2pm-9pm.&quot;
 
-Coordinator: "Here's the proposed schedule for next week: ..."</code></pre>
+Coordinator: &quot;Here&#x27;s the proposed schedule for next week: ...&quot;</code></pre>
           </div>
         </div>
 
@@ -258,12 +279,12 @@ Coordinator: "Here's the proposed schedule for next week: ..."</code></pre>
                 the tool is called (your actual code)
               </li>
             </ol>
-            <pre><code>const getEmployees = tool({
-  description: 'Get all employees at Fabulosa Books with their role (regular or on-call)',
-  inputSchema: z.object({}),
-  execute: async () => {
-    const employees = await getAllEmployees()
-    return employees
+            <pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> getEmployees = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Get all employees at Fabulosa Books with their role (regular or on-call)&#x27;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({}),
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> employees = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getAllEmployees</span>()
+    <span class="hljs-keyword">return</span> employees
   },
 })</code></pre>
             <p>
@@ -322,11 +343,13 @@ Coordinator: "Here's the proposed schedule for next week: ..."</code></pre>
                 </tr>
               </tbody>
             </table>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/tech-stack.svg"
-              alt="Tech stack: Next.js, Vercel, and Neon"
-            />
+            <a href="/fabulosa-books/images/tech-stack.svg" class="diagram">
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/tech-stack.svg"
+                alt="Tech stack: Next.js, Vercel, and Neon"
+              />
+            </a>
             <p>
               These tools work together naturally. Next.js provides the web
               framework. The AI SDK provides the agent primitives. The AI

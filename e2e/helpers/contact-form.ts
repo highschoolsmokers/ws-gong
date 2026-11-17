@@ -16,12 +16,18 @@ export async function fillContactForm(
   page: Page,
   data: ContactFormData,
 ): Promise<void> {
-  await page.getByLabel("Name").fill(data.name);
-  await page.getByLabel("Email").fill(data.email);
+  await page.locator("section#contact").getByLabel("Name").fill(data.name);
+  await page.locator("section#contact").getByLabel("Email").fill(data.email);
   if (data.subject) {
-    await page.getByLabel("Subject").fill(data.subject);
+    await page
+      .locator("section#contact")
+      .getByLabel("Subject")
+      .fill(data.subject);
   }
-  await page.getByLabel("Message").fill(data.message);
+  await page
+    .locator("section#contact")
+    .getByLabel("Message")
+    .fill(data.message);
 }
 
 /**

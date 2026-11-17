@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Applies the main site's stored light/dark choice before first paint -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <title>Part 1: Welcome to Fabulosa Books</title>
     <meta
       name="description"
@@ -15,36 +23,32 @@
     />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="W.S. Gong" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta
+      property="og:url"
+      content="https://www.ws-gong.com/fabulosa-books/part1.html"
+    />
+    <meta
+      property="og:image"
+      content="https://www.ws-gong.com/fabulosa-books/images/fabulosa-storefront.jpg"
+    />
+    <link
+      rel="canonical"
+      href="https://www.ws-gong.com/fabulosa-books/part1.html"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/fabulosa-books/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
-    />
-    <script
-      defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
-    ></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
-    </script>
   </head>
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
       <nav class="site-nav">
-        <a href="/#work">&larr; W.S. Gong / Work</a>
+        <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
       <nav class="page-nav">
-        <a href="/fabulosa-books/index.html">&larr; Contents</a>
-        <a href="/fabulosa-books/part2.html">Next &rarr;</a>
+        <a href="/fabulosa-books">&larr; Contents</a>
+        <a href="/fabulosa-books/part2.html">How Agents Think &rarr;</a>
       </nav>
       <header>
         <div class="part-label">Part 1</div>
@@ -54,15 +58,19 @@
         <div class="section">
           <h2>A Bookstore with Heart</h2>
           <div class="section-content">
-            <img
-              loading="lazy"
-              class="photo"
-              src="/fabulosa-books/images/fabulosa-storefront.jpg"
-              alt="Fabulosa Books storefront on a sunny afternoon in the Castro"
-            />
-            <figcaption>
-              Fabulosa Books, San Francisco's Castro neighborhood
-            </figcaption>
+            <figure>
+              <img
+                class="photo"
+                src="/fabulosa-books/images/fabulosa-storefront.jpg"
+                width="1057"
+                height="800"
+                fetchpriority="high"
+                alt="Fabulosa Books storefront on a sunny afternoon in the Castro"
+              />
+              <figcaption>
+                Fabulosa Books, San Francisco's Castro neighborhood
+              </figcaption>
+            </figure>
             <p>
               Fabulosa Books is an LGBTQIA+ bookstore&mdash;and that identity
               shapes everything about it. The shelves hold an extensive
@@ -110,11 +118,13 @@
               where shift changes feel like transitions between chapters rather
               than just clocking in and out.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/team-diagram.svg"
-              alt="The Fabulosa Books team: 6 regular employees and 2 on-call staff"
-            />
+            <a href="/fabulosa-books/images/team-diagram.svg" class="diagram">
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/team-diagram.svg"
+                alt="The Fabulosa Books team: 6 regular employees and 2 on-call staff"
+              />
+            </a>
             <p>
               They host readings and events. They put together staff pick
               displays that actually move inventory&mdash;customers trust their
@@ -138,11 +148,16 @@
               with markers and corrections, sometimes with sticky notes covering
               up conflicting scribbles.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/paper-vs-digital.svg"
-              alt="Paper schedule vs. web app schedule comparison"
-            />
+            <a
+              href="/fabulosa-books/images/paper-vs-digital.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/paper-vs-digital.svg"
+                alt="Paper schedule vs. web app schedule comparison"
+              />
+            </a>
             <p>In theory, it worked. In practice? It was chaos.</p>
             <div class="step">
               Step 1: Understand why a paper schedule fails at scale
@@ -207,14 +222,20 @@
               and multiple specialized AI agents coordinate to produce a fair,
               complete schedule. One agent checks who's available. Another
               ensures the shifts are distributed fairly. A third validates that
-              the store is properly covered. And a coordinator agent
+              the store is properly covered. A fourth, added in Part 7, drafts
+              the messages that go out to the team. And a coordinator agent
               orchestrates the whole thing.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/agent-architecture.svg"
-              alt="High-level multi-agent architecture diagram"
-            />
+            <a
+              href="/fabulosa-books/images/agent-architecture.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/agent-architecture.svg"
+                alt="High-level multi-agent architecture diagram"
+              />
+            </a>
 
             <h3>The Stack</h3>
             <ul>
@@ -280,7 +301,7 @@
                 </tr>
                 <tr>
                   <td><strong>Schedule Coordinator</strong></td>
-                  <td>Orchestrates the other three</td>
+                  <td>Orchestrates the specialists</td>
                   <td>Alvin delegating to his team</td>
                 </tr>
               </tbody>
@@ -295,8 +316,8 @@
         </div>
       </main>
       <nav class="bottom-nav">
-        <a href="/fabulosa-books/index.html">&larr; Contents</a>
-        <a href="/fabulosa-books/part2.html">Next: How Agents Think &rarr;</a>
+        <a href="/fabulosa-books">&larr; Contents</a>
+        <a href="/fabulosa-books/part2.html">How Agents Think &rarr;</a>
       </nav>
       <footer>
         Built with Next.js, Vercel AI SDK, Neon, and Vercel. Inspired by the

@@ -3,6 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Applies the main site's stored light/dark choice before first paint -->
+    <script>
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.dataset.theme = t;
+      } catch (e) {}
+    </script>
     <title>Part 5: Your First Agent &mdash; The Availability Agent</title>
     <meta
       name="description"
@@ -18,36 +26,32 @@
     />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="W.S. Gong" />
-    <link rel="icon" href="/favicon.ico" />
+    <meta
+      property="og:url"
+      content="https://www.ws-gong.com/fabulosa-books/part5.html"
+    />
+    <meta
+      property="og:image"
+      content="https://www.ws-gong.com/fabulosa-books/images/fabulosa-storefront.jpg"
+    />
+    <link
+      rel="canonical"
+      href="https://www.ws-gong.com/fabulosa-books/part5.html"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600;700;900&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/fabulosa-books/style.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css"
-    />
-    <script
-      defer
-      src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"
-    ></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => hljs.highlightAll());
-    </script>
   </head>
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
       <nav class="site-nav">
-        <a href="/#work">&larr; W.S. Gong / Work</a>
+        <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
       <nav class="page-nav">
-        <a href="/fabulosa-books/part4.html">&larr; Previous</a>
-        <a href="/fabulosa-books/part6.html">Next &rarr;</a>
+        <a href="/fabulosa-books/part4.html">&larr; The Foundation</a>
+        <a href="/fabulosa-books/part6.html">The Specialist Team &rarr;</a>
       </nav>
       <header>
         <div class="part-label">Part 5</div>
@@ -83,71 +87,92 @@
               Step 33: Create the tools directory and the schedule query tool
             </div>
             <p>Create <code>lib/tools/schedule-tools.ts</code>:</p>
-            <pre><code>// lib/tools/schedule-tools.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/schedule-tools.ts</span>
 
-import { tool } from 'ai'
-import { z } from 'zod'
-import { getAllEmployees, getWeekSchedule } from '@/lib/db'
-import { getWeekStartDate } from '@/lib/utils'
+<span class="hljs-keyword">import</span> { tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
+<span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
+<span class="hljs-keyword">import</span> { getAllEmployees, getWeekSchedule } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/db&#x27;</span>
+<span class="hljs-keyword">import</span> { getDateFromDayOfWeek, getWeekStartDate } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/utils&#x27;</span>
 
-export const getEmployeesTool = tool({
-  description: 'Get all employees at Fabulosa Books with their role (regular or on-call)',
-  inputSchema: z.object({}),
-  execute: async () =&gt; {
-    const employees = await getAllEmployees()
-    return employees.map(emp =&gt; ({
-      name: emp.name,
-      type: emp.is_on_call ? 'on-call' : 'regular',
-    }))
-  },
-})
-
-export const getScheduleTool = tool({
-  description: 'Get the current schedule for a specific week.',
-  inputSchema: z.object({
-    weekStart: z.string()
-      .describe('The start date of the week (Sunday) in YYYY-MM-DD format.'),
-  }),
-  execute: async ({ weekStart }) =&gt; {
-    const schedule = await getWeekSchedule(weekStart)
-    return {
-      weekStart,
-      assignments: schedule.map(entry =&gt; ({
-        day: entry.day_of_week,
-        shift: entry.shift_type,
-        employee: entry.employee_name,
-      })),
-      totalAssigned: schedule.filter(e =&gt; e.employee_name).length,
-      totalSlots: 21,
+<span class="hljs-comment">// Models don&#x27;t know today&#x27;s date. This tool tells them, in the store&#x27;s time</span>
+<span class="hljs-comment">// zone (Vercel servers run on UTC, which is already tomorrow on a Castro evening).</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getTodayTool = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>: <span class="hljs-string">&quot;Get today&#x27;s date and the start (Sunday) of this week and next week. Call it before working out which week the user means.&quot;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({}),
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> ymd = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Intl</span>.<span class="hljs-title class_">DateTimeFormat</span>(<span class="hljs-string">&#x27;en-CA&#x27;</span>, { <span class="hljs-attr">timeZone</span>: <span class="hljs-string">&#x27;America/Los_Angeles&#x27;</span> })
+      .<span class="hljs-title function_">format</span>(<span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>()) <span class="hljs-comment">// &quot;2026-11-16&quot;</span>
+    <span class="hljs-keyword">const</span> [y, m, d] = ymd.<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;-&#x27;</span>).<span class="hljs-title function_">map</span>(<span class="hljs-title class_">Number</span>)
+    <span class="hljs-keyword">const</span> today = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Date</span>(y, m - <span class="hljs-number">1</span>, d)
+    <span class="hljs-keyword">const</span> thisWeekStart = <span class="hljs-title function_">getWeekStartDate</span>(today)
+    <span class="hljs-keyword">return</span> {
+      <span class="hljs-attr">today</span>: today.<span class="hljs-title function_">toLocaleDateString</span>(<span class="hljs-string">&#x27;en-US&#x27;</span>, {
+        <span class="hljs-attr">weekday</span>: <span class="hljs-string">&#x27;long&#x27;</span>, <span class="hljs-attr">year</span>: <span class="hljs-string">&#x27;numeric&#x27;</span>, <span class="hljs-attr">month</span>: <span class="hljs-string">&#x27;long&#x27;</span>, <span class="hljs-attr">day</span>: <span class="hljs-string">&#x27;numeric&#x27;</span>,
+      }),
+      thisWeekStart,
+      <span class="hljs-attr">nextWeekStart</span>: <span class="hljs-title function_">getWeekStartDate</span>(<span class="hljs-title function_">getDateFromDayOfWeek</span>(thisWeekStart, <span class="hljs-number">7</span>)),
     }
   },
 })
 
-export const checkAvailabilityTool = tool({
-  description: 'Check which employees are available (not already scheduled) for a specific day.',
-  inputSchema: z.object({
-    weekStart: z.string().describe('Week start date (Sunday) in YYYY-MM-DD format'),
-    dayOfWeek: z.number().min(0).max(6).describe('Day of week: 0=Sunday, ..., 6=Saturday'),
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getEmployeesTool = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Get all employees at Fabulosa Books with their role (regular or on-call)&#x27;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({}),
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> () =&gt; {
+    <span class="hljs-keyword">const</span> employees = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getAllEmployees</span>()
+    <span class="hljs-keyword">return</span> employees.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">emp</span> =&gt;</span> ({
+      <span class="hljs-attr">name</span>: emp.<span class="hljs-property">name</span>,
+      <span class="hljs-attr">type</span>: emp.<span class="hljs-property">is_on_call</span> ? <span class="hljs-string">&#x27;on-call&#x27;</span> : <span class="hljs-string">&#x27;regular&#x27;</span>,
+    }))
+  },
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getScheduleTool = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Get the current schedule for a specific week.&#x27;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({
+    <span class="hljs-attr">weekStart</span>: z.<span class="hljs-title function_">string</span>()
+      .<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#x27;The start date of the week (Sunday) in YYYY-MM-DD format.&#x27;</span>),
   }),
-  execute: async ({ weekStart, dayOfWeek }) =&gt; {
-    const [employees, schedule] = await Promise.all([
-      getAllEmployees(),
-      getWeekSchedule(weekStart),
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> ({ weekStart }) =&gt; {
+    <span class="hljs-keyword">const</span> schedule = <span class="hljs-keyword">await</span> <span class="hljs-title function_">getWeekSchedule</span>(weekStart)
+    <span class="hljs-keyword">return</span> {
+      weekStart,
+      <span class="hljs-attr">assignments</span>: schedule.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">entry</span> =&gt;</span> ({
+        <span class="hljs-attr">day</span>: entry.<span class="hljs-property">day_of_week</span>,
+        <span class="hljs-attr">shift</span>: entry.<span class="hljs-property">shift_type</span>,
+        <span class="hljs-attr">employee</span>: entry.<span class="hljs-property">employee_name</span>,
+      })),
+      <span class="hljs-attr">totalAssigned</span>: schedule.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> e.<span class="hljs-property">employee_name</span>).<span class="hljs-property">length</span>,
+      <span class="hljs-attr">totalSlots</span>: <span class="hljs-number">21</span>,
+    }
+  },
+})
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> checkAvailabilityTool = <span class="hljs-title function_">tool</span>({
+  <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Check which employees are available (not already scheduled) for a specific day.&#x27;</span>,
+  <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({
+    <span class="hljs-attr">weekStart</span>: z.<span class="hljs-title function_">string</span>().<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#x27;Week start date (Sunday) in YYYY-MM-DD format&#x27;</span>),
+    <span class="hljs-attr">dayOfWeek</span>: z.<span class="hljs-title function_">number</span>().<span class="hljs-title function_">min</span>(<span class="hljs-number">0</span>).<span class="hljs-title function_">max</span>(<span class="hljs-number">6</span>).<span class="hljs-title function_">describe</span>(<span class="hljs-string">&#x27;Day of week: 0=Sunday, ..., 6=Saturday&#x27;</span>),
+  }),
+  <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> ({ weekStart, dayOfWeek }) =&gt; {
+    <span class="hljs-keyword">const</span> [employees, schedule] = <span class="hljs-keyword">await</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">all</span>([
+      <span class="hljs-title function_">getAllEmployees</span>(),
+      <span class="hljs-title function_">getWeekSchedule</span>(weekStart),
     ])
 
-    const assignedOnDay = schedule
-      .filter(s =&gt; s.day_of_week === dayOfWeek &amp;&amp; s.employee_name)
-      .map(s =&gt; s.employee_name)
+    <span class="hljs-keyword">const</span> assignedOnDay = schedule
+      .<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.<span class="hljs-property">day_of_week</span> === dayOfWeek &amp;&amp; s.<span class="hljs-property">employee_name</span>)
+      .<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">s</span> =&gt;</span> s.<span class="hljs-property">employee_name</span>)
 
-    const available = employees.filter(emp =&gt; !assignedOnDay.includes(emp.name))
+    <span class="hljs-keyword">const</span> available = employees.<span class="hljs-title function_">filter</span>(<span class="hljs-function"><span class="hljs-params">emp</span> =&gt;</span> !assignedOnDay.<span class="hljs-title function_">includes</span>(emp.<span class="hljs-property">name</span>))
 
-    return {
+    <span class="hljs-keyword">return</span> {
       dayOfWeek, weekStart,
-      available: available.map(emp =&gt; ({
-        name: emp.name,
-        type: emp.is_on_call ? 'on-call' : 'regular',
+      <span class="hljs-attr">available</span>: available.<span class="hljs-title function_">map</span>(<span class="hljs-function"><span class="hljs-params">emp</span> =&gt;</span> ({
+        <span class="hljs-attr">name</span>: emp.<span class="hljs-property">name</span>,
+        <span class="hljs-attr">type</span>: emp.<span class="hljs-property">is_on_call</span> ? <span class="hljs-string">&#x27;on-call&#x27;</span> : <span class="hljs-string">&#x27;regular&#x27;</span>,
       })),
-      alreadyScheduled: assignedOnDay,
+      <span class="hljs-attr">alreadyScheduled</span>: assignedOnDay,
     }
   },
 })</code></pre>
@@ -171,11 +196,13 @@ export const checkAvailabilityTool = tool({
               input schema (so the AI knows what to provide), and an execute
               function (your actual code).
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/tool-anatomy.svg"
-              alt="Anatomy of an AI SDK tool: description, inputSchema, and execute"
-            />
+            <a href="/fabulosa-books/images/tool-anatomy.svg" class="diagram">
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/tool-anatomy.svg"
+                alt="Anatomy of an AI SDK tool: description, inputSchema, and execute"
+              />
+            </a>
           </div>
         </div>
 
@@ -184,15 +211,17 @@ export const checkAvailabilityTool = tool({
           <div class="section-content">
             <div class="step">Step 34: Create the Availability Agent</div>
             <p>Create <code>lib/agents/availability-agent.ts</code>:</p>
-            <pre><code>// lib/agents/availability-agent.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/availability-agent.ts</span>
 
-import { ToolLoopAgent, InferAgentUIMessage } from 'ai'
-import { getEmployeesTool, getScheduleTool, checkAvailabilityTool } from '../tools/schedule-tools'
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">ToolLoopAgent</span>, <span class="hljs-title class_">InferAgentUIMessage</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
+<span class="hljs-keyword">import</span> {
+  getTodayTool, getEmployeesTool, getScheduleTool, checkAvailabilityTool,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../tools/schedule-tools&#x27;</span>
 
-export const availabilityAgent = new ToolLoopAgent({
-  model: 'anthropic/claude-sonnet-4.5',
-  instructions: `You are the Availability Agent for Fabulosa Books,
-an LGBTQIA+ bookstore in San Francisco's Castro neighborhood.
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> availabilityAgent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ToolLoopAgent</span>({
+  <span class="hljs-attr">model</span>: <span class="hljs-string">&#x27;anthropic/claude-sonnet-5.5&#x27;</span>,
+  <span class="hljs-attr">instructions</span>: <span class="hljs-string">`You are the Availability Agent for Fabulosa Books,
+an LGBTQIA+ bookstore in San Francisco&#x27;s Castro neighborhood.
 
 Your job is to answer questions about employee availability
 and the current schedule.
@@ -208,19 +237,21 @@ The store operates 10am-8pm daily (10am-9pm Saturdays) with three shifts:
 
 Each shift is assigned to one employee. Use your tools to check the
 actual schedule data before answering. Never guess or make up
-availability — always query the database.
+availability — always query the database. When the user says &quot;this
+week&quot;, &quot;Thursday&quot;, or &quot;next week&quot;, call getToday first to find the date.
 
 When reporting availability, distinguish between regular and on-call
 staff. On-call staff should generally only be suggested when regular
-staff aren't available.`,
-  tools: {
-    getEmployees: getEmployeesTool,
-    getSchedule: getScheduleTool,
-    checkAvailability: checkAvailabilityTool,
+staff aren&#x27;t available.`</span>,
+  <span class="hljs-attr">tools</span>: {
+    <span class="hljs-attr">getToday</span>: getTodayTool,
+    <span class="hljs-attr">getEmployees</span>: getEmployeesTool,
+    <span class="hljs-attr">getSchedule</span>: getScheduleTool,
+    <span class="hljs-attr">checkAvailability</span>: checkAvailabilityTool,
   },
 })
 
-export type AvailabilityAgentUIMessage = InferAgentUIMessage&lt;typeof availabilityAgent&gt;</code></pre>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> <span class="hljs-title class_">AvailabilityAgentUIMessage</span> = <span class="hljs-title class_">InferAgentUIMessage</span>&lt;<span class="hljs-keyword">typeof</span> availabilityAgent&gt;</code></pre>
             <p>Let's unpack the key parts:</p>
             <ul>
               <li>
@@ -232,7 +263,7 @@ export type AvailabilityAgentUIMessage = InferAgentUIMessage&lt;typeof availabil
               <li>
                 <strong><code>model</code></strong> &mdash; This uses the Vercel
                 AI Gateway. The string
-                <code>anthropic/claude-sonnet-4.5</code> routes through the
+                <code>anthropic/claude-sonnet-5.5</code> routes through the
                 gateway to Anthropic's Claude.
               </li>
               <li>
@@ -258,17 +289,17 @@ export type AvailabilityAgentUIMessage = InferAgentUIMessage&lt;typeof availabil
           <div class="section-content">
             <div class="step">Step 35: Create the chat API route</div>
             <p>Create <code>app/api/chat/route.ts</code>:</p>
-            <pre><code>// app/api/chat/route.ts
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/chat/route.ts</span>
 
-import { createAgentUIStreamResponse } from 'ai'
-import { availabilityAgent } from '@/lib/agents/availability-agent'
+<span class="hljs-keyword">import</span> { createAgentUIStreamResponse } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
+<span class="hljs-keyword">import</span> { availabilityAgent } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/agents/availability-agent&#x27;</span>
 
-export async function POST(request: Request) {
-  const { messages } = await request.json()
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">POST</span>(<span class="hljs-params"><span class="hljs-attr">request</span>: <span class="hljs-title class_">Request</span></span>) {
+  <span class="hljs-keyword">const</span> { messages } = <span class="hljs-keyword">await</span> request.<span class="hljs-title function_">json</span>()
 
-  return createAgentUIStreamResponse({
-    agent: availabilityAgent,
-    uiMessages: messages,
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">createAgentUIStreamResponse</span>({
+    <span class="hljs-attr">agent</span>: availabilityAgent,
+    <span class="hljs-attr">uiMessages</span>: messages,
   })
 }</code></pre>
             <p>
@@ -278,11 +309,13 @@ export async function POST(request: Request) {
               response back to the browser in a format that
               <code>useChat</code> understands.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/how-it-works.svg"
-              alt="How the agent streams responses from server to browser"
-            />
+            <a href="/fabulosa-books/images/how-it-works.svg" class="diagram">
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/how-it-works.svg"
+                alt="How the agent streams responses from server to browser"
+              />
+            </a>
           </div>
         </div>
 
@@ -291,78 +324,80 @@ export async function POST(request: Request) {
           <div class="section-content">
             <div class="step">Step 36: Create the ChatPanel component</div>
             <p>Create <code>components/ChatPanel.tsx</code>:</p>
-            <pre><code>// components/ChatPanel.tsx
-'use client'
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ChatPanel.tsx</span>
+<span class="hljs-string">&#x27;use client&#x27;</span>
 
-import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
-import { useState } from 'react'
-import type { AvailabilityAgentUIMessage } from '@/lib/agents/availability-agent'
+<span class="hljs-keyword">import</span> { useChat } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ai-sdk/react&#x27;</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">DefaultChatTransport</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
+<span class="hljs-keyword">import</span> { useState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">AvailabilityAgentUIMessage</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/agents/availability-agent&#x27;</span>
 
-const transport = new DefaultChatTransport({ api: '/api/chat' })
+<span class="hljs-keyword">const</span> transport = <span class="hljs-keyword">new</span> <span class="hljs-title class_">DefaultChatTransport</span>({ <span class="hljs-attr">api</span>: <span class="hljs-string">&#x27;/api/chat&#x27;</span> })
 
-export default function ChatPanel() {
-  const [input, setInput] = useState('')
-  const { messages, sendMessage, isLoading } = useChat&lt;AvailabilityAgentUIMessage&gt;({
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ChatPanel</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">const</span> [input, setInput] = <span class="hljs-title function_">useState</span>(<span class="hljs-string">&#x27;&#x27;</span>)
+  <span class="hljs-keyword">const</span> { messages, sendMessage, status } = useChat&lt;<span class="hljs-title class_">AvailabilityAgentUIMessage</span>&gt;({
     transport,
   })
+  <span class="hljs-comment">// status is &#x27;submitted&#x27; or &#x27;streaming&#x27; while the agent works, &#x27;ready&#x27; or &#x27;error&#x27; after.</span>
+  <span class="hljs-keyword">const</span> busy = status === <span class="hljs-string">&#x27;submitted&#x27;</span> || status === <span class="hljs-string">&#x27;streaming&#x27;</span>
 
-  const handleSubmit = (e: React.FormEvent) =&gt; {
-    e.preventDefault()
-    if (!input.trim()) return
-    sendMessage({ text: input })
-    setInput('')
+  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleSubmit</span> = (<span class="hljs-params"><span class="hljs-attr">e</span>: <span class="hljs-title class_">React</span>.<span class="hljs-title class_">FormEvent</span></span>) =&gt; {
+    e.<span class="hljs-title function_">preventDefault</span>()
+    <span class="hljs-keyword">if</span> (!input.<span class="hljs-title function_">trim</span>()) <span class="hljs-keyword">return</span>
+    <span class="hljs-title function_">sendMessage</span>({ <span class="hljs-attr">text</span>: input })
+    <span class="hljs-title function_">setInput</span>(<span class="hljs-string">&#x27;&#x27;</span>)
   }
 
-  return (
-    &lt;div className="bg-white rounded-lg border border-stone-200 shadow-sm"&gt;
-      &lt;div className="p-4 bg-stone-800 text-white rounded-t-lg"&gt;
-        &lt;h3 className="font-semibold"&gt;Schedule Assistant&lt;/h3&gt;
-      &lt;/div&gt;
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;bg-white rounded-lg border border-stone-200 shadow-sm&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;p-4 bg-stone-800 text-white rounded-t-lg&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h3</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;font-semibold&quot;</span>&gt;</span>Schedule Assistant<span class="hljs-tag">&lt;/<span class="hljs-name">h3</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 
-      &lt;div className="h-96 overflow-y-auto p-4 space-y-4"&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;h-96 overflow-y-auto p-4 space-y-4&quot;</span>&gt;</span>
         {messages.map(message =&gt; (
-          &lt;div key={message.id} className={`flex ${
-            message.role === 'user' ? 'justify-end' : 'justify-start'
-          }`}&gt;
-            &lt;div className={`max-w-[80%] rounded-lg p-3 text-sm ${
-              message.role === 'user'
-                ? 'bg-amber-500 text-white'
-                : 'bg-stone-100 text-stone-800'
-            }`}&gt;
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{message.id}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{</span>`<span class="hljs-attr">flex</span> ${
+            <span class="hljs-attr">message.role</span> === <span class="hljs-string">&#x27;user&#x27;</span> ? &#x27;<span class="hljs-attr">justify-end</span>&#x27; <span class="hljs-attr">:</span> &#x27;<span class="hljs-attr">justify-start</span>&#x27;
+          }`}&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">{</span>`<span class="hljs-attr">max-w-</span>[<span class="hljs-attr">80</span>%] <span class="hljs-attr">rounded-lg</span> <span class="hljs-attr">p-3</span> <span class="hljs-attr">text-sm</span> ${
+              <span class="hljs-attr">message.role</span> === <span class="hljs-string">&#x27;user&#x27;</span>
+                ? &#x27;<span class="hljs-attr">bg-amber-500</span> <span class="hljs-attr">text-white</span>&#x27;
+                <span class="hljs-attr">:</span> &#x27;<span class="hljs-attr">bg-stone-100</span> <span class="hljs-attr">text-stone-800</span>&#x27;
+            }`}&gt;</span>
               {message.parts.map((part, i) =&gt; {
                 switch (part.type) {
-                  case 'text':
-                    return &lt;span key={i}&gt;{part.text}&lt;/span&gt;
-                  case 'tool-getEmployees':
-                  case 'tool-getSchedule':
-                  case 'tool-checkAvailability':
+                  case &#x27;text&#x27;:
+                    return <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{i}</span>&gt;</span>{part.text}<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+                  case &#x27;tool-getEmployees&#x27;:
+                  case &#x27;tool-getSchedule&#x27;:
+                  case &#x27;tool-checkAvailability&#x27;:
                     return (
-                      &lt;div key={i} className="text-xs text-stone-400 italic my-1"&gt;
-                        {part.state === 'output-available'
-                          ? `✓ Checked ${part.type.replace('tool-', '')}`
-                          : `⏳ Checking ${part.type.replace('tool-', '')}...`}
-                      &lt;/div&gt;
+                      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{i}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-xs text-stone-400 italic my-1&quot;</span>&gt;</span>
+                        {part.state === &#x27;output-available&#x27;
+                          ? `✓ Checked ${part.type.replace(&#x27;tool-&#x27;, &#x27;&#x27;)}`
+                          : `⏳ Checking ${part.type.replace(&#x27;tool-&#x27;, &#x27;&#x27;)}...`}
+                      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
                     )
                   default:
                     return null
                 }
               })}
-            &lt;/div&gt;
-          &lt;/div&gt;
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
         ))}
-      &lt;/div&gt;
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
 
-      &lt;form onSubmit={handleSubmit} className="p-4 border-t border-stone-200"&gt;
-        &lt;div className="flex gap-2"&gt;
-          &lt;input type="text" value={input}
-            onChange={e =&gt; setInput(e.target.value)}
-            placeholder="Ask about the schedule..."
-            disabled={isLoading} /&gt;
-          &lt;button type="submit" disabled={isLoading || !input.trim()}&gt;Ask&lt;/button&gt;
-        &lt;/div&gt;
-      &lt;/form&gt;
-    &lt;/div&gt;
+      <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">onSubmit</span>=<span class="hljs-string">{handleSubmit}</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;p-4 border-t border-stone-200&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;flex gap-2&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">{input}</span>
+            <span class="hljs-attr">onChange</span>=<span class="hljs-string">{e</span> =&gt;</span> setInput(e.target.value)}
+            placeholder=&quot;Ask about the schedule...&quot;
+            disabled={busy} /&gt;
+          <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">{busy</span> || !<span class="hljs-attr">input.trim</span>()}&gt;</span>Ask<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
   )
 }</code></pre>
             <p>
@@ -371,40 +406,45 @@ export default function ChatPanel() {
               completes. The user can see the agent <em>working</em>&mdash;not
               just waiting for a final answer.
             </p>
-            <img
-              loading="lazy"
-              src="/fabulosa-books/images/chat-panel-mockup.svg"
-              alt="Chat panel showing agent interaction with tool activity indicators"
-            />
+            <a
+              href="/fabulosa-books/images/chat-panel-mockup.svg"
+              class="diagram"
+            >
+              <img
+                loading="lazy"
+                src="/fabulosa-books/images/chat-panel-mockup.svg"
+                alt="Chat panel showing agent interaction with tool activity indicators"
+              />
+            </a>
 
             <div class="step">Step 37: Add the ChatPanel to the main page</div>
             <p>
               Update <code>app/page.tsx</code> to include the chat panel
               alongside the schedule grid:
             </p>
-            <pre><code>// app/page.tsx
-import ScheduleGrid from '@/components/ScheduleGrid'
-import ChatPanel from '@/components/ChatPanel'
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">ScheduleGrid</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/ScheduleGrid&#x27;</span>
+<span class="hljs-keyword">import</span> <span class="hljs-title class_">ChatPanel</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/ChatPanel&#x27;</span>
 
-export default function Home() {
-  return (
-    &lt;main className="min-h-screen bg-stone-50 p-8"&gt;
-      &lt;div className="max-w-7xl mx-auto"&gt;
-        &lt;header className="mb-8"&gt;
-          &lt;h1 className="text-3xl font-bold text-stone-800"&gt;Fabulosa Books&lt;/h1&gt;
-          &lt;p className="text-stone-500 mt-1"&gt;Employee Schedule&lt;/p&gt;
-        &lt;/header&gt;
-        &lt;div className="grid grid-cols-1 lg:grid-cols-3 gap-8"&gt;
-          &lt;div className="lg:col-span-2"&gt;&lt;ScheduleGrid /&gt;&lt;/div&gt;
-          &lt;div&gt;&lt;ChatPanel /&gt;&lt;/div&gt;
-        &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/main&gt;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">Home</span>(<span class="hljs-params"></span>) {
+  <span class="hljs-keyword">return</span> (
+    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">main</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;min-h-screen bg-stone-50 p-8&quot;</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;max-w-7xl mx-auto&quot;</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">header</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;mb-8&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">h1</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-3xl font-bold text-stone-800&quot;</span>&gt;</span>Fabulosa Books<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;text-stone-500 mt-1&quot;</span>&gt;</span>Employee Schedule<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">header</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;grid grid-cols-1 lg:grid-cols-3 gap-8&quot;</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">className</span>=<span class="hljs-string">&quot;lg:col-span-2&quot;</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">ScheduleGrid</span> /&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">ChatPanel</span> /&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">main</span>&gt;</span></span>
   )
 }</code></pre>
 
             <div class="step">Step 38: Test your first agent</div>
-            <pre><code>npm run dev</code></pre>
+            <pre><code class="hljs language-bash">npm run dev</code></pre>
             <p>
               Open <code>http://localhost:3000</code>. You should see the
               schedule grid on the left and the chat panel on the right. Try
@@ -415,10 +455,6 @@ export default function Home() {
               <li>"Show me this week's schedule"</li>
               <li>"Which on-call staff are available Saturday?"</li>
             </ul>
-            <div class="image-placeholder">
-              Full-page screenshot showing the schedule grid (left, ~2/3 width)
-              and the chat panel (right, ~1/3 width) side by side
-            </div>
             <p>
               The agent queries the database, reasons about the results, and
               responds in natural language. It's not guessing&mdash;it's
@@ -426,8 +462,55 @@ export default function Home() {
             </p>
 
             <div class="step">Step 39: Push and deploy</div>
-            <pre><code>git add -A
-git commit -m "Add Availability Agent with chat interface"
+            <p>
+              Stop before you push. Once deployed, <code>/api/chat</code> and
+              <code>/api/schedule</code> are on the public internet: anyone who
+              finds the URL could rewrite the schedule, and every chat message
+              spends your AI Gateway credits. Lock the whole app behind a staff
+              password first. Next.js runs <code>proxy.ts</code> before every
+              request:
+            </p>
+            <pre><code class="hljs language-typescript"><span class="hljs-comment">// proxy.ts (in the project root, next to package.json)</span>
+<span class="hljs-keyword">import</span> { <span class="hljs-title class_">NextRequest</span>, <span class="hljs-title class_">NextResponse</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/server&#x27;</span>
+
+<span class="hljs-comment">// Every page and API route asks for the staff password first.</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">proxy</span>(<span class="hljs-params"><span class="hljs-attr">request</span>: <span class="hljs-title class_">NextRequest</span></span>) {
+  <span class="hljs-keyword">const</span> password = process.<span class="hljs-property">env</span>.<span class="hljs-property">STAFF_PASSWORD</span>
+  <span class="hljs-comment">// Fail closed: if the password isn&#x27;t set, nobody gets in.</span>
+  <span class="hljs-keyword">if</span> (!password) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NextResponse</span>(<span class="hljs-string">&#x27;STAFF_PASSWORD is not set&#x27;</span>, { <span class="hljs-attr">status</span>: <span class="hljs-number">503</span> })
+  }
+
+  <span class="hljs-comment">// The browser sends &quot;Basic &quot; + base64(&quot;username:password&quot;); any username works.</span>
+  <span class="hljs-keyword">const</span> [scheme, encoded] = (request.<span class="hljs-property">headers</span>.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;authorization&#x27;</span>) ?? <span class="hljs-string">&#x27;&#x27;</span>).<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27; &#x27;</span>)
+  <span class="hljs-keyword">if</span> (scheme === <span class="hljs-string">&#x27;Basic&#x27;</span> &amp;&amp; encoded) {
+    <span class="hljs-keyword">const</span> decoded = <span class="hljs-title function_">atob</span>(encoded)
+    <span class="hljs-keyword">if</span> (decoded.<span class="hljs-title function_">slice</span>(decoded.<span class="hljs-title function_">indexOf</span>(<span class="hljs-string">&#x27;:&#x27;</span>) + <span class="hljs-number">1</span>) === password) {
+      <span class="hljs-keyword">return</span> <span class="hljs-title class_">NextResponse</span>.<span class="hljs-title function_">next</span>()
+    }
+  }
+
+  <span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">NextResponse</span>(<span class="hljs-string">&#x27;Staff only&#x27;</span>, {
+    <span class="hljs-attr">status</span>: <span class="hljs-number">401</span>,
+    <span class="hljs-attr">headers</span>: { <span class="hljs-string">&#x27;WWW-Authenticate&#x27;</span>: <span class="hljs-string">&#x27;Basic realm=&quot;Fabulosa Books staff&quot;&#x27;</span> },
+  })
+}
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> config = {
+  <span class="hljs-attr">matcher</span>: [<span class="hljs-string">&#x27;/((?!_next/static|_next/image|favicon.ico).*)&#x27;</span>],
+}</code></pre>
+            <p>Set the password locally and on Vercel:</p>
+            <pre><code class="hljs language-plaintext"># .env.local — and add the same variable in Vercel:
+# Project → Settings → Environment Variables → STAFF_PASSWORD
+STAFF_PASSWORD=pick-a-long-passphrase</code></pre>
+            <p>
+              Restart <code>npm run dev</code>: the browser now asks for a
+              password before showing the app. A shared password is the minimum
+              for a small staff; Part 7 suggests real accounts as a next step.
+              You can also cap spending in the AI Gateway dashboard. Then push:
+            </p>
+            <pre><code class="hljs language-bash">git add -A
+git commit -m <span class="hljs-string">&quot;Add Availability Agent with chat interface&quot;</span>
 git push</code></pre>
             <p>
               Vercel deploys automatically. In about a minute, your live app has

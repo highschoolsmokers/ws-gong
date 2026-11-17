@@ -23,7 +23,7 @@ test.describe("Navigation", () => {
     await page.goto("/");
     const nav = page.locator("header nav");
     for (const [name, href] of [
-      ["Work", "/#work"],
+      ["Code", "/#code"],
       ["About", "/#about"],
       ["Writing", "/#writing"],
       ["Résumé", "/#resume"],

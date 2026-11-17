@@ -20,12 +20,12 @@ const tutorialPages = [
 ];
 
 // ---------------------------------------------------------------------------
-// Home Work section links the tutorial
+// Home Code section links the tutorial
 // ---------------------------------------------------------------------------
-test.describe("Work section", () => {
+test.describe("Code section", () => {
   test("has Fabulosa Books tutorial link", async ({ page }) => {
     await page.goto("/");
-    const link = page.locator('section#work a[href^="/fabulosa-books"]');
+    const link = page.locator('section#code a[href^="/fabulosa-books"]');
     await expect(link).toBeAttached();
     await expect(link).toContainText(/Fabulosa Books/i);
   });
@@ -36,7 +36,7 @@ test.describe("Work section", () => {
 // ---------------------------------------------------------------------------
 test.describe("Fabulosa Books index", () => {
   test("loads with styled content", async ({ page }) => {
-    await page.goto("/fabulosa-books/");
+    await page.goto("/fabulosa-books");
     await expect(page.locator("h1")).toContainText(
       "Building a Multi-Agent Scheduling System",
     );
@@ -47,16 +47,16 @@ test.describe("Fabulosa Books index", () => {
     expect(bg).not.toBe("rgba(0, 0, 0, 0)");
   });
 
-  test("has site nav link back to the Work section", async ({ page }) => {
-    await page.goto("/fabulosa-books/");
+  test("has site nav link back to the Code section", async ({ page }) => {
+    await page.goto("/fabulosa-books");
     const siteNav = page.locator("nav.site-nav");
     await expect(siteNav).toBeVisible();
     const link = siteNav.getByRole("link", { name: /W\.S\. Gong/i });
-    await expect(link).toHaveAttribute("href", "/#work");
+    await expect(link).toHaveAttribute("href", "/#code");
   });
 
   test("has links to all 7 parts", async ({ page }) => {
-    await page.goto("/fabulosa-books/");
+    await page.goto("/fabulosa-books");
     for (const part of tutorialPages) {
       await expect(
         page.locator(`a[href="${part.path}"]`),
@@ -81,10 +81,15 @@ test.describe("Fabulosa Books part pages", () => {
       await expect(siteNav).toBeVisible();
       await expect(
         siteNav.getByRole("link", { name: /W\.S\. Gong/i }),
-      ).toHaveAttribute("href", "/#work");
+      ).toHaveAttribute("href", "/#code");
 
-      // Page nav exists
+      // Top and bottom navs carry the same links
+      const hrefs = (nav: string) =>
+        page
+          .locator(`nav.${nav} a`)
+          .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
       await expect(page.locator("nav.page-nav")).toBeVisible();
+      expect(await hrefs("page-nav")).toEqual(await hrefs("bottom-nav"));
     });
   }
 
@@ -93,23 +98,66 @@ test.describe("Fabulosa Books part pages", () => {
     const pageNav = page.locator("nav.page-nav");
     await expect(
       pageNav.getByRole("link", { name: /Contents/i }),
-    ).toHaveAttribute("href", "/fabulosa-books/index.html");
+    ).toHaveAttribute("href", "/fabulosa-books");
   });
 
   test("part 7 has back to Contents link", async ({ page }) => {
     await page.goto("/fabulosa-books/part7.html");
     await expect(
-      page.getByRole("link", { name: /Back to Contents/i }),
-    ).toHaveAttribute("href", "/fabulosa-books/index.html");
+      page
+        .locator("nav.bottom-nav")
+        .getByRole("link", { name: /Back to Contents/i }),
+    ).toHaveAttribute("href", "/fabulosa-books");
   });
 
-  test("stylesheet is loaded on part pages", async ({ page }) => {
+  test("Geist actually loads (self-hosted; the CSP blocks font CDNs)", async ({
+    page,
+  }) => {
     await page.goto("/fabulosa-books/part3.html");
-    const fontFamily = await page.evaluate(() =>
-      getComputedStyle(document.body).getPropertyValue("font-family"),
-    );
-    expect(fontFamily).toContain("Geist");
+    const loaded = await page.evaluate(async () => {
+      await document.fonts.ready;
+      return document.fonts.check("16px Geist");
+    });
+    expect(loaded).toBe(true);
   });
+
+  test("code blocks are highlighted in the HTML", async ({ page }) => {
+    await page.goto("/fabulosa-books/part4.html");
+    await expect(
+      page.locator("pre code.hljs .hljs-keyword").first(),
+    ).toBeAttached();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Every tutorial page: no errors, no blocked requests, fits a phone
+// ---------------------------------------------------------------------------
+test.describe("Fabulosa Books page health", () => {
+  for (const path of ["/fabulosa-books", ...tutorialPages.map((p) => p.path)]) {
+    test(`${path} loads without errors, images resolve, fits 375 px`, async ({
+      page,
+    }) => {
+      const problems: string[] = [];
+      page.on("pageerror", (e) => problems.push(e.message));
+      page.on("console", (m) => {
+        if (m.type() === "error") problems.push(m.text());
+      });
+      page.on("requestfailed", (r) => problems.push(`failed: ${r.url()}`));
+      await page.setViewportSize({ width: 375, height: 800 });
+      await page.goto(path, { waitUntil: "networkidle" });
+      expect(problems).toEqual([]);
+      // Lazy images below the fold haven't loaded yet, so request each one.
+      const srcs = await page.$$eval("img", (imgs) =>
+        imgs.map((i) => (i as HTMLImageElement).src),
+      );
+      for (const src of srcs)
+        expect((await page.request.get(src)).ok(), src).toBe(true);
+      const overflow = await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      );
+      expect(overflow, "page must not scroll sideways").toBeLessThanOrEqual(0);
+    });
+  }
 });
 
 // ---------------------------------------------------------------------------
@@ -123,6 +171,6 @@ test.describe("Fabulosa Books cross-navigation", () => {
     await expect(page).toHaveURL(/\/fabulosa-books/);
 
     await page.locator("nav.site-nav").getByRole("link").click();
-    await expect(page).toHaveURL(/\/#work$/);
+    await expect(page).toHaveURL(/\/#code$/);
   });
 });

@@ -12,7 +12,9 @@
     "test:unit": "node --test --experimental-strip-types \"lib/**/*.test.ts\"",
     "test:e2e": "playwright test",
     "prepare": "husky",
-    "sync:resume": "node --env-file-if-exists=.env.local scripts/sync-resume.ts"
+    "sync:resume": "node --env-file-if-exists=.env.local scripts/sync-resume.ts",
+    "covers": "node scripts/fetch-covers.ts",
+    "highlight:tutorial": "node scripts/highlight-tutorial.ts"
   },
   "engines": {
     "node": ">=24"
@@ -25,6 +27,7 @@
     "@sentry/nextjs": "^10.78.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.1.0",
+    "marked": "^18.2.0",
     "next": "16.4.6",
     "nodemailer": "^10.5.0",
     "react": "19.2.3",
@@ -41,6 +44,7 @@
     "@vercel/blob": "^2.9.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "16.4.6",
+    "highlight.js": "11.11.1",
     "husky": "^9.1.7",
     "imapflow": "^1.7.8",
     "lint-staged": "^15.5.2",

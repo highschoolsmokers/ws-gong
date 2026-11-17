@@ -16,14 +16,14 @@ const csp = [
 ].join("; ");
 
 // The site is one page: old section pages land on their anchors, permanently.
-// /reading lands on home while the log is empty (its section is hidden).
+// /reading lands on home while the log is empty (its page and section hide).
 // /residencies became the slushpile app.
 const redirects = Object.entries({
-  "/code/:slug*": "/#work",
-  "/narratives-code/:slug*": "/#work",
+  "/code/:slug*": "/#code",
+  "/narratives-code/:slug*": "/#code",
   "/about": "/#about",
   "/narratives": "/#writing",
-  "/reading": orderedBooks.length ? "/#reading" : "/",
+  ...(orderedBooks.length ? {} : { "/reading": "/" }),
   "/resume": "/#resume",
   "/contact": "/#contact",
   "/residencies": "/slushpile",

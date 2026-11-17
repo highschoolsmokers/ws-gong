@@ -78,10 +78,10 @@ export const projects: Project[] = [
     stack: ["Vanilla HTML/CSS", "Vite", "SVG"],
   },
   {
-    href: "/fabulosa-books/",
-    title: "Fabulosa Books — Next.js on Vercel Tutorial",
+    href: "/fabulosa-books",
+    title: "Fabulosa Books — Multi-Agent Scheduling Tutorial",
     description:
-      "A step-by-step tutorial for building and deploying Next.js applications on Vercel — an employee scheduler for a bookstore, with Neon Postgres, authentication, and server actions.",
-    stack: ["Next.js", "Vercel", "Neon", "TypeScript"],
+      "A seven-part tutorial on multi-agent orchestration: a bookstore scheduler on Next.js and Vercel, where AI SDK agents check availability, fairness, and coverage, backed by Neon Postgres.",
+    stack: ["Next.js", "AI SDK", "Neon", "TypeScript"],
   },
 ];

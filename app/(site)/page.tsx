@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
-import { orderedBooks } from "@/lib/books";
+import { bookHref, bookMeta, orderedBooks } from "@/lib/books";
 import { profiles, site, SITE_URL } from "@/lib/site/content";
 import { PDFS } from "@/lib/site/resume";
 import { getSubstackPosts, SUBSCRIBE_URL } from "@/lib/substack";
 import Image from "next/image";
+import Link from "next/link";
 import ContactForm from "./ContactForm";
 import portrait from "./portrait.png";
 
@@ -66,6 +67,12 @@ export default async function Home() {
             fetchPriority="high"
           />
           <p>{site.bio[0]}</p>
+          {site.now && (
+            <div className="pt-6">
+              <h3 className="sub-head">Now</h3>
+              <p>{site.now}</p>
+            </div>
+          )}
         </div>
       </Section>
 
@@ -98,13 +105,61 @@ export default async function Home() {
               ))}
             </Rows>
           )}
-          <a href={SUBSCRIBE_URL} className="block font-medium" {...ext}>
-            Subscribe on Substack →
-          </a>
+          {/* Substack refuses sign-ups from other servers, so the address goes
+              to its subscribe page, which prefills it; the reader confirms there. */}
+          <form
+            action={SUBSCRIBE_URL}
+            method="get"
+            {...ext}
+            aria-label="Subscribe on Substack"
+            className="space-y-4"
+          >
+            <h3 className="sub-head">Newsletter</h3>
+            <div className="grid grid-cols-8 items-baseline gap-[var(--gutter)]">
+              <input
+                name="email"
+                type="email"
+                required
+                aria-label="Email"
+                placeholder="Email"
+                autoComplete="email"
+                className="field col-span-5 md:col-span-6"
+              />
+              <button
+                type="submit"
+                className="col-span-3 border border-foreground md:col-span-2 px-5 py-2 font-medium transition-colors hover:bg-foreground hover:text-background"
+              >
+                Subscribe
+              </button>
+            </div>
+            <p className="text-xs text-muted">
+              Opens Substack to confirm. Free; unsubscribe anytime.
+            </p>
+          </form>
         </div>
       </Section>
 
-      <Section id="work" index={++n} title="Work">
+      {books.length > 0 && (
+        <Section id="reading" index={++n} title="Reading">
+          <Rows>
+            {books.map((b) => (
+              <Row
+                key={b.slug}
+                href={bookHref(b)}
+                title={b.title}
+                meta={bookMeta(b)}
+              >
+                {b.note ? `${b.author}. ${b.note}` : b.author}
+              </Row>
+            ))}
+          </Rows>
+          <Link href="/reading" className="block font-medium">
+            All reading and reviews →
+          </Link>
+        </Section>
+      )}
+
+      <Section id="code" index={++n} title="Code">
         <Rows>
           {projects.map((p) => (
             <Row
@@ -118,23 +173,6 @@ export default async function Home() {
           ))}
         </Rows>
       </Section>
-
-      {books.length > 0 && (
-        <Section id="reading" index={++n} title="Reading">
-          <Rows>
-            {books.map((b) => (
-              <Row
-                key={b.title + b.author}
-                href={b.link}
-                title={b.title}
-                meta={b.finished === "reading" ? "Reading" : b.finished}
-              >
-                {b.note ? `${b.author}. ${b.note}` : b.author}
-              </Row>
-            ))}
-          </Rows>
-        </Section>
-      )}
 
       <Section id="resume" index={++n} title="Résumé">
         <Rows>

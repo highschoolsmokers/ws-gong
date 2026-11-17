@@ -11,8 +11,9 @@ const read = (p: string) => readFileSync(r(p), "utf8");
 
 test("removed surfaces stay removed", () => {
   for (const p of [
-    // Section pages folded into the one-page home; next.config.ts redirects them.
-    ...["about", "code", "narratives", "reading", "resume", "contact"].map(
+    // Section pages folded into the one-page home; next.config.ts redirects
+    // them. /reading came back as the review index (§13).
+    ...["about", "code", "narratives", "resume", "contact"].map(
       (s) => `app/(site)/${s}`,
     ),
     "app/(site)/slushpile", // mounted by rewrite from its own repo
@@ -83,7 +84,7 @@ test("Swiss rules: no off-grid alignment or ornament", () => {
   assert.deepEqual(hits, [], "off-grid alignment or ornament (SPEC §6.1)");
 });
 
-test("Work is one flat list: no featured tier, categories, or sub-pages", () => {
+test("Code is one flat list: no featured tier, categories, or sub-pages", () => {
   for (const p of projects)
     assert.deepEqual(
       Object.keys(p).sort(),

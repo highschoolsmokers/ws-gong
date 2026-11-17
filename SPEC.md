@@ -19,17 +19,19 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
 | -------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------- |
 | `/`                                                | `app/(site)/page.tsx`    | The site (§3)                                                                 |
 | `/colophon`, `/terms`                              | `app/(site)/…`           | Static pages                                                                  |
+| `/reading`, `/reading/<slug>`                      | `app/(site)/reading/`    | Reading log index and one page per reviewed book (§4)                         |
 | `/links`                                           | `app/(bare)/links`       | Instagram link-in-bio page on the grid; no site chrome, not in nav or sitemap |
-| `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts (category `Substack`), cached 1 h                   |
-| `/fabulosa-books/*`                                | `public/fabulosa-books/` | Static seven-part tutorial; `/fabulosa-books` rewrites to its index           |
+| `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts and reviews (`Substack`, `Review`), cached 1 h      |
+| `/fabulosa-books/*`                                | `public/fabulosa-books/` | Static seven-part tutorial; `/fabulosa-books` rewrites to its index (§11)     |
 | `/slushpile/*`                                     | rewrite                  | Separate app at `SLUSHPILE_URL` (basePath `/slushpile`); 404 when unset       |
 | `/wsgong_tech_writer_resume.pdf`, `/wsgong_cv.pdf` | rewrite                  | Résumé and public CV PDFs in public Vercel Blob storage                       |
 | sitemap, robots, manifest, OG image                | `app/*.ts(x)`            | Standard metadata routes                                                      |
 
-Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#work`;
+Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#code`;
 `/about` → `/#about`; `/narratives` → `/#writing`; `/resume`, `/contact` →
-their anchors; `/reading` → `/#reading`, or `/` while the reading log is empty;
-`/residencies` → `/slushpile`.
+their anchors; `/reading` → `/` while the reading log is empty;
+`/residencies` → `/slushpile`. The `/reading` redirect is decided when
+`next.config.ts` loads, so restart `pnpm dev` after adding the first book.
 
 `app/(site)/layout.tsx` wraps every page but `/links` in the masthead, the
 anchor nav (`Nav.tsx`, stacked in columns 11–12), and a footer: the copyright
@@ -42,6 +44,15 @@ inside the same layout.
 visitors arriving from Instagram, laid out with the shared `Section` and
 `Rows`. The site's nav, footer, and sitemap don't link to it.
 
+The Fabulosa tutorial is plain HTML under the site's CSP, so everything it
+loads is self-hosted: Geist from `public/fabulosa-books/fonts/` (OFL) and no
+scripts at all. Syntax highlighting is baked into the HTML by
+`pnpm highlight:tutorial` (highlight.js, a dev dependency; colors in its
+`style.css`); rerun it after editing any code sample. The tutorial's canonical index URL is
+`/fabulosa-books` (no trailing slash, which 308s); the sitemap, the Code list,
+and its own Contents links use it. Its pages apply the site's stored theme
+choice with the same pre-paint script as `app/layout.tsx`.
+
 ## 3. Home page
 
 An unnumbered lead, the **statement** (`site.statement`, one line each), then
@@ -50,14 +61,19 @@ Section 00 is fixed; the rest count up from 01, and an omitted section leaves
 no gap in the numbering.
 
 - **00 About** `#about` — the portrait at the text block's width, directly
-  above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
+  above the writer bio, `site.bio[0]`, then the **Now** line (`site.now`) when
+  the master has one. The former `/about` page folded in here.
 - **Writing** `#writing` — two lists, **Fiction** (credits from `site.json`)
   and **Substack** (the five latest posts; hidden when the fetch fails), then
-  a subscribe link.
-- **Work** `#work` — one list, `lib/projects.ts` in array order
+  a newsletter form. Forthcoming credits come first, with no link. Substack
+  refuses sign-ups from other servers (403), so the form is a plain GET to
+  Substack's subscribe page in a new tab, which prefills `email`; the reader
+  confirms there.
+- **Reading** `#reading` — up to five books, currently reading first, each
+  linking to its review (or its `link`), then a link to `/reading`; section
+  and nav entry hidden while the log is empty.
+- **Code** `#code` — one list, `lib/projects.ts` in array order
   (hand-maintained); emits an `ItemList` JSON-LD.
-- **Reading** `#reading` — up to five of `lib/books.ts`, currently
-  reading first; section and nav entry hidden while the log is empty.
 - **Résumé** `#resume` — résumé PDF, CV PDF, then the profiles (LinkedIn,
   GitHub, Substack, Instagram).
 - **Contact** `#contact` — the contact form (§5).
@@ -75,7 +91,17 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
   JSON-LD) and `FEED_DESCRIPTION` (the RSS channel); keep them in step with
   the statement.
 - `lib/projects.ts`: `{ href, title, description, stack }[]`, shown in array order.
-- `lib/books.ts`: `{ title, author, finished: "YYYY-MM-DD" | "reading", note?, link? }[]`.
+- `content/reading/<slug>.md` (format in its `README.md`): flat frontmatter
+  (`title`, `author`, `finished: YYYY-MM-DD | reading`, optional `rating` 1–5,
+  `isbn`, `note`, `link`, `substack`, `goodreads`) and a Markdown review.
+  `lib/books.ts` loads and validates them at build time (a bad file fails the
+  build); a book with a review body gets `/reading/<slug>` with Review JSON-LD.
+  `lib/review.ts` renders reviews with `marked`: `::: spoiler` blocks become
+  `<details>` on the site, are left out of the feed, and become `<spoiler>`
+  in the Goodreads copy (a "Copy for Goodreads" button in development only).
+  Covers: `pnpm covers` saves Open Library covers to `public/covers/<slug>.jpg`
+  for books with an `isbn`, so `img-src` stays `'self'`. Ratings show as "4/5".
+  Reviews are written here first; Goodreads and Substack get manual copies.
 - `lib/substack.ts`: `getSubstackPosts(limit)` over
   `/api/v1/posts`, which returns `{ posts, nextCursor }`; revalidated hourly, 5 s
   timeout. Returns `[]` on any failure so its section hides; a non-OK response
@@ -190,10 +216,10 @@ pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
 `pnpm dev | build | start | lint | typecheck` (`next typegen && tsc`, so
 route types exist on a clean checkout; delete a stale `.next/dev` if it
 fails), `pnpm test:unit` (Node test
-runner over `lib/**/*.test.ts`: book ordering, the §13 shape guards, and the
+runner over `lib/**/*.test.ts`: reading-log parsing, ordering, and spoilers, the §13 shape guards, and the
 §6.3 static Swiss guard),
 `pnpm test:e2e` (Playwright on chromium, firefox, and webkit), and
-`pnpm sync:resume` (§14). CI runs lint, typecheck, unit tests, a Prettier
+`pnpm sync:resume` (§14), `pnpm covers` (§4), and `pnpm highlight:tutorial` (§2). CI runs lint, typecheck, unit tests, a Prettier
 check, the build, and `pnpm audit --audit-level=high`
 (`.github/workflows/checks.yml`). The E2E workflow (`browser.yml`) runs
 the Playwright suite against a local production build on every PR and push to
@@ -207,17 +233,19 @@ blocks pushes from `main` and runs lint and typecheck.
 
 ```
 app/(site)/        page.tsx (home), Nav, layout, ContactForm + actions, error,
-                   colophon/, terms/, portrait.png
+                   colophon/, terms/, reading/ (index, [slug]), portrait.png
 app/(bare)/links/  Linktree page
 app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
-lib/               projects, books (+ test), shape.test, site/{content,
+lib/               projects, books (+ test), review, shape.test, site/{content,
                    content-schema, env, resume}, substack, upload
 public/            fabulosa-books/ (static tutorial; its own styles, outside
                    §6.1), apple-touch-icon.png
 content/site.json  synced copy (§14)
-scripts/           sync-resume.ts
+content/reading/   one Markdown file per book (§4)
+public/covers/     book covers from `pnpm covers`
+scripts/           sync-resume.ts, fetch-covers.ts, highlight-tutorial.ts
 e2e/               Playwright specs + helpers
 ```
 
@@ -236,19 +264,22 @@ e2e/               Playwright specs + helpers
 `lib/shape.test.ts` pins these.
 
 - **One page, not five.** Section pages folded into the home page (2026-11);
-  add a section rather than a page.
+  add a section rather than a page. The one exception is `/reading` and its
+  review pages (2026-11): reviews are long-form text with their own URLs.
 - **Slushpile lives in its own repo**, mounted by a rewrite with its nav slot
   gated on `SLUSHPILE_URL`. The old residency miner, its crons, and the
   Anthropic and Neon dependencies moved there.
 - **The résumé PDF is public, in Blob storage, not git**, with no access gate.
 - **No client Sentry SDK.** It cost about 65 KB and 2 s of render time on
   static pages. Server and edge capture remain.
-- **Work is one flat list**: no featured tier, categories, or per-project pages.
+- **Code is one flat list**: no featured tier, categories, or per-project pages.
 
 ## 14. Résumé sync and publishing
 
-The statement, bio, fiction credits, and LinkedIn and GitHub links come from
-the resumes-cvs master, not from page text.
+The statement, bio, Now line, fiction credits, and LinkedIn and GitHub links
+come from the resumes-cvs master, not from page text. In the master: a
+forthcoming credit is written `*Venue*, forthcoming.`; the Now line is an
+optional `### Now {#site-now}` paragraph in `## Website`.
 
 1. In resumes-cvs: `.venv/bin/python -m resumekit web` writes
    `private/out/web/site.json`, `resume.pdf` (the devdocs base), and `cv.pdf`
