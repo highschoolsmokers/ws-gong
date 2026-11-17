@@ -3,6 +3,7 @@
  * Keep magic numbers here with explanations so tests stay readable.
  */
 
+import { orderedBooks } from "../../lib/books";
 import { MIN_ELAPSED_MS } from "../../lib/upload";
 
 /** Wait past the server's anti-spam minimum, with margin, before submitting. */
@@ -26,14 +27,14 @@ export const MAX_TAB_STEPS_FORM = 20;
  */
 export const SITE_PAGES = ["/", "/terms", "/colophon", "/links"] as const;
 
-/** Old section pages and the home anchor each now redirects to. */
+/** Old section pages and the home anchor each now redirects to ("" = top). */
 export const FOLDED_ROUTES = [
   ["/about", "#about"],
   ["/code", "#work"],
   ["/code/colophon-mcp", "#work"],
   ["/narratives-code/colophon-mcp", "#work"],
   ["/narratives", "#writing"],
-  ["/reading", "#reading"],
+  ["/reading", orderedBooks.length ? "#reading" : ""],
   ["/resume", "#resume"],
   ["/contact", "#contact"],
 ] as const;
