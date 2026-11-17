@@ -18,7 +18,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: "W.S. Gong", template: "%s — W.S. Gong" },
   description,
-  icons: { apple: "/apple-touch-icon.png" },
+  // app/favicon.ico is the fallback (Safari); the SVG adds a dark-scheme variant.
+  icons: {
+    icon: { url: "/icon.svg", type: "image/svg+xml" },
+    apple: "/apple-touch-icon.png",
+  },
   alternates: { types: { "application/rss+xml": "/feed" } },
   openGraph: { siteName: "W.S. Gong", type: "website" },
 };
