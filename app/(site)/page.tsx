@@ -79,7 +79,7 @@ export default async function Home() {
             ))}
           </Rows>
           {posts.length > 0 && (
-            <Rows title="Newsletter">
+            <Rows title="Substack">
               {posts.map((p) => (
                 <Row
                   key={p.id}

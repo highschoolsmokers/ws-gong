@@ -13,7 +13,7 @@ const postSchema = z.object({
 
 export type SubstackPost = z.infer<typeof postSchema>;
 
-// Newsletter posts, newest first; [] on any failure so the section just hides.
+// Substack posts, newest first; [] on any failure so the section just hides.
 // A non-OK response throws inside the try so Next's data cache retries next
 // request instead of caching an empty list for the hour.
 export async function getSubstackPosts(limit = 10): Promise<SubstackPost[]> {
