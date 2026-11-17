@@ -10,7 +10,8 @@ spec; the code should match it.
 Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS 4,
 Geist. Vercel hosting (Node ≥ 24), Nodemailer over SMTP, Zod, Sentry (server
 and edge only), Vercel Analytics and Speed Insights. Playwright and the Node
-test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm.
+test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
+`packageManager` so Vercel and CI install with the same version.
 
 ## 2. Routes
 

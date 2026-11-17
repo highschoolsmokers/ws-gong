@@ -26,7 +26,10 @@ export async function getSubstackPosts(limit = 10): Promise<SubstackPost[]> {
       },
     );
     if (!res.ok) throw new Error(`Substack API ${res.status}`);
-    const posts = z.array(z.unknown()).parse(await res.json());
+    // The API wraps the list: { posts: [...], nextCursor }.
+    const { posts } = z
+      .object({ posts: z.array(z.unknown()) })
+      .parse(await res.json());
     return posts.flatMap((p) => postSchema.safeParse(p).data ?? []);
   } catch (err) {
     console.error("Substack fetch failed:", err);
