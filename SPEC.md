@@ -1,355 +1,297 @@
 # ws-gong.com — Specification
 
-The personal site of W.S. Gong: a Next.js 16 App Router app on Vercel. One
-page carries the work, writing, résumé, and contact form; its biographical
-copy syncs from the resumes-cvs master résumé (§14). This file is the single
-spec; the code should match it.
+The personal site of W.S. Gong. One home page holds the writing, code, CV, and
+contact form. Biographical copy syncs from the résumé master (§14). This file
+is the single spec; the code must match it.
 
 ## 1. Stack
 
-Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS 4,
-Geist. Vercel hosting (Node ≥ 24), Nodemailer over SMTP, Zod, Sentry (server
-and edge only), Vercel Analytics and Speed Insights. Playwright and the Node
-test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
-`packageManager` so Vercel and CI install with the same version.
+Only this section names tools; the rest describes behavior.
+
+- Framework: Next.js 16 (App Router), React 19, TypeScript.
+- Styling: Tailwind CSS 4. Typeface: Geist, self-hosted.
+- Hosting: Vercel (Node ≥ 24); blob storage for the PDFs.
+- Services: SMTP mail (Nodemailer), Substack, Open Library, Sentry (server
+  only), Vercel Analytics and Speed Insights.
+- Libraries: Zod (validation), marked (reviews), highlight.js (tutorial build).
+- Tests: Playwright (end to end), Node test runner (unit).
+- Tooling: pnpm 12 (pinned), ESLint, Prettier, Husky, lint-staged.
 
 ## 2. Routes
 
-| Path                                               | Source                   | Notes                                                                         |
-| -------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------- |
-| `/`                                                | `app/(site)/page.tsx`    | The site (§3)                                                                 |
-| `/colophon`, `/terms`                              | `app/(site)/…`           | Static pages (below)                                                          |
-| `/reading`, `/reading/<slug>`                      | `app/(site)/reading/`    | Reading log index and one page per reviewed book (§4)                         |
-| `/links`                                           | `app/(bare)/links`       | Instagram link-in-bio page on the grid; no site chrome, not in nav or sitemap |
-| `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts and reviews (`Substack`, `Review`), cached 1 h      |
-| `/fabulosa-books/*`                                | `public/fabulosa-books/` | Static seven-part tutorial; `/fabulosa-books` rewrites to its index (§11)     |
-| `/slushpile/*`                                     | rewrite                  | Separate app at `SLUSHPILE_URL` (basePath `/slushpile`); 404 when unset       |
-| `/wsgong_tech_writer_resume.pdf`, `/wsgong_cv.pdf` | rewrite                  | Résumé and public CV PDFs in public Vercel Blob storage                       |
-| sitemap, robots, manifest, OG image                | `app/*.ts(x)`            | Standard metadata routes                                                      |
+| Path                                               | Content                                                     |
+| -------------------------------------------------- | ----------------------------------------------------------- |
+| `/`                                                | Home (§3)                                                   |
+| `/colophon`                                        | How the site is made                                        |
+| `/terms`                                           | Terms, privacy, DMCA                                        |
+| `/reading`, `/reading/<slug>`                      | Reading log; one page per reviewed book (§4)                |
+| `/links`                                           | Instagram bio page; no chrome, not in nav or sitemap        |
+| `/feed`                                            | RSS: Substack posts and reviews; cached 1 h                 |
+| `/fabulosa-books/*`                                | Static seven-part tutorial                                  |
+| `/slushpile/*`                                     | Separate app, proxied when `SLUSHPILE_URL` is set; else 404 |
+| `/wsgong_cv.pdf`, `/wsgong_tech_writer_resume.pdf` | Proxied from blob storage                                   |
+| sitemap, robots, manifest, share image             | Standard metadata                                           |
 
-Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#code`;
-`/about` → `/#about`; `/narratives` → `/#writing`; `/cv` and `/resume` →
-`/#cv`; `/contact` → `/#contact`; `/reading` → `/` while the reading log is empty;
-`/residencies` → `/slushpile`. The `/reading` redirect is decided when
-`next.config.ts` loads, so restart `pnpm dev` after adding the first book.
+Permanent redirects: `/about` → `/#about`; `/narratives` → `/#writing`;
+`/code/*`, `/narratives-code/*` → `/#code`; `/cv`, `/resume` → `/#cv`;
+`/contact` → `/#contact`; `/residencies` → `/slushpile`; `/reading` → `/`
+while the log is empty (decided at server start).
 
-`app/(site)/layout.tsx` wraps every page but `/links` in the masthead, the
-anchor nav (`Nav.tsx`, stacked in columns 11–12; on phones, two rows of three 4-column tracks), and a footer: the copyright
-in columns 1–4, Colophon, Terms, and Substack stacked from the
-column-5 line, and the theme toggle on the column-11 line. The masthead is
-the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
-inside the same layout (a "404" section and a home link), and
-`app/(site)/error.tsx` an "Error" section with Try again and Home when a page
-fails to render (server errors also reach Sentry, §8).
+**Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
+the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
+two rows on three 4-column tracks. Footer: copyright (columns 1–4); Colophon,
+Terms, Substack (from column 5); theme toggle (column 11).
 
-The other pages, each a `PageTitle` and labelled `Section`s:
+**Other pages.** Each is a title and labelled sections.
 
-- **`/colophon`** — Typography, Design, Content (where each kind of copy comes
-  from), Stack, Tools, Source. Stack and Tools render `lib/colophon.ts`, which
-  reads versions from `package.json`; `lib/colophon.test.ts` fails when a
-  listed package is gone or a runtime dependency isn't credited.
-- **`/terms`** — Overview (with a last-updated date), What You May Do, Privacy,
-  Third-Party Content, DMCA Policy, AI / ML Training. Privacy describes what
-  the site actually collects (the contact form, the Substack hand-off,
-  cookieless analytics, server error reports, no cookies); change it with any
-  change to those. `app/robots.ts` blocks the known AI-training crawlers to
-  match the AI / ML clause.
-- **`/reading`** — Currently reading, then Finished (§4).
-- **`/reading/<slug>`** — the book title; a section labelled with the author
-  holding the cover, date and rating, the review, and (in development) Copy for
-  Goodreads; Also on (its Substack and Goodreads copies, when set); and a link
-  back to `/reading`.
+- 404: "404" and a home link. Error: "Error", Try again, Home.
+- `/colophon`: Typography, Design, Content, Stack, Tools, Source. Stack and
+  Tools come from `lib/colophon.ts`, which reads versions from the package
+  manifest.
+- `/terms`: Overview (last-updated date), What You May Do, Privacy,
+  Third-Party Content, DMCA Policy, AI / ML Training. robots.txt blocks known
+  AI-training crawlers and allows search.
+- `/reading`: Currently reading, Finished.
+- `/reading/<slug>`: title; author section (cover, date, rating, review;
+  "Copy for Goodreads" in development only); Also on (when set); back link.
+- `/links`: square portrait beside the name; Latest (newest Substack post,
+  newest fiction credit, subscribe form); Links (main site first, then
+  profiles without Instagram, then Fabulosa Books).
 
-`/links` exists for the Instagram bio link: the portrait (square, matching the
-Instagram profile picture) beside the name, a **Latest** section (the newest
-Substack post, hidden when the fetch fails, the first Fiction credit, and
-the Substack subscribe form, shared with the home page as
-`app/components/SubstackForm.tsx`),
-then a short list led by the main site ("ws-gong.com — writing, code, CV")
-then the profiles (no Instagram: visitors come from there), then Fabulosa
-Books, laid out
-with the shared `Section` and `Rows`. The site's nav, footer, and sitemap don't link to it.
-
-The Fabulosa tutorial is plain HTML under the site's CSP, so everything it
-loads is self-hosted: Geist from `public/fabulosa-books/fonts/` (OFL), and no
-external scripts (each page has one inline pre-paint theme script). Syntax highlighting is baked into the HTML by
-`pnpm highlight:tutorial` (highlight.js, a dev dependency; colors in its
-`style.css`); rerun it after editing any code sample. The tutorial's canonical index URL is
-`/fabulosa-books` (no trailing slash, which 308s); the sitemap, the Code list,
-and the Contents links in parts 1 and 7 use it. Its pages apply the site's stored theme
-choice with the same pre-paint script as `app/layout.tsx`.
+**Tutorial.** Plain HTML. Loads only self-hosted assets: no external fonts or
+scripts. Code highlighting is baked into the HTML by `pnpm
+highlight:tutorial`. Canonical index: `/fabulosa-books`. Follows the site's
+stored theme. Exempt from §6.1.
 
 ## 3. Home page
 
-Numbered sections, straight after the masthead, each a label column (4 of 12) and a content column (8).
-Section 00 is fixed; the rest count up from 01, and an omitted section leaves
-no gap in the numbering. The statement (`site.statement`) isn't shown on the page; it
-feeds the meta description and share text (§7).
+Sections in order, each a label (columns 1–4) and content (5–12), numbered
+from 00 with no gaps when one is hidden.
 
-- **00 About** `#about` — the portrait (4 of the content column's 8 columns;
-  6 on phones), directly above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
-- **Writing** `#writing` — two lists, **Fiction** (credits from `site.json`)
-  and **Substack** (the five latest posts; hidden when the fetch fails), then
-  a Substack subscribe form. Forthcoming credits come first, with no link. Substack
-  refuses sign-ups from other servers (403), so the form is a plain GET to
-  Substack's subscribe page in a new tab, which prefills `email`; the reader
-  confirms there.
-- **Reading** `#reading` — up to five books, currently reading first, each
-  linking to its review (or its `link`), then a link to `/reading`; section
-  and nav entry hidden while the log is empty.
-- **Code** `#code` — one list, `lib/projects.ts` in array order
-  (hand-maintained: the projects worth showing, not every repo), then a
-  "More on GitHub" link for the rest; emits an `ItemList` JSON-LD.
-- **CV** `#cv` — CV PDF, résumé PDF, then the profiles (LinkedIn,
-  GitHub, Substack, Instagram).
-- **Contact** `#contact` — the contact form (§5).
+- **00 About**: portrait (4 of the content's 8 columns; 6 on phones), bio
+  below.
+- **Writing**: Fiction credits (forthcoming first, unlinked); five latest
+  Substack posts (hidden if the fetch fails); subscribe form. Substack refuses
+  server sign-ups, so the form opens Substack's subscribe page with the email
+  filled in; the reader confirms there.
+- **Reading**: up to five books, current first, each linking to its review or
+  link; then a link to `/reading`. Hidden while the log is empty.
+- **Code**: hand-ordered list of selected projects; then "More on GitHub".
+- **CV**: CV, résumé, LinkedIn, Instagram.
+- **Contact**: the form (§5).
 
-All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
-`Rows`/`Row`, and `ext` (props for an external link).
+The statement is not shown; it feeds the description and share text (§7).
 
 ## 4. Content sources
 
-- `content/site.json` (§14), parsed at build time by `lib/site/content.ts`
-  against `lib/site/content-schema.ts`. It also exports `profiles` (LinkedIn,
-  GitHub, Substack, Instagram), the one list behind the CV section's rows, the
-  `/links` page, and the Person JSON-LD `sameAs`. Copy that `site.json`
-  doesn't carry lives beside it: `JOB_TITLE` and `KNOWS_ABOUT` (Person
-  JSON-LD) and `FEED_DESCRIPTION` (the RSS channel); keep them in step with
-  the statement.
-- `lib/projects.ts`: `{ href, title, description, stack }[]`, shown in array order.
-- `content/reading/<slug>.md` (format in its `README.md`): flat frontmatter
-  (`title`, `author`, `finished: YYYY-MM-DD | reading`, optional `rating` 1–5,
-  `isbn`, `note`, `link`, `substack`, `goodreads`) and a Markdown review.
-  A ` # …` after an unquoted value is a comment; `lib/books.test.ts` parses
-  the README's template so it stays valid. With `READING_FIXTURES` set (the
-  E2E build only), `lib/books.ts` reads `e2e/fixtures/reading/` instead.
-  `lib/books.ts` loads and validates them at build time (a bad file fails the
-  build); a book with a review body gets `/reading/<slug>` with Review JSON-LD.
-  `lib/review.ts` renders reviews with `marked`: `::: spoiler` blocks become
-  `<details>` on the site, are left out of the feed, and become `<spoiler>`
-  in the Goodreads copy (a "Copy for Goodreads" button in development only).
-  Covers: `pnpm covers` saves Open Library covers to `public/covers/<slug>.jpg`
-  for books with an `isbn`, so `img-src` stays `'self'`. Ratings show as "4/5".
-  Reviews are written here first; Goodreads and Substack get manual copies.
-- `lib/substack.ts`: `getSubstackPosts(limit)` over
-  `/api/v1/posts`, which returns `{ posts, nextCursor }`; revalidated hourly, 5 s
-  timeout. Returns `[]` on any failure so its section hides; a non-OK response
-  throws first so the data cache retries rather than caching the empty list.
+- **Site copy**: `content/site.json` (§14): statement, bio, fiction credits,
+  profile links. Validated at build. Copy it lacks (job title, topics, feed
+  description) sits beside it and tracks the statement. One profile list feeds
+  the CV section, `/links`, and the Person structured data.
+- **Projects**: `lib/projects.ts`: href, title, description, stack. Shown in
+  order.
+- **Reading log**: one Markdown file per book in `content/reading/` (format
+  in its README). Frontmatter: title, author, finished (date or `reading`);
+  optional rating 1–5, ISBN, note, link, Substack and Goodreads URLs. A body
+  is a review and gets its own page with Review structured data. A bad file
+  fails the build. `::: spoiler` blocks fold on the site, drop from the feed,
+  and become `<spoiler>` in the Goodreads copy. Ratings read "4/5".
+  `pnpm covers` saves covers by ISBN to `public/covers/`. Reviews are written
+  here first; other copies are manual. End-to-end builds read
+  `e2e/fixtures/reading/` instead (`READING_FIXTURES`).
+- **Substack**: latest posts, refreshed hourly, 5 s timeout. A failure yields
+  none, hides the list, and is retried on the next request.
 
 ## 5. Contact form
 
-`app/(site)/ContactForm.tsx` submits (via `onSubmit`, so a failed send keeps
-the visitor's text) to the server action `app/(site)/actions.ts`. Spam
-guards: a hidden `contact_hp` field that autofill and password managers are
-told to skip, and a 3-second minimum on the server's clock. On first focus
-the form asks the server action `issueFormToken` for a timestamp signed with
-HMAC (`lib/form-token.ts`, keyed by `CONTACT_FORM_SECRET`, else `SMTP_PASS`);
-a submission passes only with a valid token between 3 s and 24 h old
-(`MIN_ELAPSED_MS`, `MAX_TOKEN_AGE_MS` in `lib/upload.ts`). Field checks run
-first, so validation errors come back without waiting. Name and subject are
-capped at 200 characters and the message at 10,000 (`MAX_LENGTH`: the form's
-`maxLength` and the server both enforce it). Visitors see one generic failure for guard, config, and SMTP
-faults; the function log records the reason (`Contact form rejected: …`).
-Attachments: up to 5 files, 4 MB total, executable extensions refused, with
-trailing dots and spaces stripped first (`lib/upload.ts`); `next.config.ts` raises the server-action body limit to
-Vercel's 4.5 MB request cap. Mail goes from `SMTP_USER` to `CONTACT_EMAIL`,
-reply-to the sender, subject `[Contact Form] …`, header
-`X-Source: contact-form`.
+- A failed send keeps the visitor's text.
+- Spam guards: a hidden honeypot field; a server-signed timestamp, valid 3 s
+  to 24 h after first focus.
+- Limits: name and subject 200 characters, message 10,000; up to 5
+  attachments, 4 MB total, no executable types.
+- Field errors return at once. Every other failure shows one generic message
+  and logs the reason.
+- Mail: from the site account to `CONTACT_EMAIL`, reply-to the sender,
+  subject `[Contact Form] …`, header `X-Source: contact-form`.
 
 ## 6. Design and theming
 
-The site follows the Swiss International Typographic Style (Müller-Brockmann,
-_Grid Systems in Graphic Design_; Ruder, _Typographie_). These rules are
-binding; §6.3 lists the guards that enforce them.
+Swiss International Typographic Style (Müller-Brockmann, _Grid Systems in
+Graphic Design_; Ruder, _Typographie_). Binding; §6.3 enforces it.
 
 ### 6.1 Rules
 
-1. **The grid is the foundation.** One 12-column grid (`.swiss-grid`,
-   `--gutter`, `--margin`, 72 rem maximum) governs every page. No element
-   floats free of it.
-2. **Everything sits on a column line, inside the grid.** An element starts
-   on a column line and ends within the grid; nothing extends into the margin.
-   When content is wider than its columns, it spans more columns; it never
-   breaks the grid.
-3. **Flush left, ragged right.** No right-aligned, centered, or justified
-   text or blocks on the site. Alignment comes from position on the grid, not
-   from pushing items to an edge (`ml-auto`, `justify-end`, `text-right`,
-   `mx-auto` and the like are off-grid).
-4. **Asymmetric balance.** Label left (columns 1–4), content right (5–12).
-   The masthead takes columns 1–7; the nav takes columns 11–12, starting on
-   the column-11 line.
-5. **Hierarchy through scale and position, not decoration.** No shadows,
-   gradients, rounded corners, or ornament. Weights: 700 for display (the
-   masthead, page titles), 500 for titles, labels, and emphasis, 400 for body.
-6. **Rules are structural.** A full rule tops each section. Lists draw
-   hairlines between rows only: never above the first row or below the last,
-   which would double the section rule.
-7. **Whitespace is structural.** Gutters and margins come from the
-   `--gutter` and `--margin` tokens; all other spacing from Tailwind's
-   0.25 rem scale and the section rhythm. No arbitrary pixel values.
+1. **One grid.** 12 columns, fixed gutter and margin, 72 rem maximum, on
+   every page.
+2. **On the grid.** Every element starts on a column line and ends inside the
+   grid. Wider content spans more columns; nothing enters the margin.
+3. **Flush left.** No centered, right-aligned, or justified text or blocks;
+   no pushing to an edge. Position comes from columns.
+4. **Asymmetry.** Labels columns 1–4, content 5–12; masthead 1–7; nav 11–12.
+5. **No ornament.** No shadows, gradients, or rounded corners. Weights: 700
+   display, 500 titles and labels, 400 text.
+6. **Structural rules.** A full rule tops each section. Lists rule between
+   rows only.
+7. **Structural space.** Gutter and margin tokens; otherwise the 0.25 rem
+   scale. No arbitrary values.
 
-### 6.2 Tokens and theming
+### 6.2 Theme
 
-Tokens live in `app/globals.css` as `light-dark()` values: white and
-near-black, one muted gray, one soft rule color, one error red (errors
-only), Geist. `ThemeToggle` cycles
-system → light → dark, stores the choice in `localStorage.theme`, and sets
-`data-theme` on `<html>`, which pins `color-scheme`. An inline script in
-`app/layout.tsx` applies a stored choice before first paint. Print styles hide
-the chrome and the form.
+White, near-black, one gray, one rule color, red for errors only. Light or
+dark follows the system until the visitor picks one; the choice is stored and
+applied before first paint. Print hides chrome and forms.
 
 ### 6.3 Guards
 
-- **Static** (`lib/shape.test.ts`, unit tests and CI): across every `.tsx`
-  and `.css` file in `app/` (except `opengraph-image.tsx`), no off-grid
-  alignment utilities or edge-pushing values, and no ornament: `rounded`,
-  `shadow`, `bg-gradient`, `float`, `self-center`, or CSS `box-shadow`,
-  `border-radius`, `gradient(`.
-- **Rendered** (`e2e/swiss.spec.ts`, Playwright): on every page (one review
-  page), the 404,
-  and `/links`, at 1280 px and 375 px, the masthead, nav, footer, and section
-  content start on a grid column line and end inside the grid, and no list
-  draws a rule above its first row or below its last.
-- **Hooks** (`.claude/settings.json`): after every edit, a Swiss-style review
-  prompt flags violations of §6.1 in layout files, and a command hook flags
-  e2e anti-patterns (fixed waits, `.nth()`, silent `.catch`, CSS `name=`
-  selectors).
-- **Audit** (`.claude/commands/audit.md`, `/audit`): the full code, spec,
-  design, and live-site audit.
+- **Static** (unit): no off-grid alignment or ornament classes or CSS in
+  `app/` (share image excepted). The check matches words, so comments must
+  avoid them too.
+- **Rendered** (end to end): every page, a review page, the 404, and
+  `/links`, at 1280 and 375 px: chrome and section content on column lines
+  and inside the grid; no rule above a list's first row or below its last.
+- **Editor hooks**: flag §6.1 violations after edits, and flaky test patterns
+  (fixed waits, `.nth()`, silent catches, `name=` selectors).
+- **Audit**: `/audit` checks code, spec, design, and the live site.
 
 ## 7. Metadata
 
-Root metadata sets the title template `%s — W.S. Gong`, a description built
-from the statement, the RSS alternate, the Person JSON-LD, and the site-wide
-Open Graph fields (site name, type); pages set only a title and description,
-which Next.js also uses for `og:title` and `og:description`, so every page
-keeps the share image. The home page title is absolute. The sitemap uses one timestamp per build.
+Title template `%s — W.S. Gong`; the home title stands alone. Description from
+the statement. Every page: RSS link, Person structured data, share image;
+pages set only title and description. One sitemap timestamp per build.
 
 ## 8. Headers and monitoring
 
-Every route: `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy:
-no-referrer`, `Cross-Origin-Opener-Policy: same-origin`, two-year HSTS with
-preload, a Permissions-Policy denying unused device and tracking features, and
-a CSP: self plus Vercel Analytics; `'unsafe-inline'` scripts and styles (Next's
-inline bootstrap and the theme script; nonces would make every page dynamic);
-`data:` images; `base-uri 'none'`, `object-src 'none'`, `form-action 'self'`
-plus the Substack origin (the Substack subscribe form), and `frame-ancestors 'none'`. Production browser source maps are
-public. Sentry runs on the server and edge (`instrumentation.ts`: `register`
-plus `onRequestError`); there is no client SDK.
+Every route: no MIME sniffing, no framing, no referrer, same-origin opener,
+two-year HSTS with preload, unused device features denied. Content policy:
+self, plus analytics scripts; inline scripts and styles (framework bootstrap,
+theme script); `data:` images; no `<base>` or plugins; forms post to self or
+Substack; no framing. Public source maps. Server errors go to Sentry; no
+client SDK.
 
 ## 9. Environment
 
-| Name                                                                | Purpose                                                                                                                                                              |
-| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact form; port 465 uses TLS, others STARTTLS (default 465)                                                                                                       |
-| `CONTACT_FORM_SECRET`                                               | Optional key for the contact form's anti-spam token; falls back to `SMTP_PASS`                                                                                       |
-| `SENTRY_DSN`                                                        | Optional; Sentry off when unset                                                                                                                                      |
-| `SENTRY_AUTH_TOKEN`                                                 | Optional, build only: `withSentryConfig` uploads source maps when set                                                                                                |
-| `SLUSHPILE_URL`                                                     | Optional slushpile mount; read only in `lib/site/env.ts`, by app code and the e2e suite alike                                                                        |
-| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync:resume`, local `.env.local` only; `RESUMES_CVS_DIR` defaults to `../resumes-cvs`                                                                          |
-| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | Playwright target and preview bypass                                                                                                                                 |
-| `IMAP_PASS`, `IMAP_USER`                                            | Mail-delivery e2e test; `IMAP_USER` defaults to `CONTACT_EMAIL`                                                                                                      |
-| `MAIL_E2E`                                                          | Opt in to the mail-sending e2e tests (`@smtp`, `@infra`), which are excluded otherwise                                                                               |
-| `READING_FIXTURES`                                                  | E2E build and tests only: read `e2e/fixtures/reading/`; set at both or neither                                                                                       |
-| `CI`                                                                | Playwright retries, reporter, workers, `forbidOnly`, no server reuse; required e2e secrets fail instead of skip; Sentry build output                                 |
-| `NODE_ENV`                                                          | Set by Next: development adds `'unsafe-eval'` to the CSP; Sentry samples 100% in development, 10% in production; the Goodreads copy button shows only in development |
+| Name                                                                | Use                                                                      |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact mail; port 465 is TLS (default), others STARTTLS                 |
+| `CONTACT_FORM_SECRET`                                               | Optional token key; defaults to `SMTP_PASS`                              |
+| `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                       |
+| `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                     |
+| `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                              |
+| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync:resume`, local only; dir defaults to `../resumes-cvs`         |
+| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                        |
+| `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                     |
+| `MAIL_E2E`                                                          | Opt in to mail-sending tests                                             |
+| `READING_FIXTURES`                                                  | End-to-end build and tests: use fixture books                            |
+| `CI`                                                                | Stricter, serial test runs; missing test secrets fail                    |
+| `NODE_ENV`                                                          | Development: looser script policy, full error sampling, Goodreads button |
 
-The Vercel project still holds unused variables from the old residency
-pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
-`CRON_SECRET`, `RESUME_SECRET`, `ADMIN_*`); remove them with `vercel env rm`.
+Remove the stale host variables from the old residency pipeline
+(`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`, `CRON_SECRET`,
+`RESUME_SECRET`, `ADMIN_*`).
 
 ## 10. Scripts and tests
 
-`pnpm dev | build | start | lint | typecheck` (`next typegen && tsc`, so
-route types exist on a clean checkout; delete a stale `.next/dev` if it
-fails), `pnpm test:unit` (Node test
-runner over `lib/**/*.test.ts`: reading-log parsing, ordering, and spoilers, the contact-form token and
-attachment names, the colophon's stack and tools against `package.json`
-(`lib/colophon.ts` reads versions from it; every runtime dependency must be
-credited), the §13 shape guards, the §6.3 static Swiss guard, and a guard
-that no `"use client"` file reaches a Node-only module through its imports,
-which would otherwise surface as an opaque Turbopack panic),
-`pnpm test:e2e` (Playwright: every test in Chromium; tests tagged `@cross`,
-the engine-sensitive ones, also in Firefox and WebKit), and
-`pnpm sync:resume` (§14), `pnpm covers` (§4), and `pnpm highlight:tutorial` (§2). CI runs lint, typecheck, unit tests, a Prettier
-check, the build, and `pnpm audit --audit-level=high`
-(`.github/workflows/checks.yml`); `pnpm-workspace.yaml` overrides patched
-transitive versions and ignores one advisory with no fix yet, each with a note
-on when to drop it. The E2E workflow (`browser.yml`) runs
-the Playwright suite, in Playwright's Docker image, against a local
-production build built with `READING_FIXTURES`, on every PR and push to main.
-Tests tagged `@smtp` or `@infra` send mail, so they run only on a manual
-dispatch against a deployed URL (or locally with `MAIL_E2E=1`); that step is
-advisory (`continue-on-error`). Locally: `READING_FIXTURES=1 pnpm build &&
-READING_FIXTURES=1 pnpm test:e2e`. Husky: `commit-msg` requires a conventional type (`feat`, `fix`,
-`docs`, `refactor`, `chore`, …), `pre-commit` runs lint-staged, and `pre-push`
-blocks any push that updates or deletes remote `main`, and otherwise runs
-lint, typecheck, and unit tests (skipped when the push only deletes branches).
+- `pnpm dev | build | start | lint | typecheck`.
+- `pnpm test:unit`: reading log, spoilers, form token, attachment names,
+  colophon versus manifest, §13 pins, §6.3 static guard, and no client file
+  importing server-only code.
+- `pnpm test:e2e`: everything in Chromium; tests tagged `@cross` also in
+  Firefox and WebKit. Locally: `READING_FIXTURES=1 pnpm build &&
+READING_FIXTURES=1 pnpm test:e2e`.
+- `pnpm sync:resume` (§14), `pnpm covers` (§4), `pnpm highlight:tutorial`
+  (§2).
+- CI: lint, typecheck, unit tests, format check, build, dependency audit
+  (high). The end-to-end suite runs against a production build on every PR
+  and push to `main`. Mail tests (`@smtp`, `@infra`) run only on manual
+  dispatch, advisory.
+- Dependency overrides and ignored advisories live in `pnpm-workspace.yaml`,
+  each with a note on when to drop it.
+- Hooks: commit messages need a conventional type; pre-commit formats and
+  lints staged files; pre-push refuses pushes that change remote `main`, and
+  otherwise runs lint, typecheck, and unit tests.
 
 ## 11. Layout
 
 ```
-app/(site)/        page.tsx (home), Nav, layout, ContactForm + actions, error,
-                   colophon/, terms/, reading/ (index, [slug] + CopyForGoodreads),
-                   portrait.png
-app/(bare)/links/  Linktree page
-app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx, SubstackForm.tsx
-app/               layout, globals.css, feed/, sitemap, robots, manifest,
-                   opengraph-image, not-found, favicon.ico
-lib/               projects, books (+ test), colophon (+ test), form-token (+ test), review,
-                   shape.test, site/{content, content-schema, env, resume},
-                   substack, upload
-public/            fabulosa-books/ (static tutorial; its own styles, outside
-                   §6.1), icon.svg, apple-touch-icon.png
-content/site.json  synced copy (§14)
-content/reading/   one Markdown file per book (§4)
-public/covers/     book covers from `pnpm covers`
-scripts/           sync-resume.ts, fetch-covers.ts, highlight-tutorial.ts
-e2e/               Playwright specs, helpers, fixtures/reading/
+app/(site)/        home, nav, layout, contact form and action, error,
+                   colophon/, terms/, reading/, portrait
+app/(bare)/links/  /links
+app/components/    layout primitives, icons, theme toggle, subscribe form
+app/               root layout, styles, feed/, metadata routes, 404
+lib/               projects, books, colophon, form token, review, substack,
+                   upload, site/ (content, schema, env, PDFs), tests
+content/           site.json (§14), reading/ (§4)
+public/            fabulosa-books/, covers/, icons
+scripts/           sync-resume, fetch-covers, highlight-tutorial
+e2e/               specs, helpers, fixtures/reading/
 ```
 
-## 12. Anti-patterns
+## 12. Guardrails and anti-patterns
 
-- No abstraction without two callers; no config value with one setting.
-- No defensive code against states the types rule out.
-- Never catch errors to make a test pass.
-- Flag any new dependency in the commit message.
-- Never hand-edit `content/site.json` or hardcode bio, statement, or credits
-  in a page; change the master in resumes-cvs and re-sync.
-- Never commit a résumé document.
+### Guardrails
+
+Each holds on every change; the parenthesis names what enforces it.
+
+- **Content has one source.** Copy with a source (`site.json`, the reading
+  log, Substack, the manifest) is read from it, never retyped in a page or
+  test. (Review; tests read the same sources.)
+- **No personal data in git.** No email in `site.json`; no résumé documents.
+  (Unit test; ignore rules.)
+- **Self-hosted by default.** A new external origin needs a content-policy
+  change, a Terms Privacy update, and a reason. (Headers; §8.)
+- **Privacy matches behavior.** Any change to what the site collects or sends
+  updates Terms → Privacy in the same change. (Review.)
+- **External services fail soft.** A down service hides its section; the page
+  still renders. (Code; end-to-end tests.)
+- **Secrets stay on the server.** No secret reaches client code;
+  `SLUSHPILE_URL` is read in one place. (Lint rule; client-import test.)
+- **Every dependency is accounted for.** Runtime dependencies appear in the
+  Colophon; new ones are named in the commit. (Unit test; review.)
+- **Design rules hold.** §6.1, checked by §6.3.
+- **`main` changes only through PRs.** Every push passes lint, typecheck, and
+  unit tests; every PR passes CI and the end-to-end suite. Merging deploys,
+  so wait for the preview deploy before merging. (Hooks; CI.)
+- **The spec moves with the code.** A change that alters behavior here
+  updates this file in the same PR. (Review; `/audit`.)
+
+### Anti-patterns
+
+- An abstraction with one caller; a config value with one setting.
+- Defensive code against states the types rule out.
+- Catching errors to make a test pass.
+- Hand-editing `content/site.json`, or hard-coding bio, statement, credits,
+  versions, or other sourced copy.
+- A new page where a home section would do (§13).
+- Client JavaScript where a plain link or form works.
+- Layout off the grid: centering, edge-pushing, arbitrary sizes, ornament.
+- Tests that sleep, index by position, swallow errors, or assert copy instead
+  of reading its source.
+- Hand-editing generated output: the tutorial's highlighted code, covers.
+- Committing a résumé or any personal document.
 
 ## 13. Intentional decisions
 
-`lib/shape.test.ts` pins the removals and dropped dependencies below, the
-project list's shape, and §12's rule that `site.json` carries no email; the
-ESLint rule in `eslint.config.mjs` pins the `SLUSHPILE_URL` gate.
+Pinned by `lib/shape.test.ts` (removals, dropped dependencies, project shape,
+no email in `site.json`) and a lint rule (`SLUSHPILE_URL` read in one place).
 
-- **One page, not five.** Section pages folded into the home page (2026-11);
-  add a section rather than a page. The one exception is `/reading` and its
-  review pages (2026-11): reviews are long-form text with their own URLs.
-- **Slushpile lives in its own repo**, mounted by a rewrite with its nav slot
-  gated on `SLUSHPILE_URL`. The old residency miner, its crons, and the
-  Anthropic and Neon dependencies moved there.
-- **The résumé PDF is public, in Blob storage, not git**, with no access gate.
-- **No client Sentry SDK.** It cost about 65 KB and 2 s of render time on
-  static pages. Server and edge capture remain.
-- **Code is one flat list**: no featured tier, categories, or per-project pages.
+- **One page.** Former section pages are home sections; add a section, not a
+  page. Exception: `/reading`, whose reviews need their own URLs.
+- **Slushpile is a separate repo**, proxied, its nav entry gated on
+  `SLUSHPILE_URL`.
+- **PDFs are public, in blob storage**, not git, with no gate.
+- **No client error SDK**: it cost ~65 KB and ~2 s on static pages.
+- **Code is one flat list**: no tiers, categories, or project pages.
 
 ## 14. Résumé sync and publishing
 
-The statement, bio, fiction credits, and LinkedIn and GitHub links
-come from the resumes-cvs master, not from page text. In the master: a
-forthcoming credit is written `*Venue*, forthcoming.`.
+Statement, bio, fiction credits, and LinkedIn and GitHub links come from the
+master in resumes-cvs. A forthcoming credit is written `*Venue*, forthcoming.`
 
-1. In resumes-cvs: `.venv/bin/python -m resumekit web` writes
-   `private/out/web/site.json`, `resume.pdf` (the devdocs base), and `cv.pdf`
-   (the educational CV without its private sections, such as References). The
-   statement and bio live in the master's `## Website` section. The build
-   refuses an email address or any guard Layer 3 error.
-2. Here: `pnpm sync:resume` validates `site.json`, writes `content/site.json`,
-   prints the diff, and uploads both PDFs to Blob at their fixed paths (`PDFS` in
-   `lib/site/resume.ts`). Use
-   `--no-pdf` for the copy only. It never commits or deploys.
-3. Review the diff, commit, and open a PR; merging to `main` deploys (the
-   Vercel project is Git-connected; `vercel deploy --prod` is the manual
-   fallback).
+1. In resumes-cvs, `.venv/bin/python -m resumekit web` writes `site.json`,
+   `resume.pdf`, and `cv.pdf` (public sections only) to `private/out/web/`.
+   It refuses any email address or guard error.
+2. Here, `pnpm sync:resume` validates and writes `content/site.json`, prints
+   the diff, and uploads both PDFs to their fixed paths (`--no-pdf` skips
+   them). It never commits or deploys.
+3. Review, commit, open a PR. Merging to `main` deploys; `vercel deploy
+--prod` is the fallback.
