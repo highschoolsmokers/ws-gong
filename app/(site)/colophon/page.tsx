@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { PageTitle, Section, ext } from "@/app/components/ui";
+import { stack, tools } from "@/lib/colophon";
 
 export const metadata: Metadata = {
   title: "Colophon",
-  description: "Typography, tools, and technology behind ws-gong.com.",
+  description: "Typography, design, and technology behind ws-gong.com.",
 };
 
 const list = (items: string[]) => (
@@ -24,33 +25,32 @@ export default function Colophon() {
           <a href="https://vercel.com/font" className="underline" {...ext}>
             Geist
           </a>{" "}
-          by Vercel. System monospace for code.
+          by Vercel, served from this site. Three weights: bold for display,
+          medium for titles and labels, regular for text.
         </p>
       </Section>
       <Section title="Design">
         <p>
-          Informed by the Swiss International Typographic Style. Asymmetric
-          grid, black-and-white palette with red for errors only, strong
-          hierarchy through weight and scale. Responsive across breakpoints.
+          The Swiss International Typographic Style, after Josef
+          Müller-Brockmann&rsquo;s <em>Grid Systems in Graphic Design</em> and
+          Emil Ruder&rsquo;s <em>Typographie</em>. One twelve-column grid,
+          everything flush left on a column line, labels left and content right.
+          Black, white, one gray, and red for errors only; hierarchy comes from
+          scale and position, not ornament. Light and dark, following your
+          system or the switch in the footer. Automated tests check the grid on
+          every page at desktop and phone widths.
         </p>
       </Section>
-      <Section title="Stack">
+      <Section title="Content">
         {list([
-          "Next.js 16",
-          "React 19",
-          "Tailwind CSS 4",
-          "TypeScript",
-          "Vercel",
+          "Biography and fiction credits — synced from the master résumé",
+          "Substack — latest posts from the Substack API, also in the RSS feed",
+          "Reading — one Markdown file per book; covers from Open Library",
+          "Résumé and CV — PDFs in Vercel Blob storage",
         ])}
       </Section>
-      <Section title="Tools">
-        {list([
-          "Nodemailer — contact form delivery",
-          "Playwright — end-to-end testing",
-          "Sentry — error monitoring",
-          "Vercel Analytics — visitor insights",
-        ])}
-      </Section>
+      <Section title="Stack">{list(stack.map((e) => e.label))}</Section>
+      <Section title="Tools">{list(tools.map((e) => e.label))}</Section>
       <Section title="Source">
         <a
           href="https://github.com/highschoolsmokers/ws-gong"

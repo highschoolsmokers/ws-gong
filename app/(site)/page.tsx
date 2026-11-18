@@ -64,12 +64,6 @@ export default async function Home() {
             fetchPriority="high"
           />
           <p>{site.bio[0]}</p>
-          {site.now && (
-            <div className="pt-6">
-              <h3 className="sub-head">Now</h3>
-              <p>{site.now}</p>
-            </div>
-          )}
         </div>
       </Section>
 
@@ -111,7 +105,6 @@ export default async function Home() {
             aria-label="Subscribe on Substack"
             className="space-y-4"
           >
-            <h3 className="sub-head">Newsletter</h3>
             <div className="grid grid-cols-8 items-baseline gap-[var(--gutter)]">
               <input
                 name="email"

@@ -35,7 +35,7 @@ their anchors; `/reading` → `/` while the reading log is empty;
 
 `app/(site)/layout.tsx` wraps every page but `/links` in the masthead, the
 anchor nav (`Nav.tsx`, stacked in columns 11–12), and a footer: the copyright
-in columns 1–4, Colophon, Terms, and Subscribe stacked from the
+in columns 1–4, Colophon, Terms, and Substack stacked from the
 column-5 line, and the theme toggle on the column-11 line. The masthead is
 the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
 inside the same layout.
@@ -61,11 +61,10 @@ Section 00 is fixed; the rest count up from 01, and an omitted section leaves
 no gap in the numbering.
 
 - **00 About** `#about` — the portrait at the text block's width, directly
-  above the writer bio, `site.bio[0]`, then the **Now** line (`site.now`) when
-  the master has one. The former `/about` page folded in here.
+  above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
 - **Writing** `#writing` — two lists, **Fiction** (credits from `site.json`)
   and **Substack** (the five latest posts; hidden when the fetch fails), then
-  a newsletter form. Forthcoming credits come first, with no link. Substack
+  a Substack subscribe form. Forthcoming credits come first, with no link. Substack
   refuses sign-ups from other servers (403), so the form is a plain GET to
   Substack's subscribe page in a new tab, which prefills `email`; the reader
   confirms there.
@@ -207,7 +206,7 @@ preload, a Permissions-Policy denying unused device and tracking features, and
 a CSP: self plus Vercel Analytics; `'unsafe-inline'` scripts and styles (Next's
 inline bootstrap and the theme script; nonces would make every page dynamic);
 `data:` images; `base-uri 'none'`, `object-src 'none'`, `form-action 'self'`
-plus the Substack origin (the newsletter form), and `frame-ancestors 'none'`. Production browser source maps are
+plus the Substack origin (the Substack subscribe form), and `frame-ancestors 'none'`. Production browser source maps are
 public. Sentry runs on the server and edge (`instrumentation.ts`: `register`
 plus `onRequestError`); there is no client SDK.
 
@@ -238,7 +237,9 @@ pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
 route types exist on a clean checkout; delete a stale `.next/dev` if it
 fails), `pnpm test:unit` (Node test
 runner over `lib/**/*.test.ts`: reading-log parsing, ordering, and spoilers, the contact-form token and
-attachment names, the §13 shape guards, the §6.3 static Swiss guard, and a guard
+attachment names, the colophon's stack and tools against `package.json`
+(`lib/colophon.ts` reads versions from it; every runtime dependency must be
+credited), the §13 shape guards, the §6.3 static Swiss guard, and a guard
 that no `"use client"` file reaches a Node-only module through its imports,
 which would otherwise surface as an opaque Turbopack panic),
 `pnpm test:e2e` (Playwright: every test in Chromium; tests tagged `@cross`,
@@ -268,7 +269,7 @@ app/(bare)/links/  Linktree page
 app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
-lib/               projects, books (+ test), form-token (+ test), review,
+lib/               projects, books (+ test), colophon (+ test), form-token (+ test), review,
                    shape.test, site/{content, content-schema, env, resume},
                    substack, upload
 public/            fabulosa-books/ (static tutorial; its own styles, outside
@@ -309,10 +310,9 @@ ESLint rule in `eslint.config.mjs` pins the `SLUSHPILE_URL` gate.
 
 ## 14. Résumé sync and publishing
 
-The statement, bio, Now line, fiction credits, and LinkedIn and GitHub links
+The statement, bio, fiction credits, and LinkedIn and GitHub links
 come from the resumes-cvs master, not from page text. In the master: a
-forthcoming credit is written `*Venue*, forthcoming.`; the Now line is an
-optional `### Now {#site-now}` paragraph in `## Website`.
+forthcoming credit is written `*Venue*, forthcoming.`.
 
 1. In resumes-cvs: `.venv/bin/python -m resumekit web` writes
    `private/out/web/site.json`, `resume.pdf` (the devdocs base), and `cv.pdf`
