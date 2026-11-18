@@ -67,7 +67,7 @@ export async function sendMessage(
   )
     return {
       status: "error",
-      message: `Please keep the name and subject under ${MAX_LENGTH.name} characters and the message under ${MAX_LENGTH.message.toLocaleString("en-US")}.`,
+      message: `Please keep the name and subject to ${MAX_LENGTH.name} characters and the message to ${MAX_LENGTH.message.toLocaleString("en-US")}.`,
     };
   // Bot trap: no valid token, or the form went out faster than a person types.
   if (!tokenIsValid(field("_token"), tokenKey()))
@@ -78,11 +78,19 @@ export async function sendMessage(
   const attachments = [];
   let total = 0;
   for (const f of form.getAll("attachments")) {
-    if (!(f instanceof File) || !f.size || isBlockedAttachmentName(f.name))
-      continue;
-    if (attachments.length >= MAX_FILES || total + f.size > MAX_TOTAL_BYTES)
-      break;
+    if (!(f instanceof File) || !f.size) continue;
     total += f.size;
+    // The form already refuses these; a request that bypasses it is refused
+    // whole, never sent with the file silently dropped.
+    if (
+      isBlockedAttachmentName(f.name) ||
+      attachments.length >= MAX_FILES ||
+      total > MAX_TOTAL_BYTES
+    )
+      return {
+        status: "error",
+        message: `Not sent: ${f.name} can't be attached (type, count, or size limit). Remove it and try again.`,
+      };
     attachments.push({
       filename: f.name,
       content: Buffer.from(await f.arrayBuffer()),

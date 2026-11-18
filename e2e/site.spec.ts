@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { stack, tools } from "../lib/colophon";
-import { ELSEWHERE_ON_HOME, linkUrl } from "../lib/site/content-schema";
-import { PDFS } from "../lib/site/resume";
+import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "../lib/site/schema";
 import { tabTo } from "./helpers/contact-form";
 import { orderedBooks, site, slushpileConfigured } from "./helpers/constants";
 

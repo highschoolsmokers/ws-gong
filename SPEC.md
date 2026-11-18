@@ -35,11 +35,11 @@ Only this section names tools; the rest describes behavior.
 Permanent redirects: `/about` → `/#about`; `/narratives` → `/#writing`;
 `/code/*`, `/narratives-code/*` → `/#code`; `/cv`, `/resume` → `/#cv`;
 `/contact` → `/#contact`; `/residencies` → `/slushpile`; `/reading` → `/`
-while the log is empty (decided at server start).
+while the log is empty (decided at build).
 
 **Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
 the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
-two rows on three 4-column tracks. Footer: copyright (columns 1–4); Colophon,
+rows of three 4-column tracks. Footer: copyright (columns 1–4); Colophon,
 Terms, Substack (from column 5); theme toggle (column 11).
 
 **Other pages.** Each is a title and labelled sections.
@@ -58,6 +58,15 @@ Terms, Substack (from column 5); theme toggle (column 11).
   newest fiction credit, subscribe form); Links (main site, then every master
   link except Instagram, in master order).
 
+**`/links` and Instagram.** Instagram allows one link, in the profile bio;
+`/links` is where it points. It is built for a follower on a phone, arriving
+from Instagram: who this is (the portrait matches the Instagram picture), what
+is new (latest post and story, subscribe form), and where to go next (the main
+site, the other profiles). It omits Instagram, since visitors come from there,
+and nothing else on the site links to it. Everything on it updates from the
+master and Substack. Set the bio link to `www.ws-gong.com/links?ref=ig` so
+analytics can count visits from Instagram.
+
 **Tutorial.** Plain HTML. Loads only self-hosted assets: no external fonts or
 scripts. Code highlighting is baked into the HTML by `pnpm
 highlight:tutorial`. Canonical index: `/fabulosa-books`. Follows the site's
@@ -68,8 +77,8 @@ stored theme. Exempt from §6.1.
 Sections in order, each a label (columns 1–4) and content (5–12), numbered
 from 00 with no gaps when one is hidden.
 
-- **00 About**: portrait (4 of the content's 8 columns; 6 on phones), bio
-  below.
+- **00 About**: portrait centered over the bio (the content's columns 3–6
+  of 8; 3–10 of 12 on phones), bio below.
 - **Writing**: Fiction credits (forthcoming first, unlinked); five latest
   Substack posts (hidden if the fetch fails); subscribe form. Substack refuses
   server sign-ups, so the form opens Substack's subscribe page with the email
@@ -81,13 +90,15 @@ from 00 with no gaps when one is hidden.
   (GitHub is under Code; Substack is in Writing and the footer).
 - **Contact**: the form (§5).
 
-The statement is not shown; it feeds the description and share text (§7).
+The statement is not shown; it feeds the description (§7). The home title and
+share image carry the tagline, "Stories & Systems".
 
 ## 4. Content sources
 
 - **Site copy**: `content/site.json` (§14): statement, bio, fiction credits,
-  and links. Validated at build. Copy it lacks (job title, topics, feed
-  description) sits beside it and tracks the statement.
+  and links. Validated at build. Copy it lacks (tagline, job title, topics,
+  feed description) sits beside it in `lib/site/content.ts`, one constant
+  each.
 - **Links**: every link the site shows, as label and URL, in the master's
   order. They feed the home page, `/links`, and the Person structured data;
   the Substack link also sets the feed and subscribe URLs. GitHub and Substack
@@ -104,7 +115,7 @@ The statement is not shown; it feeds the description and share text (§7).
   here first; other copies are manual. End-to-end builds read
   `e2e/fixtures/reading/` instead (`READING_FIXTURES`).
 - **Substack**: latest posts, refreshed hourly, 5 s timeout. A failure yields
-  none, hides the list, and is retried on the next request.
+  none and hides the list until the page next refreshes (within the hour).
 
 ## 5. Contact form
 
@@ -112,7 +123,9 @@ The statement is not shown; it feeds the description and share text (§7).
 - Spam guards: a hidden honeypot field; a server-signed timestamp, valid 3 s
   to 24 h after first focus.
 - Limits: name and subject 200 characters, message 10,000; up to 5
-  attachments, 4 MB total, no executable types.
+  attachments, 4 MB total, no executable types. The form refuses a file past a
+  limit and names it; the server refuses a message carrying one, never sends
+  it with the file dropped.
 - Field errors return at once. Every other failure shows one generic message
   and logs the reason.
 - Mail: from the site account to `CONTACT_EMAIL`, reply-to the sender,
@@ -136,20 +149,23 @@ Graphic Design_; Ruder, _Typographie_). Binding; §6.3 enforces it.
    display, 500 titles and labels, 400 text.
 6. **Structural rules.** A full rule tops each section. Lists rule between
    rows only.
-7. **Structural space.** Gutter and margin tokens; otherwise the 0.25 rem
-   scale. No arbitrary values.
+7. **Structural space.** Gutter and margin tokens, the 0.25 rem scale, and
+   named tokens in the stylesheet (type sizes, fine row spacing). No one-off
+   values in markup.
 
 ### 6.2 Theme
 
-White, near-black, one gray, one rule color, red for errors only. Light or
+White, near-black, one gray, a soft hairline color for row rules (section
+rules are near-black), red for errors only. Light or
 dark follows the system until the visitor picks one; the choice is stored and
 applied before first paint. Print hides chrome and forms.
 
 ### 6.3 Guards
 
 - **Static** (unit): no off-grid alignment or ornament classes or CSS in
-  `app/` (share image excepted). The check matches words, so comments must
-  avoid them too.
+  `app/` (share image excepted). It matches words in `.tsx` files, comments
+  included, so they must avoid the banned words too; CSS comments are skipped.
+  A bracketed value in markup must be built from a token (rule 7).
 - **Rendered** (end to end): every page, a review page, the 404, and
   `/links`, at 1280 and 375 px: chrome and section content on column lines
   and inside the grid; no rule above a list's first row or below its last.
@@ -159,8 +175,8 @@ applied before first paint. Print hides chrome and forms.
 
 ## 7. Metadata
 
-Title template `%s — W.S. Gong`; the home title stands alone. Description from
-the statement. Every page: RSS link, Person structured data, share image;
+Title template `%s — W.S. Gong`; the home title stands alone ("W.S. Gong —"
+and the tagline). Description from the statement. Every page: RSS link, Person structured data, share image;
 pages set only title and description. One sitemap timestamp per build.
 
 ## 8. Headers and monitoring
@@ -178,6 +194,7 @@ client SDK.
 | ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact mail; port 465 is TLS (default), others STARTTLS                 |
 | `CONTACT_FORM_SECRET`                                               | Optional token key; defaults to `SMTP_PASS`                              |
+| `VERCEL`                                                            | Set by the host: renders the analytics scripts only on Vercel            |
 | `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                       |
 | `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                     |
 | `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                              |
@@ -186,8 +203,8 @@ client SDK.
 | `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                     |
 | `MAIL_E2E`                                                          | Opt in to mail-sending tests                                             |
 | `READING_FIXTURES`                                                  | End-to-end build and tests: use fixture books                            |
-| `CI`                                                                | Stricter, serial test runs; missing test secrets fail                    |
-| `NODE_ENV`                                                          | Development: looser script policy, full error sampling, Goodreads button |
+| `CI`                                                                | 4 workers, retries, no `.only`; missing test secrets fail                |
+| `NODE_ENV`                                                          | Development: looser script policy, full trace sampling, Goodreads button |
 
 Remove the stale host variables from the old residency pipeline
 (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`, `CRON_SECRET`,
@@ -218,12 +235,13 @@ READING_FIXTURES=1 pnpm test:e2e`.
 
 ```
 app/(site)/        home, nav, layout, contact form and action, error,
-                   colophon/, terms/, reading/, portrait
-app/(bare)/links/  /links
-app/components/    layout primitives, icons, theme toggle, subscribe form
-app/               root layout, styles, feed/, metadata routes, 404
+                   colophon/, terms/, reading/
+app/(bare)/links/  /links and its icons
+app/components/    layout primitives, shared rows, theme toggle, subscribe form
+app/               root layout, styles, portrait, feed/, metadata routes, 404
 lib/               projects, books, colophon, form token, review, substack,
-                   upload, site/ (content, schema, env, PDFs), tests
+                   upload, site/ (content, env, schema: site.json and PDFs),
+                   tests (guards.test: §6.3 static, §12 drift, §13 pins)
 content/           site.json (§14), reading/ (§4)
 public/            fabulosa-books/, covers/, icons
 scripts/           sync, fetch-covers, highlight-tutorial
@@ -263,14 +281,15 @@ Each holds on every change; the parenthesis names what enforces it.
 
 ### Drift guards
 
-`lib/spec.test.ts` fails when spec and code disagree:
+`lib/guards.test.ts` fails when spec and code disagree:
 
 - §2 routes: every page is listed; every listed path is served.
-- §2 redirects: sources match the configured redirects.
+- §2 redirects: sources and destinations match the configured redirects.
 - §9 environment: every variable read is listed; every listed one is read
   (except those only tools read).
 - §10 scripts: every package script is named; every named one exists.
-- § references: every `§` in code and spec has a heading.
+- § references: every `§` in code, styles, commands, README, and spec has a
+  heading.
 - §11 layout: every listed path exists; every top-level folder is listed.
 - Links: no `site.json` link typed into `app/` or `lib/` (project repo URLs
   excepted).
@@ -294,7 +313,7 @@ Claims it can't check (copy, design intent) are covered by §6.3 and `/audit`.
 
 ## 13. Intentional decisions
 
-Pinned by `lib/shape.test.ts` (removals, dropped dependencies, project shape,
+Pinned by `lib/guards.test.ts` (removals, dropped dependencies, project shape,
 no email in `site.json`) and a lint rule (`SLUSHPILE_URL` read in one place).
 
 - **One page.** Former section pages are home sections; add a section, not a

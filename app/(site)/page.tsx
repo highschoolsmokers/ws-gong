@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
+import { BookRow, PostRow, StoryRow } from "@/app/components/rows";
 import SubstackForm from "@/app/components/SubstackForm";
 import { JsonLd, Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
-import { bookHref, bookMeta, orderedBooks } from "@/lib/books";
-import { profiles, site, SITE_URL } from "@/lib/site/content";
-import { ELSEWHERE_ON_HOME, linkUrl } from "@/lib/site/content-schema";
-import { PDFS } from "@/lib/site/resume";
+import { orderedBooks } from "@/lib/books";
+import { site, SITE_URL, TAGLINE } from "@/lib/site/content";
+import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "@/lib/site/schema";
 import { getSubstackPosts } from "@/lib/substack";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "./ContactForm";
-import portrait from "./portrait.png";
+import portrait from "@/app/portrait.png";
 
 export const metadata: Metadata = {
-  title: { absolute: "W.S. Gong — Stories & Systems" },
+  title: { absolute: `W.S. Gong — ${TAGLINE}` },
   description: site.statement.join(" "),
 };
 
@@ -44,48 +44,34 @@ export default async function Home() {
       <JsonLd data={projectsLd} />
 
       <Section id="about" index={0} title="About">
-        {/* The portrait sits above the bio, on the content column's 8 columns:
-            4 of them on desktop, 6 on phones. */}
-        <div className="grid grid-cols-8 gap-y-4 gap-x-[var(--gutter)]">
+        {/* The portrait sits above the bio, centered on the content's own
+            columns: 3–10 of 12 on phones, 3–6 of 8 on desktop, so every edge
+            lands on a line of the page grid. */}
+        <div className="grid grid-cols-12 gap-y-4 gap-x-[var(--gutter)] md:grid-cols-8">
           <Image
             src={portrait}
             alt="Illustrated portrait of W.S. Gong"
             sizes="(min-width: 768px) 22rem, 75vw"
-            className="col-span-6 h-auto w-full md:col-span-4"
+            className="col-span-8 col-start-3 h-auto w-full md:col-span-4 md:col-start-3"
             // In the first viewport on most screens and the page's LCP element.
             loading="eager"
             fetchPriority="high"
           />
-          <p className="col-span-8 max-w-prose">{site.bio[0]}</p>
+          <p className="col-span-12 max-w-prose md:col-span-8">{site.bio[0]}</p>
         </div>
       </Section>
 
       <Section id="writing" index={++n} title="Writing">
         <div className="space-y-14">
           <Rows title="Fiction">
-            {site.published.map((p) => (
-              <Row
-                key={p.title}
-                href={p.url}
-                title={p.title}
-                meta={[p.venue, p.detail].filter(Boolean).join(" · ")}
-              />
+            {site.published.map((s) => (
+              <StoryRow key={s.title} s={s} />
             ))}
           </Rows>
           {posts.length > 0 && (
             <Rows title="Substack">
               {posts.map((p) => (
-                <Row
-                  key={p.id}
-                  href={p.canonical_url}
-                  title={p.title}
-                  meta={new Date(p.post_date).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                  })}
-                >
-                  {p.subtitle}
-                </Row>
+                <PostRow key={p.id} p={p} />
               ))}
             </Rows>
           )}
@@ -97,14 +83,7 @@ export default async function Home() {
         <Section id="reading" index={++n} title="Reading">
           <Rows>
             {books.map((b) => (
-              <Row
-                key={b.slug}
-                href={bookHref(b)}
-                title={b.title}
-                meta={bookMeta(b)}
-              >
-                {b.note ? `${b.author}. ${b.note}` : b.author}
-              </Row>
+              <BookRow key={b.slug} b={b} />
             ))}
           </Rows>
           <Link href="/reading" className="block font-medium">
@@ -141,7 +120,7 @@ export default async function Home() {
           <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
           {/* Every master link except those with a place of their own here:
               GitHub (under Code) and Substack (Writing, footer). */}
-          {profiles
+          {site.links
             .filter((p) => !ELSEWHERE_ON_HOME.includes(p.label))
             .map((p) => (
               <Row key={p.label} href={p.url} title={p.label} />

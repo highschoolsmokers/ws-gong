@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { JsonLd, PageTitle, Row, Rows, Section } from "@/app/components/ui";
 import { bookMeta, coverPath, reviewed } from "@/lib/books";
 import { SITE_URL } from "@/lib/site/content";
@@ -26,8 +25,7 @@ export async function generateMetadata({
 }
 
 export default async function Review({ params }: PageProps<"/reading/[slug]">) {
-  const b = find((await params).slug);
-  if (!b) notFound();
+  const b = find((await params).slug)!;
   const cover = coverPath(b);
   const url = `${SITE_URL}/reading/${b.slug}`;
   const ld = {
@@ -40,7 +38,7 @@ export default async function Review({ params }: PageProps<"/reading/[slug]">) {
       "@type": "Book",
       name: b.title,
       author: { "@type": "Person", name: b.author },
-      ...(b.isbn && { isbn: b.isbn.replaceAll("-", "") }),
+      ...(b.isbn && { isbn: b.isbn }),
     },
     ...(b.rating && {
       reviewRating: {

@@ -1,17 +1,14 @@
 import type { Metadata } from "next";
-import { PageTitle, Row, Rows, Section } from "@/app/components/ui";
-import { bookHref, bookMeta, orderedBooks, type Book } from "@/lib/books";
+import { BookRow } from "@/app/components/rows";
+import { PageTitle, Rows, Section } from "@/app/components/ui";
+import { orderedBooks, type Book } from "@/lib/books";
 
 export const metadata: Metadata = {
   title: "Reading",
   description: "What W.S. Gong is reading, with reviews.",
 };
 
-const row = (b: Book) => (
-  <Row key={b.slug} href={bookHref(b)} title={b.title} meta={bookMeta(b)}>
-    {b.note ? `${b.author}. ${b.note}` : b.author}
-  </Row>
-);
+const row = (b: Book) => <BookRow key={b.slug} b={b} />;
 
 export default function Reading() {
   const now = orderedBooks.filter((b) => b.finished === "reading");

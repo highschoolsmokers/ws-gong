@@ -1,12 +1,5 @@
-export type Project = {
-  href: string;
-  title: string;
-  description: string;
-  stack: string[];
-};
-
 // Shown in this order on the home page.
-export const projects: Project[] = [
+export const projects = [
   {
     href: "https://github.com/highschoolsmokers/second-reader",
     title: "Second Reader",

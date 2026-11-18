@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { waitForEmail, deleteEmails } from "./helpers/imap";
+import { deleteEmails, requireEnv, waitForEmail } from "./helpers/imap";
 import {
   fillContactForm,
   openContactForm,
@@ -10,8 +10,7 @@ import {
   EMAIL_DELIVERY_TIMEOUT_MS,
   SUBMISSION_TIMEOUT_MS,
 } from "./helpers/constants";
-import { requireEnv } from "./helpers/required-env";
-import { MAX_LENGTH } from "../lib/upload";
+import { MAX_FILES, MAX_LENGTH, MAX_TOTAL_BYTES } from "../lib/upload";
 
 // Form behavior differs by engine (constraint validation, file inputs,
 // focus order), so these run everywhere.
@@ -66,6 +65,36 @@ test.describe("Contact form", { tag: "@cross" }, () => {
       .getByRole("button", { name: /remove test-upload\.txt/i })
       .click();
     await expect(page.getByText("test-upload.txt")).not.toBeAttached();
+  });
+
+  test("attachments over the limits are refused, by name", async ({ page }) => {
+    await openContactForm(page);
+    const input = page.locator("input[type='file']");
+    const file = (name: string, bytes = 1) => ({
+      name,
+      mimeType: "application/octet-stream",
+      buffer: Buffer.alloc(bytes),
+    });
+    const refused = page.getByText(/^Not attached/);
+
+    // A blocked type; trailing dots and spaces don't hide it.
+    await input.setInputFiles([file("setup.exe"), file("run.bat. ")]);
+    await expect(refused).toContainText("setup.exe");
+    await expect(refused).toContainText("run.bat");
+
+    // One file past the count limit.
+    await input.setInputFiles(
+      Array.from({ length: MAX_FILES + 1 }, (_, i) => file(`f${i}.txt`)),
+    );
+    await expect(refused).toContainText(`f${MAX_FILES}.txt`);
+    for (const i of [0, MAX_FILES - 1])
+      await expect(page.getByText(`f${i}.txt (`)).toBeVisible();
+
+    // Past the total size limit.
+    for (let i = 0; i < MAX_FILES; i++)
+      await page.getByRole("button", { name: `Remove f${i}.txt` }).click();
+    await input.setInputFiles(file("big.pdf", MAX_TOTAL_BYTES + 1));
+    await expect(refused).toContainText("big.pdf");
   });
 
   test("Send is keyboard-reachable from the first field", async ({ page }) => {
@@ -129,7 +158,31 @@ test.describe("Contact form delivery", () => {
     await expect(page.getByText(/message sent/i)).toBeVisible({
       timeout: SUBMISSION_TIMEOUT_MS,
     });
-    expect(await waitForEmail(token)).toContain(token);
+    expect((await waitForEmail(token))?.subject).toContain(token);
+    await deleteEmails(token);
+  });
+
+  test("an attachment arrives with the email @infra", async ({ page }) => {
+    requireEnv("IMAP_PASS");
+    test.setTimeout(EMAIL_DELIVERY_TIMEOUT_MS);
+    const token = `e2e-attach-${Date.now()}`;
+    await openContactForm(page);
+    await fillContactForm(page, {
+      name: "E2E Attachment",
+      email: "e2e@test.local",
+      subject: token,
+      message: "Attachment delivery check.",
+    });
+    await page.locator("input[type='file']").setInputFiles({
+      name: `${token}.txt`,
+      mimeType: "text/plain",
+      buffer: Buffer.from(token),
+    });
+    await submitContactForm(page, { pastAntiSpam: true });
+    await expect(page.getByText(/message sent/i)).toBeVisible({
+      timeout: SUBMISSION_TIMEOUT_MS,
+    });
+    expect((await waitForEmail(token))?.attachments).toContain(`${token}.txt`);
     await deleteEmails(token);
   });
 });

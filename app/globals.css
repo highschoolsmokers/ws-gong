@@ -17,12 +17,6 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 }
-@media (min-width: 768px) {
-  :root {
-    --gutter: 2rem;
-    --margin: 3rem;
-  }
-}
 
 @theme inline {
   --color-background: var(--background);
@@ -30,6 +24,9 @@
   --color-muted: var(--muted);
   --color-error: var(--error);
   --font-sans: var(--font-geist-sans);
+  /* Page titles (text-title, md:text-title-lg). */
+  --text-title: 2.5rem;
+  --text-title-lg: 3.5rem;
 }
 
 body {
@@ -107,6 +104,11 @@ a:hover {
 a.row {
   text-decoration: none;
 }
+/* Phones: at least 24px to tap (WCAG 2.5.8); desktop links are spaced enough. */
+.site-nav a {
+  display: block;
+  padding-block: 0.25rem;
+}
 .site-footer {
   border-top: 1px solid var(--foreground);
   padding-block: 1.25rem 2.5rem;
@@ -116,6 +118,10 @@ a.row {
   color: var(--foreground);
 }
 @media (min-width: 768px) {
+  :root {
+    --gutter: 2rem;
+    --margin: 3rem;
+  }
   .site-header {
     padding-block: 3rem 6rem;
   }
@@ -124,6 +130,9 @@ a.row {
     flex-direction: column;
     gap: 0.25rem;
     font-size: 1.25rem;
+  }
+  .site-nav a {
+    padding-block: 0;
   }
 }
 
@@ -211,13 +220,19 @@ a.row:hover .row-title {
 .review details[open] summary {
   margin-bottom: 0.5em;
 }
+/* The contact form's bot trap: off screen, out of the layout. */
+.honeypot {
+  position: absolute;
+  left: -9999px;
+  height: 0;
+  opacity: 0;
+}
 .field {
   width: 100%;
   border-bottom: 1px solid var(--muted);
   background: transparent;
   padding-block: 0.5rem;
   font-size: 0.875rem;
-  outline: none;
 }
 .field::placeholder {
   color: var(--muted);

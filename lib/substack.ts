@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import raw from "../content/site.json";
-import { linkUrl } from "./site/content-schema";
+import { linkUrl } from "./site/schema";
 
 // The publication is the master's Substack link (site.json); next.config.ts
 // imports this too, so no path aliases.
@@ -22,8 +22,8 @@ const postSchema = z.object({
 export type SubstackPost = z.infer<typeof postSchema>;
 
 // Substack posts, newest first; [] on any failure so the section just hides.
-// A non-OK response throws inside the try so Next's data cache retries next
-// request instead of caching an empty list for the hour.
+// A non-OK response throws inside the try so the fetch result isn't cached;
+// the page that rendered the empty list still is, until it next refreshes.
 export async function getSubstackPosts(limit = 10): Promise<SubstackPost[]> {
   try {
     const res = await fetch(

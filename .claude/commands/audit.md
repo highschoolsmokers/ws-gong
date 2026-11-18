@@ -27,7 +27,7 @@ is a finding; name why it skipped.
 **2. Code against SPEC.md.** Every factual claim in SPEC.md must match the code:
 the routes table vs `app/`; redirects, rewrites, and headers vs `next.config.ts`;
 the environment table vs every `process.env` read; scripts vs `package.json`; the
-layout tree vs the files on disk; §13 decisions vs `lib/shape.test.ts`.
+layout tree vs the files on disk; §13 decisions vs `lib/guards.test.ts`.
 Also the reverse: behavior in code that SPEC.md doesn't describe.
 
 **3. Code-level minimization.** Goal: the fewest lines that do the job.
