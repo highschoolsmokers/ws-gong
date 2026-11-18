@@ -1,30 +1,33 @@
 /**
- * Shared constants for e2e tests.
- * Keep magic numbers here with explanations so tests stay readable.
+ * Shared data for e2e tests. Copy, links, and routes come from the same
+ * sources the site renders from, so content edits don't break tests.
  */
 
+import raw from "../../content/site.json";
 import { orderedBooks, reviewed } from "../../lib/books";
+import { siteContentSchema } from "../../lib/site/content-schema";
+import { slushpileUrl } from "../../lib/site/env";
 import { MIN_ELAPSED_MS } from "../../lib/upload";
 
-/** Wait past the server's anti-spam minimum, with margin, before submitting. */
-export const ANTI_SPAM_DELAY_MS = MIN_ELAPSED_MS + 500;
+export const site = siteContentSchema.parse(raw);
+export { orderedBooks, reviewed };
 
-/** Max time to wait for the "message sent" confirmation after form submit. */
+/** How far to fast-forward the page clock past the anti-spam minimum. */
+export const ANTI_SPAM_MS = MIN_ELAPSED_MS + 500;
+
+/** Max time to wait for the "message sent" confirmation after submit. */
 export const SUBMISSION_TIMEOUT_MS = 15_000;
-
-/** Server-side validation response timeout. */
-export const VALIDATION_TIMEOUT_MS = 10_000;
 
 /** Overall timeout for the email delivery verification test. */
 export const EMAIL_DELIVERY_TIMEOUT_MS = 120_000;
 
-/** Max Tab key presses when testing keyboard navigation reach. */
-export const MAX_TAB_STEPS_NAV = 10;
-export const MAX_TAB_STEPS_FORM = 20;
+/** Max Tab presses when checking that something is keyboard-reachable. */
+export const MAX_TAB_STEPS = 20;
 
-/**
- * All publicly routable pages — OG metadata and Swiss grid checks.
- */
+/** Same flag the rewrite and nav slot read, so the tests can't disagree. */
+export const slushpileConfigured = Boolean(slushpileUrl);
+
+/** Every publicly routable page: metadata and Swiss grid checks. */
 export const SITE_PAGES = [
   "/",
   "/terms",
@@ -34,7 +37,7 @@ export const SITE_PAGES = [
   ...reviewed.slice(0, 1).map((b) => `/reading/${b.slug}`),
 ];
 
-/** Old section pages and the home anchor each now redirects to ("" = top). */
+/** Old section pages and the home anchor each redirects to ("" = top). */
 export const FOLDED_ROUTES = [
   ["/about", "#about"],
   ["/code", "#code"],

@@ -1,9 +1,9 @@
 name: E2E
 
-# Deploys go out through the Vercel CLI, which sends GitHub no deployment
-# event, so the suite runs against a local production build on every PR and
-# push to main. Mail-sending tests (@smtp, @infra) run only by hand against a
-# deployed URL, so no PR sends mail.
+# Runs against a local production build on every PR and push to main.
+# Playwright starts the server itself (webServer in playwright.config.ts).
+# Mail-sending tests (@smtp, @infra) run only by hand against a deployed URL,
+# so no PR sends mail.
 on:
   push:
     branches: [main]
@@ -23,8 +23,18 @@ concurrency:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
+    # Playwright's image ships all three browsers and their system deps, so
+    # nothing is downloaded mid-run. Its tag must match @playwright/test.
+    # --user 1001 matches the runner's workspace owner (and Firefox refuses
+    # to run as root in another user's home).
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --user 1001
+    # Hard ceilings so a hung step fails fast instead of running for an hour.
+    timeout-minutes: 15
     env:
-      BASE_URL: ${{ inputs.base_url || 'http://localhost:3000' }}
+      # Set only for a deployed run; otherwise Playwright serves the build.
+      BASE_URL: ${{ inputs.base_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,24 +46,24 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+        timeout-minutes: 3
 
-      - run: pnpm exec playwright install --with-deps
-
-      - name: Build and start
+      - name: Build
         if: ${{ !inputs.base_url }}
-        run: |
-          pnpm build
-          pnpm start &
-          npx --yes wait-on@8.0.3 --timeout 60000 http://localhost:3000
+        timeout-minutes: 5
+        run: pnpm build
 
       - name: Core e2e tests
-        run: pnpm exec playwright test --grep-invert "@infra|@smtp"
+        timeout-minutes: 5
+        run: pnpm exec playwright test
 
       - name: Mail e2e tests
         if: ${{ inputs.base_url }}
         continue-on-error: true
-        run: pnpm exec playwright test --grep "@infra|@smtp"
+        timeout-minutes: 5
+        run: pnpm exec playwright test --project=chromium --grep "@infra|@smtp"
         env:
+          MAIL_E2E: "1"
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}

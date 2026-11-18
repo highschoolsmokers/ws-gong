@@ -2,8 +2,10 @@ import { test, expect, type Page } from "@playwright/test";
 import { SITE_PAGES } from "./helpers/constants";
 
 // SPEC §6.1, checked on the rendered page: elements start on a grid column
-// line and end inside the grid; lists draw rules between rows only.
+// line and end inside the grid; lists draw rules between rows only. Layout is
+// engine-specific, so this runs in all three browsers.
 const PAGES = [...SITE_PAGES, "/no-such-page"];
+const WIDTHS = [1280, 375];
 
 async function audit(page: Page) {
   return page.evaluate(() => {
@@ -60,13 +62,17 @@ async function audit(page: Page) {
   });
 }
 
-for (const width of [1280, 375])
-  for (const path of PAGES) {
-    test(`${path} at ${width}px follows the grid (SPEC §6.1)`, async ({
-      page,
-    }) => {
-      await page.setViewportSize({ width, height: 900 });
+// One load per page; the viewport is resized in place for each width.
+for (const path of PAGES)
+  test(
+    `${path} follows the grid (SPEC §6.1)`,
+    { tag: "@cross" },
+    async ({ page }) => {
+      await page.setViewportSize({ width: WIDTHS[0], height: 900 });
       await page.goto(path);
-      expect(await audit(page)).toEqual([]);
-    });
-  }
+      for (const width of WIDTHS) {
+        await page.setViewportSize({ width, height: 900 });
+        expect(await audit(page), `at ${width}px`).toEqual([]);
+      }
+    },
+  );
