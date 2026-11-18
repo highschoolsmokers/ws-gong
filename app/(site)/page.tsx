@@ -45,14 +45,14 @@ export default async function Home() {
 
       <Section id="about" index={0} title="About">
         {/* The portrait sits above the bio, centered on the content's own
-            columns: 3–10 of 12 on phones, 3–6 of 8 on desktop, so every edge
-            lands on a line of the page grid. */}
+            columns: 3–10 of 12 on phones, 2–7 of 8 on tablets, 3–6 of 8 on
+            desktop, so every edge lands on a line of the page grid. */}
         <div className="grid grid-cols-12 gap-y-4 gap-x-[var(--gutter)] md:grid-cols-8">
           <Image
             src={portrait}
             alt="Illustrated portrait of W.S. Gong"
             sizes="(min-width: 768px) 22rem, 75vw"
-            className="col-span-8 col-start-3 h-auto w-full md:col-span-4 md:col-start-3"
+            className="col-span-8 col-start-3 h-auto w-full md:col-span-6 md:col-start-2 lg:col-span-4 lg:col-start-3"
             // In the first viewport on most screens and the page's LCP element.
             loading="eager"
             fetchPriority="high"

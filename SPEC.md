@@ -78,7 +78,7 @@ Sections in order, each a label (columns 1–4) and content (5–12), numbered
 from 00 with no gaps when one is hidden.
 
 - **00 About**: portrait centered over the bio (the content's columns 3–6
-  of 8; 3–10 of 12 on phones), bio below.
+  of 8; 2–7 on tablets; 3–10 of 12 on phones), bio below.
 - **Writing**: Fiction credits (forthcoming first, unlinked); five latest
   Substack posts (hidden if the fetch fails); subscribe form. Substack refuses
   server sign-ups, so the form opens Substack's subscribe page with the email

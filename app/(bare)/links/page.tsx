@@ -38,10 +38,10 @@ export default async function Links() {
           src={portrait}
           alt="Illustrated portrait of W.S. Gong"
           sizes="(min-width: 768px) 10rem, 25vw"
-          className="col-span-4 aspect-square h-auto w-full object-cover object-top md:col-span-2"
+          className="col-span-4 aspect-square h-auto w-full object-cover object-top md:col-span-3 lg:col-span-2"
           priority
         />
-        <h1 className="col-span-8 swiss-display text-3xl md:col-span-10">
+        <h1 className="col-span-8 swiss-display text-3xl md:col-span-9 lg:col-span-10">
           <Link href="/">W.S. Gong</Link>
         </h1>
       </div>
@@ -59,7 +59,7 @@ export default async function Links() {
               key={l.label}
               href={l.url}
               title={
-                <span className="inline-flex items-center gap-3">
+                <span className="inline-flex flex-wrap items-center gap-x-3">
                   {/* Label first, on the column line; the icon follows it. */}
                   {l.label}
                   <Icon name={l.label} />

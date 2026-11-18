@@ -27,6 +27,7 @@ export function Icon({ name }: { name: string }) {
       width="20"
       height="20"
       fill="currentColor"
+      className="shrink-0"
       aria-hidden
     >
       {/* evenodd cuts the "f" out of the Fabulosa circle; brand marks keep nonzero. */}
