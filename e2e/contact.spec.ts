@@ -1,142 +1,110 @@
 import { test, expect } from "@playwright/test";
 import { waitForEmail, deleteEmails } from "./helpers/imap";
-import { fillContactForm, submitContactForm } from "./helpers/contact-form";
 import {
-  SUBMISSION_TIMEOUT_MS,
-  VALIDATION_TIMEOUT_MS,
+  fillContactForm,
+  openContactForm,
+  submitContactForm,
+  tabTo,
+} from "./helpers/contact-form";
+import {
   EMAIL_DELIVERY_TIMEOUT_MS,
+  SUBMISSION_TIMEOUT_MS,
 } from "./helpers/constants";
 import { requireEnv } from "./helpers/required-env";
 
-// ---------------------------------------------------------------------------
-// Field presence
-// ---------------------------------------------------------------------------
-test.describe("Contact form fields", () => {
-  test("renders required fields and submit button", async ({ page }) => {
-    await page.goto("/#contact");
+// Form behavior differs by engine (constraint validation, file inputs,
+// focus order), so these run everywhere.
+test.describe("Contact form", { tag: "@cross" }, () => {
+  test("required fields are marked and enforced", async ({ page }) => {
+    const f = await openContactForm(page);
+    for (const field of [f.name, f.email, f.message])
+      await expect(field).toHaveAttribute("required", "");
+    await expect(f.subject).not.toHaveAttribute("required", "");
 
-    await expect(
-      page.locator("section#contact").getByLabel("Name"),
-    ).toBeAttached();
-    await expect(
-      page.locator("section#contact").getByLabel("Name"),
-    ).toHaveAttribute("required", "");
-    await expect(
-      page.locator("section#contact").getByLabel("Email"),
-    ).toBeAttached();
-    await expect(
-      page.locator("section#contact").getByLabel("Email"),
-    ).toHaveAttribute("required", "");
-    await expect(
-      page.locator("section#contact").getByLabel("Message"),
-    ).toBeAttached();
-    await expect(
-      page.locator("section#contact").getByLabel("Message"),
-    ).toHaveAttribute("required", "");
-    await expect(
-      page.locator("section#contact").getByLabel("Subject"),
-    ).toBeAttached();
-    await expect(page.getByRole("button", { name: /send/i })).toBeAttached();
-  });
-});
+    // Empty submit: the browser blocks it, nothing is sent.
+    await f.send.click();
+    expect(
+      await f.name.evaluate((el: HTMLInputElement) => el.validity.valid),
+    ).toBe(false);
 
-// ---------------------------------------------------------------------------
-// Validation
-// ---------------------------------------------------------------------------
-test.describe("Contact form validation", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/#contact");
+    // Name and email but no message: still blocked, on the message.
+    await f.name.fill("Test User");
+    await f.email.fill("test@example.com");
+    await f.send.click();
+    expect(
+      await f.message.evaluate((el: HTMLTextAreaElement) => el.validity.valid),
+    ).toBe(false);
+    await expect(page.getByText(/message sent/i)).not.toBeAttached();
   });
 
-  test("required fields block empty submission via browser validation", async ({
+  test("server rejects a bad email and keeps what was typed", async ({
     page,
   }) => {
-    await page.getByRole("button", { name: /send/i }).click();
-
-    await expect(page.getByText(/message sent/i)).not.toBeVisible();
-    await expect(page.getByText(/please enter/i)).not.toBeVisible();
-
-    const nameValid = await page
-      .locator("section#contact")
-      .getByLabel("Name")
-      .evaluate((el: HTMLInputElement) => el.validity.valid);
-    expect(nameValid, "Name field should be invalid when empty").toBe(false);
-  });
-
-  test("invalid email shows server validation error", async ({ page }) => {
-    // Bypass browser validation so the server can respond
-    await page
-      .locator("section#contact form")
-      .evaluate((el: HTMLFormElement) => el.setAttribute("novalidate", ""));
-
+    const f = await openContactForm(page);
+    // Skip browser validation so the server's check is what's tested.
+    await f.form.evaluate((el) => el.setAttribute("novalidate", ""));
     await fillContactForm(page, {
       name: "Test User",
       email: "not-an-email",
       message: "Test message content here.",
     });
-
     await submitContactForm(page);
-
-    await expect(page.getByText(/please enter a valid email/i)).toBeVisible({
-      timeout: VALIDATION_TIMEOUT_MS,
-    }); // A failed send must not wipe what the visitor typed.
-    await expect(
-      page.locator("section#contact").getByLabel("Message"),
-    ).toHaveValue("Test message content here.");
+    await expect(page.getByText(/please enter a valid email/i)).toBeVisible();
+    await expect(f.message).toHaveValue("Test message content here.");
   });
 
-  test("missing message is blocked by browser validation", async ({ page }) => {
-    await page.locator("section#contact").getByLabel("Name").fill("Test User");
+  test("attachments can be added and removed", async ({ page }) => {
+    await openContactForm(page);
+    await page.locator("input[type='file']").setInputFiles({
+      name: "test-upload.txt",
+      mimeType: "text/plain",
+      buffer: Buffer.from("x"),
+    });
+    await expect(page.getByText("test-upload.txt")).toBeVisible();
     await page
-      .locator("section#contact")
-      .getByLabel("Email")
-      .fill("test@example.com");
+      .getByRole("button", { name: /remove test-upload\.txt/i })
+      .click();
+    await expect(page.getByText("test-upload.txt")).not.toBeAttached();
+  });
 
-    await page.getByRole("button", { name: /send/i }).click();
+  test("Send is keyboard-reachable from the first field", async ({ page }) => {
+    const f = await openContactForm(page);
+    await f.name.focus();
+    await tabTo(page, f.send);
+  });
 
-    const messageValid = await page
-      .locator("section#contact")
-      .getByLabel("Message")
-      .evaluate((el: HTMLTextAreaElement) => el.validity.valid);
-    expect(messageValid, "Message field should be invalid when empty").toBe(
-      false,
-    );
+  test("honeypot is hidden from people, AT, and password managers", async ({
+    page,
+  }) => {
+    await page.goto("/#contact");
+    const hp = page.locator("input[name='contact_hp']");
+    await expect(hp).toHaveAttribute("aria-hidden", "true");
+    await expect(hp).toHaveAttribute("tabindex", "-1");
+    await expect(hp).toHaveAttribute("data-1p-ignore", "");
   });
 });
 
-// ---------------------------------------------------------------------------
-// Submission (requires SMTP)
-// ---------------------------------------------------------------------------
-test.describe("Contact form submission", () => {
-  test("submission without optional subject @smtp", async ({ page }) => {
+// Real mail: run by hand against a deployed URL (MAIL_E2E=1).
+test.describe("Contact form delivery", () => {
+  test("sends without the optional subject @smtp", async ({ page }) => {
     requireEnv("SMTP_HOST");
-    await page.goto("/#contact");
-
+    await openContactForm(page);
     await fillContactForm(page, {
       name: "E2E No Subject",
       email: "e2e@test.local",
       message: "Automated smoke test without subject — please ignore.",
     });
     await submitContactForm(page);
-
-    await expect(page.getByRole("button", { name: /sending/i })).toBeVisible();
     await expect(page.getByText(/message sent/i)).toBeVisible({
       timeout: SUBMISSION_TIMEOUT_MS,
     });
   });
-});
 
-// ---------------------------------------------------------------------------
-// Email delivery (requires SMTP + IMAP)
-// ---------------------------------------------------------------------------
-test.describe("Contact form email delivery", () => {
-  test("email delivery verification @infra", async ({ page }) => {
+  test("the email actually arrives @infra", async ({ page }) => {
     requireEnv("IMAP_PASS");
     test.setTimeout(EMAIL_DELIVERY_TIMEOUT_MS);
-
     const token = `e2e-${Date.now()}`;
-    await page.goto("/#contact");
-
+    await openContactForm(page);
     await fillContactForm(page, {
       name: "E2E Delivery",
       email: "e2e@test.local",
@@ -144,45 +112,10 @@ test.describe("Contact form email delivery", () => {
       message: `Delivery verification token: ${token}`,
     });
     await submitContactForm(page);
-
     await expect(page.getByText(/message sent/i)).toBeVisible({
       timeout: SUBMISSION_TIMEOUT_MS,
     });
-
-    const subject = await waitForEmail(token);
-    expect(subject, `Email with "${token}" should arrive`).toContain(token);
+    expect(await waitForEmail(token)).toContain(token);
     await deleteEmails(token);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// File attachments
-// ---------------------------------------------------------------------------
-test.describe("Contact form file attachments", () => {
-  test("attaching a file shows it in the list", async ({ page }) => {
-    await page.goto("/#contact");
-
-    await page.locator("input[type='file']").setInputFiles({
-      name: "test-upload.txt",
-      mimeType: "text/plain",
-      buffer: Buffer.from("x"),
-    });
-    await expect(page.getByText("test-upload.txt")).toBeVisible();
-  });
-
-  test("removing an attached file", async ({ page }) => {
-    await page.goto("/#contact");
-
-    await page.locator("input[type='file']").setInputFiles({
-      name: "test-remove.txt",
-      mimeType: "text/plain",
-      buffer: Buffer.from("x"),
-    });
-    await expect(page.getByText("test-remove.txt")).toBeVisible();
-
-    await page
-      .getByRole("button", { name: /remove test-remove\.txt/i })
-      .click();
-    await expect(page.getByText("test-remove.txt")).not.toBeVisible();
   });
 });

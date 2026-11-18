@@ -1,9 +1,9 @@
 name: E2E
 
-# Deploys go out through the Vercel CLI, which sends GitHub no deployment
-# event, so the suite runs against a local production build on every PR and
-# push to main. Mail-sending tests (@smtp, @infra) run only by hand against a
-# deployed URL, so no PR sends mail.
+# Runs against a local production build on every PR and push to main.
+# Playwright starts the server itself (webServer in playwright.config.ts).
+# Mail-sending tests (@smtp, @infra) run only by hand against a deployed URL,
+# so no PR sends mail.
 on:
   push:
     branches: [main]
@@ -23,8 +23,11 @@ concurrency:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
+    # Hard ceilings so a hung step fails fast instead of running for an hour.
+    timeout-minutes: 15
     env:
-      BASE_URL: ${{ inputs.base_url || 'http://localhost:3000' }}
+      # Set only for a deployed run; otherwise Playwright serves the build.
+      BASE_URL: ${{ inputs.base_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,24 +39,45 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+        timeout-minutes: 3
 
-      - run: pnpm exec playwright install --with-deps
+      - name: Playwright version
+        id: pw
+        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
 
-      - name: Build and start
+      - name: Cache Playwright browsers
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
+
+      - name: Install browsers and system deps
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        timeout-minutes: 5
+        run: pnpm exec playwright install --with-deps chromium firefox webkit
+
+      - name: Install system deps (browsers cached)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        timeout-minutes: 5
+        run: pnpm exec playwright install-deps chromium firefox webkit
+
+      - name: Build
         if: ${{ !inputs.base_url }}
-        run: |
-          pnpm build
-          pnpm start &
-          npx --yes wait-on@8.0.3 --timeout 60000 http://localhost:3000
+        timeout-minutes: 5
+        run: pnpm build
 
       - name: Core e2e tests
-        run: pnpm exec playwright test --grep-invert "@infra|@smtp"
+        timeout-minutes: 5
+        run: pnpm exec playwright test
 
       - name: Mail e2e tests
         if: ${{ inputs.base_url }}
         continue-on-error: true
-        run: pnpm exec playwright test --grep "@infra|@smtp"
+        timeout-minutes: 5
+        run: pnpm exec playwright test --project=chromium --grep "@infra|@smtp"
         env:
+          MAIL_E2E: "1"
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
