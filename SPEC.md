@@ -18,7 +18,7 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
 | Path                                               | Source                   | Notes                                                                         |
 | -------------------------------------------------- | ------------------------ | ----------------------------------------------------------------------------- |
 | `/`                                                | `app/(site)/page.tsx`    | The site (§3)                                                                 |
-| `/colophon`, `/terms`                              | `app/(site)/…`           | Static pages                                                                  |
+| `/colophon`, `/terms`                              | `app/(site)/…`           | Static pages (below)                                                          |
 | `/reading`, `/reading/<slug>`                      | `app/(site)/reading/`    | Reading log index and one page per reviewed book (§4)                         |
 | `/links`                                           | `app/(bare)/links`       | Instagram link-in-bio page on the grid; no site chrome, not in nav or sitemap |
 | `/feed`                                            | `app/feed/route.ts`      | RSS 2.0 of Substack posts and reviews (`Substack`, `Review`), cached 1 h      |
@@ -38,11 +38,37 @@ anchor nav (`Nav.tsx`, stacked in columns 11–12; on phones, two rows of three 
 in columns 1–4, Colophon, Terms, and Substack stacked from the
 column-5 line, and the theme toggle on the column-11 line. The masthead is
 the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
-inside the same layout.
+inside the same layout (a "404" section and a home link), and
+`app/(site)/error.tsx` an "Error" section with Try again and Home when a page
+fails to render (server errors also reach Sentry, §8).
 
-`/links` exists for the Instagram bio link: a short list of profiles for
-visitors arriving from Instagram, laid out with the shared `Section` and
-`Rows`. The site's nav, footer, and sitemap don't link to it.
+The other pages, each a `PageTitle` and labelled `Section`s:
+
+- **`/colophon`** — Typography, Design, Content (where each kind of copy comes
+  from), Stack, Tools, Source. Stack and Tools render `lib/colophon.ts`, which
+  reads versions from `package.json`; `lib/colophon.test.ts` fails when a
+  listed package is gone or a runtime dependency isn't credited.
+- **`/terms`** — Overview (with a last-updated date), What You May Do, Privacy,
+  Third-Party Content, DMCA Policy, AI / ML Training. Privacy describes what
+  the site actually collects (the contact form, the Substack hand-off,
+  cookieless analytics, server error reports, no cookies); change it with any
+  change to those. `app/robots.ts` blocks the known AI-training crawlers to
+  match the AI / ML clause.
+- **`/reading`** — Currently reading, then Finished (§4).
+- **`/reading/<slug>`** — the book title; a section labelled with the author
+  holding the cover, date and rating, the review, and (in development) Copy for
+  Goodreads; Also on (its Substack and Goodreads copies, when set); and a link
+  back to `/reading`.
+
+`/links` exists for the Instagram bio link: the portrait (square, matching the
+Instagram profile picture) beside the name, a **Latest** section (the newest
+Substack post, hidden when the fetch fails, the first Fiction credit, and
+the Substack subscribe form, shared with the home page as
+`app/components/SubstackForm.tsx`),
+then a short list led by the main site ("ws-gong.com — writing, code, CV")
+then the profiles (no Instagram: visitors come from there), then Fabulosa
+Books, laid out
+with the shared `Section` and `Rows`. The site's nav, footer, and sitemap don't link to it.
 
 The Fabulosa tutorial is plain HTML under the site's CSP, so everything it
 loads is self-hosted: Geist from `public/fabulosa-books/fonts/` (OFL), and no
@@ -267,7 +293,7 @@ app/(site)/        page.tsx (home), Nav, layout, ContactForm + actions, error,
                    colophon/, terms/, reading/ (index, [slug] + CopyForGoodreads),
                    portrait.png
 app/(bare)/links/  Linktree page
-app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
+app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx, SubstackForm.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
 lib/               projects, books (+ test), colophon (+ test), form-token (+ test), review,

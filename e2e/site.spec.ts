@@ -157,11 +157,59 @@ test.describe("Inner pages", () => {
     const h1 = page.getByRole("heading", { level: 1 });
     await expect(h1).toHaveText("W.S. Gong");
     await expect(h1.getByRole("link")).toHaveAttribute("href", "/");
+    await expect(
+      page.getByRole("img", { name: /portrait of W\.S\. Gong/i }),
+    ).toBeVisible();
     expect(
       await page.locator("a[target='_blank']").count(),
     ).toBeGreaterThanOrEqual(5);
     await expect(page.locator("header")).not.toBeAttached();
     await expect(page.locator("footer")).not.toBeAttached();
+    await expect(
+      page.getByRole("link", { name: /ws-gong\.com/ }),
+    ).toHaveAttribute("href", "/");
+    const list = page.locator("section", {
+      has: page.getByRole("heading", { name: "Links" }),
+    });
+    await expect(list.locator("li").first()).toContainText("ws-gong.com");
+    await expect(list.locator("li").last()).toContainText("Fabulosa Books");
+    // Visitors arrive from Instagram; no link back there.
+    await expect(page.locator('a[href*="instagram.com"]')).toHaveCount(0);
+  });
+
+  for (const path of ["/", "/links"])
+    test(`${path}: the Substack button fits its form at phone and tablet widths`, async ({
+      page,
+    }) => {
+      for (const width of [320, 768]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        const form = page.getByRole("form", { name: "Subscribe on Substack" });
+        const [f, b] = await Promise.all([
+          form.boundingBox(),
+          form.getByRole("button").boundingBox(),
+        ]);
+        expect(
+          b!.x + b!.width,
+          `button inside the form at ${width}px`,
+        ).toBeLessThanOrEqual(f!.x + f!.width + 0.5);
+      }
+    });
+
+  test("/links leads with the latest story (and post, when Substack answers)", async ({
+    page,
+  }) => {
+    await page.goto("/links");
+    const latest = page.locator("section", {
+      has: page.getByRole("heading", { name: "Latest" }),
+    });
+    await expect(latest).toContainText(site.published[0].title);
+    await expect(
+      latest.getByRole("form", { name: "Subscribe on Substack" }),
+    ).toHaveAttribute("action", /substack\.com\/subscribe$/);
+    // Latest comes before the profile links.
+    const headings = await page.locator("main h2, h2").allTextContents();
+    expect(headings.indexOf("Latest")).toBeLessThan(headings.indexOf("Links"));
   });
 
   test("404 page offers a way home", async ({ page }) => {

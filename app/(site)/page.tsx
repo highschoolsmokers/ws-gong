@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import SubstackForm from "@/app/components/SubstackForm";
 import { JsonLd, Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
 import { bookHref, bookMeta, orderedBooks } from "@/lib/books";
 import { profiles, site, SITE_URL } from "@/lib/site/content";
 import { PDFS } from "@/lib/site/resume";
-import { getSubstackPosts, SUBSCRIBE_URL } from "@/lib/substack";
+import { getSubstackPosts } from "@/lib/substack";
 import Image from "next/image";
 import Link from "next/link";
 import ContactForm from "./ContactForm";
@@ -87,36 +88,7 @@ export default async function Home() {
               ))}
             </Rows>
           )}
-          {/* Substack refuses sign-ups from other servers, so the address goes
-              to its subscribe page, which prefills it; the reader confirms there. */}
-          <form
-            action={SUBSCRIBE_URL}
-            method="get"
-            {...ext}
-            aria-label="Subscribe on Substack"
-            className="space-y-4"
-          >
-            <div className="grid grid-cols-8 items-baseline gap-[var(--gutter)]">
-              <input
-                name="email"
-                type="email"
-                required
-                aria-label="Email"
-                placeholder="Email"
-                autoComplete="email"
-                className="field col-span-5 md:col-span-6"
-              />
-              <button
-                type="submit"
-                className="col-span-3 justify-self-start border border-foreground px-(--gutter) py-[calc(var(--gutter)/4)] font-medium transition-colors hover:bg-foreground hover:text-background md:col-span-2"
-              >
-                Subscribe
-              </button>
-            </div>
-            <p className="text-xs text-muted">
-              Opens Substack to confirm. Free; unsubscribe anytime.
-            </p>
-          </form>
+          <SubstackForm />
         </div>
       </Section>
 
