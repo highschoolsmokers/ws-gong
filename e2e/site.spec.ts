@@ -13,9 +13,6 @@ test.describe("Home", () => {
   });
 
   test("renders every section from content", async ({ page }) => {
-    await expect(page.getByRole("region", { name: "Statement" })).toContainText(
-      site.statement[0],
-    );
     const about = page.locator("section#about");
     await expect(about).toContainText(site.bio[0]);
     await expect(

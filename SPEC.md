@@ -55,10 +55,10 @@ choice with the same pre-paint script as `app/layout.tsx`.
 
 ## 3. Home page
 
-An unnumbered lead, the **statement** (`site.statement`, one line each), then
-numbered sections, each a label column (4 of 12) and a content column (8).
+Numbered sections, straight after the masthead, each a label column (4 of 12) and a content column (8).
 Section 00 is fixed; the rest count up from 01, and an omitted section leaves
-no gap in the numbering.
+no gap in the numbering. The statement (`site.statement`) isn't shown on the page; it
+feeds the meta description and share text (§7).
 
 - **00 About** `#about` — the portrait at the text block's width, directly
   above the writer bio, `site.bio[0]`. The former `/about` page folded in here.

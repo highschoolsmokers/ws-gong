@@ -41,16 +41,6 @@ export default async function Home() {
     <>
       <JsonLd data={projectsLd} />
 
-      <section aria-label="Statement" className="statement swiss-grid">
-        <p className="col-span-12 md:col-span-10">
-          {site.statement.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </p>
-      </section>
-
       <Section id="about" index={0} title="About">
         {/* The portrait spans the text block's width, directly above the bio. */}
         <div className="max-w-prose space-y-4">
