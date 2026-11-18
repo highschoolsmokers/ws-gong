@@ -13,7 +13,10 @@ export const metadata: Metadata = {
 
 // Instagram link-in-bio page (SPEC §2): the site grid without the site chrome.
 // No Instagram row: visitors are arriving from there.
+// The main site leads, labelled with what's there: the h1 home link alone
+// didn't read as a way in.
 const links = [
+  { label: "ws-gong.com", url: "/", note: "writing, code, CV" },
   { label: "Fabulosa Books", url: "https://www.fabulosabooks.com/" },
   ...profiles.filter((p) => p.label !== "Instagram"),
 ];
@@ -62,6 +65,9 @@ export default async function Links() {
                 <span className="inline-flex items-center gap-3">
                   <Icon name={l.label} />
                   {l.label}
+                  {"note" in l && (
+                    <span className="font-normal text-muted">{l.note}</span>
+                  )}
                 </span>
               }
             />
