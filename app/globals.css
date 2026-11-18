@@ -94,10 +94,12 @@ a:hover {
 .masthead {
   font-size: clamp(3rem, 8vw, 5.25rem);
 }
+/* Phones: three tracks of four grid columns each, so every link starts on a
+   column line (§6.1) in two short rows. Desktop: one stacked column. */
 .site-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.25rem var(--gutter);
   font-weight: 500;
   line-height: 1.1;
 }
@@ -118,6 +120,9 @@ a.row {
     padding-block: 3rem 6rem;
   }
   .site-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
     font-size: 1.25rem;
   }
 }

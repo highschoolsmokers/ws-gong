@@ -34,7 +34,7 @@ Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#code`;
 `next.config.ts` loads, so restart `pnpm dev` after adding the first book.
 
 `app/(site)/layout.tsx` wraps every page but `/links` in the masthead, the
-anchor nav (`Nav.tsx`, stacked in columns 11–12), and a footer: the copyright
+anchor nav (`Nav.tsx`, stacked in columns 11–12; on phones, two rows of three 4-column tracks), and a footer: the copyright
 in columns 1–4, Colophon, Terms, and Substack stacked from the
 column-5 line, and the theme toggle on the column-11 line. The masthead is
 the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
