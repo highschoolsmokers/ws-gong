@@ -1,4 +1,4 @@
-# pnpm 11 requires explicit approval for build scripts. Without these flags
+# pnpm 11+ requires explicit approval for build scripts. Without these flags
 # `pnpm install --frozen-lockfile` errors on ignored builds in CI.
 allowBuilds:
   "@sentry/cli": true

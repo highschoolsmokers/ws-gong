@@ -3,7 +3,10 @@ import type { NextConfig } from "next";
 import { orderedBooks } from "./lib/books";
 import { slushpileUrl } from "./lib/site/env";
 import { PDFS, blobUrl } from "./lib/site/resume";
+import { SUBSTACK_BASE_URL } from "./lib/substack";
 
+// 'unsafe-inline' scripts: Next's inline bootstrap and the theme script.
+// Nonces would force every page to render dynamically.
 const csp = [
   "default-src 'self'",
   // React's development build needs eval for its debug call stacks; production never does.
@@ -13,6 +16,11 @@ const csp = [
   "font-src 'self'",
   "connect-src 'self' https://va.vercel-scripts.com",
   "frame-ancestors 'none'",
+  // These three don't fall back to default-src. Forms post to this site (the
+  // contact form) or to Substack (the newsletter form).
+  "base-uri 'none'",
+  "object-src 'none'",
+  `form-action 'self' ${SUBSTACK_BASE_URL}`,
 ].join("; ");
 
 // The site is one page: old section pages land on their anchors, permanently.
@@ -63,6 +71,7 @@ const nextConfig: NextConfig = {
         { key: "X-Content-Type-Options", value: "nosniff" },
         { key: "X-Frame-Options", value: "DENY" },
         { key: "Referrer-Policy", value: "no-referrer" },
+        { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
         {
           key: "Strict-Transport-Security",
           value: "max-age=63072000; includeSubDomains; preload",

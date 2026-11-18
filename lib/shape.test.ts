@@ -92,3 +92,48 @@ test("Code is one flat list: no featured tier, categories, or sub-pages", () => 
       p.title,
     );
 });
+
+// A client component that reaches a Node-only module (lib/books reads the
+// reading log with node:fs) makes Turbopack panic mid-build with no hint of
+// where. Walk every "use client" file's imports and name the chain instead.
+// A "use server" file is a boundary: the client gets RPC stubs, not its code.
+test("client components never import Node-only modules", () => {
+  const files = (dir: string): string[] =>
+    readdirSync(r(dir), { withFileTypes: true }).flatMap((e) =>
+      e.isDirectory()
+        ? files(join(dir, e.name))
+        : /\.tsx?$/.test(e.name)
+          ? [join(dir, e.name)]
+          : [],
+    );
+  const resolve = (from: string, spec: string) => {
+    const base = spec.startsWith("@/") ? spec.slice(2) : join(from, "..", spec);
+    return ["", ".ts", ".tsx", "/index.ts", "/index.tsx"]
+      .map((ext) => base + ext)
+      .find((p) => existsSync(r(p)) && /\.tsx?$/.test(p));
+  };
+  const IMPORT =
+    /(?:^|\n)\s*((?:import|export)\s[^;]*?)from\s+["']([^"']+)["']/g;
+  const NODE = /^(node:|fs$|path$|os$|child_process$|crypto$)/;
+  for (const entry of files("app").filter((f) =>
+    /^["']use client["']/.test(read(f).trimStart()),
+  )) {
+    const seen = new Set<string>();
+    const walk = (file: string, chain: string[]) => {
+      if (seen.has(file)) return;
+      seen.add(file);
+      if (chain.length && /^["']use server["']/.test(read(file).trimStart()))
+        return;
+      for (const [, stmt, spec] of read(file).matchAll(IMPORT)) {
+        if (/^(import|export)\s+type\s/.test(stmt)) continue; // erased at build
+        if (NODE.test(spec))
+          assert.fail(`${[...chain, file].join(" → ")} imports ${spec}`);
+        if (spec.startsWith(".") || spec.startsWith("@/")) {
+          const next = resolve(file, spec);
+          if (next) walk(next, [...chain, file]);
+        }
+      }
+    };
+    walk(entry, []);
+  }
+});

@@ -21,12 +21,7 @@ export function contactForm(page: Page) {
   };
 }
 
-/**
- * Open the contact section with a controllable clock, so the anti-spam
- * minimum is skipped rather than waited out.
- */
 export async function openContactForm(page: Page) {
-  await page.clock.install();
   await page.goto("/#contact");
   return contactForm(page);
 }
@@ -42,9 +37,16 @@ export async function fillContactForm(
   await f.message.fill(data.message);
 }
 
-/** Jump the page clock past the anti-spam minimum and click Send. */
-export async function submitContactForm(page: Page): Promise<void> {
-  await page.clock.fastForward(ANTI_SPAM_MS);
+/**
+ * Click Send. The anti-spam timer runs on the server's clock from the form's
+ * first focus, so a submission meant to reach SMTP first waits it out for
+ * real; validation errors come back before the timer is checked.
+ */
+export async function submitContactForm(
+  page: Page,
+  { pastAntiSpam = false } = {},
+): Promise<void> {
+  if (pastAntiSpam) await new Promise((r) => setTimeout(r, ANTI_SPAM_MS));
   await contactForm(page).send.click();
 }
 

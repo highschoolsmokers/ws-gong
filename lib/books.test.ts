@@ -1,5 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { orderBooks, parseBook, type Book } from "./books.ts";
 import { feedHtml, goodreadsHtml, reviewHtml } from "./review.ts";
 
@@ -46,6 +48,37 @@ test("parseBook reads frontmatter and the review body", () => {
   assert.equal(b.rating, 4);
   assert.equal(b.finished, "2026-10-01");
   assert.match(b.review, /^A \*family\* saga\./);
+});
+
+test("trailing ` # comments` end a value; URL fragments and quotes survive", () => {
+  const b = parseBook(
+    "x",
+    file
+      .replace("rating: 4", "rating: 4 # optional, 1–5")
+      .replace(
+        "finished: 2026-10-01",
+        'finished: 2026-10-01 # or: reading\nlink: https://e.com/p#ch2 # where it links\nnote: "Has # inside" # quoted',
+      ),
+  );
+  assert.equal(b.rating, 4);
+  assert.equal(b.finished, "2026-10-01");
+  assert.equal(b.link, "https://e.com/p#ch2");
+  assert.equal(b.note, "Has # inside");
+});
+
+// The template in content/reading/README.md must stay a valid book file.
+test("the README's template parses", () => {
+  const readme = readFileSync(
+    join(import.meta.dirname, "..", "content", "reading", "README.md"),
+    "utf8",
+  );
+  const template = /```markdown\n([\s\S]*?)\n```/.exec(readme)![1];
+  const b = parseBook(
+    "pachinko",
+    template.replaceAll("https://…", "https://example.com"),
+  );
+  assert.equal(b.finished, "2026-10-01");
+  assert.equal(b.rating, 4);
 });
 
 test("parseBook rejects bad files", () => {

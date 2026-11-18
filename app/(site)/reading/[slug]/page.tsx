@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageTitle, Row, Rows, Section } from "@/app/components/ui";
+import { JsonLd, PageTitle, Row, Rows, Section } from "@/app/components/ui";
 import { bookMeta, coverPath, reviewed } from "@/lib/books";
 import { SITE_URL } from "@/lib/site/content";
 import { goodreadsHtml, reviewHtml } from "@/lib/review";
@@ -17,8 +17,8 @@ const find = (slug: string) => reviewed.find((b) => b.slug === slug);
 export async function generateMetadata({
   params,
 }: PageProps<"/reading/[slug]">): Promise<Metadata> {
-  const b = find((await params).slug);
-  if (!b) return {};
+  // dynamicParams is off, so the slug always names a reviewed book.
+  const b = find((await params).slug)!;
   return {
     title: `${b.title} by ${b.author}`,
     description: b.note ?? `W.S. Gong reviews ${b.title} by ${b.author}.`,
@@ -58,10 +58,7 @@ export default async function Review({ params }: PageProps<"/reading/[slug]">) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }}
-      />
+      <JsonLd data={ld} />
       <PageTitle>{b.title}</PageTitle>
       <Section title={b.author}>
         <div className="max-w-prose space-y-6">

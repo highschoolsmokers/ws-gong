@@ -15,7 +15,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   [ "$local_sha" != "$zero" ] && checks=yes
 done
 
-# Fast sanity checks; full build runs in CI.
+# Fast sanity checks (seconds); the full build and e2e run in CI.
 if [ "$checks" = yes ]; then
-  pnpm lint && pnpm typecheck
+  pnpm lint && pnpm typecheck && pnpm test:unit
 fi

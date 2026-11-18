@@ -62,16 +62,16 @@ async function audit(page: Page) {
   });
 }
 
-// One load per page; the viewport is resized in place for each width.
+// A fresh load at each width: resizing an open page in place raced in
+// Firefox (page.evaluate hung until the test timed out).
 for (const path of PAGES)
   test(
     `${path} follows the grid (SPEC §6.1)`,
     { tag: "@cross" },
     async ({ page }) => {
-      await page.setViewportSize({ width: WIDTHS[0], height: 900 });
-      await page.goto(path);
       for (const width of WIDTHS) {
         await page.setViewportSize({ width, height: 900 });
+        await page.goto(path);
         expect(await audit(page), `at ${width}px`).toEqual([]);
       }
     },

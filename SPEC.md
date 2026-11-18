@@ -45,12 +45,12 @@ visitors arriving from Instagram, laid out with the shared `Section` and
 `Rows`. The site's nav, footer, and sitemap don't link to it.
 
 The Fabulosa tutorial is plain HTML under the site's CSP, so everything it
-loads is self-hosted: Geist from `public/fabulosa-books/fonts/` (OFL) and no
-scripts at all. Syntax highlighting is baked into the HTML by
+loads is self-hosted: Geist from `public/fabulosa-books/fonts/` (OFL), and no
+external scripts (each page has one inline pre-paint theme script). Syntax highlighting is baked into the HTML by
 `pnpm highlight:tutorial` (highlight.js, a dev dependency; colors in its
 `style.css`); rerun it after editing any code sample. The tutorial's canonical index URL is
 `/fabulosa-books` (no trailing slash, which 308s); the sitemap, the Code list,
-and its own Contents links use it. Its pages apply the site's stored theme
+and the Contents links in parts 1 and 7 use it. Its pages apply the site's stored theme
 choice with the same pre-paint script as `app/layout.tsx`.
 
 ## 3. Home page
@@ -94,6 +94,9 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 - `content/reading/<slug>.md` (format in its `README.md`): flat frontmatter
   (`title`, `author`, `finished: YYYY-MM-DD | reading`, optional `rating` 1–5,
   `isbn`, `note`, `link`, `substack`, `goodreads`) and a Markdown review.
+  A ` # …` after an unquoted value is a comment; `lib/books.test.ts` parses
+  the README's template so it stays valid. With `READING_FIXTURES` set (the
+  E2E build only), `lib/books.ts` reads `e2e/fixtures/reading/` instead.
   `lib/books.ts` loads and validates them at build time (a bad file fails the
   build); a book with a review body gets `/reading/<slug>` with Review JSON-LD.
   `lib/review.ts` renders reviews with `marked`: `::: spoiler` blocks become
@@ -112,12 +115,17 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 `app/(site)/ContactForm.tsx` submits (via `onSubmit`, so a failed send keeps
 the visitor's text) to the server action `app/(site)/actions.ts`. Spam
 guards: a hidden `contact_hp` field that autofill and password managers are
-told to skip, and a 3-second minimum measured on the visitor's own clock
-(`_elapsed`; `MIN_ELAPSED_MS` in `lib/upload.ts`, which the e2e helpers also
-read). Visitors see one generic failure for guard, config, and SMTP
+told to skip, and a 3-second minimum on the server's clock. On first focus
+the form asks the server action `issueFormToken` for a timestamp signed with
+HMAC (`lib/form-token.ts`, keyed by `CONTACT_FORM_SECRET`, else `SMTP_PASS`);
+a submission passes only with a valid token between 3 s and 24 h old
+(`MIN_ELAPSED_MS`, `MAX_TOKEN_AGE_MS` in `lib/upload.ts`). Field checks run
+first, so validation errors come back without waiting. Name and subject are
+capped at 200 characters and the message at 10,000 (`MAX_LENGTH`: the form's
+`maxLength` and the server both enforce it). Visitors see one generic failure for guard, config, and SMTP
 faults; the function log records the reason (`Contact form rejected: …`).
-Attachments: up to 5 files, 4 MB total, executable extensions refused
-(`lib/upload.ts`); `next.config.ts` raises the server-action body limit to
+Attachments: up to 5 files, 4 MB total, executable extensions refused, with
+trailing dots and spaces stripped first (`lib/upload.ts`); `next.config.ts` raises the server-action body limit to
 Vercel's 4.5 MB request cap. Mail goes from `SMTP_USER` to `CONTACT_EMAIL`,
 reply-to the sender, subject `[Contact Form] …`, header
 `X-Source: contact-form`.
@@ -150,8 +158,9 @@ binding; §6.3 lists the guards that enforce them.
 6. **Rules are structural.** A full rule tops each section. Lists draw
    hairlines between rows only: never above the first row or below the last,
    which would double the section rule.
-7. **Whitespace is structural.** Spacing comes from the tokens and the
-   section rhythm, never ad hoc.
+7. **Whitespace is structural.** Gutters and margins come from the
+   `--gutter` and `--margin` tokens; all other spacing from Tailwind's
+   0.25 rem scale and the section rhythm. No arbitrary pixel values.
 
 ### 6.2 Tokens and theming
 
@@ -165,15 +174,20 @@ the chrome and the form.
 
 ### 6.3 Guards
 
-- **Static** (`lib/shape.test.ts`, unit tests and CI): no off-grid
-  alignment utilities in `app/` and no edge-pushing values in `globals.css`.
-- **Rendered** (`e2e/swiss.spec.ts`, Playwright): on every page, the 404,
+- **Static** (`lib/shape.test.ts`, unit tests and CI): across every `.tsx`
+  and `.css` file in `app/` (except `opengraph-image.tsx`), no off-grid
+  alignment utilities or edge-pushing values, and no ornament: `rounded`,
+  `shadow`, `bg-gradient`, `float`, `self-center`, or CSS `box-shadow`,
+  `border-radius`, `gradient(`.
+- **Rendered** (`e2e/swiss.spec.ts`, Playwright): on every page (one review
+  page), the 404,
   and `/links`, at 1280 px and 375 px, the masthead, nav, footer, and section
   content start on a grid column line and end inside the grid, and no list
   draws a rule above its first row or below its last.
 - **Hooks** (`.claude/settings.json`): after every edit, a Swiss-style review
   prompt flags violations of §6.1 in layout files, and a command hook flags
-  e2e anti-patterns (fixed waits, `.nth()`, silent `.catch`).
+  e2e anti-patterns (fixed waits, `.nth()`, silent `.catch`, CSS `name=`
+  selectors).
 - **Audit** (`.claude/commands/audit.md`, `/audit`): the full code, spec,
   design, and live-site audit.
 
@@ -188,24 +202,31 @@ keeps the share image. The home page title is absolute. The sitemap uses one tim
 ## 8. Headers and monitoring
 
 Every route: `nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy:
-no-referrer`, two-year HSTS with preload, a Permissions-Policy denying unused
-device and tracking features, and a CSP allowing only self plus Vercel
-Analytics (`frame-ancestors 'none'`). Production browser source maps are
+no-referrer`, `Cross-Origin-Opener-Policy: same-origin`, two-year HSTS with
+preload, a Permissions-Policy denying unused device and tracking features, and
+a CSP: self plus Vercel Analytics; `'unsafe-inline'` scripts and styles (Next's
+inline bootstrap and the theme script; nonces would make every page dynamic);
+`data:` images; `base-uri 'none'`, `object-src 'none'`, `form-action 'self'`
+plus the Substack origin (the newsletter form), and `frame-ancestors 'none'`. Production browser source maps are
 public. Sentry runs on the server and edge (`instrumentation.ts`: `register`
 plus `onRequestError`); there is no client SDK.
 
 ## 9. Environment
 
-| Name                                                                | Purpose                                                                                                         |
-| ------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact form; port 465 uses TLS, others STARTTLS (default 465)                                                  |
-| `SENTRY_DSN`                                                        | Optional; Sentry off when unset                                                                                 |
-| `SLUSHPILE_URL`                                                     | Optional slushpile mount; app code reads it only in `lib/site/env.ts` (e2e specs read it directly)              |
-| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync:resume`, local `.env.local` only                                                                     |
-| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | Playwright target and preview bypass                                                                            |
-| `IMAP_PASS`, `IMAP_USER`                                            | Mail-delivery e2e test; `IMAP_USER` defaults to `CONTACT_EMAIL`                                                 |
-| `CI`                                                                | Playwright retries and reporter; required e2e secrets fail instead of skip                                      |
-| `NODE_ENV`                                                          | Set by Next: development adds `'unsafe-eval'` to the CSP; Sentry samples 100% in development, 10% in production |
+| Name                                                                | Purpose                                                                                                                                                              |
+| ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact form; port 465 uses TLS, others STARTTLS (default 465)                                                                                                       |
+| `CONTACT_FORM_SECRET`                                               | Optional key for the contact form's anti-spam token; falls back to `SMTP_PASS`                                                                                       |
+| `SENTRY_DSN`                                                        | Optional; Sentry off when unset                                                                                                                                      |
+| `SENTRY_AUTH_TOKEN`                                                 | Optional, build only: `withSentryConfig` uploads source maps when set                                                                                                |
+| `SLUSHPILE_URL`                                                     | Optional slushpile mount; read only in `lib/site/env.ts`, by app code and the e2e suite alike                                                                        |
+| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync:resume`, local `.env.local` only; `RESUMES_CVS_DIR` defaults to `../resumes-cvs`                                                                          |
+| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | Playwright target and preview bypass                                                                                                                                 |
+| `IMAP_PASS`, `IMAP_USER`                                            | Mail-delivery e2e test; `IMAP_USER` defaults to `CONTACT_EMAIL`                                                                                                      |
+| `MAIL_E2E`                                                          | Opt in to the mail-sending e2e tests (`@smtp`, `@infra`), which are excluded otherwise                                                                               |
+| `READING_FIXTURES`                                                  | E2E build and tests only: read `e2e/fixtures/reading/`; set at both or neither                                                                                       |
+| `CI`                                                                | Playwright retries, reporter, workers, `forbidOnly`, no server reuse; required e2e secrets fail instead of skip; Sentry build output                                 |
+| `NODE_ENV`                                                          | Set by Next: development adds `'unsafe-eval'` to the CSP; Sentry samples 100% in development, 10% in production; the Goodreads copy button shows only in development |
 
 The Vercel project still holds unused variables from the old residency
 pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
@@ -216,37 +237,47 @@ pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
 `pnpm dev | build | start | lint | typecheck` (`next typegen && tsc`, so
 route types exist on a clean checkout; delete a stale `.next/dev` if it
 fails), `pnpm test:unit` (Node test
-runner over `lib/**/*.test.ts`: reading-log parsing, ordering, and spoilers, the §13 shape guards, and the
-§6.3 static Swiss guard),
-`pnpm test:e2e` (Playwright on chromium, firefox, and webkit), and
+runner over `lib/**/*.test.ts`: reading-log parsing, ordering, and spoilers, the contact-form token and
+attachment names, the §13 shape guards, the §6.3 static Swiss guard, and a guard
+that no `"use client"` file reaches a Node-only module through its imports,
+which would otherwise surface as an opaque Turbopack panic),
+`pnpm test:e2e` (Playwright: every test in Chromium; tests tagged `@cross`,
+the engine-sensitive ones, also in Firefox and WebKit), and
 `pnpm sync:resume` (§14), `pnpm covers` (§4), and `pnpm highlight:tutorial` (§2). CI runs lint, typecheck, unit tests, a Prettier
 check, the build, and `pnpm audit --audit-level=high`
-(`.github/workflows/checks.yml`). The E2E workflow (`browser.yml`) runs
-the Playwright suite against a local production build on every PR and push to
-main (CLI deploys send GitHub no deployment event). Tests tagged `@smtp` or
-`@infra` send mail, so they run only on a manual dispatch against a deployed
-URL. Husky: `commit-msg` requires a conventional type (`feat`, `fix`,
+(`.github/workflows/checks.yml`); `pnpm-workspace.yaml` overrides patched
+transitive versions and ignores one advisory with no fix yet, each with a note
+on when to drop it. The E2E workflow (`browser.yml`) runs
+the Playwright suite, in Playwright's Docker image, against a local
+production build built with `READING_FIXTURES`, on every PR and push to main.
+Tests tagged `@smtp` or `@infra` send mail, so they run only on a manual
+dispatch against a deployed URL (or locally with `MAIL_E2E=1`); that step is
+advisory (`continue-on-error`). Locally: `READING_FIXTURES=1 pnpm build &&
+READING_FIXTURES=1 pnpm test:e2e`. Husky: `commit-msg` requires a conventional type (`feat`, `fix`,
 `docs`, `refactor`, `chore`, …), `pre-commit` runs lint-staged, and `pre-push`
-blocks pushes from `main` and runs lint and typecheck.
+blocks any push that updates or deletes remote `main`, and otherwise runs
+lint, typecheck, and unit tests (skipped when the push only deletes branches).
 
 ## 11. Layout
 
 ```
 app/(site)/        page.tsx (home), Nav, layout, ContactForm + actions, error,
-                   colophon/, terms/, reading/ (index, [slug]), portrait.png
+                   colophon/, terms/, reading/ (index, [slug] + CopyForGoodreads),
+                   portrait.png
 app/(bare)/links/  Linktree page
 app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
-lib/               projects, books (+ test), review, shape.test, site/{content,
-                   content-schema, env, resume}, substack, upload
+lib/               projects, books (+ test), form-token (+ test), review,
+                   shape.test, site/{content, content-schema, env, resume},
+                   substack, upload
 public/            fabulosa-books/ (static tutorial; its own styles, outside
-                   §6.1), apple-touch-icon.png
+                   §6.1), icon.svg, apple-touch-icon.png
 content/site.json  synced copy (§14)
 content/reading/   one Markdown file per book (§4)
 public/covers/     book covers from `pnpm covers`
 scripts/           sync-resume.ts, fetch-covers.ts, highlight-tutorial.ts
-e2e/               Playwright specs + helpers
+e2e/               Playwright specs, helpers, fixtures/reading/
 ```
 
 ## 12. Anti-patterns
@@ -261,7 +292,9 @@ e2e/               Playwright specs + helpers
 
 ## 13. Intentional decisions
 
-`lib/shape.test.ts` pins these.
+`lib/shape.test.ts` pins the removals and dropped dependencies below, the
+project list's shape, and §12's rule that `site.json` carries no email; the
+ESLint rule in `eslint.config.mjs` pins the `SLUSHPILE_URL` gate.
 
 - **One page, not five.** Section pages folded into the home page (2026-11);
   add a section rather than a page. The one exception is `/reading` and its
@@ -290,5 +323,6 @@ optional `### Now {#site-now}` paragraph in `## Website`.
    prints the diff, and uploads both PDFs to Blob at their fixed paths (`PDFS` in
    `lib/site/resume.ts`). Use
    `--no-pdf` for the copy only. It never commits or deploys.
-3. Review the diff, commit, and run `vercel deploy --prod` (the Vercel project
-   is not Git-connected).
+3. Review the diff, commit, and open a PR; merging to `main` deploys (the
+   Vercel project is Git-connected; `vercel deploy --prod` is the manual
+   fallback).

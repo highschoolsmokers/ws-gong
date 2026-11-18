@@ -11,6 +11,7 @@ import {
   SUBMISSION_TIMEOUT_MS,
 } from "./helpers/constants";
 import { requireEnv } from "./helpers/required-env";
+import { MAX_LENGTH } from "../lib/upload";
 
 // Form behavior differs by engine (constraint validation, file inputs,
 // focus order), so these run everywhere.
@@ -73,6 +74,19 @@ test.describe("Contact form", { tag: "@cross" }, () => {
     await tabTo(page, f.send);
   });
 
+  test("fields carry the server's length limits", async ({ page }) => {
+    const f = await openContactForm(page);
+    await expect(f.name).toHaveAttribute("maxlength", String(MAX_LENGTH.name));
+    await expect(f.subject).toHaveAttribute(
+      "maxlength",
+      String(MAX_LENGTH.subject),
+    );
+    await expect(f.message).toHaveAttribute(
+      "maxlength",
+      String(MAX_LENGTH.message),
+    );
+  });
+
   test("honeypot is hidden from people, AT, and password managers", async ({
     page,
   }) => {
@@ -94,7 +108,7 @@ test.describe("Contact form delivery", () => {
       email: "e2e@test.local",
       message: "Automated smoke test without subject — please ignore.",
     });
-    await submitContactForm(page);
+    await submitContactForm(page, { pastAntiSpam: true });
     await expect(page.getByText(/message sent/i)).toBeVisible({
       timeout: SUBMISSION_TIMEOUT_MS,
     });
@@ -111,7 +125,7 @@ test.describe("Contact form delivery", () => {
       subject: token,
       message: `Delivery verification token: ${token}`,
     });
-    await submitContactForm(page);
+    await submitContactForm(page, { pastAntiSpam: true });
     await expect(page.getByText(/message sent/i)).toBeVisible({
       timeout: SUBMISSION_TIMEOUT_MS,
     });

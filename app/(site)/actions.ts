@@ -1,9 +1,10 @@
 "use server";
 
 import nodemailer from "nodemailer";
+import { issueToken, tokenIsValid } from "@/lib/form-token";
 import {
   MAX_FILES,
-  MIN_ELAPSED_MS,
+  MAX_LENGTH,
   MAX_TOTAL_BYTES,
   isBlockedAttachmentName,
 } from "@/lib/upload";
@@ -24,6 +25,11 @@ const fail = (reason: string, err?: unknown): FormState => {
 };
 const EMAIL = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
+// Signs the anti-spam token. CONTACT_FORM_SECRET if set, else the SMTP
+// password, which production already has; both stay on the server.
+const tokenKey = () =>
+  process.env.CONTACT_FORM_SECRET || process.env.SMTP_PASS || "";
+
 const port = Number(process.env.SMTP_PORT) || 465;
 const transporter = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -32,23 +38,21 @@ const transporter = nodemailer.createTransport({
   auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
 });
 
+/** Called once, when a visitor first focuses the form. */
+export async function issueFormToken(): Promise<string> {
+  return issueToken(tokenKey());
+}
+
 export async function sendMessage(
   _prev: FormState,
   form: FormData,
 ): Promise<FormState> {
   const field = (k: string) => form.get(k)?.toString().trim() ?? "";
-  // Bot traps: the hidden field is filled, or the form went out faster than a
-  // person types. Elapsed time is measured on the visitor's clock alone.
   if (field("contact_hp")) return fail("honeypot filled");
-  if (!(Number(field("_elapsed")) >= MIN_ELAPSED_MS))
-    return fail("submitted too fast");
 
-  const [name, email, subject, message] = [
-    "name",
-    "email",
-    "subject",
-    "message",
-  ].map(field);
+  const [name, email, subject, message] = "name email subject message"
+    .split(" ")
+    .map(field);
   if (!name || !email || !message)
     return {
       status: "error",
@@ -56,6 +60,18 @@ export async function sendMessage(
     };
   if (!EMAIL.test(email))
     return { status: "error", message: "Please enter a valid email address." };
+  if (
+    name.length > MAX_LENGTH.name ||
+    subject.length > MAX_LENGTH.subject ||
+    message.length > MAX_LENGTH.message
+  )
+    return {
+      status: "error",
+      message: `Please keep the name and subject under ${MAX_LENGTH.name} characters and the message under ${MAX_LENGTH.message.toLocaleString("en-US")}.`,
+    };
+  // Bot trap: no valid token, or the form went out faster than a person types.
+  if (!tokenIsValid(field("_token"), tokenKey()))
+    return fail("token missing, forged, too fresh, or stale");
   if (!process.env.CONTACT_EMAIL || !process.env.SMTP_HOST)
     return fail("SMTP not configured");
 

@@ -3,17 +3,17 @@
 import {
   startTransition,
   useActionState,
-  useEffect,
   useRef,
   useState,
   type DragEvent,
 } from "react";
 import {
   MAX_FILES,
+  MAX_LENGTH,
   MAX_TOTAL_BYTES,
   isBlockedAttachmentName,
 } from "@/lib/upload";
-import { sendMessage, type FormState } from "./actions";
+import { issueFormToken, sendMessage, type FormState } from "./actions";
 
 const MB = 1024 * 1024;
 
@@ -31,15 +31,16 @@ function Form({ onReset }: { onReset: () => void }) {
   const [files, setFiles] = useState<{ id: string; file: File }[]>([]);
   const [note, setNote] = useState("");
   const [dragging, setDragging] = useState(false);
-  const startedAt = useRef(0);
   const depth = useRef(0); // dragenter/leave fire per child element
   const picker = useRef<HTMLInputElement>(null);
+  // The anti-spam token is fetched on first focus, not on page load, so a
+  // plain visit costs no server call; the server times from its issue.
+  const token = useRef<Promise<string> | null>(null);
+  const startTimer = () => {
+    token.current ??= issueFormToken().catch(() => "");
+  };
 
-  useEffect(() => {
-    startedAt.current = Date.now();
-  }, []);
-
-  // Copy the FileList now: the picker is cleared before the updater runs.
+  // Copy the FileList now: the picker's value is cleared right after this call.
   const add = (list: FileList | null) => {
     const kept = [...files];
     const skipped: string[] = [];
@@ -80,11 +81,13 @@ function Form({ onReset }: { onReset: () => void }) {
     <form
       // onSubmit rather than a form action: React resets the fields after an
       // action, which would wipe the message on any error.
-      onSubmit={(e) => {
+      onFocus={startTimer}
+      onSubmit={async (e) => {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         files.forEach(({ file }) => data.append("attachments", file));
-        data.set("_elapsed", String(Date.now() - startedAt.current));
+        startTimer();
+        data.set("_token", await token.current!);
         startTransition(() => action(data));
       }}
       onDragEnter={drag(1)}
@@ -119,6 +122,7 @@ function Form({ onReset }: { onReset: () => void }) {
           aria-label="Name"
           placeholder="Name"
           autoComplete="name"
+          maxLength={MAX_LENGTH.name}
           className="field"
         />
         <input
@@ -135,6 +139,7 @@ function Form({ onReset }: { onReset: () => void }) {
         name="subject"
         aria-label="Subject"
         placeholder="Subject"
+        maxLength={MAX_LENGTH.subject}
         className="field"
       />
       <textarea
@@ -142,6 +147,7 @@ function Form({ onReset }: { onReset: () => void }) {
         required
         aria-label="Message"
         placeholder="Message"
+        maxLength={MAX_LENGTH.message}
         rows={6}
         className="field min-h-40 resize-y border border-muted p-3"
       />

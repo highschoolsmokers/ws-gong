@@ -5,6 +5,7 @@ import {
   STATIC_ROUTES,
   slushpileConfigured,
 } from "./helpers/constants";
+import { SUBSTACK_BASE_URL } from "../lib/substack";
 
 // Server responses only: status codes, redirects, metadata, feeds. No page is
 // rendered, so these run once (Chromium project) and fast.
@@ -63,6 +64,25 @@ test.describe("Slushpile mount", () => {
     // Mounted: proxied upstream, which owns its own UI. Unmounted: no route.
     if (slushpileConfigured) expect(status).toBeLessThan(500);
     else expect(status).toBe(404);
+  });
+});
+
+test.describe("Security headers", () => {
+  test("CSP locks down base, objects, form targets, and framing; COOP is set", async ({
+    request,
+  }) => {
+    const h = (await request.get("/")).headers();
+    const csp = h["content-security-policy"];
+    for (const directive of [
+      "default-src 'self'",
+      "base-uri 'none'",
+      "object-src 'none'",
+      `form-action 'self' ${SUBSTACK_BASE_URL}`,
+      "frame-ancestors 'none'",
+    ])
+      expect(csp).toContain(directive);
+    expect(h["cross-origin-opener-policy"]).toBe("same-origin");
+    expect(h["x-content-type-options"]).toBe("nosniff");
   });
 });
 
