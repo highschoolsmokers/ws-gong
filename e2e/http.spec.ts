@@ -92,6 +92,22 @@ test.describe("Feeds and files", () => {
       expect((await request.get(route)).status()).toBe(200);
     });
 
+  test("robots.txt blocks AI training crawlers, not search", async ({
+    request,
+  }) => {
+    const txt = await (await request.get("/robots.txt")).text();
+    // Next groups agents that share a rule: each gets its own User-Agent line.
+    const blocked = txt
+      .split(/\n\s*\n/)
+      .find((g) => /Disallow: \/\s*$/m.test(g));
+    expect(blocked).toBeDefined();
+    for (const bot of ["GPTBot", "ClaudeBot", "Google-Extended", "CCBot"])
+      expect(blocked).toContain(`User-Agent: ${bot}`);
+    for (const bot of ["Googlebot", "OAI-SearchBot", "Claude-SearchBot"])
+      expect(blocked).not.toContain(bot);
+    expect(txt).toMatch(/User-Agent: \*\nAllow: \//);
+  });
+
   test("every sitemap URL is reachable", async ({ request }) => {
     const xml = await (await request.get("/sitemap.xml")).text();
     const paths = [...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(
