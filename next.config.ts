@@ -2,7 +2,7 @@ import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
 import { orderedBooks } from "./lib/books";
 import { slushpileUrl } from "./lib/site/env";
-import { PDFS, blobUrl } from "./lib/site/resume";
+import { PDFS, blobUrl } from "./lib/site/schema";
 import { SUBSTACK_BASE_URL } from "./lib/substack";
 
 // 'unsafe-inline' scripts: Next's inline bootstrap and the theme script.

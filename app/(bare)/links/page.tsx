@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import portrait from "@/app/(site)/portrait.png";
-import { Icon } from "@/app/components/icons";
+import portrait from "@/app/portrait.png";
+import { Icon } from "./icons";
+import { PostRow, StoryRow } from "@/app/components/rows";
 import SubstackForm from "@/app/components/SubstackForm";
 import { Row, Rows, Section } from "@/app/components/ui";
-import { profiles, site } from "@/lib/site/content";
+import { site } from "@/lib/site/content";
 import { getSubstackPosts } from "@/lib/substack";
 
 export const metadata: Metadata = {
@@ -19,7 +20,7 @@ export const metadata: Metadata = {
 // didn't read as a way in.
 const links = [
   { label: "ws-gong.com", url: "/", note: "writing, code, CV" },
-  ...profiles.filter((p) => p.label !== "Instagram"),
+  ...site.links.filter((l) => l.label !== "Instagram"),
 ];
 
 export default async function Links() {
@@ -28,7 +29,8 @@ export default async function Links() {
   const [post] = await getSubstackPosts(1);
   const story = site.published[0];
   return (
-    <div className="swiss-container pb-24">
+    // <main> is the page's landmark, and what the §6.3 grid test inspects.
+    <main id="main" className="swiss-container pb-24">
       {/* The portrait matches the Instagram profile picture, so visitors know
           they're in the right place. Square, not a circle (§6.1 bans curved corners), on grid columns, with the name beside it. */}
       <div className="site-header swiss-grid items-end">
@@ -36,34 +38,17 @@ export default async function Links() {
           src={portrait}
           alt="Illustrated portrait of W.S. Gong"
           sizes="(min-width: 768px) 10rem, 25vw"
-          className="col-span-4 aspect-square h-auto w-full object-cover object-top md:col-span-2"
+          className="col-span-4 aspect-square h-auto w-full object-cover object-top md:col-span-3 lg:col-span-2"
           priority
         />
-        <h1 className="col-span-8 swiss-display text-3xl md:col-span-10">
+        <h1 className="col-span-8 swiss-display text-3xl md:col-span-9 lg:col-span-10">
           <Link href="/">W.S. Gong</Link>
         </h1>
       </div>
       <Section title="Latest">
         <Rows>
-          {post && (
-            <Row
-              href={post.canonical_url}
-              title={post.title}
-              meta={`Substack · ${new Date(post.post_date).toLocaleDateString(
-                "en-US",
-                { year: "numeric", month: "long" },
-              )}`}
-            >
-              {post.subtitle}
-            </Row>
-          )}
-          {story && (
-            <Row
-              href={story.url}
-              title={story.title}
-              meta={[story.venue, story.detail].filter(Boolean).join(" · ")}
-            />
-          )}
+          {post && <PostRow p={post} via="Substack · " />}
+          {story && <StoryRow s={story} />}
         </Rows>
         <SubstackForm />
       </Section>
@@ -74,9 +59,10 @@ export default async function Links() {
               key={l.label}
               href={l.url}
               title={
-                <span className="inline-flex items-center gap-3">
-                  <Icon name={l.label} />
+                <span className="inline-flex flex-wrap items-center gap-x-3">
+                  {/* Label first, on the column line; the icon follows it. */}
                   {l.label}
+                  <Icon name={l.label} />
                   {"note" in l && (
                     <span className="font-normal text-muted">{l.note}</span>
                   )}
@@ -86,6 +72,6 @@ export default async function Links() {
           ))}
         </Rows>
       </Section>
-    </div>
+    </main>
   );
 }

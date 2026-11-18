@@ -1,3 +1,5 @@
+import { readdirSync } from "node:fs";
+import { join } from "node:path";
 import type { MetadataRoute } from "next";
 import { orderedBooks, reviewed } from "@/lib/books";
 import { SITE_URL } from "@/lib/site/content";
@@ -11,7 +13,9 @@ const paths = [
   ...(orderedBooks.length ? ["/reading"] : []),
   ...reviewed.map((b) => `/reading/${b.slug}`),
   "/fabulosa-books",
-  ...[1, 2, 3, 4, 5, 6, 7].map((n) => `/fabulosa-books/part${n}.html`),
+  ...readdirSync(join(process.cwd(), "public", "fabulosa-books"))
+    .filter((f) => /^part\d+\.html$/.test(f))
+    .map((f) => `/fabulosa-books/${f}`),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

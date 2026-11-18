@@ -1,12 +1,29 @@
 import { test, expect } from "@playwright/test";
 import { stack, tools } from "../lib/colophon";
-import { ELSEWHERE_ON_HOME, linkUrl } from "../lib/site/content-schema";
-import { PDFS } from "../lib/site/resume";
+import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "../lib/site/schema";
 import { tabTo } from "./helpers/contact-form";
-import { orderedBooks, site, slushpileConfigured } from "./helpers/constants";
+import {
+  orderedBooks,
+  site,
+  SITE_PAGES,
+  slushpileConfigured,
+} from "./helpers/constants";
 
 // Rendered pages: structure and copy, checked against the content they're
 // built from. Interaction and focus tests carry @cross (all three engines).
+
+// Hydration: the server's HTML must match what the browser renders. A
+// mismatch (React error #418) once made the live masthead a link, not an h1.
+test.describe("Hydration", () => {
+  for (const path of [...SITE_PAGES, "/no-such-page"])
+    test(`${path} hydrates without errors; one h1`, async ({ page }) => {
+      const errors: string[] = [];
+      page.on("pageerror", (e) => errors.push(e.message));
+      await page.goto(path, { waitUntil: "networkidle" });
+      expect(errors).toEqual([]);
+      await expect(page.locator("h1")).toHaveCount(1);
+    });
+});
 
 test.describe("Home", () => {
   test.beforeEach(async ({ page }) => {

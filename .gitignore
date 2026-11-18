@@ -15,5 +15,5 @@ TODO.md
 
 # Personal: résumé documents never enter git (SPEC §12, §14)
 /private/
-/public/*resume*.pdf
+/public/*.pdf
 *.docx

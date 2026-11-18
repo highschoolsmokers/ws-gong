@@ -2,12 +2,7 @@
 
 import nodemailer from "nodemailer";
 import { issueToken, tokenIsValid } from "@/lib/form-token";
-import {
-  MAX_FILES,
-  MAX_LENGTH,
-  MAX_TOTAL_BYTES,
-  isBlockedAttachmentName,
-} from "@/lib/upload";
+import { MAX_LENGTH, splitAttachments } from "@/lib/upload";
 
 export type FormState = {
   status: "idle" | "success" | "error";
@@ -67,7 +62,7 @@ export async function sendMessage(
   )
     return {
       status: "error",
-      message: `Please keep the name and subject under ${MAX_LENGTH.name} characters and the message under ${MAX_LENGTH.message.toLocaleString("en-US")}.`,
+      message: `Please keep the name and subject to ${MAX_LENGTH.name} characters and the message to ${MAX_LENGTH.message.toLocaleString("en-US")}.`,
     };
   // Bot trap: no valid token, or the form went out faster than a person types.
   if (!tokenIsValid(field("_token"), tokenKey()))
@@ -75,19 +70,24 @@ export async function sendMessage(
   if (!process.env.CONTACT_EMAIL || !process.env.SMTP_HOST)
     return fail("SMTP not configured");
 
-  const attachments = [];
-  let total = 0;
-  for (const f of form.getAll("attachments")) {
-    if (!(f instanceof File) || !f.size || isBlockedAttachmentName(f.name))
-      continue;
-    if (attachments.length >= MAX_FILES || total + f.size > MAX_TOTAL_BYTES)
-      break;
-    total += f.size;
-    attachments.push({
+  // The form already refuses these; a request that bypasses it is refused
+  // whole, never sent with the file silently dropped.
+  const { kept, refused } = splitAttachments(
+    form
+      .getAll("attachments")
+      .filter((f): f is File => f instanceof File && f.size > 0),
+  );
+  if (refused.length)
+    return {
+      status: "error",
+      message: `Not sent: ${refused.join(", ")} can't be attached (type, count, or size limit). Remove and try again.`,
+    };
+  const attachments = await Promise.all(
+    kept.map(async (f) => ({
       filename: f.name,
       content: Buffer.from(await f.arrayBuffer()),
-    });
-  }
+    })),
+  );
 
   try {
     await transporter.sendMail({

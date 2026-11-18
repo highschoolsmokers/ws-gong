@@ -11,7 +11,7 @@ import {
   MAX_FILES,
   MAX_LENGTH,
   MAX_TOTAL_BYTES,
-  isBlockedAttachmentName,
+  splitAttachments,
 } from "@/lib/upload";
 import { issueFormToken, sendMessage, type FormState } from "./actions";
 
@@ -42,22 +42,17 @@ function Form({ onReset }: { onReset: () => void }) {
 
   // Copy the FileList now: the picker's value is cleared right after this call.
   const add = (list: FileList | null) => {
-    const kept = [...files];
-    const skipped: string[] = [];
-    for (const file of Array.from(list ?? [])) {
-      const total = kept.reduce((n, f) => n + f.file.size, 0) + file.size;
-      if (
-        isBlockedAttachmentName(file.name) ||
-        kept.length >= MAX_FILES ||
-        total > MAX_TOTAL_BYTES
-      )
-        skipped.push(file.name);
-      else kept.push({ id: crypto.randomUUID(), file });
-    }
-    setFiles(kept);
+    const { kept, refused } = splitAttachments(
+      Array.from(list ?? []),
+      files.map((f) => f.file),
+    );
+    setFiles([
+      ...files,
+      ...kept.map((file) => ({ id: crypto.randomUUID(), file })),
+    ]);
     setNote(
-      skipped.length
-        ? `Not attached (type, count, or size limit): ${skipped.join(", ")}`
+      refused.length
+        ? `Not attached (type, count, or size limit): ${refused.join(", ")}`
         : "",
     );
   };
@@ -100,7 +95,7 @@ function Form({ onReset }: { onReset: () => void }) {
       className="space-y-6 pt-4"
     >
       {dragging && (
-        <div className="pointer-events-none fixed inset-0 z-50 flex items-center bg-foreground/90 text-4xl font-medium text-background">
+        <div className="pointer-events-none fixed inset-0 z-50 m-0 flex items-center bg-foreground/90 text-4xl font-medium text-background">
           <div className="swiss-container w-full">Drop to attach</div>
         </div>
       )}
@@ -113,7 +108,7 @@ function Form({ onReset }: { onReset: () => void }) {
         data-1p-ignore=""
         data-lpignore="true"
         data-form-type="other"
-        className="absolute -left-[9999px] h-0 opacity-0"
+        className="honeypot"
       />
       <div className="grid grid-cols-2 gap-[var(--gutter)]">
         <input
@@ -149,9 +144,9 @@ function Form({ onReset }: { onReset: () => void }) {
         placeholder="Message"
         maxLength={MAX_LENGTH.message}
         rows={6}
-        className="field min-h-40 resize-y border border-muted p-3"
+        className="field min-h-40 resize-y"
       />
-      <div className="flex items-center gap-4 text-muted">
+      <div className="space-y-1 text-muted">
         <input
           ref={picker}
           type="file"
@@ -166,7 +161,7 @@ function Form({ onReset }: { onReset: () => void }) {
         >
           + Attach file
         </button>
-        <span className="text-xs">
+        <span className="block text-xs">
           or drag and drop (up to {MAX_FILES} files, {MAX_TOTAL_BYTES / MB} MB
           total)
         </span>
@@ -178,14 +173,14 @@ function Form({ onReset }: { onReset: () => void }) {
             type="button"
             onClick={() => setFiles(files.filter((f) => f.id !== id))}
             aria-label={`Remove ${file.name}`}
-            className="hover:text-error"
+            className="px-2 hover:text-error"
           >
             ×
           </button>
         </p>
       ))}
       {note && <p className="text-xs text-muted">{note}</p>}
-      <div className="flex items-baseline gap-3">
+      <div className="space-y-2">
         <button
           type="submit"
           disabled={pending}
@@ -194,7 +189,7 @@ function Form({ onReset }: { onReset: () => void }) {
           {pending ? "Sending…" : "Send"}
         </button>
         {state.status === "error" && (
-          <span className="text-error">{state.message}</span>
+          <p className="text-error">{state.message}</p>
         )}
       </div>
     </form>

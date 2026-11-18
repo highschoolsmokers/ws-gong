@@ -13,7 +13,7 @@ export const JsonLd = ({ data }: { data: object }) => (
 
 export function PageTitle({ children }: { children: ReactNode }) {
   return (
-    <h1 className="swiss-display pb-10 text-[2.5rem] md:text-[3.5rem]">
+    <h1 className="swiss-display pb-10 text-title md:text-title-lg">
       {children}
     </h1>
   );

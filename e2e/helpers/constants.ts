@@ -5,7 +5,7 @@
 
 import raw from "../../content/site.json";
 import { orderedBooks, reviewed } from "../../lib/books";
-import { siteContentSchema } from "../../lib/site/content-schema";
+import { siteContentSchema } from "../../lib/site/schema";
 import { slushpileUrl } from "../../lib/site/env";
 import { MIN_ELAPSED_MS } from "../../lib/upload";
 

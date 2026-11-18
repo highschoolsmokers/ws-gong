@@ -2,13 +2,8 @@ import type { Metadata } from "next";
 import { Geist } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import {
-  JOB_TITLE,
-  KNOWS_ABOUT,
-  SITE_URL,
-  profiles,
-  site,
-} from "@/lib/site/content";
+import { JOB_TITLE, KNOWS_ABOUT, SITE_URL, site } from "@/lib/site/content";
+import { JsonLd } from "@/app/components/ui";
 import "./globals.css";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
@@ -33,7 +28,7 @@ const jsonLd = {
   name: "W.S. Gong",
   url: SITE_URL,
   jobTitle: JOB_TITLE,
-  sameAs: profiles.map((p) => p.url),
+  sameAs: site.links.map((l) => l.url),
   knowsAbout: KNOWS_ABOUT,
 };
 
@@ -50,15 +45,17 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <JsonLd data={jsonLd} />
       </head>
       <body className={`${geist.variable} font-sans antialiased`}>
         {children}
-        <Analytics />
-        <SpeedInsights />
+        {/* Vercel serves these scripts; elsewhere they would 404. */}
+        {process.env.VERCEL && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+          </>
+        )}
       </body>
     </html>
   );

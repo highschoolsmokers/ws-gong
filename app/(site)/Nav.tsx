@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 // The home page is the site: nav entries are anchors into its sections.
 // Optional sections pass their flag in from the server layout, which can read
@@ -9,9 +9,11 @@ import { usePathname } from "next/navigation";
 export default function Nav({
   slushpile,
   reading,
+  notFound,
 }: {
   slushpile: boolean;
   reading: boolean;
+  notFound: boolean;
 }) {
   const links = [
     ["/#about", "About"],
@@ -31,7 +33,10 @@ export default function Nav({
   );
   return (
     <div className="swiss-grid items-end">
-      {usePathname() === "/" ? (
+      {/* The masthead is the h1 on the home page. Decided by route segment,
+          not URL: on Vercel, regenerating "/" rendered with another pathname,
+          so the server sent a link, the browser an h1 (React error #418). */}
+      {useSelectedLayoutSegment() === null && !notFound ? (
         <h1 className="col-span-12 md:col-span-7">{masthead}</h1>
       ) : (
         <Link

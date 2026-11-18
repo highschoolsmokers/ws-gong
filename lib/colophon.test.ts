@@ -1,12 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import pkg from "../package.json" with { type: "json" };
 import { major, stack, tools } from "./colophon.ts";
 
-const pkg = JSON.parse(
-  readFileSync(join(import.meta.dirname, "..", "package.json"), "utf8"),
-);
 const installed = { ...pkg.dependencies, ...pkg.devDependencies };
 const credited = [...stack, ...tools].flatMap((e) => e.packages);
 

@@ -13,9 +13,11 @@ const frontmatterSchema = z
     author: z.string().min(1),
     finished: z.union([z.literal("reading"), day]),
     rating: z.coerce.number().int().min(1).max(5).optional(),
+    // Stored without dashes, as covers and structured data want it.
     isbn: z
       .string()
       .regex(/^[\dX-]{10,17}$/)
+      .transform((s) => s.replaceAll("-", ""))
       .optional(),
     note: z.string().min(1).optional(),
     link: z.url().optional(),

@@ -13,10 +13,9 @@ mkdirSync(COVERS_DIR, { recursive: true });
 for (const b of loadBooks()) {
   const dest = join(COVERS_DIR, `${b.slug}.jpg`);
   if (!b.isbn || existsSync(dest)) continue;
-  const isbn = b.isbn.replaceAll("-", "");
   // default=false makes a missing cover a 404 instead of a blank image.
   const res = await fetch(
-    `https://covers.openlibrary.org/b/isbn/${isbn}-L.jpg?default=false`,
+    `https://covers.openlibrary.org/b/isbn/${b.isbn}-L.jpg?default=false`,
     { signal: AbortSignal.timeout(15_000) },
   );
   if (!res.ok) {

@@ -18,8 +18,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { siteContentSchema } from "../lib/site/content-schema.ts";
-import { PDFS } from "../lib/site/resume.ts";
+import { PDFS, siteContentSchema } from "../lib/site/schema.ts";
 
 const args = new Set(process.argv.slice(2));
 const root = resolve(import.meta.dirname, "..");
@@ -28,6 +27,8 @@ const src = join(cvs, "private", "out", "web");
 const dest = join(root, "content", "site.json");
 const git = (...a: string[]) =>
   execFileSync("git", a, { cwd: root, encoding: "utf8" }).trim();
+const run = (cmd: string, args: string[], cwd = root) =>
+  execFileSync(cmd, args, { cwd, stdio: "inherit" });
 
 function fail(message: string): never {
   console.error(`sync: ${message}`);
@@ -49,7 +50,7 @@ if (!args.has("--no-build")) {
     ...(args.has("--no-pdf") ? ["--no-pdf"] : []),
   ];
   try {
-    execFileSync(python, build, { cwd: cvs, stdio: "inherit" });
+    run(python, build, cvs);
   } catch {
     fail(`resumekit web failed in ${cvs}`);
   }
@@ -66,11 +67,7 @@ const text = JSON.stringify(parsed.data, null, 2) + "\n";
 const changed = (existsSync(dest) ? readFileSync(dest, "utf8") : "") !== text;
 writeFileSync(dest, text);
 console.log(`content/site.json: ${changed ? "updated" : "unchanged"}`);
-if (changed)
-  execFileSync("git", ["diff", "--no-color", "--", dest], {
-    cwd: root,
-    stdio: "inherit",
-  });
+if (changed) run("git", ["diff", "--no-color", "--", dest]);
 
 // 3. PDFs: resume.pdf → PDFS.resume, cv.pdf → PDFS.cv.
 if (!args.has("--no-pdf")) {
@@ -103,21 +100,14 @@ if (args.has("--pr")) {
   git("switch", "-c", branch);
   git("add", dest);
   git("commit", "-m", "chore(content): sync from the résumé master");
-  execFileSync("git", ["push", "-u", "origin", branch], {
-    cwd: root,
-    stdio: "inherit",
-  });
-  execFileSync(
-    "gh",
-    [
-      "pr",
-      "create",
-      "--fill",
-      "--base",
-      "main",
-      "--body",
-      "Synced by `pnpm sync --pr` from the résumé master: copy and links (`content/site.json`). The PDFs were uploaded during the sync. Merging deploys.",
-    ],
-    { cwd: root, stdio: "inherit" },
-  );
+  run("git", ["push", "-u", "origin", branch]);
+  run("gh", [
+    "pr",
+    "create",
+    "--fill",
+    "--base",
+    "main",
+    "--body",
+    "Synced by `pnpm sync --pr` from the résumé master: copy and links (`content/site.json`). The PDFs were uploaded during the sync. Merging deploys.",
+  ]);
 }

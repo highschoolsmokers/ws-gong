@@ -1,97 +1,102 @@
+import { test } from "@playwright/test";
 import { ImapFlow } from "imapflow";
 
-const E2E_FOLDER = "E2E";
+// Mail tests (@smtp, @infra): their env checks and the inbox they watch.
 
-const IMAP_CONFIG = {
+/** Skip without the variable locally; fail in CI, so a missing secret can't pass green. */
+export function requireEnv(name: string): void {
+  if (process.env[name]) return;
+  if (process.env.CI)
+    throw new Error(
+      `${name} must be set in CI: check the workflow env and repo secret.`,
+    );
+  test.skip(true, `${name} not set (local dev)`);
+}
+
+const FOLDER = "E2E";
+const config = {
   host: "imap.mail.me.com",
   port: 993,
   secure: true,
+  // The form delivers to CONTACT_EMAIL, so that is the inbox to watch.
   auth: {
-    // The form delivers to CONTACT_EMAIL, so that is the inbox to watch.
     user: process.env.IMAP_USER ?? process.env.CONTACT_EMAIL ?? "",
     pass: process.env.IMAP_PASS ?? "",
   },
   logger: false as const,
 };
 
-/**
- * Ensure the E2E mailbox folder exists, creating it if needed.
- */
-async function ensureFolder(client: ImapFlow): Promise<void> {
-  const mailboxes = await client.list();
-  const exists = mailboxes.some(
-    (m) => m.path === E2E_FOLDER || m.name === E2E_FOLDER,
-  );
-  if (!exists) {
-    await client.mailboxCreate(E2E_FOLDER);
+// Connect, make sure the E2E folder exists, lock `box`, run, clean up.
+async function withMailbox<T>(box: string, fn: (c: ImapFlow) => Promise<T>) {
+  const client = new ImapFlow(config);
+  await client.connect();
+  try {
+    const boxes = await client.list();
+    if (!boxes.some((m) => m.path === FOLDER || m.name === FOLDER))
+      await client.mailboxCreate(FOLDER);
+    const lock = await client.getMailboxLock(box);
+    try {
+      return await fn(client);
+    } finally {
+      lock.release();
+    }
+  } finally {
+    await client.logout();
   }
 }
 
-/**
- * Search iCloud INBOX for an email matching the given subject substring.
- * When found, moves it to the E2E folder to keep INBOX clean.
- * Retries up to `maxRetries` times with `delayMs` between attempts to
- * allow for delivery lag.
- */
+type Received = { subject: string; attachments: string[] };
+
+/** Wait for a message whose subject contains `query`; move matches out of INBOX. */
 export async function waitForEmail(
-  subjectQuery: string,
+  query: string,
   { maxRetries = 20, delayMs = 5000 } = {},
-): Promise<string | null> {
+): Promise<Received | null> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    const client = new ImapFlow(IMAP_CONFIG);
     try {
-      await client.connect();
-      await ensureFolder(client);
-
-      const lock = await client.getMailboxLock("INBOX");
-      try {
-        const uids = await client.search({ subject: subjectQuery });
-        if (Array.isArray(uids) && uids.length > 0) {
-          const msg = await client.fetchOne(uids[uids.length - 1], {
-            envelope: true,
-          });
-
-          // Move all matching emails to E2E folder
-          await client.messageMove(uids, E2E_FOLDER);
-
-          if (msg && msg.envelope) return msg.envelope.subject ?? "";
-        }
-      } finally {
-        lock.release();
-      }
-      await client.logout();
+      const subject = await withMailbox("INBOX", async (c) => {
+        const uids = await c.search({ subject: query });
+        if (!uids || !uids.length) return null;
+        const msg = await c.fetchOne(uids[uids.length - 1], {
+          envelope: true,
+          bodyStructure: true,
+        });
+        await c.messageMove(uids, FOLDER);
+        if (!msg) return null;
+        // Every attachment's filename, from the message's MIME tree.
+        type Part = {
+          dispositionParameters?: { filename?: string };
+          childNodes?: Part[];
+        };
+        const names = (p?: Part): string[] =>
+          p
+            ? [
+                p.dispositionParameters?.filename ?? [],
+                ...(p.childNodes ?? []).flatMap(names),
+              ].flat()
+            : [];
+        return {
+          subject: msg.envelope?.subject ?? "",
+          attachments: names(msg.bodyStructure as Part),
+        };
+      });
+      if (subject !== null) return subject;
     } catch {
-      // connection error — retry
+      // Connection error: retry.
     }
-
-    if (attempt < maxRetries) {
-      await new Promise((r) => setTimeout(r, delayMs));
-    }
+    if (attempt < maxRetries) await new Promise((r) => setTimeout(r, delayMs));
   }
   return null;
 }
 
-/**
- * Delete all emails whose subject contains the given query string
- * from the E2E folder.
- */
-export async function deleteEmails(subjectQuery: string): Promise<void> {
-  const client = new ImapFlow(IMAP_CONFIG);
+/** Delete the E2E folder's messages whose subject contains `query`. */
+export async function deleteEmails(query: string): Promise<void> {
   try {
-    await client.connect();
-    await ensureFolder(client);
-
-    const lock = await client.getMailboxLock(E2E_FOLDER);
-    try {
-      const uids = await client.search({ subject: subjectQuery });
-      if (Array.isArray(uids) && uids.length > 0) {
-        await client.messageDelete(uids);
-      }
-    } finally {
-      lock.release();
-    }
-    await client.logout();
+    await withMailbox(FOLDER, async (c) => {
+      const uids = await c.search({ subject: query });
+      if (uids && uids.length) await c.messageDelete(uids);
+    });
   } catch {
-    // ignore cleanup errors
+    // Cleanup is best-effort.
   }
 }
