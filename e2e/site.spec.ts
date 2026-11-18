@@ -164,6 +164,19 @@ test.describe("Inner pages", () => {
     await expect(page.locator("footer")).not.toBeAttached();
   });
 
+  test("/links leads with the latest story (and post, when Substack answers)", async ({
+    page,
+  }) => {
+    await page.goto("/links");
+    const latest = page.locator("section", {
+      has: page.getByRole("heading", { name: "Latest" }),
+    });
+    await expect(latest).toContainText(site.published[0].title);
+    // Latest comes before the profile links.
+    const headings = await page.locator("main h2, h2").allTextContents();
+    expect(headings.indexOf("Latest")).toBeLessThan(headings.indexOf("Links"));
+  });
+
   test("404 page offers a way home", async ({ page }) => {
     await page.goto("/no-such-page");
     await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
