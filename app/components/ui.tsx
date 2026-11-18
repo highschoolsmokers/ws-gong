@@ -4,6 +4,13 @@ import type { ReactNode } from "react";
 
 export const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 
+export const JsonLd = ({ data }: { data: object }) => (
+  <script
+    type="application/ld+json"
+    dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+  />
+);
+
 export function PageTitle({ children }: { children: ReactNode }) {
   return (
     <h1 className="swiss-display pb-10 text-[2.5rem] md:text-[3.5rem]">

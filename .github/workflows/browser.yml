@@ -35,6 +35,9 @@ jobs:
     env:
       # Set only for a deployed run; otherwise Playwright serves the build.
       BASE_URL: ${{ inputs.base_url }}
+      # The local build reads e2e/fixtures/reading so the reading pages are
+      # tested; a deployed run sees the real log. Must match at build and test.
+      READING_FIXTURES: ${{ !inputs.base_url && '1' || '' }}
     steps:
       - uses: actions/checkout@v4
 

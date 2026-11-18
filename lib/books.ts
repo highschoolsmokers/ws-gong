@@ -31,7 +31,8 @@ export type Book = z.infer<typeof frontmatterSchema> & {
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-// Flat `key: value` frontmatter between --- fences; quotes are optional.
+// Flat `key: value` frontmatter between --- fences; quotes are optional, and
+// ` # …` ends an unquoted value (URL fragments have no space before the #).
 export function parseBook(slug: string, text: string): Book {
   if (!SLUG.test(slug)) throw new Error(`${slug}.md: slug must be kebab-case`);
   const m = /^---\n([\s\S]*?)\n---\n?([\s\S]*)$/.exec(text);
@@ -43,8 +44,10 @@ export function parseBook(slug: string, text: string): Book {
       .map((l) => {
         const i = l.indexOf(":");
         if (i < 0) throw new Error(`${slug}.md: bad frontmatter line ${l}`);
-        const value = l.slice(i + 1).trim();
-        return [l.slice(0, i).trim(), value.replace(/^(["'])(.*)\1$/, "$2")];
+        const raw = l.slice(i + 1).trim();
+        const quoted = /^(["'])(.*?)\1(?:\s+#.*)?$/.exec(raw);
+        const value = quoted ? quoted[2] : raw.replace(/\s+#.*$/, "");
+        return [l.slice(0, i).trim(), value];
       }),
   );
   const parsed = frontmatterSchema.safeParse(fields);
@@ -53,16 +56,16 @@ export function parseBook(slug: string, text: string): Book {
   return { ...parsed.data, slug, review: m[2].trim() };
 }
 
-// Every .md but README.md; a malformed file fails the build.
+// Every .md but README.md; a malformed file fails the build. The e2e build
+// sets READING_FIXTURES to read e2e/fixtures/reading instead, so the reading
+// pages are tested while the real log is empty; production never sets it.
 export function loadBooks(): Book[] {
-  return readdirSync(join(process.cwd(), "content", "reading"))
+  const dir = process.env.READING_FIXTURES
+    ? join(process.cwd(), "e2e", "fixtures", "reading")
+    : join(process.cwd(), "content", "reading");
+  return readdirSync(dir)
     .filter((f) => f.endsWith(".md") && f !== "README.md")
-    .map((f) =>
-      parseBook(
-        f.slice(0, -3),
-        readFileSync(join(process.cwd(), "content", "reading", f), "utf8"),
-      ),
-    );
+    .map((f) => parseBook(f.slice(0, -3), readFileSync(join(dir, f), "utf8")));
 }
 
 // Currently reading first, then finished, newest first; ties by title.

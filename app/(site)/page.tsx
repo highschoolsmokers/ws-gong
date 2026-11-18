@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Row, Rows, Section, ext } from "@/app/components/ui";
+import { JsonLd, Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
 import { bookHref, bookMeta, orderedBooks } from "@/lib/books";
 import { profiles, site, SITE_URL } from "@/lib/site/content";
@@ -39,10 +39,7 @@ export default async function Home() {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectsLd) }}
-      />
+      <JsonLd data={projectsLd} />
 
       <section aria-label="Statement" className="statement swiss-grid">
         <p className="col-span-12 md:col-span-10">
@@ -127,7 +124,7 @@ export default async function Home() {
               />
               <button
                 type="submit"
-                className="col-span-3 border border-foreground md:col-span-2 px-5 py-2 font-medium transition-colors hover:bg-foreground hover:text-background"
+                className="col-span-3 justify-self-start border border-foreground px-(--gutter) py-[calc(var(--gutter)/4)] font-medium transition-colors hover:bg-foreground hover:text-background md:col-span-2"
               >
                 Subscribe
               </button>
