@@ -32,7 +32,8 @@ const redirects = Object.entries({
   "/about": "/#about",
   "/narratives": "/#writing",
   ...(orderedBooks.length ? {} : { "/reading": "/" }),
-  "/resume": "/#resume",
+  "/cv": "/#cv",
+  "/resume": "/#cv",
   "/contact": "/#contact",
   "/residencies": "/slushpile",
 }).map(([source, destination]) => ({ source, destination, permanent: true }));

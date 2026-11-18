@@ -164,10 +164,10 @@ export default async function Home() {
         </Rows>
       </Section>
 
-      <Section id="resume" index={++n} title="Résumé">
+      <Section id="cv" index={++n} title="CV">
         <Rows>
-          <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
           <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
+          <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
           {profiles.map((p) => (
             <Row key={p.label} href={p.url} title={p.label} />
           ))}

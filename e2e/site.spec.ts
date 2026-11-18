@@ -21,7 +21,7 @@ test.describe("Home", () => {
     await expect(
       about.getByRole("img", { name: /portrait of W\.S\. Gong/i }),
     ).toBeVisible();
-    for (const id of ["code", "writing", "resume", "contact"])
+    for (const id of ["code", "writing", "cv", "contact"])
       await expect(page.locator(`section#${id} h2`)).toBeVisible();
     await expect(
       page.locator('section#code a[href^="/fabulosa-books"]'),
@@ -40,7 +40,7 @@ test.describe("Home", () => {
       ["Code", "/#code"],
       ["About", "/#about"],
       ["Writing", "/#writing"],
-      ["Résumé", "/#resume"],
+      ["CV", "/#cv"],
       ["Contact", "/#contact"],
       ...(orderedBooks.length ? [["Reading", "/#reading"]] : []),
     ];
@@ -59,8 +59,15 @@ test.describe("Home", () => {
     else await expect(slush).not.toBeAttached();
   });
 
-  test("résumé links and Substack subscribe form", async ({ page }) => {
-    const resume = page.locator("section#resume");
+  test("CV section: CV first, then résumé and profiles; Substack form", async ({
+    page,
+  }) => {
+    const resume = page.locator("section#cv");
+    const rows = await resume.locator("li").allTextContents();
+    expect(rows.slice(0, 2).map((r) => r.trim())).toEqual([
+      "CV (PDF)",
+      "Résumé (PDF)",
+    ]);
     await expect(
       resume.getByRole("link", { name: /résumé \(pdf\)/i }),
     ).toHaveAttribute("href", `/${PDFS.resume}`);

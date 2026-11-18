@@ -28,8 +28,8 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
 | sitemap, robots, manifest, OG image                | `app/*.ts(x)`            | Standard metadata routes                                                      |
 
 Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#code`;
-`/about` → `/#about`; `/narratives` → `/#writing`; `/resume`, `/contact` →
-their anchors; `/reading` → `/` while the reading log is empty;
+`/about` → `/#about`; `/narratives` → `/#writing`; `/cv` and `/resume` →
+`/#cv`; `/contact` → `/#contact`; `/reading` → `/` while the reading log is empty;
 `/residencies` → `/slushpile`. The `/reading` redirect is decided when
 `next.config.ts` loads, so restart `pnpm dev` after adding the first book.
 
@@ -73,7 +73,7 @@ no gap in the numbering.
   and nav entry hidden while the log is empty.
 - **Code** `#code` — one list, `lib/projects.ts` in array order
   (hand-maintained); emits an `ItemList` JSON-LD.
-- **Résumé** `#resume` — résumé PDF, CV PDF, then the profiles (LinkedIn,
+- **CV** `#cv` — CV PDF, résumé PDF, then the profiles (LinkedIn,
   GitHub, Substack, Instagram).
 - **Contact** `#contact` — the contact form (§5).
 
@@ -84,7 +84,7 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 
 - `content/site.json` (§14), parsed at build time by `lib/site/content.ts`
   against `lib/site/content-schema.ts`. It also exports `profiles` (LinkedIn,
-  GitHub, Substack, Instagram), the one list behind the Résumé rows, the
+  GitHub, Substack, Instagram), the one list behind the CV section's rows, the
   `/links` page, and the Person JSON-LD `sameAs`. Copy that `site.json`
   doesn't carry lives beside it: `JOB_TITLE` and `KNOWS_ABOUT` (Person
   JSON-LD) and `FEED_DESCRIPTION` (the RSS channel); keep them in step with
