@@ -153,6 +153,9 @@ export default async function Home() {
             </Row>
           ))}
         </Rows>
+        <a href={site.links.github} className="block font-medium" {...ext}>
+          More on GitHub →
+        </a>
       </Section>
 
       <Section id="cv" index={++n} title="CV">

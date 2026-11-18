@@ -23,6 +23,11 @@ test.describe("Home", () => {
     await expect(
       page.locator('section#code a[href^="/fabulosa-books"]'),
     ).toContainText(/Fabulosa Books/i);
+    await expect(
+      page
+        .locator("section#code")
+        .getByRole("link", { name: /More on GitHub/ }),
+    ).toHaveAttribute("href", site.links.github);
   });
 
   test("masthead is the h1; nav anchors land on real sections", async ({

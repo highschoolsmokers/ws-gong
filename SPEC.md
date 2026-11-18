@@ -72,7 +72,8 @@ feeds the meta description and share text (§7).
   linking to its review (or its `link`), then a link to `/reading`; section
   and nav entry hidden while the log is empty.
 - **Code** `#code` — one list, `lib/projects.ts` in array order
-  (hand-maintained); emits an `ItemList` JSON-LD.
+  (hand-maintained: the projects worth showing, not every repo), then a
+  "More on GitHub" link for the rest; emits an `ItemList` JSON-LD.
 - **CV** `#cv` — CV PDF, résumé PDF, then the profiles (LinkedIn,
   GitHub, Substack, Instagram).
 - **Contact** `#contact` — the contact form (§5).

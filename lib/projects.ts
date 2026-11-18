@@ -8,11 +8,11 @@ export type Project = {
 // Shown in this order on the home page.
 export const projects: Project[] = [
   {
-    href: "https://github.com/highschoolsmokers/colophon-mcp",
-    title: "Colophon",
+    href: "https://github.com/highschoolsmokers/second-reader",
+    title: "Second Reader",
     description:
-      "Dual-interface book search engine — an MCP server for Claude Code and a standalone Express web app. Aggregates Open Library, Google Books, and price comparison sources. Dockerized for both entry points.",
-    stack: ["TypeScript", "MCP SDK", "Express", "Docker"],
+      "MCP server that grounds academic literary criticism in verifiable sources. Cross-checks claims against an indexed corpus to prevent hallucinated citations, fabricated quotations, and distorted arguments.",
+    stack: ["TypeScript", "MCP SDK", "Neon", "pgvector"],
   },
   {
     href: "https://github.com/highschoolsmokers/historical-research-agent",
@@ -36,13 +36,6 @@ export const projects: Project[] = [
     stack: ["TypeScript", "MCP SDK", "Express"],
   },
   {
-    href: "https://github.com/highschoolsmokers/second-reader",
-    title: "Second Reader",
-    description:
-      "MCP server that grounds academic literary criticism in verifiable sources. Cross-checks claims against an indexed corpus to prevent hallucinated citations, fabricated quotations, and distorted arguments.",
-    stack: ["TypeScript", "MCP SDK", "Neon", "pgvector"],
-  },
-  {
     href: "https://github.com/highschoolsmokers/lit-research-plugin",
     title: "Literary Research Plugin",
     description:
@@ -57,25 +50,11 @@ export const projects: Project[] = [
     stack: ["JavaScript", "Vercel Cron", "Upstash Redis", "Resend"],
   },
   {
-    href: "https://github.com/highschoolsmokers/writer-utilities",
-    title: "Writer Utilities",
-    description:
-      "Polyglot monorepo of scripts and small apps — including a Google Docs to Scrivener converter and CLI tools for manuscript management.",
-    stack: ["TypeScript", "Python", "Google Docs API"],
-  },
-  {
     href: "https://github.com/highschoolsmokers/ws-gong",
     title: "ws-gong.com",
     description:
       "This portfolio site. Next.js 16 App Router, Tailwind, server components, RSS feed, and a Swiss-typography design system. Sentry, Vercel Analytics, Playwright across three browsers.",
     stack: ["Next.js", "TypeScript", "Tailwind"],
-  },
-  {
-    href: "https://github.com/highschoolsmokers/swiss-design-workbench",
-    title: "Swiss Design Workbench",
-    description:
-      "A working studio for design in the Swiss tradition — grid, type, and objectivity applied to web and print. Every piece reads from a single token system; vanilla HTML and hand-authored SVG with togglable grid and baseline overlays.",
-    stack: ["Vanilla HTML/CSS", "Vite", "SVG"],
   },
   {
     href: "/fabulosa-books",
