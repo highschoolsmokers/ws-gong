@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import portrait from "@/app/(site)/portrait.png";
 import { Icon } from "@/app/components/icons";
 import SubstackForm from "@/app/components/SubstackForm";
 import { Row, Rows, Section } from "@/app/components/ui";
@@ -28,9 +30,20 @@ export default async function Links() {
   const story = site.published[0];
   return (
     <div className="swiss-container pb-24">
-      <h1 className="site-header swiss-display text-3xl">
-        <Link href="/">W.S. Gong</Link>
-      </h1>
+      {/* The portrait matches the Instagram profile picture, so visitors know
+          they're in the right place. Square, not a circle (§6.1 bans curved corners), on grid columns, with the name beside it. */}
+      <div className="site-header swiss-grid items-end">
+        <Image
+          src={portrait}
+          alt="Illustrated portrait of W.S. Gong"
+          sizes="(min-width: 768px) 10rem, 25vw"
+          className="col-span-4 aspect-square h-auto w-full object-cover object-top md:col-span-2"
+          priority
+        />
+        <h1 className="col-span-8 swiss-display text-3xl md:col-span-10">
+          <Link href="/">W.S. Gong</Link>
+        </h1>
+      </div>
       <Section title="Latest">
         <Rows>
           {post && (

@@ -40,7 +40,8 @@ column-5 line, and the theme toggle on the column-11 line. The masthead is
 the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
 inside the same layout.
 
-`/links` exists for the Instagram bio link: a **Latest** section (the newest
+`/links` exists for the Instagram bio link: the portrait (square, matching the
+Instagram profile picture) beside the name, a **Latest** section (the newest
 Substack post, hidden when the fetch fails, the first Fiction credit, and
 the Substack subscribe form, shared with the home page as
 `app/components/SubstackForm.tsx`),

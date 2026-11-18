@@ -157,6 +157,9 @@ test.describe("Inner pages", () => {
     const h1 = page.getByRole("heading", { level: 1 });
     await expect(h1).toHaveText("W.S. Gong");
     await expect(h1.getByRole("link")).toHaveAttribute("href", "/");
+    await expect(
+      page.getByRole("img", { name: /portrait of W\.S\. Gong/i }),
+    ).toBeVisible();
     expect(
       await page.locator("a[target='_blank']").count(),
     ).toBeGreaterThanOrEqual(5);
