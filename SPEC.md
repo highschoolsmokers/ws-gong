@@ -1,7 +1,7 @@
 # ws-gong.com — Specification
 
 The personal site of W.S. Gong. One home page holds the writing, code, CV, and
-contact form. Biographical copy syncs from the résumé master (§14). This file
+contact form. Copy, links, and PDFs sync from the résumé master (§14). This file
 is the single spec; the code must match it.
 
 ## 1. Stack
@@ -55,8 +55,8 @@ Terms, Substack (from column 5); theme toggle (column 11).
 - `/reading/<slug>`: title; author section (cover, date, rating, review;
   "Copy for Goodreads" in development only); Also on (when set); back link.
 - `/links`: square portrait beside the name; Latest (newest Substack post,
-  newest fiction credit, subscribe form); Links (main site first, then
-  profiles without Instagram, then Fabulosa Books).
+  newest fiction credit, subscribe form); Links (main site, then every master
+  link except Instagram, in master order).
 
 **Tutorial.** Plain HTML. Loads only self-hosted assets: no external fonts or
 scripts. Code highlighting is baked into the HTML by `pnpm
@@ -77,7 +77,8 @@ from 00 with no gaps when one is hidden.
 - **Reading**: up to five books, current first, each linking to its review or
   link; then a link to `/reading`. Hidden while the log is empty.
 - **Code**: hand-ordered list of selected projects; then "More on GitHub".
-- **CV**: CV, résumé, LinkedIn, Instagram.
+- **CV**: CV, résumé, then every master link not shown elsewhere on the page
+  (GitHub is under Code; Substack is in Writing and the footer).
 - **Contact**: the form (§5).
 
 The statement is not shown; it feeds the description and share text (§7).
@@ -85,9 +86,12 @@ The statement is not shown; it feeds the description and share text (§7).
 ## 4. Content sources
 
 - **Site copy**: `content/site.json` (§14): statement, bio, fiction credits,
-  profile links. Validated at build. Copy it lacks (job title, topics, feed
-  description) sits beside it and tracks the statement. One profile list feeds
-  the CV section, `/links`, and the Person structured data.
+  and links. Validated at build. Copy it lacks (job title, topics, feed
+  description) sits beside it and tracks the statement.
+- **Links**: every link the site shows, as label and URL, in the master's
+  order. They feed the home page, `/links`, and the Person structured data;
+  the Substack link also sets the feed and subscribe URLs. GitHub and Substack
+  are required. A label without an icon gets a generic one.
 - **Projects**: `lib/projects.ts`: href, title, description, stack. Shown in
   order.
 - **Reading log**: one Markdown file per book in `content/reading/` (format
@@ -177,7 +181,7 @@ client SDK.
 | `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                       |
 | `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                     |
 | `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                              |
-| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync:resume`, local only; dir defaults to `../resumes-cvs`         |
+| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync`, local only; dir defaults to `../resumes-cvs`                |
 | `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                        |
 | `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                     |
 | `MAIL_E2E`                                                          | Opt in to mail-sending tests                                             |
@@ -198,7 +202,7 @@ Remove the stale host variables from the old residency pipeline
 - `pnpm test:e2e`: everything in Chromium; tests tagged `@cross` also in
   Firefox and WebKit. Locally: `READING_FIXTURES=1 pnpm build &&
 READING_FIXTURES=1 pnpm test:e2e`.
-- `pnpm sync:resume` (§14), `pnpm covers` (§4), `pnpm highlight:tutorial`
+- `pnpm sync` (§14), `pnpm covers` (§4), `pnpm highlight:tutorial`
   (§2).
 - CI: lint, typecheck, unit tests, format check, build, dependency audit
   (high). The end-to-end suite runs against a production build on every PR
@@ -222,7 +226,7 @@ lib/               projects, books, colophon, form token, review, substack,
                    upload, site/ (content, schema, env, PDFs), tests
 content/           site.json (§14), reading/ (§4)
 public/            fabulosa-books/, covers/, icons
-scripts/           sync-resume, fetch-covers, highlight-tutorial
+scripts/           sync, fetch-covers, highlight-tutorial
 e2e/               specs, helpers, fixtures/reading/
 ```
 
@@ -235,6 +239,9 @@ Each holds on every change; the parenthesis names what enforces it.
 - **Content has one source.** Copy with a source (`site.json`, the reading
   log, Substack, the manifest) is read from it, never retyped in a page or
   test. (Review; tests read the same sources.)
+- **Links come from the master.** No link is typed into code; every master
+  link appears on the home page and on `/links` (Instagram excepted). (Drift
+  guards; end-to-end tests.)
 - **No personal data in git.** No email in `site.json`; no résumé documents.
   (Unit test; ignore rules.)
 - **Self-hosted by default.** A new external origin needs a content-policy
@@ -265,6 +272,8 @@ Each holds on every change; the parenthesis names what enforces it.
 - §10 scripts: every package script is named; every named one exists.
 - § references: every `§` in code and spec has a heading.
 - §11 layout: every listed path exists; every top-level folder is listed.
+- Links: no `site.json` link typed into `app/` or `lib/` (project repo URLs
+  excepted).
 
 Claims it can't check (copy, design intent) are covered by §6.3 and `/audit`.
 
@@ -298,14 +307,20 @@ no email in `site.json`) and a lint rule (`SLUSHPILE_URL` read in one place).
 
 ## 14. Résumé sync and publishing
 
-Statement, bio, fiction credits, and LinkedIn and GitHub links come from the
-master in resumes-cvs. A forthcoming credit is written `*Venue*, forthcoming.`
+The master in resumes-cvs is the source for the statement, bio, fiction
+credits, links, and both PDFs. New facts reach it through its update
+interview, which ends by reminding the user to sync; Substack posts need
+nothing (§4). A forthcoming credit is written `*Venue*, forthcoming.`; links
+are `- Label: URL` under Website → `### Links {#site-links}`.
 
-1. In resumes-cvs, `.venv/bin/python -m resumekit web` writes `site.json`,
-   `resume.pdf`, and `cv.pdf` (public sections only) to `private/out/web/`.
-   It refuses any email address or guard error.
-2. Here, `pnpm sync:resume` validates and writes `content/site.json`, prints
-   the diff, and uploads both PDFs to their fixed paths (`--no-pdf` skips
-   them). It never commits or deploys.
-3. Review, commit, open a PR. Merging to `main` deploys; `vercel deploy
---prod` is the fallback.
+One command, `pnpm sync`, does everything:
+
+1. Runs `resumekit web` in resumes-cvs, which writes `site.json`, `resume.pdf`,
+   and `cv.pdf` (public sections only) to `private/out/web/` and refuses any
+   email address or guard error.
+2. Validates and writes `content/site.json`; prints the diff.
+3. Uploads both PDFs to their fixed paths.
+4. With `--pr`, commits `content/site.json` on a new branch and opens a PR.
+   Merging deploys; `vercel deploy --prod` is the fallback.
+
+`--no-pdf` skips the PDFs; `--no-build` reuses the last build.

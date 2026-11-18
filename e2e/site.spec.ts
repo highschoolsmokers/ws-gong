@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { stack, tools } from "../lib/colophon";
+import { ELSEWHERE_ON_HOME, linkUrl } from "../lib/site/content-schema";
 import { PDFS } from "../lib/site/resume";
 import { tabTo } from "./helpers/contact-form";
 import { orderedBooks, site, slushpileConfigured } from "./helpers/constants";
@@ -27,7 +28,7 @@ test.describe("Home", () => {
       page
         .locator("section#code")
         .getByRole("link", { name: /More on GitHub/ }),
-    ).toHaveAttribute("href", site.links.github);
+    ).toHaveAttribute("href", linkUrl(site.links, "GitHub"));
   });
 
   test("masthead is the h1; nav anchors land on real sections", async ({
@@ -61,6 +62,14 @@ test.describe("Home", () => {
     else await expect(slush).not.toBeAttached();
   });
 
+  test("every master link appears on the home page", async ({ page }) => {
+    for (const { label, url } of site.links)
+      expect(
+        await page.locator(`a[href^="${url.replace(/\/$/, "")}"]`).count(),
+        `${label} is linked on /`,
+      ).toBeGreaterThan(0);
+  });
+
   test("CV section: CV first, then résumé and profiles; Substack form", async ({
     page,
   }) => {
@@ -76,9 +85,12 @@ test.describe("Home", () => {
     await expect(
       resume.getByRole("link", { name: /^cv \(pdf\)/i }),
     ).toHaveAttribute("href", `/${PDFS.cv}`);
-    await expect(
-      resume.getByRole("link", { name: /linkedin/i }),
-    ).toHaveAttribute("href", /linkedin\.com\/in\//);
+    // Every master link but those with their own place on the page, in order.
+    expect(rows.slice(2).map((r) => r.replace("↗", "").trim())).toEqual(
+      site.links
+        .filter((l) => !ELSEWHERE_ON_HOME.includes(l.label))
+        .map((l) => l.label),
+    );
 
     const form = page.getByRole("form", { name: "Subscribe on Substack" });
     await expect(form).toHaveAttribute("action", /substack\.com\/subscribe$/);
@@ -146,8 +158,8 @@ test.describe("Inner pages", () => {
     for (const { label } of [...stack, ...tools])
       await expect(page.getByText(label, { exact: true })).toBeVisible();
     await expect(
-      page.getByRole("link", { name: "github.com/highschoolsmokers/ws-gong" }),
-    ).toHaveAttribute("href", "https://github.com/highschoolsmokers/ws-gong");
+      page.getByRole("link", { name: /\/ws-gong$/ }),
+    ).toHaveAttribute("href", `${linkUrl(site.links, "GitHub")}/ws-gong`);
   });
 
   test("/links is bare: h1 home link, external cards, no chrome", async ({
@@ -171,10 +183,16 @@ test.describe("Inner pages", () => {
     const list = page.locator("section", {
       has: page.getByRole("heading", { name: "Links" }),
     });
-    await expect(list.locator("li").first()).toContainText("ws-gong.com");
-    await expect(list.locator("li").last()).toContainText("Fabulosa Books");
+    // The main site, then every master link but Instagram, in master order.
+    const labels = await list.locator("li").allTextContents();
+    expect(labels.map((l) => l.replace("↗", "").trim())).toEqual([
+      "ws-gong.comwriting, code, CV",
+      ...site.links.filter((l) => l.label !== "Instagram").map((l) => l.label),
+    ]);
     // Visitors arrive from Instagram; no link back there.
-    await expect(page.locator('a[href*="instagram.com"]')).toHaveCount(0);
+    await expect(
+      page.locator(`a[href="${linkUrl(site.links, "Instagram")}"]`),
+    ).toHaveCount(0);
   });
 
   for (const path of ["/", "/links"])

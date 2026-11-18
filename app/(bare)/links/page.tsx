@@ -20,8 +20,6 @@ export const metadata: Metadata = {
 const links = [
   { label: "ws-gong.com", url: "/", note: "writing, code, CV" },
   ...profiles.filter((p) => p.label !== "Instagram"),
-  // Last: the bookstore employer, not the author's own work.
-  { label: "Fabulosa Books", url: "https://www.fabulosabooks.com/" },
 ];
 
 export default async function Links() {
