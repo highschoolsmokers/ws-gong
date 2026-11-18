@@ -46,7 +46,8 @@ Substack post, hidden when the fetch fails, the first Fiction credit, and
 the Substack subscribe form, shared with the home page as
 `app/components/SubstackForm.tsx`),
 then a short list led by the main site ("ws-gong.com — writing, code, CV")
-and the profiles (no Instagram: visitors come from there), laid out
+then the profiles (no Instagram: visitors come from there), then Fabulosa
+Books, laid out
 with the shared `Section` and `Rows`. The site's nav, footer, and sitemap don't link to it.
 
 The Fabulosa tutorial is plain HTML under the site's CSP, so everything it

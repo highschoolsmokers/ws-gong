@@ -168,6 +168,11 @@ test.describe("Inner pages", () => {
     await expect(
       page.getByRole("link", { name: /ws-gong\.com/ }),
     ).toHaveAttribute("href", "/");
+    const list = page.locator("section", {
+      has: page.getByRole("heading", { name: "Links" }),
+    });
+    await expect(list.locator("li").first()).toContainText("ws-gong.com");
+    await expect(list.locator("li").last()).toContainText("Fabulosa Books");
     // Visitors arrive from Instagram; no link back there.
     await expect(page.locator('a[href*="instagram.com"]')).toHaveCount(0);
   });
