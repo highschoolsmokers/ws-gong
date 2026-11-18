@@ -1,10 +1,21 @@
 #!/usr/bin/env sh
-# Prevent direct pushes to main
-branch=$(git symbolic-ref --short HEAD)
-if [ "$branch" = "main" ]; then
-  echo "Direct push to main is not allowed. Use a PR."
-  exit 1
-fi
+# Git passes one line per ref being pushed on stdin:
+#   <local ref> <local sha> <remote ref> <remote sha>
+# Block anything that would update or delete main on the remote, whichever
+# branch is checked out. Pushing or deleting other branches is fine, even
+# from main.
+zero=0000000000000000000000000000000000000000
+checks=no
+while read -r local_ref local_sha remote_ref remote_sha; do
+  if [ "$remote_ref" = "refs/heads/main" ]; then
+    echo "Direct push to main is not allowed. Use a PR."
+    exit 1
+  fi
+  # Deleting a remote branch sends no code, so it needs no checks.
+  [ "$local_sha" != "$zero" ] && checks=yes
+done
 
 # Fast sanity checks; full build runs in CI.
-pnpm lint && pnpm typecheck
+if [ "$checks" = yes ]; then
+  pnpm lint && pnpm typecheck
+fi
