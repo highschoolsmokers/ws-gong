@@ -166,6 +166,25 @@ test.describe("Inner pages", () => {
     await expect(page.locator('a[href*="instagram.com"]')).toHaveCount(0);
   });
 
+  for (const path of ["/", "/links"])
+    test(`${path}: the Substack button fits its form at phone and tablet widths`, async ({
+      page,
+    }) => {
+      for (const width of [320, 768]) {
+        await page.setViewportSize({ width, height: 800 });
+        await page.goto(path);
+        const form = page.getByRole("form", { name: "Subscribe on Substack" });
+        const [f, b] = await Promise.all([
+          form.boundingBox(),
+          form.getByRole("button").boundingBox(),
+        ]);
+        expect(
+          b!.x + b!.width,
+          `button inside the form at ${width}px`,
+        ).toBeLessThanOrEqual(f!.x + f!.width + 0.5);
+      }
+    });
+
   test("/links leads with the latest story (and post, when Substack answers)", async ({
     page,
   }) => {
@@ -174,6 +193,9 @@ test.describe("Inner pages", () => {
       has: page.getByRole("heading", { name: "Latest" }),
     });
     await expect(latest).toContainText(site.published[0].title);
+    await expect(
+      latest.getByRole("form", { name: "Subscribe on Substack" }),
+    ).toHaveAttribute("action", /substack\.com\/subscribe$/);
     // Latest comes before the profile links.
     const headings = await page.locator("main h2, h2").allTextContents();
     expect(headings.indexOf("Latest")).toBeLessThan(headings.indexOf("Links"));

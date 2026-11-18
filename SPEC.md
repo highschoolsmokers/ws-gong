@@ -41,7 +41,9 @@ the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
 inside the same layout.
 
 `/links` exists for the Instagram bio link: a **Latest** section (the newest
-Substack post, hidden when the fetch fails, and the first Fiction credit),
+Substack post, hidden when the fetch fails, the first Fiction credit, and
+the Substack subscribe form, shared with the home page as
+`app/components/SubstackForm.tsx`),
 then a short list of profiles (no Instagram: visitors come from there), laid out
 with the shared `Section` and `Rows`. The site's nav, footer, and sitemap don't link to it.
 
@@ -268,7 +270,7 @@ app/(site)/        page.tsx (home), Nav, layout, ContactForm + actions, error,
                    colophon/, terms/, reading/ (index, [slug] + CopyForGoodreads),
                    portrait.png
 app/(bare)/links/  Linktree page
-app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
+app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx, SubstackForm.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
 lib/               projects, books (+ test), colophon (+ test), form-token (+ test), review,
