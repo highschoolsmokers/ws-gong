@@ -11,9 +11,10 @@ export const metadata: Metadata = {
 };
 
 // Instagram link-in-bio page (SPEC §2): the site grid without the site chrome.
+// No Instagram row: visitors are arriving from there.
 const links = [
   { label: "Fabulosa Books", url: "https://www.fabulosabooks.com/" },
-  ...profiles,
+  ...profiles.filter((p) => p.label !== "Instagram"),
 ];
 
 export default async function Links() {

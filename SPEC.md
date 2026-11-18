@@ -42,7 +42,7 @@ inside the same layout.
 
 `/links` exists for the Instagram bio link: a **Latest** section (the newest
 Substack post, hidden when the fetch fails, and the first Fiction credit),
-then a short list of profiles, for visitors arriving from Instagram, laid out
+then a short list of profiles (no Instagram: visitors come from there), laid out
 with the shared `Section` and `Rows`. The site's nav, footer, and sitemap don't link to it.
 
 The Fabulosa tutorial is plain HTML under the site's CSP, so everything it

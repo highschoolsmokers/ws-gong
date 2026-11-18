@@ -162,6 +162,8 @@ test.describe("Inner pages", () => {
     ).toBeGreaterThanOrEqual(5);
     await expect(page.locator("header")).not.toBeAttached();
     await expect(page.locator("footer")).not.toBeAttached();
+    // Visitors arrive from Instagram; no link back there.
+    await expect(page.locator('a[href*="instagram.com"]')).toHaveCount(0);
   });
 
   test("/links leads with the latest story (and post, when Substack answers)", async ({
