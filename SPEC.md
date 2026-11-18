@@ -60,8 +60,8 @@ Section 00 is fixed; the rest count up from 01, and an omitted section leaves
 no gap in the numbering. The statement (`site.statement`) isn't shown on the page; it
 feeds the meta description and share text (§7).
 
-- **00 About** `#about` — the portrait at the text block's width, directly
-  above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
+- **00 About** `#about` — the portrait (4 of the content column's 8 columns;
+  6 on phones), directly above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
 - **Writing** `#writing` — two lists, **Fiction** (credits from `site.json`)
   and **Substack** (the five latest posts; hidden when the fetch fails), then
   a Substack subscribe form. Forthcoming credits come first, with no link. Substack

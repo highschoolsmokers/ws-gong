@@ -42,18 +42,19 @@ export default async function Home() {
       <JsonLd data={projectsLd} />
 
       <Section id="about" index={0} title="About">
-        {/* The portrait spans the text block's width, directly above the bio. */}
-        <div className="max-w-prose space-y-4">
+        {/* The portrait sits above the bio, on the content column's 8 columns:
+            4 of them on desktop, 6 on phones. */}
+        <div className="grid grid-cols-8 gap-y-4 gap-x-[var(--gutter)]">
           <Image
             src={portrait}
             alt="Illustrated portrait of W.S. Gong"
-            sizes="(min-width: 768px) 40vw, 100vw"
-            className="h-auto w-full"
+            sizes="(min-width: 768px) 22rem, 75vw"
+            className="col-span-6 h-auto w-full md:col-span-4"
             // In the first viewport on most screens and the page's LCP element.
             loading="eager"
             fetchPriority="high"
           />
-          <p>{site.bio[0]}</p>
+          <p className="col-span-8 max-w-prose">{site.bio[0]}</p>
         </div>
       </Section>
 
