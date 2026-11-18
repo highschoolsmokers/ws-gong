@@ -23,6 +23,13 @@ concurrency:
 jobs:
   e2e:
     runs-on: ubuntu-24.04
+    # Playwright's image ships all three browsers and their system deps, so
+    # nothing is downloaded mid-run. Its tag must match @playwright/test.
+    # --user 1001 matches the runner's workspace owner (and Firefox refuses
+    # to run as root in another user's home).
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --user 1001
     # Hard ceilings so a hung step fails fast instead of running for an hour.
     timeout-minutes: 15
     env:
@@ -40,27 +47,6 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
         timeout-minutes: 3
-
-      - name: Playwright version
-        id: pw
-        run: echo "version=$(pnpm exec playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
-
-      - name: Cache Playwright browsers
-        id: pw-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ steps.pw.outputs.version }}
-
-      - name: Install browsers and system deps
-        if: steps.pw-cache.outputs.cache-hit != 'true'
-        timeout-minutes: 5
-        run: pnpm exec playwright install --with-deps chromium firefox webkit
-
-      - name: Install system deps (browsers cached)
-        if: steps.pw-cache.outputs.cache-hit == 'true'
-        timeout-minutes: 5
-        run: pnpm exec playwright install-deps chromium firefox webkit
 
       - name: Build
         if: ${{ !inputs.base_url }}
