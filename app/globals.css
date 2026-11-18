@@ -153,6 +153,10 @@ a.row {
   display: block;
   padding-block: 1.125rem;
 }
+/* Link-only rows (no description or meta) sit closer together. */
+.row:not(:has(.row-body, .row-meta)) {
+  padding-block: 0.625rem;
+}
 a.row:hover .row-title {
   text-decoration: underline;
 }
