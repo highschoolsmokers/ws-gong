@@ -13,7 +13,7 @@ test.describe("Page content", () => {
   }) => {
     await page.goto("/");
     const about = page.locator("section#about");
-    await expect(about).toContainText("writer, editor, and software developer");
+    await expect(about).toContainText("writer and software developer");
     await expect(
       about.getByRole("img", { name: /portrait of W\.S\. Gong/i }),
     ).toBeVisible();
