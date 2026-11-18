@@ -6,6 +6,6 @@ Vercel. [SPEC.md](SPEC.md) is the full specification.
 ```bash
 pnpm install
 pnpm dev            # http://localhost:3000
-pnpm sync:resume    # pull site copy + résumé and CV PDFs from resumes-cvs (SPEC §14)
+pnpm sync           # copy, links, résumé and CV from resumes-cvs (SPEC §14)
 vercel deploy --prod
 ```

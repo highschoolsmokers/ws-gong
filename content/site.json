@@ -25,8 +25,26 @@
       "detail": "San Francisco: Kearny Street Workshop, 2010"
     }
   ],
-  "links": {
-    "linkedin": "https://linkedin.com/in/ws-gong",
-    "github": "https://github.com/highschoolsmokers"
-  }
+  "links": [
+    {
+      "label": "LinkedIn",
+      "url": "https://linkedin.com/in/ws-gong"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/highschoolsmokers"
+    },
+    {
+      "label": "Substack",
+      "url": "https://highschoolsmokers.substack.com"
+    },
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/born.deleuze"
+    },
+    {
+      "label": "Fabulosa Books",
+      "url": "https://www.fabulosabooks.com/"
+    }
+  ]
 }

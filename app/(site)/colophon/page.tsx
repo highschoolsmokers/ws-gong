@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { PageTitle, Section, ext } from "@/app/components/ui";
 import { stack, tools } from "@/lib/colophon";
+import { site } from "@/lib/site/content";
+import { linkUrl } from "@/lib/site/content-schema";
+
+// This repo, under the master's GitHub link.
+const source = `${linkUrl(site.links, "GitHub").replace(/\/$/, "")}/ws-gong`;
 
 export const metadata: Metadata = {
   title: "Colophon",
@@ -52,12 +57,8 @@ export default function Colophon() {
       <Section title="Stack">{list(stack.map((e) => e.label))}</Section>
       <Section title="Tools">{list(tools.map((e) => e.label))}</Section>
       <Section title="Source">
-        <a
-          href="https://github.com/highschoolsmokers/ws-gong"
-          className="underline"
-          {...ext}
-        >
-          github.com/highschoolsmokers/ws-gong
+        <a href={source} className="underline" {...ext}>
+          {source.replace(/^https:\/\//, "")}
         </a>
       </Section>
     </>

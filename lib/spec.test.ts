@@ -196,3 +196,27 @@ test("§11 layout: every listed path exists, every top-level folder is listed", 
     "top-level folders §11 doesn't list",
   );
 });
+
+test("links come only from site.json: none typed into app/ or lib/", () => {
+  const { links } = JSON.parse(read("content/site.json")) as {
+    links: { url: string }[];
+  };
+  const typed = sources
+    // lib/projects.ts holds each project's own repo URL, not a profile link.
+    .filter((f) => /^(app|lib)\//.test(f) && f !== "lib/projects.ts")
+    .flatMap((f) => {
+      const text = readFileSync(join(root, f), "utf8");
+      // The URL without scheme or "www.", as code would type or display it.
+      return links
+        .map((l) =>
+          l.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""),
+        )
+        .filter((url) => text.includes(url))
+        .map((url) => `${f}: ${url}`);
+    });
+  assert.deepEqual(
+    typed,
+    [],
+    "link hosts typed into code instead of site.json",
+  );
+});

@@ -11,7 +11,7 @@
     "test:unit": "node --test --experimental-strip-types \"lib/**/*.test.ts\"",
     "test:e2e": "playwright test",
     "prepare": "husky",
-    "sync:resume": "node --env-file-if-exists=.env.local scripts/sync-resume.ts",
+    "sync": "node --env-file-if-exists=.env.local scripts/sync.ts",
     "covers": "node scripts/fetch-covers.ts",
     "highlight:tutorial": "node scripts/highlight-tutorial.ts"
   },

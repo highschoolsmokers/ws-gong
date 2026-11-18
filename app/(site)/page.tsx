@@ -4,6 +4,7 @@ import { JsonLd, Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
 import { bookHref, bookMeta, orderedBooks } from "@/lib/books";
 import { profiles, site, SITE_URL } from "@/lib/site/content";
+import { ELSEWHERE_ON_HOME, linkUrl } from "@/lib/site/content-schema";
 import { PDFS } from "@/lib/site/resume";
 import { getSubstackPosts } from "@/lib/substack";
 import Image from "next/image";
@@ -125,7 +126,11 @@ export default async function Home() {
             </Row>
           ))}
         </Rows>
-        <a href={site.links.github} className="block font-medium" {...ext}>
+        <a
+          href={linkUrl(site.links, "GitHub")}
+          className="block font-medium"
+          {...ext}
+        >
           More on GitHub →
         </a>
       </Section>
@@ -134,9 +139,13 @@ export default async function Home() {
         <Rows>
           <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
           <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
-          {profiles.map((p) => (
-            <Row key={p.label} href={p.url} title={p.label} />
-          ))}
+          {/* Every master link except those with a place of their own here:
+              GitHub (under Code) and Substack (Writing, footer). */}
+          {profiles
+            .filter((p) => !ELSEWHERE_ON_HOME.includes(p.label))
+            .map((p) => (
+              <Row key={p.label} href={p.url} title={p.label} />
+            ))}
         </Rows>
       </Section>
 
