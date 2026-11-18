@@ -162,9 +162,12 @@ export default async function Home() {
         <Rows>
           <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
           <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
-          {profiles.map((p) => (
-            <Row key={p.label} href={p.url} title={p.label} />
-          ))}
+          {/* GitHub sits under Code and Substack under Writing. */}
+          {profiles
+            .filter((p) => p.label !== "GitHub" && p.label !== "Substack")
+            .map((p) => (
+              <Row key={p.label} href={p.url} title={p.label} />
+            ))}
         </Rows>
       </Section>
 

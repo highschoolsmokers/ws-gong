@@ -66,9 +66,11 @@ test.describe("Home", () => {
   }) => {
     const resume = page.locator("section#cv");
     const rows = await resume.locator("li").allTextContents();
-    expect(rows.slice(0, 2).map((r) => r.trim())).toEqual([
+    expect(rows.map((r) => r.replace("↗", "").trim())).toEqual([
       "CV (PDF)",
       "Résumé (PDF)",
+      "LinkedIn",
+      "Instagram",
     ]);
     await expect(
       resume.getByRole("link", { name: /résumé \(pdf\)/i }),

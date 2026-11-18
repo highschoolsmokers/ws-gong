@@ -74,8 +74,8 @@ feeds the meta description and share text (§7).
 - **Code** `#code` — one list, `lib/projects.ts` in array order
   (hand-maintained: the projects worth showing, not every repo), then a
   "More on GitHub" link for the rest; emits an `ItemList` JSON-LD.
-- **CV** `#cv` — CV PDF, résumé PDF, then the profiles (LinkedIn,
-  GitHub, Substack, Instagram).
+- **CV** `#cv` — CV PDF, résumé PDF, then LinkedIn and Instagram (GitHub
+  is linked under Code, Substack under Writing and in the footer).
 - **Contact** `#contact` — the contact form (§5).
 
 All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
@@ -85,8 +85,8 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 
 - `content/site.json` (§14), parsed at build time by `lib/site/content.ts`
   against `lib/site/content-schema.ts`. It also exports `profiles` (LinkedIn,
-  GitHub, Substack, Instagram), the one list behind the CV section's rows, the
-  `/links` page, and the Person JSON-LD `sameAs`. Copy that `site.json`
+  GitHub, Substack, Instagram), the one list behind the CV section's profile
+  rows (minus GitHub and Substack), the `/links` page, and the Person JSON-LD `sameAs`. Copy that `site.json`
   doesn't carry lives beside it: `JOB_TITLE` and `KNOWS_ABOUT` (Person
   JSON-LD) and `FEED_DESCRIPTION` (the RSS channel); keep them in step with
   the statement.
