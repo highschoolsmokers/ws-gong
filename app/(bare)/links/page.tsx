@@ -60,8 +60,9 @@ export default async function Links() {
               href={l.url}
               title={
                 <span className="inline-flex items-center gap-3">
-                  <Icon name={l.label} />
+                  {/* Label first, on the column line; the icon follows it. */}
                   {l.label}
+                  <Icon name={l.label} />
                   {"note" in l && (
                     <span className="font-normal text-muted">{l.note}</span>
                   )}

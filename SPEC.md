@@ -213,7 +213,7 @@ Remove the stale host variables from the old residency pipeline
 ## 10. Scripts and tests
 
 - `pnpm dev | build | start | lint | typecheck`.
-- `pnpm test:unit`: reading log, spoilers, form token, attachment names,
+- `pnpm test:unit`: reading log, spoilers, form token, attachment limits (shared by form and server),
   colophon versus manifest, §13 pins, §6.3 static guard, §12 drift guards,
   and no client file importing server-only code.
 - `pnpm test:e2e`: everything in Chromium; tests tagged `@cross` also in
@@ -234,7 +234,8 @@ READING_FIXTURES=1 pnpm test:e2e`.
 ## 11. Layout
 
 ```
-app/(site)/        home, nav, layout, contact form and action, error,
+app/(site)/        home, layout, chrome (masthead, nav, footer), contact form
+                   and action, error,
                    colophon/, terms/, reading/
 app/(bare)/links/  /links and its icons
 app/components/    layout primitives, shared rows, theme toggle, subscribe form

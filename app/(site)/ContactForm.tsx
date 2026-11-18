@@ -11,7 +11,7 @@ import {
   MAX_FILES,
   MAX_LENGTH,
   MAX_TOTAL_BYTES,
-  isBlockedAttachmentName,
+  splitAttachments,
 } from "@/lib/upload";
 import { issueFormToken, sendMessage, type FormState } from "./actions";
 
@@ -42,22 +42,17 @@ function Form({ onReset }: { onReset: () => void }) {
 
   // Copy the FileList now: the picker's value is cleared right after this call.
   const add = (list: FileList | null) => {
-    const kept = [...files];
-    const skipped: string[] = [];
-    for (const file of Array.from(list ?? [])) {
-      const total = kept.reduce((n, f) => n + f.file.size, 0) + file.size;
-      if (
-        isBlockedAttachmentName(file.name) ||
-        kept.length >= MAX_FILES ||
-        total > MAX_TOTAL_BYTES
-      )
-        skipped.push(file.name);
-      else kept.push({ id: crypto.randomUUID(), file });
-    }
-    setFiles(kept);
+    const { kept, refused } = splitAttachments(
+      Array.from(list ?? []),
+      files.map((f) => f.file),
+    );
+    setFiles([
+      ...files,
+      ...kept.map((file) => ({ id: crypto.randomUUID(), file })),
+    ]);
     setNote(
-      skipped.length
-        ? `Not attached (type, count, or size limit): ${skipped.join(", ")}`
+      refused.length
+        ? `Not attached (type, count, or size limit): ${refused.join(", ")}`
         : "",
     );
   };

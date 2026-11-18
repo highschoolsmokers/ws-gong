@@ -30,3 +30,27 @@ export const isBlockedAttachmentName = (name: string) =>
       .split(".")
       .pop() ?? "",
   );
+
+// Split `files` into those that fit, in order, and the names of those
+// refused: a blocked type, past the count, or past the total size, counting
+// any files `already` attached. The form and the server action both use it.
+export function splitAttachments<T extends { name: string; size: number }>(
+  files: T[],
+  already: { size: number }[] = [],
+) {
+  const kept: T[] = [];
+  const refused: string[] = [];
+  let total = already.reduce((n, f) => n + f.size, 0);
+  for (const f of files)
+    if (
+      isBlockedAttachmentName(f.name) ||
+      already.length + kept.length >= MAX_FILES ||
+      total + f.size > MAX_TOTAL_BYTES
+    )
+      refused.push(f.name);
+    else {
+      kept.push(f);
+      total += f.size;
+    }
+  return { kept, refused };
+}
