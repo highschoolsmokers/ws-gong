@@ -46,7 +46,8 @@ export const FOLDED_ROUTES = [
   ["/narratives", "#writing"],
   // /reading folds to the top of home only while the log is empty.
   ...(orderedBooks.length ? [] : [["/reading", ""] as const]),
-  ["/resume", "#resume"],
+  ["/cv", "#cv"],
+  ["/resume", "#cv"],
   ["/contact", "#contact"],
 ] as const;
 

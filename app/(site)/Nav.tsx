@@ -18,7 +18,7 @@ export default function Nav({
     ["/#writing", "Writing"],
     ...(reading ? [["/#reading", "Reading"]] : []),
     ["/#code", "Code"],
-    ["/#resume", "Résumé"],
+    ["/#cv", "CV"],
     ["/#contact", "Contact"],
     ...(slushpile ? [["/slushpile", "Slushpile"]] : []),
   ];

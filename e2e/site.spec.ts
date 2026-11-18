@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { stack, tools } from "../lib/colophon";
 import { PDFS } from "../lib/site/resume";
 import { tabTo } from "./helpers/contact-form";
 import { orderedBooks, site, slushpileConfigured } from "./helpers/constants";
@@ -12,22 +13,21 @@ test.describe("Home", () => {
   });
 
   test("renders every section from content", async ({ page }) => {
-    await expect(page.getByRole("region", { name: "Statement" })).toContainText(
-      site.statement[0],
-    );
     const about = page.locator("section#about");
     await expect(about).toContainText(site.bio[0]);
     await expect(
       about.getByRole("img", { name: /portrait of W\.S\. Gong/i }),
     ).toBeVisible();
-    const now = about.getByRole("heading", { name: "Now" });
-    if (site.now) await expect(now).toBeVisible();
-    else await expect(now).not.toBeAttached();
-    for (const id of ["code", "writing", "resume", "contact"])
+    for (const id of ["code", "writing", "cv", "contact"])
       await expect(page.locator(`section#${id} h2`)).toBeVisible();
     await expect(
       page.locator('section#code a[href^="/fabulosa-books"]'),
     ).toContainText(/Fabulosa Books/i);
+    await expect(
+      page
+        .locator("section#code")
+        .getByRole("link", { name: /More on GitHub/ }),
+    ).toHaveAttribute("href", site.links.github);
   });
 
   test("masthead is the h1; nav anchors land on real sections", async ({
@@ -42,7 +42,7 @@ test.describe("Home", () => {
       ["Code", "/#code"],
       ["About", "/#about"],
       ["Writing", "/#writing"],
-      ["Résumé", "/#resume"],
+      ["CV", "/#cv"],
       ["Contact", "/#contact"],
       ...(orderedBooks.length ? [["Reading", "/#reading"]] : []),
     ];
@@ -61,8 +61,15 @@ test.describe("Home", () => {
     else await expect(slush).not.toBeAttached();
   });
 
-  test("résumé links and newsletter form", async ({ page }) => {
-    const resume = page.locator("section#resume");
+  test("CV section: CV first, then résumé and profiles; Substack form", async ({
+    page,
+  }) => {
+    const resume = page.locator("section#cv");
+    const rows = await resume.locator("li").allTextContents();
+    expect(rows.slice(0, 2).map((r) => r.trim())).toEqual([
+      "CV (PDF)",
+      "Résumé (PDF)",
+    ]);
     await expect(
       resume.getByRole("link", { name: /résumé \(pdf\)/i }),
     ).toHaveAttribute("href", `/${PDFS.resume}`);
@@ -100,9 +107,7 @@ test.describe("Inner pages", () => {
     ).toHaveAttribute("href", "/");
     const footer = page.locator("footer");
     await expect(footer).toContainText(/© \d{4} W\.S\. Gong/);
-    await expect(
-      footer.getByRole("link", { name: /subscribe/i }),
-    ).toBeAttached();
+    await expect(footer.getByRole("link", { name: "Substack" })).toBeAttached();
     await expect(
       page.getByRole("link", { name: /skip to content/i }),
     ).toHaveAttribute("href", "#main");
@@ -110,8 +115,21 @@ test.describe("Inner pages", () => {
   });
 
   for (const [path, headings] of [
-    ["/terms", ["Overview", "DMCA Policy", "AI / ML Training"]],
-    ["/colophon", ["Typography", "Design", "Stack", "Tools", "Source"]],
+    [
+      "/terms",
+      [
+        "Overview",
+        "What You May Do",
+        "Privacy",
+        "Third-Party Content",
+        "DMCA Policy",
+        "AI / ML Training",
+      ],
+    ],
+    [
+      "/colophon",
+      ["Typography", "Design", "Content", "Stack", "Tools", "Source"],
+    ],
   ] as const)
     test(`${path} has its sections`, async ({ page }) => {
       await page.goto(path);
@@ -120,6 +138,17 @@ test.describe("Inner pages", () => {
           page.getByRole("heading", { name, exact: true }),
         ).toBeVisible();
     });
+
+  test("/colophon lists the stack and tools from lib/colophon", async ({
+    page,
+  }) => {
+    await page.goto("/colophon");
+    for (const { label } of [...stack, ...tools])
+      await expect(page.getByText(label, { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("link", { name: "github.com/highschoolsmokers/ws-gong" }),
+    ).toHaveAttribute("href", "https://github.com/highschoolsmokers/ws-gong");
+  });
 
   test("/links is bare: h1 home link, external cards, no chrome", async ({
     page,

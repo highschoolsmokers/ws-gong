@@ -13,7 +13,7 @@ test("removed surfaces stay removed", () => {
   for (const p of [
     // Section pages folded into the one-page home; next.config.ts redirects
     // them. /reading came back as the review index (§13).
-    ...["about", "code", "narratives", "resume", "contact"].map(
+    ...["about", "code", "narratives", "cv", "resume", "contact"].map(
       (s) => `app/(site)/${s}`,
     ),
     "app/(site)/slushpile", // mounted by rewrite from its own repo

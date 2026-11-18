@@ -35,11 +35,11 @@ async function audit(page: Page) {
     document
       .querySelectorAll(".masthead, header nav a, footer a, footer button")
       .forEach((el) => check(el, `"${el.textContent?.trim()}"`));
-    // Every block placed on the grid: section heads and bodies, the
-    // statement, any other grid child, and page titles.
+    // Every block placed on the grid: section heads and bodies, any other
+    // grid child, and page titles.
     document
       .querySelectorAll(
-        "main .section > *, main .statement > *, main .swiss-grid > *, main h1, .swiss-container > h1",
+        "main .section > *, main .swiss-grid > *, main h1, .swiss-container > h1",
       )
       .forEach((el, i) =>
         check(el, `block ${i + 1} <${el.tagName.toLowerCase()}>`),

@@ -41,35 +41,20 @@ export default async function Home() {
     <>
       <JsonLd data={projectsLd} />
 
-      <section aria-label="Statement" className="statement swiss-grid">
-        <p className="col-span-12 md:col-span-10">
-          {site.statement.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
-        </p>
-      </section>
-
       <Section id="about" index={0} title="About">
-        {/* The portrait spans the text block's width, directly above the bio. */}
-        <div className="max-w-prose space-y-4">
+        {/* The portrait sits above the bio, on the content column's 8 columns:
+            4 of them on desktop, 6 on phones. */}
+        <div className="grid grid-cols-8 gap-y-4 gap-x-[var(--gutter)]">
           <Image
             src={portrait}
             alt="Illustrated portrait of W.S. Gong"
-            sizes="(min-width: 768px) 40vw, 100vw"
-            className="h-auto w-full"
+            sizes="(min-width: 768px) 22rem, 75vw"
+            className="col-span-6 h-auto w-full md:col-span-4"
             // In the first viewport on most screens and the page's LCP element.
             loading="eager"
             fetchPriority="high"
           />
-          <p>{site.bio[0]}</p>
-          {site.now && (
-            <div className="pt-6">
-              <h3 className="sub-head">Now</h3>
-              <p>{site.now}</p>
-            </div>
-          )}
+          <p className="col-span-8 max-w-prose">{site.bio[0]}</p>
         </div>
       </Section>
 
@@ -111,7 +96,6 @@ export default async function Home() {
             aria-label="Subscribe on Substack"
             className="space-y-4"
           >
-            <h3 className="sub-head">Newsletter</h3>
             <div className="grid grid-cols-8 items-baseline gap-[var(--gutter)]">
               <input
                 name="email"
@@ -169,12 +153,15 @@ export default async function Home() {
             </Row>
           ))}
         </Rows>
+        <a href={site.links.github} className="block font-medium" {...ext}>
+          More on GitHub →
+        </a>
       </Section>
 
-      <Section id="resume" index={++n} title="Résumé">
+      <Section id="cv" index={++n} title="CV">
         <Rows>
-          <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
           <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
+          <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
           {profiles.map((p) => (
             <Row key={p.label} href={p.url} title={p.label} />
           ))}

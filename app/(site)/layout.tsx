@@ -37,7 +37,7 @@ export default function SiteLayout({
           </li>
           <li>
             <a href={SUBSCRIBE_URL} {...ext}>
-              Subscribe
+              Substack
             </a>
           </li>
         </ul>

@@ -28,14 +28,14 @@ test runner. ESLint 9, Prettier, Husky + lint-staged. pnpm 12, pinned by
 | sitemap, robots, manifest, OG image                | `app/*.ts(x)`            | Standard metadata routes                                                      |
 
 Redirects (permanent, 308): `/code/*` and `/narratives-code/*` → `/#code`;
-`/about` → `/#about`; `/narratives` → `/#writing`; `/resume`, `/contact` →
-their anchors; `/reading` → `/` while the reading log is empty;
+`/about` → `/#about`; `/narratives` → `/#writing`; `/cv` and `/resume` →
+`/#cv`; `/contact` → `/#contact`; `/reading` → `/` while the reading log is empty;
 `/residencies` → `/slushpile`. The `/reading` redirect is decided when
 `next.config.ts` loads, so restart `pnpm dev` after adding the first book.
 
 `app/(site)/layout.tsx` wraps every page but `/links` in the masthead, the
-anchor nav (`Nav.tsx`, stacked in columns 11–12), and a footer: the copyright
-in columns 1–4, Colophon, Terms, and Subscribe stacked from the
+anchor nav (`Nav.tsx`, stacked in columns 11–12; on phones, two rows of three 4-column tracks), and a footer: the copyright
+in columns 1–4, Colophon, Terms, and Substack stacked from the
 column-5 line, and the theme toggle on the column-11 line. The masthead is
 the H1 on `/` and a home link elsewhere. `app/not-found.tsx` renders the 404
 inside the same layout.
@@ -55,17 +55,16 @@ choice with the same pre-paint script as `app/layout.tsx`.
 
 ## 3. Home page
 
-An unnumbered lead, the **statement** (`site.statement`, one line each), then
-numbered sections, each a label column (4 of 12) and a content column (8).
+Numbered sections, straight after the masthead, each a label column (4 of 12) and a content column (8).
 Section 00 is fixed; the rest count up from 01, and an omitted section leaves
-no gap in the numbering.
+no gap in the numbering. The statement (`site.statement`) isn't shown on the page; it
+feeds the meta description and share text (§7).
 
-- **00 About** `#about` — the portrait at the text block's width, directly
-  above the writer bio, `site.bio[0]`, then the **Now** line (`site.now`) when
-  the master has one. The former `/about` page folded in here.
+- **00 About** `#about` — the portrait (4 of the content column's 8 columns;
+  6 on phones), directly above the writer bio, `site.bio[0]`. The former `/about` page folded in here.
 - **Writing** `#writing` — two lists, **Fiction** (credits from `site.json`)
   and **Substack** (the five latest posts; hidden when the fetch fails), then
-  a newsletter form. Forthcoming credits come first, with no link. Substack
+  a Substack subscribe form. Forthcoming credits come first, with no link. Substack
   refuses sign-ups from other servers (403), so the form is a plain GET to
   Substack's subscribe page in a new tab, which prefills `email`; the reader
   confirms there.
@@ -73,8 +72,9 @@ no gap in the numbering.
   linking to its review (or its `link`), then a link to `/reading`; section
   and nav entry hidden while the log is empty.
 - **Code** `#code` — one list, `lib/projects.ts` in array order
-  (hand-maintained); emits an `ItemList` JSON-LD.
-- **Résumé** `#resume` — résumé PDF, CV PDF, then the profiles (LinkedIn,
+  (hand-maintained: the projects worth showing, not every repo), then a
+  "More on GitHub" link for the rest; emits an `ItemList` JSON-LD.
+- **CV** `#cv` — CV PDF, résumé PDF, then the profiles (LinkedIn,
   GitHub, Substack, Instagram).
 - **Contact** `#contact` — the contact form (§5).
 
@@ -85,7 +85,7 @@ All layout comes from `app/components/ui.tsx`: `PageTitle`, `Section`,
 
 - `content/site.json` (§14), parsed at build time by `lib/site/content.ts`
   against `lib/site/content-schema.ts`. It also exports `profiles` (LinkedIn,
-  GitHub, Substack, Instagram), the one list behind the Résumé rows, the
+  GitHub, Substack, Instagram), the one list behind the CV section's rows, the
   `/links` page, and the Person JSON-LD `sameAs`. Copy that `site.json`
   doesn't carry lives beside it: `JOB_TITLE` and `KNOWS_ABOUT` (Person
   JSON-LD) and `FEED_DESCRIPTION` (the RSS channel); keep them in step with
@@ -207,7 +207,7 @@ preload, a Permissions-Policy denying unused device and tracking features, and
 a CSP: self plus Vercel Analytics; `'unsafe-inline'` scripts and styles (Next's
 inline bootstrap and the theme script; nonces would make every page dynamic);
 `data:` images; `base-uri 'none'`, `object-src 'none'`, `form-action 'self'`
-plus the Substack origin (the newsletter form), and `frame-ancestors 'none'`. Production browser source maps are
+plus the Substack origin (the Substack subscribe form), and `frame-ancestors 'none'`. Production browser source maps are
 public. Sentry runs on the server and edge (`instrumentation.ts`: `register`
 plus `onRequestError`); there is no client SDK.
 
@@ -238,7 +238,9 @@ pipeline (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`,
 route types exist on a clean checkout; delete a stale `.next/dev` if it
 fails), `pnpm test:unit` (Node test
 runner over `lib/**/*.test.ts`: reading-log parsing, ordering, and spoilers, the contact-form token and
-attachment names, the §13 shape guards, the §6.3 static Swiss guard, and a guard
+attachment names, the colophon's stack and tools against `package.json`
+(`lib/colophon.ts` reads versions from it; every runtime dependency must be
+credited), the §13 shape guards, the §6.3 static Swiss guard, and a guard
 that no `"use client"` file reaches a Node-only module through its imports,
 which would otherwise surface as an opaque Turbopack panic),
 `pnpm test:e2e` (Playwright: every test in Chromium; tests tagged `@cross`,
@@ -268,7 +270,7 @@ app/(bare)/links/  Linktree page
 app/components/    ui.tsx, icons.tsx, ThemeToggle.tsx
 app/               layout, globals.css, feed/, sitemap, robots, manifest,
                    opengraph-image, not-found, favicon.ico
-lib/               projects, books (+ test), form-token (+ test), review,
+lib/               projects, books (+ test), colophon (+ test), form-token (+ test), review,
                    shape.test, site/{content, content-schema, env, resume},
                    substack, upload
 public/            fabulosa-books/ (static tutorial; its own styles, outside
@@ -309,10 +311,9 @@ ESLint rule in `eslint.config.mjs` pins the `SLUSHPILE_URL` gate.
 
 ## 14. Résumé sync and publishing
 
-The statement, bio, Now line, fiction credits, and LinkedIn and GitHub links
+The statement, bio, fiction credits, and LinkedIn and GitHub links
 come from the resumes-cvs master, not from page text. In the master: a
-forthcoming credit is written `*Venue*, forthcoming.`; the Now line is an
-optional `### Now {#site-now}` paragraph in `## Website`.
+forthcoming credit is written `*Venue*, forthcoming.`.
 
 1. In resumes-cvs: `.venv/bin/python -m resumekit web` writes
    `private/out/web/site.json`, `resume.pdf` (the devdocs base), and `cv.pdf`

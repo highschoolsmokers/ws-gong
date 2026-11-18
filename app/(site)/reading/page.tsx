@@ -20,7 +20,7 @@ export default function Reading() {
     <>
       <PageTitle>Reading</PageTitle>
       {now.length > 0 && (
-        <Section title="Now">
+        <Section title="Currently reading">
           <Rows>{now.map(row)}</Rows>
         </Section>
       )}
