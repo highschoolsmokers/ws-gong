@@ -193,8 +193,8 @@ Remove the stale host variables from the old residency pipeline
 
 - `pnpm dev | build | start | lint | typecheck`.
 - `pnpm test:unit`: reading log, spoilers, form token, attachment names,
-  colophon versus manifest, §13 pins, §6.3 static guard, and no client file
-  importing server-only code.
+  colophon versus manifest, §13 pins, §6.3 static guard, §12 drift guards,
+  and no client file importing server-only code.
 - `pnpm test:e2e`: everything in Chromium; tests tagged `@cross` also in
   Firefox and WebKit. Locally: `READING_FIXTURES=1 pnpm build &&
 READING_FIXTURES=1 pnpm test:e2e`.
@@ -252,7 +252,21 @@ Each holds on every change; the parenthesis names what enforces it.
   unit tests; every PR passes CI and the end-to-end suite. Merging deploys,
   so wait for the preview deploy before merging. (Hooks; CI.)
 - **The spec moves with the code.** A change that alters behavior here
-  updates this file in the same PR. (Review; `/audit`.)
+  updates this file in the same PR. (Drift guards; `/audit`.)
+
+### Drift guards
+
+`lib/spec.test.ts` fails when spec and code disagree:
+
+- §2 routes: every page is listed; every listed path is served.
+- §2 redirects: sources match the configured redirects.
+- §9 environment: every variable read is listed; every listed one is read
+  (except those only tools read).
+- §10 scripts: every package script is named; every named one exists.
+- § references: every `§` in code and spec has a heading.
+- §11 layout: every listed path exists; every top-level folder is listed.
+
+Claims it can't check (copy, design intent) are covered by §6.3 and `/audit`.
 
 ### Anti-patterns
 
