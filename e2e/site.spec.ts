@@ -202,9 +202,13 @@ test.describe("Inner pages", () => {
       `${path}: the Substack button fits its form at phone and tablet widths`,
       { tag: "@cross" },
       async ({ page }) => {
+        // One load, then resize: a second goto to the same URL makes Firefox
+        // start its own revalidating reload, and Playwright waits on it
+        // until timeout. The layout answers a resize without reloading.
+        await page.setViewportSize({ width: 320, height: 800 });
+        await page.goto(path);
         for (const width of [320, 768]) {
           await page.setViewportSize({ width, height: 800 });
-          await page.goto(path);
           const form = page.getByRole("form", {
             name: "Subscribe on Substack",
           });
