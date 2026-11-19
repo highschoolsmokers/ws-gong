@@ -1,9 +1,13 @@
 import ThemeToggle from "@/app/components/ThemeToggle";
 import { ext, NewTab } from "@/app/components/ui";
 import { orderedBooks } from "@/lib/books";
+import { site } from "@/lib/site/content";
 import { slushpileUrl } from "@/lib/site/env";
+import { findLink } from "@/lib/site/schema";
 import { SUBSCRIBE_URL } from "@/lib/substack";
 import Nav from "./Nav";
+
+const instagram = findLink(site.links, "Instagram");
 
 // The site chrome: masthead, nav, footer. The layout wraps every page in it;
 // the root 404 uses it directly and says so, since it renders outside the
@@ -47,6 +51,14 @@ export default function Chrome({
               <NewTab />
             </a>
           </li>
+          {instagram && (
+            <li>
+              <a href={instagram.url} {...ext}>
+                Instagram
+                <NewTab />
+              </a>
+            </li>
+          )}
         </ul>
         <div className="col-span-12 md:col-span-2 md:col-start-11">
           <ThemeToggle />

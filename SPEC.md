@@ -40,9 +40,9 @@ while the log is empty (decided at build).
 **Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
 the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
 rows of three 4-column tracks. Footer: copyright (columns 1–4); Colophon,
-Terms, Substack (from column 5); theme toggle (column 11). Footer links and
-the toggle are at least 24 px tall to tap. Every link or form that opens a new
-tab says so to screen readers (`NEW_TAB_NOTICE`), not on screen.
+Terms, Substack, Instagram (from column 5); theme toggle (column 11). Footer
+links and the toggle are at least 24 px tall to tap. Every link or form that
+opens a new tab says so to screen readers (`NEW_TAB_NOTICE`), not on screen.
 
 **Other pages.** Each is a title and labelled sections.
 
@@ -88,9 +88,11 @@ from 00 with no gaps when one is hidden.
   filled in; the reader confirms there.
 - **Reading**: up to five books, current first, each linking to its review or
   link; then a link to `/reading`. Hidden while the log is empty.
-- **Code**: hand-ordered list of selected projects; then "More on GitHub".
+- **Code**: hand-ordered list of selected projects; then "More on GitHub" and
+  "Visit Fabulosa Books", the store the tutorial is built for.
 - **CV**: CV, résumé, then every master link not shown elsewhere on the page
-  (GitHub is under Code; Substack is in Writing and the footer).
+  (GitHub and Fabulosa Books are under Code; Substack is in Writing and the
+  footer; Instagram is in the footer).
 - **Contact**: the form (§5).
 
 The statement is not shown; it feeds the description (§7). The home title and

@@ -5,7 +5,7 @@ import { JsonLd, NewTab, Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
 import { orderedBooks } from "@/lib/books";
 import { site, SITE_URL, TAGLINE } from "@/lib/site/content";
-import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "@/lib/site/schema";
+import { ELSEWHERE_ON_HOME, findLink, linkUrl, PDFS } from "@/lib/site/schema";
 import { getSubstackPosts } from "@/lib/substack";
 import Image from "next/image";
 import Link from "next/link";
@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   title: { absolute: `W.S. Gong — ${TAGLINE}` },
   description: site.statement.join(" "),
 };
+
+// The bookstore the tutorial is built for, linked beside it under Code.
+const fabulosa = findLink(site.links, "Fabulosa Books");
 
 const projectsLd = {
   "@context": "https://schema.org",
@@ -113,14 +116,21 @@ export default async function Home() {
           More on GitHub →
           <NewTab />
         </a>
+        {fabulosa && (
+          <a href={fabulosa.url} className="block font-medium" {...ext}>
+            Visit Fabulosa Books →
+            <NewTab />
+          </a>
+        )}
       </Section>
 
       <Section id="cv" index={++n} title="CV">
         <Rows>
           <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
           <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
-          {/* Every master link except those with a place of their own here:
-              GitHub (under Code) and Substack (Writing, footer). */}
+          {/* Every master link except those with a place of their own:
+              GitHub and Fabulosa Books (Code), Substack (Writing, footer),
+              Instagram (footer). */}
           {site.links
             .filter((p) => !ELSEWHERE_ON_HOME.includes(p.label))
             .map((p) => (
