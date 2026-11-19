@@ -1,8 +1,12 @@
 import type { ReactNode } from "react";
+import { NEW_TAB_NOTICE } from "@/lib/site/content";
 
 // The site's only layout primitives: page title, labelled section, list rows.
 
 export const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
+
+// Spoken, not shown: every link or form with `ext` carries one.
+export const NewTab = () => <span className="sr-only"> {NEW_TAB_NOTICE}</span>;
 
 export const JsonLd = ({ data }: { data: object }) => (
   <script
@@ -91,6 +95,7 @@ export function Row({
             <span aria-hidden className="font-normal text-muted">
               ↗
             </span>
+            <NewTab />
           </>
         )}
       </span>

@@ -1,4 +1,4 @@
-import { ext } from "@/app/components/ui";
+import { ext, NewTab } from "@/app/components/ui";
 import { SUBSCRIBE_URL } from "@/lib/substack";
 
 // The home page's Writing section and /links. No script: a plain GET form.
@@ -28,6 +28,7 @@ export default function SubstackForm() {
           className="col-span-4 justify-self-start border border-foreground px-(--gutter) py-[calc(var(--gutter)/4)] font-medium transition-colors hover:bg-foreground hover:text-background md:col-span-3"
         >
           Subscribe
+          <NewTab />
         </button>
       </div>
       <p className="text-xs text-muted">

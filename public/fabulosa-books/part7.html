@@ -43,10 +43,10 @@
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Site">
         <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
-      <nav class="page-nav">
+      <nav class="page-nav" aria-label="Tutorial parts">
         <a href="/fabulosa-books/part6.html">&larr; The Specialist Team</a>
         <a href="/fabulosa-books">Back to Contents &rarr;</a>
       </nav>
@@ -67,7 +67,9 @@
 
             <div class="step">Step 50: Create the Communication Agent</div>
             <p>Create <code>lib/tools/communication-tools.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/communication-tools.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/communication-tools.ts</span>
 
 <span class="hljs-keyword">import</span> { tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
@@ -130,7 +132,9 @@
 })</code></pre>
 
             <p>Create <code>lib/agents/communication-agent.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/communication-agent.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/communication-agent.ts</span>
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> communicationAgent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ToolLoopAgent</span>({
   <span class="hljs-attr">model</span>: <span class="hljs-string">&#x27;anthropic/claude-sonnet-5.5&#x27;</span>,
@@ -163,7 +167,9 @@ know ASAP if anything doesn&#x27;t work.&quot;`</span>,
               Update <code>lib/agents/coordinator-agent.ts</code> to include the
               new subagent:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// Add to the coordinator&#x27;s tools:</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// Add to the coordinator&#x27;s tools:</span>
 <span class="hljs-keyword">const</span> draftCommunicationSubagent = <span class="hljs-title function_">tool</span>({
   <span class="hljs-attr">description</span>:
     <span class="hljs-string">&#x27;Ask the Communication Agent to draft a human-readable schedule summary, notification, or message for the team.&#x27;</span>,
@@ -230,7 +236,9 @@ know ASAP if anything doesn&#x27;t work.&quot;`</span>,
               couldn't solve and <em>why</em>, rather than failing silently.
             </p>
             <p>Add to the coordinator's instructions:</p>
-            <pre><code class="hljs language-plaintext">When you cannot create a complete schedule:
+            <pre
+              tabindex="0"
+            ><code class="hljs language-plaintext">When you cannot create a complete schedule:
 - Explain which constraints conflict
 - Fill what you can and clearly mark remaining gaps
 - Suggest solutions: &quot;Consider asking Johnny Ray or Carly for extra on-call shifts&quot;
@@ -268,7 +276,9 @@ know ASAP if anything doesn&#x27;t work.&quot;`</span>,
               To use a cheaper model for a specific agent, just change the model
               string:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// In coverage-agent.ts — this agent&#x27;s job is simple enough for Haiku</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// In coverage-agent.ts — this agent&#x27;s job is simple enough for Haiku</span>
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> coverageAgent = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ToolLoopAgent</span>({
   <span class="hljs-attr">model</span>: <span class="hljs-string">&#x27;anthropic/claude-haiku-5.5&#x27;</span>,
   <span class="hljs-comment">// ... rest stays the same</span>
@@ -280,7 +290,7 @@ know ASAP if anything doesn&#x27;t work.&quot;`</span>,
           <h2>Deploy the Final Version</h2>
           <div class="section-content">
             <div class="step">Step 55: Push the complete system</div>
-            <pre><code class="hljs language-bash">git add -A
+            <pre tabindex="0"><code class="hljs language-bash">git add -A
 git commit -m <span class="hljs-string">&quot;Complete multi-agent system: Communication Agent, error handling, cost optimization&quot;</span>
 git push</code></pre>
             <p>
@@ -428,7 +438,7 @@ git push</code></pre>
           </div>
         </div>
       </main>
-      <nav class="bottom-nav">
+      <nav class="bottom-nav" aria-label="Tutorial parts, end of page">
         <a href="/fabulosa-books/part6.html">&larr; The Specialist Team</a>
         <a href="/fabulosa-books">Back to Contents &rarr;</a>
       </nav>

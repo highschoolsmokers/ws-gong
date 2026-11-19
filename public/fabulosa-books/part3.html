@@ -43,10 +43,10 @@
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Site">
         <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
-      <nav class="page-nav">
+      <nav class="page-nav" aria-label="Tutorial parts">
         <a href="/fabulosa-books/part2.html">&larr; How Agents Think</a>
         <a href="/fabulosa-books/part4.html">The Foundation &rarr;</a>
       </nav>
@@ -86,7 +86,9 @@
               version labeled "LTS" (Long Term Support). Install it like any
               other program. Then open your terminal and verify:
             </p>
-            <pre><code class="hljs language-bash">node --version</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">node --version</code></pre>
 
             <div class="step">Step 9: Install a code editor</div>
             <p>
@@ -135,7 +137,9 @@
           <div class="section-content">
             <div class="step">Step 12: Create the Next.js project</div>
             <p>Open your terminal and run:</p>
-            <pre><code class="hljs language-bash">npx create-next-app@latest fabulosa-scheduler</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npx create-next-app@latest fabulosa-scheduler</code></pre>
             <p>
               When it asks whether to use the recommended defaults, choose
               <strong>Yes</strong>. That gives you TypeScript, Tailwind CSS,
@@ -148,7 +152,9 @@
             <div class="step">
               Step 13: Enter the project and start the dev server
             </div>
-            <pre><code class="hljs language-bash"><span class="hljs-built_in">cd</span> fabulosa-scheduler
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash"><span class="hljs-built_in">cd</span> fabulosa-scheduler
 npm run dev</code></pre>
             <p>
               Open your browser and go to <code>http://localhost:3000</code>.
@@ -160,7 +166,9 @@ npm run dev</code></pre>
               Stop the dev server (Ctrl+C) and install the packages we'll need
               for agents:
             </p>
-            <pre><code class="hljs language-bash">npm install ai@6 @ai-sdk/react@3 zod</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm install ai@6 @ai-sdk/react@3 zod</code></pre>
             <ul>
               <li>
                 <code>ai</code> &mdash; the core Vercel AI SDK (agents, tools,
@@ -182,12 +190,16 @@ npm run dev</code></pre>
             </p>
 
             <div class="step">Step 15: Install the Neon serverless driver</div>
-            <pre><code class="hljs language-bash">npm install @neondatabase/serverless</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm install @neondatabase/serverless</code></pre>
             <p>
               For local development, we'll also use a lightweight SQLite
               stand-in:
             </p>
-            <pre><code class="hljs language-bash">npm install sql.js
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm install sql.js
 npm install --save-dev @types/sql.js</code></pre>
           </div>
         </div>
@@ -196,7 +208,7 @@ npm install --save-dev @types/sql.js</code></pre>
           <h2>Putting It on GitHub</h2>
           <div class="section-content">
             <div class="step">Step 16: Initialize Git and push to GitHub</div>
-            <pre><code class="hljs language-bash">git init
+            <pre tabindex="0"><code class="hljs language-bash">git init
 git add -A
 git commit -m <span class="hljs-string">&quot;Initial commit: Fabulosa Books multi-agent scheduler&quot;</span></code></pre>
             <p>
@@ -204,7 +216,9 @@ git commit -m <span class="hljs-string">&quot;Initial commit: Fabulosa Books mul
               choose "New repository", name it <code>fabulosa-scheduler</code>,
               and create it. Then run:
             </p>
-            <pre><code class="hljs language-bash">git remote add origin https://github.com/YOUR-USERNAME/fabulosa-scheduler.git
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">git remote add origin https://github.com/YOUR-USERNAME/fabulosa-scheduler.git
 git branch -M main
 git push -u origin main</code></pre>
           </div>
@@ -261,12 +275,16 @@ git push -u origin main</code></pre>
               In your Vercel project settings, go to Environment Variables and
               add:
             </p>
-            <pre><code class="hljs language-bash">AI_GATEWAY_API_KEY=your_key_here</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">AI_GATEWAY_API_KEY=your_key_here</code></pre>
             <p>
               For local development, install the Vercel CLI, link this folder to
               your Vercel project, and pull the environment variables:
             </p>
-            <pre><code class="hljs language-bash">npm install -g vercel
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm install -g vercel
 vercel <span class="hljs-built_in">link</span>
 vercel <span class="hljs-built_in">env</span> pull .env.local</code></pre>
             <p>
@@ -298,7 +316,7 @@ vercel <span class="hljs-built_in">env</span> pull .env.local</code></pre>
           </div>
         </div>
       </main>
-      <nav class="bottom-nav">
+      <nav class="bottom-nav" aria-label="Tutorial parts, end of page">
         <a href="/fabulosa-books/part2.html">&larr; How Agents Think</a>
         <a href="/fabulosa-books/part4.html">The Foundation &rarr;</a>
       </nav>

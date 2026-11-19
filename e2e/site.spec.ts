@@ -4,6 +4,11 @@ import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "../lib/site/schema";
 import { tabTo } from "./helpers/contact-form";
 import { site, slushpileConfigured } from "./helpers/constants";
 import { orderedBooks } from "../lib/books";
+import { NEW_TAB_NOTICE } from "../lib/site/content";
+
+// Visible text: drop the arrow and the spoken-only new-tab notice.
+const shown = (s: string) =>
+  s.replace("↗", "").replace(NEW_TAB_NOTICE, "").trim();
 
 // Rendered pages: structure and copy, checked against the content they're
 // built from. Layout, interaction, and focus tests carry @cross.
@@ -76,7 +81,7 @@ test("Home: sections, nav, links, CV, reading", async ({ page }) => {
       resume.getByRole("link", { name: /^cv \(pdf\)/i }),
     ).toHaveAttribute("href", `/${PDFS.cv}`);
     // Every master link but those with their own place on the page, in order.
-    expect(rows.slice(2).map((r) => r.replace("↗", "").trim())).toEqual(
+    expect(rows.slice(2).map(shown)).toEqual(
       site.links
         .filter((l) => !ELSEWHERE_ON_HOME.includes(l.label))
         .map((l) => l.label),
@@ -126,9 +131,12 @@ test.describe("Inner pages", () => {
       ).toBeVisible();
     for (const { label } of [...stack, ...tools])
       await expect(page.getByText(label, { exact: true })).toBeVisible();
+    const source = `${linkUrl(site.links, "GitHub")}/ws-gong`;
     await expect(
-      page.getByRole("link", { name: /\/ws-gong$/ }),
-    ).toHaveAttribute("href", `${linkUrl(site.links, "GitHub")}/ws-gong`);
+      page.getByRole("link", {
+        name: `${source.replace(/^https:\/\//, "")} ${NEW_TAB_NOTICE}`,
+      }),
+    ).toHaveAttribute("href", source);
   });
 
   test("/terms has its sections", async ({ page }) => {
@@ -169,7 +177,7 @@ test.describe("Inner pages", () => {
     });
     // The main site, then every master link but Instagram, in master order.
     const labels = await list.locator("li").allTextContents();
-    expect(labels.map((l) => l.replace("↗", "").trim())).toEqual([
+    expect(labels.map(shown)).toEqual([
       "ws-gong.comwriting, code, CV",
       ...site.links.filter((l) => l.label !== "Instagram").map((l) => l.label),
     ]);

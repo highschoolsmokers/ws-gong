@@ -46,10 +46,10 @@
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Site">
         <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
-      <nav class="page-nav">
+      <nav class="page-nav" aria-label="Tutorial parts">
         <a href="/fabulosa-books/part5.html">&larr; Your First Agent</a>
         <a href="/fabulosa-books/part7.html">Making It Real &rarr;</a>
       </nav>
@@ -188,7 +188,9 @@
               stores ban the &ldquo;clopening,&rdquo; closing one night and
               opening the next morning. Add it to the coverage check:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/coverage-tools.ts — inside validateCoverageTool&#x27;s execute,</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/coverage-tools.ts — inside validateCoverageTool&#x27;s execute,</span>
 <span class="hljs-comment">// after the double-booking check</span>
 
 <span class="hljs-comment">// No &quot;clopening&quot;: closing one night, then opening the next morning</span>
@@ -211,7 +213,9 @@
           <div class="section-content">
             <div class="step">Step 40: Create the fairness tools</div>
             <p>Create <code>lib/tools/fairness-tools.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/fairness-tools.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/fairness-tools.ts</span>
 
 <span class="hljs-keyword">import</span> { tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
@@ -302,7 +306,9 @@
 
             <div class="step">Step 41: Create the Fairness Agent</div>
             <p>Create <code>lib/agents/fairness-agent.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/fairness-agent.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/fairness-agent.ts</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">ToolLoopAgent</span>, <span class="hljs-title class_">InferAgentUIMessage</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { getShiftDistributionTool, getMultiWeekHistoryTool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../tools/fairness-tools&#x27;</span>
@@ -345,7 +351,9 @@ a closing shift this week since Marcus has had closing three weeks in a row.&quo
           <div class="section-content">
             <div class="step">Step 42: Create the coverage tools</div>
             <p>Create <code>lib/tools/coverage-tools.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/coverage-tools.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/coverage-tools.ts</span>
 
 <span class="hljs-keyword">import</span> { tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
@@ -393,7 +401,9 @@ a closing shift this week since Marcus has had closing three weeks in a row.&quo
 })</code></pre>
 
             <div class="step">Step 43: Create the Coverage Agent</div>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/coverage-agent.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/coverage-agent.ts</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">ToolLoopAgent</span>, <span class="hljs-title class_">InferAgentUIMessage</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { validateCoverageTool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;../tools/coverage-tools&#x27;</span>
@@ -433,7 +443,9 @@ When reporting issues, explain the impact.`</span>,
             </p>
             <div class="step">Step 44: Create the coordinator agent</div>
             <p>Create <code>lib/agents/coordinator-agent.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/coordinator-agent.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/coordinator-agent.ts</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">ToolLoopAgent</span>, <span class="hljs-title class_">InferAgentUIMessage</span>, tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
@@ -560,7 +572,9 @@ Important guidelines:
             <div class="step">
               Step 45: Update the chat API route to use the coordinator
             </div>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/chat/route.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/api/chat/route.ts</span>
 
 <span class="hljs-keyword">import</span> { createAgentUIStreamResponse } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { coordinatorAgent } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/agents/coordinator-agent&#x27;</span>
@@ -589,7 +603,9 @@ Important guidelines:
               delegates to the Fairness Agent, you see "Fairness Agent" in the
               response, with a loading indicator while it runs.
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ChatPanel.tsx — changes from Part 5</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// components/ChatPanel.tsx — changes from Part 5</span>
 
 <span class="hljs-comment">// 1. Type the chat with the coordinator&#x27;s tools instead of the Availability Agent&#x27;s</span>
 <span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">CoordinatorAgentUIMessage</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/agents/coordinator-agent&#x27;</span>
@@ -633,7 +649,9 @@ Important guidelines:
               <code>refreshKey</code> state triggers a re-fetch of schedule data
               after each agent interaction completes.
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ScheduleGrid.tsx — two changes from Part 4</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// components/ScheduleGrid.tsx — two changes from Part 4</span>
 
 <span class="hljs-comment">// 1. Take a refreshKey prop</span>
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">ScheduleGrid</span>(<span class="hljs-params">{ refreshKey = <span class="hljs-number">0</span> }: { refreshKey?: <span class="hljs-built_in">number</span> }</span>) {
@@ -642,7 +660,9 @@ Important guidelines:
   <span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> {
     <span class="hljs-comment">// ... same fetch as before ...</span>
   }, [weekStart, refreshKey])</code></pre>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
 <span class="hljs-string">&#x27;use client&#x27;</span>
 
 <span class="hljs-keyword">import</span> { useState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
@@ -674,7 +694,9 @@ Important guidelines:
 }</code></pre>
 
             <div class="step">Step 48: Test multi-agent orchestration</div>
-            <pre><code class="hljs language-bash">npm run dev</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm run dev</code></pre>
             <p>Try these prompts:</p>
             <ul>
               <li>
@@ -696,7 +718,7 @@ Important guidelines:
             </ul>
 
             <div class="step">Step 49: Push and deploy</div>
-            <pre><code class="hljs language-bash">git add -A
+            <pre tabindex="0"><code class="hljs language-bash">git add -A
 git commit -m <span class="hljs-string">&quot;Add multi-agent orchestration: Fairness, Coverage, and Coordinator agents&quot;</span>
 git push</code></pre>
           </div>
@@ -754,7 +776,7 @@ git push</code></pre>
           </div>
         </div>
       </main>
-      <nav class="bottom-nav">
+      <nav class="bottom-nav" aria-label="Tutorial parts, end of page">
         <a href="/fabulosa-books/part5.html">&larr; Your First Agent</a>
         <a href="/fabulosa-books/part7.html">Making It Real &rarr;</a>
       </nav>

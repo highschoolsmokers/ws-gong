@@ -46,10 +46,10 @@
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Site">
         <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
-      <nav class="page-nav">
+      <nav class="page-nav" aria-label="Tutorial parts">
         <a href="/fabulosa-books/part4.html">&larr; The Foundation</a>
         <a href="/fabulosa-books/part6.html">The Specialist Team &rarr;</a>
       </nav>
@@ -87,7 +87,9 @@
               Step 33: Create the tools directory and the schedule query tool
             </div>
             <p>Create <code>lib/tools/schedule-tools.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/schedule-tools.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/tools/schedule-tools.ts</span>
 
 <span class="hljs-keyword">import</span> { tool } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { z } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;zod&#x27;</span>
@@ -211,7 +213,9 @@
           <div class="section-content">
             <div class="step">Step 34: Create the Availability Agent</div>
             <p>Create <code>lib/agents/availability-agent.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/availability-agent.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/agents/availability-agent.ts</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">ToolLoopAgent</span>, <span class="hljs-title class_">InferAgentUIMessage</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> {
@@ -289,7 +293,9 @@ staff aren&#x27;t available.`</span>,
           <div class="section-content">
             <div class="step">Step 35: Create the chat API route</div>
             <p>Create <code>app/api/chat/route.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/chat/route.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/api/chat/route.ts</span>
 
 <span class="hljs-keyword">import</span> { createAgentUIStreamResponse } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;ai&#x27;</span>
 <span class="hljs-keyword">import</span> { availabilityAgent } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/agents/availability-agent&#x27;</span>
@@ -324,7 +330,9 @@ staff aren&#x27;t available.`</span>,
           <div class="section-content">
             <div class="step">Step 36: Create the ChatPanel component</div>
             <p>Create <code>components/ChatPanel.tsx</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ChatPanel.tsx</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// components/ChatPanel.tsx</span>
 <span class="hljs-string">&#x27;use client&#x27;</span>
 
 <span class="hljs-keyword">import</span> { useChat } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@ai-sdk/react&#x27;</span>
@@ -422,7 +430,9 @@ staff aren&#x27;t available.`</span>,
               Update <code>app/page.tsx</code> to include the chat panel
               alongside the schedule grid:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
 <span class="hljs-keyword">import</span> <span class="hljs-title class_">ScheduleGrid</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/ScheduleGrid&#x27;</span>
 <span class="hljs-keyword">import</span> <span class="hljs-title class_">ChatPanel</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/ChatPanel&#x27;</span>
 
@@ -444,7 +454,9 @@ staff aren&#x27;t available.`</span>,
 }</code></pre>
 
             <div class="step">Step 38: Test your first agent</div>
-            <pre><code class="hljs language-bash">npm run dev</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm run dev</code></pre>
             <p>
               Open <code>http://localhost:3000</code>. You should see the
               schedule grid on the left and the chat panel on the right. Try
@@ -470,7 +482,9 @@ staff aren&#x27;t available.`</span>,
               password first. Next.js runs <code>proxy.ts</code> before every
               request:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// proxy.ts (in the project root, next to package.json)</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// proxy.ts (in the project root, next to package.json)</span>
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">NextRequest</span>, <span class="hljs-title class_">NextResponse</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/server&#x27;</span>
 
 <span class="hljs-comment">// Every page and API route asks for the staff password first.</span>
@@ -500,7 +514,9 @@ staff aren&#x27;t available.`</span>,
   <span class="hljs-attr">matcher</span>: [<span class="hljs-string">&#x27;/((?!_next/static|_next/image|favicon.ico).*)&#x27;</span>],
 }</code></pre>
             <p>Set the password locally and on Vercel:</p>
-            <pre><code class="hljs language-plaintext"># .env.local — and add the same variable in Vercel:
+            <pre
+              tabindex="0"
+            ><code class="hljs language-plaintext"># .env.local — and add the same variable in Vercel:
 # Project → Settings → Environment Variables → STAFF_PASSWORD
 STAFF_PASSWORD=pick-a-long-passphrase</code></pre>
             <p>
@@ -509,7 +525,7 @@ STAFF_PASSWORD=pick-a-long-passphrase</code></pre>
               for a small staff; Part 7 suggests real accounts as a next step.
               You can also cap spending in the AI Gateway dashboard. Then push:
             </p>
-            <pre><code class="hljs language-bash">git add -A
+            <pre tabindex="0"><code class="hljs language-bash">git add -A
 git commit -m <span class="hljs-string">&quot;Add Availability Agent with chat interface&quot;</span>
 git push</code></pre>
             <p>
@@ -546,7 +562,7 @@ git push</code></pre>
           </div>
         </div>
       </main>
-      <nav class="bottom-nav">
+      <nav class="bottom-nav" aria-label="Tutorial parts, end of page">
         <a href="/fabulosa-books/part4.html">&larr; The Foundation</a>
         <a href="/fabulosa-books/part6.html">The Specialist Team &rarr;</a>
       </nav>

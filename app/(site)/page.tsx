@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { BookRow, PostRow, StoryRow } from "@/app/components/rows";
 import SubstackForm from "@/app/components/SubstackForm";
-import { JsonLd, Row, Rows, Section, ext } from "@/app/components/ui";
+import { JsonLd, NewTab, Row, Rows, Section, ext } from "@/app/components/ui";
 import { projects } from "@/lib/projects";
 import { orderedBooks } from "@/lib/books";
 import { site, SITE_URL, TAGLINE } from "@/lib/site/content";
@@ -111,6 +111,7 @@ export default async function Home() {
           {...ext}
         >
           More on GitHub →
+          <NewTab />
         </a>
       </Section>
 

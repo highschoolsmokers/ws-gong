@@ -65,7 +65,15 @@ function Form({ onReset }: { onReset: () => void }) {
   if (state.status === "success")
     return (
       <div className="space-y-4">
-        <p className="font-medium">{state.message}</p>
+        {/* Focus moves here: the form it replaces held focus. */}
+        <p
+          ref={(el) => el?.focus()}
+          tabIndex={-1}
+          role="status"
+          className="font-medium"
+        >
+          {state.message}
+        </p>
         <button onClick={onReset} className="font-medium">
           Send another message
         </button>
@@ -111,41 +119,45 @@ function Form({ onReset }: { onReset: () => void }) {
         className="honeypot"
       />
       <div className="grid grid-cols-2 gap-[var(--gutter)]">
-        <input
-          name="name"
-          required
-          aria-label="Name"
-          placeholder="Name"
-          autoComplete="name"
-          maxLength={MAX_LENGTH.name}
-          className="field"
-        />
-        <input
-          name="email"
-          type="email"
-          required
-          aria-label="Email"
-          placeholder="Email"
-          autoComplete="email"
-          className="field"
-        />
+        <label>
+          <span className="field-label">Name</span>
+          <input
+            name="name"
+            required
+            autoComplete="name"
+            maxLength={MAX_LENGTH.name}
+            className="field"
+          />
+        </label>
+        <label>
+          <span className="field-label">Email</span>
+          <input
+            name="email"
+            type="email"
+            required
+            autoComplete="email"
+            className="field"
+          />
+        </label>
       </div>
-      <input
-        name="subject"
-        aria-label="Subject"
-        placeholder="Subject"
-        maxLength={MAX_LENGTH.subject}
-        className="field"
-      />
-      <textarea
-        name="message"
-        required
-        aria-label="Message"
-        placeholder="Message"
-        maxLength={MAX_LENGTH.message}
-        rows={6}
-        className="field min-h-40 resize-y"
-      />
+      <label className="block">
+        <span className="field-label">Subject (optional)</span>
+        <input
+          name="subject"
+          maxLength={MAX_LENGTH.subject}
+          className="field"
+        />
+      </label>
+      <label className="block">
+        <span className="field-label">Message</span>
+        <textarea
+          name="message"
+          required
+          maxLength={MAX_LENGTH.message}
+          rows={6}
+          className="field min-h-40 resize-y"
+        />
+      </label>
       <div className="space-y-1 text-muted">
         <input
           ref={picker}
@@ -179,7 +191,10 @@ function Form({ onReset }: { onReset: () => void }) {
           </button>
         </p>
       ))}
-      {note && <p className="text-xs text-muted">{note}</p>}
+      {/* Always rendered, so screen readers announce the note when it fills. */}
+      <p role="status" className="text-xs text-muted empty:mb-0">
+        {note}
+      </p>
       <div className="space-y-2">
         <button
           type="submit"
@@ -188,9 +203,9 @@ function Form({ onReset }: { onReset: () => void }) {
         >
           {pending ? "Sending…" : "Send"}
         </button>
-        {state.status === "error" && (
-          <p className="text-error">{state.message}</p>
-        )}
+        <p role="alert" className="text-error">
+          {state.status === "error" ? state.message : ""}
+        </p>
       </div>
     </form>
   );

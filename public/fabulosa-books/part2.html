@@ -43,10 +43,10 @@
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Site">
         <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
-      <nav class="page-nav">
+      <nav class="page-nav" aria-label="Tutorial parts">
         <a href="/fabulosa-books/part1.html"
           >&larr; Welcome to Fabulosa Books</a
         >
@@ -137,7 +137,7 @@
                 alt="Chatbot vs Agent comparison diagram"
               />
             </a>
-            <pre><code class="hljs language-plaintext">Chatbot:
+            <pre tabindex="0"><code class="hljs language-plaintext">Chatbot:
   User: &quot;Who&#x27;s free Thursday?&quot;
   AI: &quot;I&#x27;d need to check your schedule system.&quot;
 
@@ -237,7 +237,9 @@ Agent:
               In the Vercel AI SDK, this pattern is implemented naturally: the
               coordinator is an agent whose <em>tools</em> are the other agents.
             </p>
-            <pre><code class="hljs language-plaintext">User: &quot;Schedule next week&quot;
+            <pre
+              tabindex="0"
+            ><code class="hljs language-plaintext">User: &quot;Schedule next week&quot;
 
 Coordinator thinks: &quot;I need to build a schedule. Let me check availability first.&quot;
   → calls Availability Agent
@@ -279,7 +281,9 @@ Coordinator: &quot;Here&#x27;s the proposed schedule for next week: ...&quot;</c
                 the tool is called (your actual code)
               </li>
             </ol>
-            <pre><code class="hljs language-typescript"><span class="hljs-keyword">const</span> getEmployees = <span class="hljs-title function_">tool</span>({
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-keyword">const</span> getEmployees = <span class="hljs-title function_">tool</span>({
   <span class="hljs-attr">description</span>: <span class="hljs-string">&#x27;Get all employees at Fabulosa Books with their role (regular or on-call)&#x27;</span>,
   <span class="hljs-attr">inputSchema</span>: z.<span class="hljs-title function_">object</span>({}),
   <span class="hljs-attr">execute</span>: <span class="hljs-title function_">async</span> () =&gt; {
@@ -361,7 +365,7 @@ Coordinator: &quot;Here&#x27;s the proposed schedule for next week: ...&quot;</c
           </div>
         </div>
       </main>
-      <nav class="bottom-nav">
+      <nav class="bottom-nav" aria-label="Tutorial parts, end of page">
         <a href="/fabulosa-books/part1.html"
           >&larr; Welcome to Fabulosa Books</a
         >

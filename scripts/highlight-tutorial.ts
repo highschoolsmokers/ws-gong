@@ -4,7 +4,9 @@
 // and writes the <span class="hljs-…"> markup into the file, so the pages need
 // no script and no CDN (the site's CSP allows 'self' only). Idempotent: an
 // already-highlighted block is stripped back to text and highlighted again, so
-// rerun it after editing any code sample. Colors live in style.css.
+// rerun it after editing any code sample. Colors live in style.css. Each
+// block gets tabindex="0": long lines scroll sideways, and keyboard users
+// need focus to scroll them.
 
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -40,13 +42,13 @@ for (const file of readdirSync(dir).filter((f) => f.endsWith(".html"))) {
   const before = readFileSync(path, "utf8");
   let blocks = 0;
   const after = before.replace(
-    /<pre><code(?: class="[^"]*")?>([\s\S]*?)<\/code><\/pre>/g,
+    /<pre(?:\s+tabindex="0")?\s*><code(?: class="[^"]*")?>([\s\S]*?)<\/code><\/pre>/g,
     (_, body: string) => {
       blocks++;
       const code = decode(body);
       const lang = language(code);
       const { value } = hljs.highlight(code, { language: lang });
-      return `<pre><code class="hljs language-${lang}">${value}</code></pre>`;
+      return `<pre tabindex="0"><code class="hljs language-${lang}">${value}</code></pre>`;
     },
   );
   if (after !== before) writeFileSync(path, after);

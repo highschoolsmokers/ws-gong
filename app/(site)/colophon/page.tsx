@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PageTitle, Section, ext } from "@/app/components/ui";
+import { NewTab, PageTitle, Section, ext } from "@/app/components/ui";
 import { stack, tools } from "@/lib/colophon";
 import { site } from "@/lib/site/content";
 import { linkUrl } from "@/lib/site/schema";
@@ -29,6 +29,7 @@ export default function Colophon() {
           Set in{" "}
           <a href="https://vercel.com/font" className="underline" {...ext}>
             Geist
+            <NewTab />
           </a>{" "}
           by Vercel, served from this site. Three weights: bold for display,
           medium for titles and labels, regular for text.
@@ -59,6 +60,7 @@ export default function Colophon() {
       <Section title="Source">
         <a href={source} className="underline" {...ext}>
           {source.replace(/^https:\/\//, "")}
+          <NewTab />
         </a>
       </Section>
     </>
