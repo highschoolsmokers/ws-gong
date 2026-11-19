@@ -4,6 +4,13 @@ import type { ReactNode } from "react";
 
 export const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 
+// Spoken, not shown: every link or form with `ext` carries a NewTab. The
+// text lives here because this file must import nothing: the client error
+// page imports it, and whatever it pulls in ships to the browser.
+export const NEW_TAB_NOTICE = "(opens in new tab)";
+
+export const NewTab = () => <span className="sr-only"> {NEW_TAB_NOTICE}</span>;
+
 export const JsonLd = ({ data }: { data: object }) => (
   <script
     type="application/ld+json"
@@ -91,6 +98,7 @@ export function Row({
             <span aria-hidden className="font-normal text-muted">
               ↗
             </span>
+            <NewTab />
           </>
         )}
       </span>

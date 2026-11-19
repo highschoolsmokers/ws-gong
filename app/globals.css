@@ -58,6 +58,7 @@ a:hover {
 }
 .swiss-label,
 .sub-head,
+.field-label,
 .row-meta {
   font-size: 0.75rem;
   font-weight: 500;
@@ -116,6 +117,17 @@ a.row {
 }
 .site-footer a {
   color: var(--foreground);
+}
+/* Tap targets of at least 24px: padding grows the hit area, the matching
+   negative margin keeps the type where it was. */
+.site-footer a {
+  display: inline-block;
+  padding-block: 0.25rem;
+  margin-block: -0.25rem;
+}
+.site-footer button {
+  padding-block: 0.5rem;
+  margin-block: -0.5rem;
 }
 @media (min-width: 768px) {
   :root {
@@ -226,6 +238,10 @@ a.row:hover .row-title {
   left: -9999px;
   height: 0;
   opacity: 0;
+}
+.field-label {
+  display: block;
+  color: var(--muted);
 }
 .field {
   width: 100%;

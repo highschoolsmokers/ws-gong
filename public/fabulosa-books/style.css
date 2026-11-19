@@ -83,7 +83,8 @@ body {
 
 /* Focus states */
 a:focus-visible,
-button:focus-visible {
+button:focus-visible,
+pre:focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
 }

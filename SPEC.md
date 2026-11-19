@@ -40,7 +40,9 @@ while the log is empty (decided at build).
 **Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
 the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
 rows of three 4-column tracks. Footer: copyright (columns 1–4); Colophon,
-Terms, Substack (from column 5); theme toggle (column 11).
+Terms, Substack (from column 5); theme toggle (column 11). Footer links and
+the toggle are at least 24 px tall to tap. Every link or form that opens a new
+tab says so to screen readers (`NEW_TAB_NOTICE`), not on screen.
 
 **Other pages.** Each is a title and labelled sections.
 
@@ -69,7 +71,8 @@ analytics can count visits from Instagram.
 
 **Tutorial.** Plain HTML. Loads only self-hosted assets: no external fonts or
 scripts. Code highlighting is baked into the HTML by `pnpm
-highlight:tutorial`. Canonical index: `/fabulosa-books`. Follows the site's
+highlight:tutorial`, which also makes each code block focusable so a keyboard
+can scroll it. Its navs carry labels. Canonical index: `/fabulosa-books`. Follows the site's
 stored theme. Exempt from §6.1.
 
 ## 3. Home page
@@ -119,6 +122,9 @@ share image carry the tagline, "Stories & Systems".
 
 ## 5. Contact form
 
+- Every field has a visible label above it; Subject reads "(optional)".
+- Errors and the refused-attachment note are announced to screen readers; on
+  success, focus moves to the confirmation.
 - A failed send keeps the visitor's text.
 - Spam guards: a hidden honeypot field; a server-signed timestamp, valid 3 s
   to 24 h after first focus.

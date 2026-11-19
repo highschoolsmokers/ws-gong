@@ -46,10 +46,10 @@
   <body>
     <div class="page-wrap">
       <a href="#main" class="skip-to-content">Skip to content</a>
-      <nav class="site-nav">
+      <nav class="site-nav" aria-label="Site">
         <a href="/#code">&larr; W.S. Gong / Code</a>
       </nav>
-      <nav class="page-nav">
+      <nav class="page-nav" aria-label="Tutorial parts">
         <a href="/fabulosa-books/part3.html">&larr; Setting Up Shop</a>
         <a href="/fabulosa-books/part5.html">Your First Agent &rarr;</a>
       </nav>
@@ -78,7 +78,9 @@
               Create a <code>types</code> folder in your project root with an
               <code>index.ts</code> file:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// types/index.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// types/index.ts</span>
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">interface</span> <span class="hljs-title class_">Employee</span> {
   <span class="hljs-attr">id</span>: <span class="hljs-built_in">number</span>
@@ -121,7 +123,9 @@
           <div class="section-content">
             <div class="step">Step 23: Create helper functions</div>
             <p>Create <code>lib/utils.ts</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/utils.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/utils.ts</span>
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-variable constant_">DAYS_OF_WEEK</span> = [
   <span class="hljs-string">&#x27;Sunday&#x27;</span>, <span class="hljs-string">&#x27;Monday&#x27;</span>, <span class="hljs-string">&#x27;Tuesday&#x27;</span>, <span class="hljs-string">&#x27;Wednesday&#x27;</span>,
@@ -192,7 +196,9 @@
               automatically uses the right one based on whether
               <code>DATABASE_URL</code> exists.
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// lib/db.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// lib/db.ts</span>
 
 <span class="hljs-keyword">import</span> { neon } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@neondatabase/serverless&#x27;</span>
 
@@ -262,7 +268,9 @@
               Below the Neon code in <code>lib/db.ts</code>, add the SQLite
               fallback for local development:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// ---- sql.js (local dev) helpers ----</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// ---- sql.js (local dev) helpers ----</span>
 
 <span class="hljs-keyword">import</span> initSqlJs, { <span class="hljs-title class_">Database</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">SqlJsDatabase</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;sql.js&#x27;</span>
 <span class="hljs-keyword">import</span> fs <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;fs&#x27;</span>
@@ -349,7 +357,9 @@
               <code>.wasm</code> file at runtime. Tell Next.js not to bundle it,
               in <code>next.config.ts</code>:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// next.config.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// next.config.ts</span>
 <span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> { <span class="hljs-title class_">NextConfig</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next&#x27;</span>
 
 <span class="hljs-keyword">const</span> <span class="hljs-attr">nextConfig</span>: <span class="hljs-title class_">NextConfig</span> = {
@@ -365,7 +375,9 @@
               These are the functions the rest of the app (and our agents) will
               use:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// ---- Public API ----</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// ---- Public API ----</span>
 
 <span class="hljs-comment">// Neon when DATABASE_URL is set (on Vercel, and locally after `vercel env pull`);</span>
 <span class="hljs-comment">// the local sql.js file otherwise.</span>
@@ -463,7 +475,9 @@
           <h2>The API Routes</h2>
           <div class="section-content">
             <div class="step">Step 27: Create the employees API route</div>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/employees/route.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/api/employees/route.ts</span>
 
 <span class="hljs-keyword">import</span> { getAllEmployees } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/db&#x27;</span>
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">NextResponse</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/server&#x27;</span>
@@ -486,7 +500,9 @@
 }</code></pre>
 
             <div class="step">Step 28: Create the schedule API route</div>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/api/schedule/route.ts</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/api/schedule/route.ts</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">NextRequest</span>, <span class="hljs-title class_">NextResponse</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;next/server&#x27;</span>
 <span class="hljs-keyword">import</span> { getWeekSchedule, updateSchedule } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/lib/db&#x27;</span>
@@ -537,7 +553,9 @@
               the schedule grid is its own component. When you click it, a
               dropdown shows all employees:
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ShiftCell.tsx</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// components/ShiftCell.tsx</span>
 <span class="hljs-string">&#x27;use client&#x27;</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">Employee</span> } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/types&#x27;</span>
@@ -584,7 +602,9 @@
               grid with week navigation and shift cells for all 21 slots (3
               shifts &times; 7 days).
             </p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// components/ScheduleGrid.tsx</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// components/ScheduleGrid.tsx</span>
 <span class="hljs-string">&#x27;use client&#x27;</span>
 
 <span class="hljs-keyword">import</span> { <span class="hljs-title class_">Fragment</span>, useEffect, useState } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react&#x27;</span>
@@ -710,7 +730,9 @@
 
             <div class="step">Step 31: Wire up the main page</div>
             <p>Replace <code>app/page.tsx</code>:</p>
-            <pre><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-typescript"><span class="hljs-comment">// app/page.tsx</span>
 <span class="hljs-keyword">import</span> <span class="hljs-title class_">ScheduleGrid</span> <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/components/ScheduleGrid&#x27;</span>
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">Home</span>(<span class="hljs-params"></span>) {
@@ -728,7 +750,9 @@
 }</code></pre>
 
             <div class="step">Step 32: Run and verify</div>
-            <pre><code class="hljs language-bash">npm run dev</code></pre>
+            <pre
+              tabindex="0"
+            ><code class="hljs language-bash">npm run dev</code></pre>
             <p>
               Open <code>http://localhost:3000</code>. You should see the
               schedule grid with week navigation and 21 "Unassigned" cells.
@@ -765,7 +789,7 @@
           </div>
         </div>
       </main>
-      <nav class="bottom-nav">
+      <nav class="bottom-nav" aria-label="Tutorial parts, end of page">
         <a href="/fabulosa-books/part3.html">&larr; Setting Up Shop</a>
         <a href="/fabulosa-books/part5.html">Your First Agent &rarr;</a>
       </nav>
