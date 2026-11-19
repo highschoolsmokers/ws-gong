@@ -31,6 +31,14 @@ test("Home: sections, nav, links, CV, reading", async ({ page }) => {
         .locator("section#code")
         .getByRole("link", { name: /More on GitHub/ }),
     ).toHaveAttribute("href", linkUrl(site.links, "GitHub"));
+    await expect(
+      page
+        .locator("section#code")
+        .getByRole("link", { name: /Visit Fabulosa Books/ }),
+    ).toHaveAttribute("href", linkUrl(site.links, "Fabulosa Books"));
+    await expect(
+      page.locator("footer").getByRole("link", { name: /^Instagram/ }),
+    ).toHaveAttribute("href", linkUrl(site.links, "Instagram"));
   });
   await test.step("masthead is the h1; nav anchors land on real sections", async () => {
     const header = page.locator("header");
