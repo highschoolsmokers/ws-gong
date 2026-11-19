@@ -4,7 +4,7 @@ import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "../lib/site/schema";
 import { tabTo } from "./helpers/contact-form";
 import { site, slushpileConfigured } from "./helpers/constants";
 import { orderedBooks } from "../lib/books";
-import { NEW_TAB_NOTICE } from "../lib/site/content";
+import { NEW_TAB_NOTICE } from "../app/components/ui";
 
 // Visible text: drop the arrow and the spoken-only new-tab notice.
 const shown = (s: string) =>

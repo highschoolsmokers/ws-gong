@@ -14,8 +14,6 @@ export const KNOWS_ABOUT = [
   "Model Context Protocol",
   "Developer Documentation",
 ];
-// Spoken after every link or form that opens a new tab; not shown.
-export const NEW_TAB_NOTICE = "(opens in new tab)";
 export const FEED_DESCRIPTION =
   "Writing by W.S. Gong: fiction, essays, and notes.";
 
