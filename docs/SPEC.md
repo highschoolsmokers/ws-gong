@@ -34,8 +34,9 @@ Only this section names tools; the rest describes behavior.
 
 Permanent redirects: `/about` → `/#about`; `/narratives` → `/#writing`;
 `/code/*`, `/narratives-code/*` → `/#code`; `/cv`, `/resume` → `/#cv`;
-`/contact` → `/#contact`; `/residencies` → `/slushpile`; `/reading` → `/`
-while the log is empty (decided at build).
+`/contact` → `/#contact`; `/residencies` → `/slushpile`, or `/` while
+`SLUSHPILE_URL` is unset; `/reading` → `/` while the log is empty (both
+decided at build).
 
 **Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
 the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
@@ -80,8 +81,8 @@ stored theme. Exempt from §6.1.
 Sections in order, each a label (columns 1–4) and content (5–12), numbered
 from 00 with no gaps when one is hidden.
 
-- **00 About**: portrait centered over the bio (the content's columns 3–6
-  of 8; 2–7 on tablets; 3–10 of 12 on phones), bio below.
+- **00 About**: portrait flush left over the bio (the content's columns 1–4
+  of 8; 1–6 on tablets; 1–8 of 12 on phones), then every bio paragraph.
 - **Writing**: Fiction credits (forthcoming first, unlinked); five latest
   Substack posts (hidden if the fetch fails); subscribe form. Substack refuses
   server sign-ups, so the form opens Substack's subscribe page with the email
@@ -198,21 +199,21 @@ client SDK.
 
 ## 9. Environment
 
-| Name                                                                | Use                                                                      |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact mail; port 465 is TLS (default), others STARTTLS                 |
-| `CONTACT_FORM_SECRET`                                               | Optional token key; defaults to `SMTP_PASS`                              |
-| `VERCEL`                                                            | Set by the host: renders the analytics scripts only on Vercel            |
-| `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                       |
-| `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                     |
-| `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                              |
-| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync`, local only; dir defaults to `../resumes-cvs`                |
-| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                        |
-| `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                     |
-| `MAIL_E2E`                                                          | Opt in to mail-sending tests                                             |
-| `READING_FIXTURES`                                                  | End-to-end build and tests: use fixture books                            |
-| `CI`                                                                | 4 workers, retries, no `.only`; missing test secrets fail                |
-| `NODE_ENV`                                                          | Development: looser script policy, full trace sampling, Goodreads button |
+| Name                                                                | Use                                                                       |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact mail; port 465 is TLS (default), others STARTTLS                  |
+| `CONTACT_FORM_SECRET`                                               | Optional token key; defaults to `SMTP_PASS`                               |
+| `VERCEL`                                                            | Set by the host: renders the analytics scripts only on Vercel             |
+| `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                        |
+| `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                      |
+| `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                               |
+| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync`, local only; dir defaults to `../resumes-cvs`                 |
+| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                         |
+| `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                      |
+| `MAIL_E2E`                                                          | Opt in to mail-sending tests                                              |
+| `READING_FIXTURES`                                                  | End-to-end build and tests: use fixture books                             |
+| `CI`                                                                | Retries, no `.only`, quiet Sentry build output; missing test secrets fail |
+| `NODE_ENV`                                                          | Development: looser script policy, full trace sampling, Goodreads button  |
 
 Remove the stale host variables from the old residency pipeline
 (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`, `CRON_SECRET`,

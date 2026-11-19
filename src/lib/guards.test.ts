@@ -208,8 +208,9 @@ test("§2 routes: every page in app/ is listed, every listed path exists", () =>
 
 test("§2 redirects match next.config.ts, source and destination", () => {
   const norm = (p: string) => p.replace(/\/:slug\*$/, "/*");
+  // A conditional destination (`flag ? "/a" : "/b"`) is checked by its first branch.
   const configured = [
-    ...nextConfig.matchAll(/"(\/[^"]*)":\s*"(\/[^"]*)"/g),
+    ...nextConfig.matchAll(/"(\/[^"]*)":\s*(?:\w+\s*\?\s*)?"(\/[^"]*)"/g),
   ].map((m) => `${norm(m[1])} → ${m[2]}`);
   const para = section(2).split("Permanent redirects")[1].split("\n\n")[0];
   const listed = para.split(";").flatMap((clause) => {

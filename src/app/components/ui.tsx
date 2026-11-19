@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
-// The site's only layout primitives: page title, labelled section, list rows.
+// The site's layout primitives (page title, labelled section, list rows) and
+// new-tab link helpers.
 
 export const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
 

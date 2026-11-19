@@ -28,7 +28,6 @@
   --background: #f2ede4;
   --foreground: #000000;
   --neutral-200: #e5e5e5;
-  --neutral-400: #a3a3a3;
   --neutral-500: #5f5f5f; /* 5.3:1 on the cream background */
 }
 
@@ -46,7 +45,6 @@
   --background: #141414;
   --foreground: #e5e5e5;
   --neutral-200: #404040;
-  --neutral-400: #525252;
   --neutral-500: #a3a3a3;
 }
 
@@ -279,13 +277,11 @@ pre {
 }
 
 /* Syntax highlighting, baked into the HTML by highlight.js at authoring time */
-pre code .hljs-keyword,
-pre code .hljs-selector-tag {
+pre code .hljs-keyword {
   color: #c678dd;
 }
 pre code .hljs-string,
-pre code .hljs-template-tag,
-pre code .hljs-template-variable {
+pre code .hljs-regexp {
   color: #98c379;
 }
 pre code .hljs-comment {
@@ -293,23 +289,20 @@ pre code .hljs-comment {
   font-style: italic;
 }
 pre code .hljs-number,
-pre code .hljs-literal {
-  color: #d19a66;
-}
-pre code .hljs-function,
-pre code .hljs-title {
-  color: #61afef;
-}
-pre code .hljs-built_in {
-  color: #e5c07b;
-}
-pre code .hljs-type,
-pre code .hljs-params {
-  color: #e5c07b;
-}
+pre code .hljs-literal,
 pre code .hljs-attr,
 pre code .hljs-property {
   color: #d19a66;
+}
+pre code .hljs-function,
+pre code .hljs-title,
+pre code .hljs-meta {
+  color: #61afef;
+}
+pre code .hljs-built_in,
+pre code .hljs-type,
+pre code .hljs-params {
+  color: #e5c07b;
 }
 pre code .hljs-variable,
 pre code .hljs-name {
@@ -317,18 +310,6 @@ pre code .hljs-name {
 }
 pre code .hljs-punctuation {
   color: #abb2bf;
-}
-pre code .hljs-meta {
-  color: #61afef;
-}
-pre code .hljs-selector-class {
-  color: #d19a66;
-}
-pre code .hljs-symbol {
-  color: #56b6c2;
-}
-pre code .hljs-regexp {
-  color: #98c379;
 }
 
 /* Steps */
@@ -392,7 +373,6 @@ td {
   margin-bottom: 1rem;
 }
 
-/* Image placeholders (for images not yet created) */
 /* Table of contents (index page) */
 .toc {
   list-style: none;

@@ -115,12 +115,10 @@ a.row {
   padding-block: 1.25rem 2.5rem;
   color: var(--muted);
 }
-.site-footer a {
-  color: var(--foreground);
-}
 /* Tap targets of at least 24px: padding grows the hit area, the matching
    negative margin keeps the type where it was. */
 .site-footer a {
+  color: var(--foreground);
   display: inline-block;
   padding-block: 0.25rem;
   margin-block: -0.25rem;
