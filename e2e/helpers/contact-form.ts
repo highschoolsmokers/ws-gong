@@ -1,5 +1,5 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { MIN_ELAPSED_MS } from "../../lib/upload";
+import { MIN_ELAPSED_MS } from "../../src/lib/upload";
 
 /** Real wait past the server's anti-spam minimum before a real send. */
 const ANTI_SPAM_MS = MIN_ELAPSED_MS + 500;

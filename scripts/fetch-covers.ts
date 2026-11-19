@@ -5,7 +5,7 @@
 
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { loadBooks } from "../lib/books.ts";
+import { loadBooks } from "../src/lib/books.ts";
 
 const COVERS_DIR = join(process.cwd(), "public", "covers");
 

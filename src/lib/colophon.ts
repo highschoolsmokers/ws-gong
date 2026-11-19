@@ -1,4 +1,4 @@
-import pkg from "../package.json" with { type: "json" };
+import pkg from "../../package.json" with { type: "json" };
 
 // The colophon's stack and tools, tied to package.json so they can't drift:
 // versions are read from it, and lib/colophon.test.ts fails when a listed

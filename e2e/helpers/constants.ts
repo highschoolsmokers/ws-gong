@@ -4,9 +4,9 @@
  */
 
 import raw from "../../content/site.json" with { type: "json" };
-import { orderedBooks, reviewed } from "../../lib/books";
-import { siteContentSchema } from "../../lib/site/schema";
-import { slushpileUrl } from "../../lib/site/env";
+import { orderedBooks, reviewed } from "../../src/lib/books";
+import { siteContentSchema } from "../../src/lib/site/schema";
+import { slushpileUrl } from "../../src/lib/site/env";
 
 export const site = siteContentSchema.parse(raw);
 

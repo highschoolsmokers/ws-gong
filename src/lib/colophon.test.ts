@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import pkg from "../package.json" with { type: "json" };
+import pkg from "../../package.json" with { type: "json" };
 import { major, stack, tools } from "./colophon.ts";
 
 const installed = { ...pkg.dependencies, ...pkg.devDependencies };

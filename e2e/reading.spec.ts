@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { orderedBooks, reviewed } from "../lib/books";
+import { orderedBooks, reviewed } from "../src/lib/books";
 
 // With fixtures (READING_FIXTURES) these must run; only a real, empty log skips.
 const empty = (n: number) => !process.env.READING_FIXTURES && n === 0;

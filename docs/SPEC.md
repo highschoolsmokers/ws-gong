@@ -48,7 +48,7 @@ tab says so to screen readers (`NEW_TAB_NOTICE`), not on screen.
 
 - 404: "404" and a home link. Error: "Error", Try again, Home.
 - `/colophon`: Typography, Design, Content, Stack, Tools, Source. Stack and
-  Tools come from `lib/colophon.ts`, which reads versions from the package
+  Tools come from `src/lib/colophon.ts`, which reads versions from the package
   manifest.
 - `/terms`: Overview (last-updated date), What You May Do, Privacy,
   Third-Party Content, DMCA Policy, AI / ML Training. robots.txt blocks known
@@ -100,13 +100,13 @@ share image carry the tagline, "Stories & Systems".
 
 - **Site copy**: `content/site.json` (§14): statement, bio, fiction credits,
   and links. Validated at build. Copy it lacks (tagline, job title, topics,
-  feed description) sits beside it in `lib/site/content.ts`, one constant
+  feed description) sits beside it in `src/lib/site/content.ts`, one constant
   each.
 - **Links**: every link the site shows, as label and URL, in the master's
   order. They feed the home page, `/links`, and the Person structured data;
   the Substack link also sets the feed and subscribe URLs. GitHub and Substack
   are required. A label without an icon gets a generic one.
-- **Projects**: `lib/projects.ts`: href, title, description, stack. Shown in
+- **Projects**: `src/lib/projects.ts`: href, title, description, stack. Shown in
   order.
 - **Reading log**: one Markdown file per book in `content/reading/` (format
   in its README). Frontmatter: title, author, finished (date or `reading`);
@@ -169,7 +169,7 @@ applied before first paint. Print hides chrome and forms.
 ### 6.3 Guards
 
 - **Static** (unit): no off-grid alignment or ornament classes or CSS in
-  `app/` (share image excepted). It matches words in `.tsx` files, comments
+  `src/app/` (share image excepted). It matches words in `.tsx` files, comments
   included, so they must avoid the banned words too; CSS comments are skipped.
   A bracketed value in markup must be built from a token (rule 7).
 - **Rendered** (end to end): every page, a review page, the 404, and
@@ -240,19 +240,23 @@ READING_FIXTURES=1 pnpm test:e2e`.
 ## 11. Layout
 
 ```
-app/(site)/        home, layout, chrome (masthead, nav, footer), contact form
-                   and action, error,
-                   colophon/, terms/, reading/
-app/(bare)/links/  /links and its icons
-app/components/    layout primitives, shared rows, theme toggle, subscribe form
-app/               root layout, styles, portrait, feed/, metadata routes, 404
-lib/               projects, books, colophon, form token, review, substack,
-                   upload, site/ (content, env, schema: site.json and PDFs),
-                   tests (guards.test: §6.3 static, §12 drift, §13 pins)
-content/           site.json (§14), reading/ (§4)
-public/            fabulosa-books/, covers/, icons
-scripts/           sync, fetch-covers, highlight-tutorial
-e2e/               specs, helpers, fixtures/reading/
+src/app/(site)/        home, layout, chrome (masthead, nav, footer), contact
+                       form and action, error,
+                       colophon/, terms/, reading/
+src/app/(bare)/links/  /links and its icons
+src/app/components/    layout primitives, shared rows, theme toggle, subscribe
+                       form
+src/app/               root layout, styles, portrait, feed/, metadata routes,
+                       404
+src/lib/               projects, books, colophon, form token, review,
+                       substack, upload, site/ (content, env, schema:
+                       site.json and PDFs), tests (guards.test: §6.3 static,
+                       §12 drift, §13 pins)
+content/               site.json (§14), reading/ (§4)
+public/                fabulosa-books/, covers/, icons
+scripts/               sync, fetch-covers, highlight-tutorial
+docs/                  this spec
+e2e/                   specs, helpers, fixtures/reading/
 ```
 
 ## 12. Guardrails and anti-patterns
@@ -288,7 +292,7 @@ Each holds on every change; the parenthesis names what enforces it.
 
 ### Drift guards
 
-`lib/guards.test.ts` fails when spec and code disagree:
+`src/lib/guards.test.ts` fails when spec and code disagree:
 
 - §2 routes: every page is listed; every listed path is served.
 - §2 redirects: sources and destinations match the configured redirects.
@@ -298,7 +302,7 @@ Each holds on every change; the parenthesis names what enforces it.
 - § references: every `§` in code, styles, commands, README, and spec has a
   heading.
 - §11 layout: every listed path exists; every top-level folder is listed.
-- Links: no `site.json` link typed into `app/` or `lib/` (project repo URLs
+- Links: no `site.json` link typed into `src/` (project repo URLs
   excepted).
 
 Claims it can't check (copy, design intent) are covered by §6.3 and `/audit`.
@@ -320,7 +324,7 @@ Claims it can't check (copy, design intent) are covered by §6.3 and `/audit`.
 
 ## 13. Intentional decisions
 
-Pinned by `lib/guards.test.ts` (removals, dropped dependencies, project shape,
+Pinned by `src/lib/guards.test.ts` (removals, dropped dependencies, project shape,
 no email in `site.json`) and a lint rule (`SLUSHPILE_URL` read in one place).
 
 - **One page.** Former section pages are home sections; add a section, not a
