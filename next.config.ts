@@ -25,7 +25,7 @@ const csp = [
 
 // The site is one page: old section pages land on their anchors, permanently.
 // /reading lands on home while the log is empty (its page and section hide).
-// /residencies became the slushpile app.
+// /residencies became the slushpile app; home while that app isn't proxied.
 const redirects = Object.entries({
   "/code/:slug*": "/#code",
   "/narratives-code/:slug*": "/#code",
@@ -35,7 +35,7 @@ const redirects = Object.entries({
   "/cv": "/#cv",
   "/resume": "/#cv",
   "/contact": "/#contact",
-  "/residencies": "/slushpile",
+  "/residencies": slushpileUrl ? "/slushpile" : "/",
 }).map(([source, destination]) => ({ source, destination, permanent: true }));
 
 const nextConfig: NextConfig = {

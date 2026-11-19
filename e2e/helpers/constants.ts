@@ -3,12 +3,10 @@
  * sources the site renders from, so content edits don't break tests.
  */
 
-import raw from "../../content/site.json" with { type: "json" };
 import { orderedBooks, reviewed } from "../../src/lib/books";
-import { siteContentSchema } from "../../src/lib/site/schema";
 import { slushpileUrl } from "../../src/lib/site/env";
 
-export const site = siteContentSchema.parse(raw);
+export { site } from "../../src/lib/site/content";
 
 /** Same flag the rewrite and nav slot read, so the tests can't disagree. */
 export const slushpileConfigured = Boolean(slushpileUrl);

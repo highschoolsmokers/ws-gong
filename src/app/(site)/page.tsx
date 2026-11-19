@@ -47,20 +47,24 @@ export default async function Home() {
       <JsonLd data={projectsLd} />
 
       <Section id="about" index={0} title="About">
-        {/* The portrait sits above the bio, centered on the content's own
-            columns: 3–10 of 12 on phones, 2–7 of 8 on tablets, 3–6 of 8 on
+        {/* The portrait sits above the bio, flush left on the content's own
+            columns: 1–8 of 12 on phones, 1–6 of 8 on tablets, 1–4 of 8 on
             desktop, so every edge lands on a line of the page grid. */}
         <div className="grid grid-cols-12 gap-y-4 gap-x-[var(--gutter)] md:grid-cols-8">
           <Image
             src={portrait}
             alt="Illustrated portrait of W.S. Gong"
             sizes="(min-width: 768px) 22rem, 75vw"
-            className="col-span-8 col-start-3 h-auto w-full md:col-span-6 md:col-start-2 lg:col-span-4 lg:col-start-3"
+            className="col-span-8 h-auto w-full md:col-span-6 lg:col-span-4"
             // In the first viewport on most screens and the page's LCP element.
             loading="eager"
             fetchPriority="high"
           />
-          <p className="col-span-12 max-w-prose md:col-span-8">{site.bio[0]}</p>
+          {site.bio.map((p) => (
+            <p key={p} className="col-span-12 max-w-prose md:col-span-8">
+              {p}
+            </p>
+          ))}
         </div>
       </Section>
 
@@ -128,9 +132,8 @@ export default async function Home() {
         <Rows>
           <Row href={`/${PDFS.cv}`} title="CV (PDF)" />
           <Row href={`/${PDFS.resume}`} title="Résumé (PDF)" />
-          {/* Every master link except those with a place of their own:
-              GitHub and Fabulosa Books (Code), Substack (Writing, footer),
-              Instagram (footer). */}
+          {/* Every master link but those with a place of their own
+              (ELSEWHERE_ON_HOME). */}
           {site.links
             .filter((p) => !ELSEWHERE_ON_HOME.includes(p.label))
             .map((p) => (

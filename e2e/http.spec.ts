@@ -53,7 +53,8 @@ const REDIRECTS = [
   ["/cv", "/#cv"],
   ["/resume", "/#cv"],
   ["/contact", "/#contact"],
-  ["/residencies", "/slushpile"],
+  // /residencies goes home while the slushpile app isn't proxied.
+  ["/residencies", slushpileConfigured ? "/slushpile" : "/"],
 ] as const;
 
 test("redirects are permanent and land where SPEC §2 says", async ({

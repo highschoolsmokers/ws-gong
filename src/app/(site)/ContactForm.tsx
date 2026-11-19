@@ -100,7 +100,7 @@ function Form({ onReset }: { onReset: () => void }) {
         drag(-depth.current)(e);
         add(e.dataTransfer.files);
       }}
-      className="space-y-6 pt-4"
+      className="space-y-6"
     >
       {dragging && (
         <div className="pointer-events-none fixed inset-0 z-50 m-0 flex items-center bg-foreground/90 text-4xl font-medium text-background">
