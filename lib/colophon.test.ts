@@ -23,6 +23,7 @@ test("every runtime dependency is credited in the colophon", () => {
 });
 
 test("stack versions come from package.json", () => {
+  assert.match(stack[0].label, new RegExp(`^Next\\.js ${major("next")} `));
   assert.ok(/^\d+$/.test(major("next")!), "major() reads a plain number");
   assert.match(
     stack.at(-1)!.label,
