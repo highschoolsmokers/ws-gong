@@ -23,6 +23,11 @@
     "*.{js,jsx,ts,tsx,css,md,json}": "prettier --write",
     "*.{js,jsx,ts,tsx}": "eslint --fix"
   },
+  "postcss": {
+    "plugins": {
+      "@tailwindcss/postcss": {}
+    }
+  },
   "dependencies": {
     "@sentry/nextjs": "^10.78.0",
     "@vercel/analytics": "^2.0.1",
