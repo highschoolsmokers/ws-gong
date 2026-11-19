@@ -5,15 +5,17 @@ import { defineConfig } from "@playwright/test";
 const deployed = process.env.BASE_URL;
 const baseURL = deployed || "http://localhost:3000";
 
-// Engine-sensitive tests (layout, focus, form behavior, fonts) carry @cross
-// and run in all three browsers. Everything else is server-rendered output
-// that doesn't vary by engine, so it runs once, in Chromium.
+// Engine-sensitive tests (layout, hydration, focus, form behavior, fonts)
+// carry @cross and run in all three browsers. Everything else is
+// server-rendered output that doesn't vary by engine, so it runs once, in
+// Chromium.
 const CROSS = /@cross/;
 
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
-  workers: process.env.CI ? 4 : undefined,
+  // Measured: 4 workers beat both 1 (3× slower) and the machine default.
+  workers: 4,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [["github"], ["list"]] : "list",

@@ -2,35 +2,15 @@ import { test, expect } from "@playwright/test";
 import { stack, tools } from "../lib/colophon";
 import { ELSEWHERE_ON_HOME, linkUrl, PDFS } from "../lib/site/schema";
 import { tabTo } from "./helpers/contact-form";
-import {
-  orderedBooks,
-  site,
-  SITE_PAGES,
-  slushpileConfigured,
-} from "./helpers/constants";
+import { site, slushpileConfigured } from "./helpers/constants";
+import { orderedBooks } from "../lib/books";
 
 // Rendered pages: structure and copy, checked against the content they're
-// built from. Interaction and focus tests carry @cross (all three engines).
+// built from. Layout, interaction, and focus tests carry @cross.
 
-// Hydration: the server's HTML must match what the browser renders. A
-// mismatch (React error #418) once made the live masthead a link, not an h1.
-test.describe("Hydration", () => {
-  for (const path of [...SITE_PAGES, "/no-such-page"])
-    test(`${path} hydrates without errors; one h1`, async ({ page }) => {
-      const errors: string[] = [];
-      page.on("pageerror", (e) => errors.push(e.message));
-      await page.goto(path, { waitUntil: "networkidle" });
-      expect(errors).toEqual([]);
-      await expect(page.locator("h1")).toHaveCount(1);
-    });
-});
-
-test.describe("Home", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/");
-  });
-
-  test("renders every section from content", async ({ page }) => {
+test("Home: sections, nav, links, CV, reading", async ({ page }) => {
+  await page.goto("/");
+  await test.step("renders every section from content", async () => {
     const about = page.locator("section#about");
     await expect(about).toContainText(site.bio[0]);
     await expect(
@@ -47,10 +27,7 @@ test.describe("Home", () => {
         .getByRole("link", { name: /More on GitHub/ }),
     ).toHaveAttribute("href", linkUrl(site.links, "GitHub"));
   });
-
-  test("masthead is the h1; nav anchors land on real sections", async ({
-    page,
-  }) => {
+  await test.step("masthead is the h1; nav anchors land on real sections", async () => {
     const header = page.locator("header");
     await expect(header.locator("h1")).toContainText("W.S.");
     await expect(header.locator("h1").getByRole("link")).not.toBeAttached();
@@ -78,18 +55,14 @@ test.describe("Home", () => {
     if (slushpileConfigured) await expect(slush).toBeAttached();
     else await expect(slush).not.toBeAttached();
   });
-
-  test("every master link appears on the home page", async ({ page }) => {
+  await test.step("every master link appears on the home page", async () => {
     for (const { label, url } of site.links)
       expect(
         await page.locator(`a[href^="${url.replace(/\/$/, "")}"]`).count(),
         `${label} is linked on /`,
       ).toBeGreaterThan(0);
   });
-
-  test("CV section: CV first, then résumé and profiles; Substack form", async ({
-    page,
-  }) => {
+  await test.step("CV section: CV first, then résumé and profiles; Substack form", async () => {
     const resume = page.locator("section#cv");
     const rows = await resume.locator("li").allTextContents();
     expect(rows.slice(0, 2).map((r) => r.trim())).toEqual([
@@ -117,8 +90,7 @@ test.describe("Home", () => {
       "email",
     );
   });
-
-  test("Reading section follows content/reading", async ({ page }) => {
+  await test.step("Reading section follows content/reading", async () => {
     const section = page.locator("section#reading");
     if (!orderedBooks.length) return expect(section).not.toBeAttached();
     await expect(section.locator("li").first()).toBeVisible();
@@ -129,7 +101,7 @@ test.describe("Home", () => {
 });
 
 test.describe("Inner pages", () => {
-  test("site chrome: home link, footer, skip link", async ({ page }) => {
+  test("/colophon: chrome, sections, stack and tools", async ({ page }) => {
     await page.goto("/colophon");
     await expect(
       page.locator("header").getByRole("link", { name: /W\.S\. Gong, home/i }),
@@ -141,37 +113,17 @@ test.describe("Inner pages", () => {
       page.getByRole("link", { name: /skip to content/i }),
     ).toHaveAttribute("href", "#main");
     await expect(page.locator("main#main")).toBeAttached();
-  });
-
-  for (const [path, headings] of [
-    [
-      "/terms",
-      [
-        "Overview",
-        "What You May Do",
-        "Privacy",
-        "Third-Party Content",
-        "DMCA Policy",
-        "AI / ML Training",
-      ],
-    ],
-    [
-      "/colophon",
-      ["Typography", "Design", "Content", "Stack", "Tools", "Source"],
-    ],
-  ] as const)
-    test(`${path} has its sections`, async ({ page }) => {
-      await page.goto(path);
-      for (const name of headings)
-        await expect(
-          page.getByRole("heading", { name, exact: true }),
-        ).toBeVisible();
-    });
-
-  test("/colophon lists the stack and tools from lib/colophon", async ({
-    page,
-  }) => {
-    await page.goto("/colophon");
+    for (const name of [
+      "Typography",
+      "Design",
+      "Content",
+      "Stack",
+      "Tools",
+      "Source",
+    ])
+      await expect(
+        page.getByRole("heading", { name, exact: true }),
+      ).toBeVisible();
     for (const { label } of [...stack, ...tools])
       await expect(page.getByText(label, { exact: true })).toBeVisible();
     await expect(
@@ -179,7 +131,22 @@ test.describe("Inner pages", () => {
     ).toHaveAttribute("href", `${linkUrl(site.links, "GitHub")}/ws-gong`);
   });
 
-  test("/links is bare: h1 home link, external cards, no chrome", async ({
+  test("/terms has its sections", async ({ page }) => {
+    await page.goto("/terms");
+    for (const name of [
+      "Overview",
+      "What You May Do",
+      "Privacy",
+      "Third-Party Content",
+      "DMCA Policy",
+      "AI / ML Training",
+    ])
+      await expect(
+        page.getByRole("heading", { name, exact: true }),
+      ).toBeVisible();
+  });
+
+  test("/links: bare, Latest first, then every link but Instagram", async ({
     page,
   }) => {
     await page.goto("/links");
@@ -210,31 +177,6 @@ test.describe("Inner pages", () => {
     await expect(
       page.locator(`a[href="${linkUrl(site.links, "Instagram")}"]`),
     ).toHaveCount(0);
-  });
-
-  for (const path of ["/", "/links"])
-    test(`${path}: the Substack button fits its form at phone and tablet widths`, async ({
-      page,
-    }) => {
-      for (const width of [320, 768]) {
-        await page.setViewportSize({ width, height: 800 });
-        await page.goto(path);
-        const form = page.getByRole("form", { name: "Subscribe on Substack" });
-        const [f, b] = await Promise.all([
-          form.boundingBox(),
-          form.getByRole("button").boundingBox(),
-        ]);
-        expect(
-          b!.x + b!.width,
-          `button inside the form at ${width}px`,
-        ).toBeLessThanOrEqual(f!.x + f!.width + 0.5);
-      }
-    });
-
-  test("/links leads with the latest story (and post, when Substack answers)", async ({
-    page,
-  }) => {
-    await page.goto("/links");
     const latest = page.locator("section", {
       has: page.getByRole("heading", { name: "Latest" }),
     });
@@ -246,6 +188,29 @@ test.describe("Inner pages", () => {
     const headings = await page.locator("main h2, h2").allTextContents();
     expect(headings.indexOf("Latest")).toBeLessThan(headings.indexOf("Links"));
   });
+
+  for (const path of ["/", "/links"])
+    test(
+      `${path}: the Substack button fits its form at phone and tablet widths`,
+      { tag: "@cross" },
+      async ({ page }) => {
+        for (const width of [320, 768]) {
+          await page.setViewportSize({ width, height: 800 });
+          await page.goto(path);
+          const form = page.getByRole("form", {
+            name: "Subscribe on Substack",
+          });
+          const [f, b] = await Promise.all([
+            form.boundingBox(),
+            form.getByRole("button").boundingBox(),
+          ]);
+          expect(
+            b!.x + b!.width,
+            `button inside the form at ${width}px`,
+          ).toBeLessThanOrEqual(f!.x + f!.width + 0.5);
+        }
+      },
+    );
 
   test("404 page offers a way home", async ({ page }) => {
     await page.goto("/no-such-page");

@@ -1,6 +1,6 @@
 import { reviewed } from "@/lib/books";
 import { feedHtml } from "@/lib/review";
-import { FEED_DESCRIPTION, SITE_URL as site } from "@/lib/site/content";
+import { FEED_DESCRIPTION, SITE_URL } from "@/lib/site/content";
 import { getSubstackPosts } from "@/lib/substack";
 // "]]>" can't appear inside CDATA; split it across two sections.
 const cdata = (s: string) =>
@@ -24,7 +24,7 @@ export async function GET() {
   }));
   // Reviews carry their full text, spoilers left out.
   const reviews: Item[] = reviewed.map((b) => {
-    const url = `${site}/reading/${b.slug}`;
+    const url = `${SITE_URL}/reading/${b.slug}`;
     return {
       title: `Review: ${b.title} by ${b.author}`,
       url,
@@ -40,7 +40,7 @@ export async function GET() {
         `<item><title>${cdata(i.title)}</title><link>${i.url}</link><guid isPermaLink="true">${i.url}</guid>${i.date ? `<pubDate>${i.date.toUTCString()}</pubDate>` : ""}${i.description ? `<description>${cdata(i.description)}</description>` : ""}<category>${i.category}</category></item>`,
     );
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>W.S. Gong</title><link>${site}</link><description>${FEED_DESCRIPTION}</description><language>en-us</language><atom:link href="${site}/feed" rel="self" type="application/rss+xml"/>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>W.S. Gong</title><link>${SITE_URL}</link><description>${FEED_DESCRIPTION}</description><language>en-us</language><atom:link href="${SITE_URL}/feed" rel="self" type="application/rss+xml"/>
 ${items.join("\n")}
 </channel></rss>`;
   return new Response(xml, {

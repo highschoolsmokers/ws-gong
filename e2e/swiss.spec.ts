@@ -3,7 +3,9 @@ import { SITE_PAGES } from "./helpers/constants";
 
 // SPEC §6.1, checked on the rendered page: elements start on a grid column
 // line and end inside the grid; lists draw rules between rows only. Layout is
-// engine-specific, so this runs in all three browsers.
+// engine-specific, so this runs in all three browsers. The same load checks
+// hydration: a server/client mismatch (React #418) once made the live
+// masthead a link instead of the h1.
 const PAGES = [...SITE_PAGES, "/no-such-page"];
 const WIDTHS = [1280, 375];
 
@@ -66,13 +68,25 @@ async function audit(page: Page) {
 // Firefox (page.evaluate hung until the test timed out).
 for (const path of PAGES)
   test(
-    `${path} follows the grid (SPEC §6.1)`,
+    `${path} hydrates cleanly, has one h1, follows the grid (SPEC §6.1)`,
     { tag: "@cross" },
     async ({ page }) => {
-      for (const width of WIDTHS) {
+      // A script that fails to load never throws, so failed requests and
+      // console errors count too (the 404 page's own status excepted).
+      const errors: string[] = [];
+      page.on("pageerror", (e) => errors.push(e.message));
+      page.on("requestfailed", (r) => errors.push(`failed: ${r.url()}`));
+      page.on("console", (m) => {
+        if (m.type() === "error" && !/status of 404/.test(m.text()))
+          errors.push(m.text());
+      });
+      for (const [i, width] of WIDTHS.entries()) {
         await page.setViewportSize({ width, height: 900 });
-        await page.goto(path);
+        // The first load waits for hydration to finish.
+        await page.goto(path, { waitUntil: i ? "load" : "networkidle" });
         expect(await audit(page), `at ${width}px`).toEqual([]);
       }
+      expect(errors).toEqual([]);
+      await expect(page.locator("h1")).toHaveCount(1);
     },
   );

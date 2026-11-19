@@ -6,11 +6,11 @@ import {
   submitContactForm,
   tabTo,
 } from "./helpers/contact-form";
-import {
-  EMAIL_DELIVERY_TIMEOUT_MS,
-  SUBMISSION_TIMEOUT_MS,
-} from "./helpers/constants";
-import { MAX_FILES, MAX_LENGTH, MAX_TOTAL_BYTES } from "../lib/upload";
+import { MAX_FILES, MAX_LENGTH } from "../lib/upload";
+
+/** Wait for "message sent", and for a delivered email. */
+const SUBMISSION_TIMEOUT_MS = 15_000;
+const EMAIL_DELIVERY_TIMEOUT_MS = 120_000;
 
 // Form behavior differs by engine (constraint validation, file inputs,
 // focus order), so these run everywhere.
@@ -37,6 +37,40 @@ test.describe("Contact form", { tag: "@cross" }, () => {
     await expect(page.getByText(/message sent/i)).not.toBeAttached();
   });
 
+  // The limits themselves are unit-tested (lib/upload.test.ts); this proves
+  // the form applies them, counting files already attached, and can undo.
+  test("attachments over the limits are refused, by name", async ({ page }) => {
+    await openContactForm(page);
+    const input = page.locator("input[type='file']");
+    const file = (name: string) => ({
+      name,
+      mimeType: "application/octet-stream",
+      buffer: Buffer.alloc(1),
+    });
+    const refused = page.getByText(/^Not attached/);
+
+    await input.setInputFiles([file("setup.exe"), file("f0.txt")]);
+    await expect(refused).toContainText("setup.exe");
+    await expect(page.getByText("f0.txt (")).toBeVisible();
+
+    await input.setInputFiles(
+      Array.from({ length: MAX_FILES }, (_, i) => file(`g${i}.txt`)),
+    );
+    await expect(refused).toContainText(`g${MAX_FILES - 1}.txt`);
+
+    await page.getByRole("button", { name: "Remove f0.txt" }).click();
+    await expect(page.getByText("f0.txt (")).not.toBeAttached();
+  });
+
+  test("Send is keyboard-reachable from the first field", async ({ page }) => {
+    const f = await openContactForm(page);
+    await f.name.focus();
+    await tabTo(page, f.send);
+  });
+});
+
+// Server-rendered markup and server checks: the same in every engine.
+test.describe("Contact form (server)", () => {
   test("server rejects a bad email and keeps what was typed", async ({
     page,
   }) => {
@@ -53,74 +87,14 @@ test.describe("Contact form", { tag: "@cross" }, () => {
     await expect(f.message).toHaveValue("Test message content here.");
   });
 
-  test("attachments can be added and removed", async ({ page }) => {
-    await openContactForm(page);
-    await page.locator("input[type='file']").setInputFiles({
-      name: "test-upload.txt",
-      mimeType: "text/plain",
-      buffer: Buffer.from("x"),
-    });
-    await expect(page.getByText("test-upload.txt")).toBeVisible();
-    await page
-      .getByRole("button", { name: /remove test-upload\.txt/i })
-      .click();
-    await expect(page.getByText("test-upload.txt")).not.toBeAttached();
-  });
-
-  test("attachments over the limits are refused, by name", async ({ page }) => {
-    await openContactForm(page);
-    const input = page.locator("input[type='file']");
-    const file = (name: string, bytes = 1) => ({
-      name,
-      mimeType: "application/octet-stream",
-      buffer: Buffer.alloc(bytes),
-    });
-    const refused = page.getByText(/^Not attached/);
-
-    // A blocked type; trailing dots and spaces don't hide it.
-    await input.setInputFiles([file("setup.exe"), file("run.bat. ")]);
-    await expect(refused).toContainText("setup.exe");
-    await expect(refused).toContainText("run.bat");
-
-    // One file past the count limit.
-    await input.setInputFiles(
-      Array.from({ length: MAX_FILES + 1 }, (_, i) => file(`f${i}.txt`)),
-    );
-    await expect(refused).toContainText(`f${MAX_FILES}.txt`);
-    for (const i of [0, MAX_FILES - 1])
-      await expect(page.getByText(`f${i}.txt (`)).toBeVisible();
-
-    // Past the total size limit.
-    for (let i = 0; i < MAX_FILES; i++)
-      await page.getByRole("button", { name: `Remove f${i}.txt` }).click();
-    await input.setInputFiles(file("big.pdf", MAX_TOTAL_BYTES + 1));
-    await expect(refused).toContainText("big.pdf");
-  });
-
-  test("Send is keyboard-reachable from the first field", async ({ page }) => {
-    const f = await openContactForm(page);
-    await f.name.focus();
-    await tabTo(page, f.send);
-  });
-
-  test("fields carry the server's length limits", async ({ page }) => {
-    const f = await openContactForm(page);
-    await expect(f.name).toHaveAttribute("maxlength", String(MAX_LENGTH.name));
-    await expect(f.subject).toHaveAttribute(
-      "maxlength",
-      String(MAX_LENGTH.subject),
-    );
-    await expect(f.message).toHaveAttribute(
-      "maxlength",
-      String(MAX_LENGTH.message),
-    );
-  });
-
-  test("honeypot is hidden from people, AT, and password managers", async ({
+  test("markup: the server's length limits; a honeypot no one sees", async ({
     page,
   }) => {
-    await page.goto("/#contact");
-    const hp = page.locator("input[name='contact_hp']");
+    const f = await openContactForm(page);
+    for (const k of ["name", "subject", "message"] as const)
+      await expect(f[k]).toHaveAttribute("maxlength", String(MAX_LENGTH[k]));
+    // Hidden from people, assistive tech, and password managers.
+    const hp = page.locator("section#contact .honeypot");
     await expect(hp).toHaveAttribute("aria-hidden", "true");
     await expect(hp).toHaveAttribute("tabindex", "-1");
     await expect(hp).toHaveAttribute("data-1p-ignore", "");

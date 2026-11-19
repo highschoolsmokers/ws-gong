@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import raw from "../content/site.json";
+import raw from "../content/site.json" with { type: "json" };
 import { linkUrl } from "./site/schema";
 
 // The publication is the master's Substack link (site.json); next.config.ts

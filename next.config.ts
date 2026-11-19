@@ -17,7 +17,7 @@ const csp = [
   "connect-src 'self' https://va.vercel-scripts.com",
   "frame-ancestors 'none'",
   // These three don't fall back to default-src. Forms post to this site (the
-  // contact form) or to Substack (the newsletter form).
+  // contact form) or to Substack (the subscribe form).
   "base-uri 'none'",
   "object-src 'none'",
   `form-action 'self' ${SUBSTACK_BASE_URL}`,

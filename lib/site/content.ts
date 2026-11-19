@@ -1,4 +1,4 @@
-import raw from "@/content/site.json";
+import raw from "@/content/site.json" with { type: "json" };
 import { siteContentSchema } from "./schema";
 
 export const SITE_URL = "https://www.ws-gong.com";

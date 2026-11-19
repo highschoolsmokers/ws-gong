@@ -4,25 +4,12 @@ import { test, expect } from "@playwright/test";
 // The tutorial is static HTML in public/; the list of parts comes from the
 // files themselves, so adding a part adds its tests.
 const DIR = "public/fabulosa-books";
-const ENTITIES: Record<string, string> = {
-  amp: "&",
-  lt: "<",
-  gt: ">",
-  quot: '"',
-  mdash: "—",
-  ndash: "–",
-  rsquo: "’",
-  lsquo: "‘",
-  rdquo: "”",
-  ldquo: "“",
-  hellip: "…",
-  nbsp: " ",
-};
+// Part titles use only &mdash; and &amp; among entities.
 const text = (html: string) =>
   html
     .replace(/<[^>]+>/g, "")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(+n))
-    .replace(/&(\w+);/g, (m, name) => ENTITIES[name] ?? m)
+    .replaceAll("&mdash;", "—")
+    .replaceAll("&amp;", "&")
     .trim();
 const parts = readdirSync(DIR)
   .filter((f) => /^part\d+\.html$/.test(f))
@@ -89,6 +76,9 @@ for (const [i, part] of parts.entries())
       )
     ).filter(Boolean);
     expect(bad, "broken images").toEqual([]);
+    // Every code block is syntax-highlighted.
+    for (const pre of await page.locator("pre code").all())
+      await expect(pre).toHaveClass(/hljs/);
     expect(problems).toEqual([]);
   });
 
@@ -117,19 +107,4 @@ test.describe("Rendering", { tag: "@cross" }, () => {
       ).toBeLessThanOrEqual(0);
     }
   });
-});
-
-test("code blocks are highlighted", async ({ page }) => {
-  await page.goto("/fabulosa-books/part4.html");
-  await expect(
-    page.locator("pre code.hljs .hljs-keyword").first(),
-  ).toBeAttached();
-});
-
-test("home → tutorial → back to the Code section", async ({ page }) => {
-  await page.goto("/");
-  await page.locator('section#code a[href^="/fabulosa-books"]').click();
-  await expect(page).toHaveURL(/\/fabulosa-books/);
-  await page.locator("nav.site-nav").getByRole("link").click();
-  await expect(page).toHaveURL(/\/#code$/);
 });

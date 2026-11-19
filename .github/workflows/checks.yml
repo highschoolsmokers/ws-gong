@@ -1,8 +1,8 @@
 name: CI
 
+# On PRs only: pre-push already runs lint, typecheck, and unit tests, and
+# the build is covered by the E2E job and the Vercel preview.
 on:
-  push:
-    branches-ignore: [main]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -33,9 +33,6 @@ jobs:
 
       - name: Format check
         run: pnpm exec prettier --check .
-
-      - name: Build
-        run: pnpm build
 
       - name: Audit
         run: pnpm audit --audit-level=high
