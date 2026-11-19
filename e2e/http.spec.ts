@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { orderedBooks, reviewed } from "../lib/books";
-import { SUBSTACK_BASE_URL } from "../lib/substack";
+import { orderedBooks, reviewed } from "../src/lib/books";
+import { SUBSTACK_BASE_URL } from "../src/lib/substack";
 import { SITE_PAGES, slushpileConfigured } from "./helpers/constants";
 
 // Server responses only: status codes, redirects, metadata, feeds. No page is

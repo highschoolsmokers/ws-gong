@@ -2,14 +2,14 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
-import pkg from "../package.json" with { type: "json" };
+import pkg from "../../package.json" with { type: "json" };
 import { projects } from "./projects.ts";
 import { PDFS, blobUrl } from "./site/schema.ts";
 
 // Repo-wide guards: §13 decisions stay decided, §6.1 holds in code, client
 // code stays off the server, and SPEC.md and the code agree (§12 drift guards).
 
-const root = join(import.meta.dirname, "..");
+const root = join(import.meta.dirname, "..", "..");
 const read = (p: string) => readFileSync(join(root, p), "utf8");
 const walk = (dir: string, ext = /\.(ts|tsx|mjs)$/): string[] =>
   readdirSync(join(root, dir), { withFileTypes: true }).flatMap((e) =>
@@ -19,7 +19,7 @@ const walk = (dir: string, ext = /\.(ts|tsx|mjs)$/): string[] =>
         ? [join(dir, e.name)]
         : [],
   );
-const spec = read("SPEC.md");
+const spec = read("docs/SPEC.md");
 const nextConfig = read("next.config.ts");
 const section = (n: number) => {
   const m = new RegExp(
@@ -33,14 +33,14 @@ const code = (text: string) =>
   [...text.matchAll(/`([^`]+)`/g)].map((m) => m[1]);
 // Code the site and its tooling run (this file excepted: its patterns would match).
 const sources = [
-  ...["app", "lib", "scripts", "e2e"].flatMap((d) => walk(d)),
+  ...["src", "scripts", "e2e"].flatMap((d) => walk(d)),
   ...[
     "next.config.ts",
-    "instrumentation.ts",
+    "src/instrumentation.ts",
     "playwright.config.ts",
     "eslint.config.mjs",
   ],
-].filter((f) => f !== "lib/guards.test.ts");
+].filter((f) => f !== "src/lib/guards.test.ts");
 
 // §13 ------------------------------------------------------------------------
 
@@ -48,13 +48,13 @@ test("removed surfaces stay removed", () => {
   for (const p of [
     // Section pages folded into the home page; next.config.ts redirects them.
     ...["about", "code", "narratives", "cv", "resume", "contact"].map(
-      (s) => `app/(site)/${s}`,
+      (s) => `src/app/(site)/${s}`,
     ),
-    "app/(site)/slushpile", // mounted by rewrite from its own repo
-    "lib/residency-miner", // moved to the slushpile repo
-    "app/api", // no API routes: no crons, no résumé gate
+    "src/app/(site)/slushpile", // mounted by rewrite from its own repo
+    "src/lib/residency-miner", // moved to the slushpile repo
+    "src/app/api", // no API routes: no crons, no résumé gate
     ...Object.values(PDFS).map((name) => `public/${name}`), // in blob storage
-    "instrumentation-client.ts", // client Sentry SDK stays off
+    "src/instrumentation-client.ts", // client Sentry SDK stays off
   ])
     assert.equal(existsSync(join(root, p)), false, `${p} must not exist`);
 });
@@ -67,7 +67,7 @@ test("dropped dependencies stay dropped", () => {
 
 test("site copy comes from content/site.json, with no email in it", () => {
   assert.doesNotMatch(read("content/site.json"), /[\w.+-]+@[\w-]+\.\w/);
-  for (const p of ["app/(site)/page.tsx", "app/layout.tsx"])
+  for (const p of ["src/app/(site)/page.tsx", "src/app/layout.tsx"])
     assert.match(read(p), /@\/lib\/site\/content/, `${p} must read it`);
 });
 
@@ -92,7 +92,7 @@ test("Code is one flat list: no featured tier, categories, or sub-pages", () => 
 
 test("Swiss rules: no off-grid alignment or ornament", () => {
   // The share image is a raster composition, not page layout.
-  const files = walk("app", /\.(tsx|css)$/).filter(
+  const files = walk("src/app", /\.(tsx|css)$/).filter(
     (f) => !f.endsWith("opengraph-image.tsx"),
   );
   const utilities =
@@ -117,7 +117,7 @@ test("Swiss rules: no off-grid alignment or ornament", () => {
 // markup must be built from one, like gap-[var(--gutter)]; one-off sizes are
 // named in globals.css instead.
 test("Swiss rule 7: no one-off values in markup", () => {
-  const hits = walk("app", /\.tsx$/)
+  const hits = walk("src/app", /\.tsx$/)
     .filter((f) => !f.endsWith("opengraph-image.tsx"))
     .flatMap((f) =>
       [...read(f).matchAll(/[\w:-]+-\[([^\]]+)\]/g)]
@@ -135,7 +135,9 @@ test("Swiss rule 7: no one-off values in markup", () => {
 // A "use server" file is a boundary: the client gets RPC stubs, not its code.
 test("client components never import Node-only modules", () => {
   const resolve = (from: string, spec: string) => {
-    const base = spec.startsWith("@/") ? spec.slice(2) : join(from, "..", spec);
+    const base = spec.startsWith("@/")
+      ? `src/${spec.slice(2)}`
+      : join(from, "..", spec);
     return ["", ".ts", ".tsx", "/index.ts", "/index.tsx"]
       .map((ext) => base + ext)
       .find((p) => existsSync(join(root, p)) && /\.tsx?$/.test(p));
@@ -143,7 +145,7 @@ test("client components never import Node-only modules", () => {
   const IMPORT =
     /(?:^|\n)\s*((?:import|export)\s[^;]*?)from\s+["']([^"']+)["']/g;
   const NODE = /^(node:|fs$|path$|os$|child_process$|crypto$)/;
-  for (const entry of walk("app", /\.tsx?$/).filter((f) =>
+  for (const entry of walk("src/app", /\.tsx?$/).filter((f) =>
     /^["']use client["']/.test(read(f).trimStart()),
   )) {
     const seen = new Set<string>();
@@ -170,13 +172,13 @@ test("client components never import Node-only modules", () => {
 
 test("§2 routes: every page in app/ is listed, every listed path exists", () => {
   // app/(group)/a/[slug]/page.tsx → /a/<slug>
-  const routes = walk("app")
+  const routes = walk("src/app")
     .filter((f) => /\/(page\.tsx|route\.ts)$/.test(f))
     .map(
       (f) =>
         (
           "/" +
-          relative("app", f)
+          relative("src/app", f)
             .replace(/\/?(page\.tsx|route\.ts)$/, "")
             .split("/")
             .filter((s) => !/^\(.*\)$/.test(s))
@@ -282,10 +284,10 @@ test("§ references in code, styles, and docs point at real sections", () => {
   );
   const files = [
     ...sources,
-    ...walk("app", /\.css$/),
+    ...walk("src/app", /\.css$/),
     ...walk(".claude/commands", /\.md$/),
     "README.md",
-    "SPEC.md",
+    "docs/SPEC.md",
   ];
   const bad = files.flatMap((f) =>
     [...read(f).matchAll(/§(\d+(?:\.\d+)?)/g)]
@@ -334,7 +336,7 @@ test("links come only from site.json: none typed into app/ or lib/", () => {
     l.url.replace(/^https?:\/\/(www\.)?/, "").replace(/\/$/, ""),
   );
   const typed = sources
-    .filter((f) => /^(app|lib)\//.test(f))
+    .filter((f) => /^src\//.test(f))
     .flatMap((f) => {
       let text = read(f);
       // A project's own repo URL is project data, not a profile link.

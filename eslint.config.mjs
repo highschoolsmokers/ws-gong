@@ -5,11 +5,11 @@ import nextTs from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
-  // SLUSHPILE_URL is read in exactly one place — lib/site/env.ts — so the
+  // SLUSHPILE_URL is read in exactly one place — src/lib/site/env.ts — so the
   // rewrite, the nav slot, and the e2e suite (through env.ts) agree.
   {
     files: ["**/*.{ts,tsx,js,mjs,cjs}"],
-    ignores: ["lib/site/env.ts"],
+    ignores: ["src/lib/site/env.ts"],
     rules: {
       "no-restricted-syntax": [
         "error",
@@ -22,7 +22,7 @@ export default defineConfig([
         ].map((selector) => ({
           selector,
           message:
-            "Read SLUSHPILE_URL via lib/site/env.ts so the rewrite and nav slot agree on flag state.",
+            "Read SLUSHPILE_URL via src/lib/site/env.ts so the rewrite and nav slot agree on flag state.",
         })),
       ],
     },

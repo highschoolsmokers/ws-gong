@@ -69,7 +69,7 @@ test("trailing ` # comments` end a value; URL fragments and quotes survive", () 
 // The template in content/reading/README.md must stay a valid book file.
 test("the README's template parses", () => {
   const readme = readFileSync(
-    join(import.meta.dirname, "..", "content", "reading", "README.md"),
+    join(import.meta.dirname, "..", "..", "content", "reading", "README.md"),
     "utf8",
   );
   const template = /```markdown\n([\s\S]*?)\n```/.exec(readme)![1];

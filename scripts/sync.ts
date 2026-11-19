@@ -18,7 +18,7 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { PDFS, siteContentSchema } from "../lib/site/schema.ts";
+import { PDFS, siteContentSchema } from "../src/lib/site/schema.ts";
 
 const args = new Set(process.argv.slice(2));
 const root = resolve(import.meta.dirname, "..");

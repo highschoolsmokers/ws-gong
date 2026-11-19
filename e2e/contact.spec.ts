@@ -6,7 +6,7 @@ import {
   submitContactForm,
   tabTo,
 } from "./helpers/contact-form";
-import { MAX_FILES, MAX_LENGTH } from "../lib/upload";
+import { MAX_FILES, MAX_LENGTH } from "../src/lib/upload";
 
 /** Wait for "message sent", and for a delivered email. */
 const SUBMISSION_TIMEOUT_MS = 15_000;

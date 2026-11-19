@@ -7,9 +7,9 @@ export const alt = "W.S. Gong";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-// Geist Bold, bundled (app/fonts, OFL): no network fetch at build.
+// Geist Bold, bundled (src/app/fonts, OFL): no network fetch at build.
 const geist = () =>
-  readFile(join(process.cwd(), "app", "fonts", "Geist-Bold.ttf"));
+  readFile(join(process.cwd(), "src", "app", "fonts", "Geist-Bold.ttf"));
 
 const ink = "#161616";
 

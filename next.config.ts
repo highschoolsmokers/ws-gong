@@ -1,9 +1,9 @@
 import { withSentryConfig } from "@sentry/nextjs/config";
 import type { NextConfig } from "next";
-import { orderedBooks } from "./lib/books";
-import { slushpileUrl } from "./lib/site/env";
-import { PDFS, blobUrl } from "./lib/site/schema";
-import { SUBSTACK_BASE_URL } from "./lib/substack";
+import { orderedBooks } from "./src/lib/books";
+import { slushpileUrl } from "./src/lib/site/env";
+import { PDFS, blobUrl } from "./src/lib/site/schema";
+import { SUBSTACK_BASE_URL } from "./src/lib/substack";
 
 // 'unsafe-inline' scripts: Next's inline bootstrap and the theme script.
 // Nonces would force every page to render dynamically.
@@ -44,7 +44,7 @@ const nextConfig: NextConfig = {
   // Lockfiles above this repo make Next guess a parent folder as the root,
   // which breaks file watching and the dev cache.
   turbopack: { root: __dirname },
-  // Contact-form attachments: match Vercel's 4.5 MB request cap (lib/upload.ts).
+  // Contact-form attachments: match Vercel's 4.5 MB request cap (src/lib/upload.ts).
   experimental: { serverActions: { bodySizeLimit: "4.5mb" } },
   redirects: async () => redirects,
   rewrites: async () => [
