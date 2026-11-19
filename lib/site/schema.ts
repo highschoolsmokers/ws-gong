@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+// Links the home page shows in their own sections (Code, Writing and the
+// footer), so the schema requires them and the CV list skips them.
+export const ELSEWHERE_ON_HOME = ["GitHub", "Substack"];
+
 // What the résumé master feeds the site (SPEC §14): the shape of
 // content/site.json and where the PDFs live. No path aliases: the sync
 // script and next.config.ts import this file directly.
@@ -18,14 +22,13 @@ export const siteContentSchema = z
         .strict(),
     ),
     // Every link the site shows, in display order, from the master's
-    // Website → Links. GitHub and Substack also have dedicated places on the
-    // home page (Code, Writing), so they're required.
+    // Website → Links.
     links: z
       .array(z.object({ label: z.string().min(1), url: z.url() }).strict())
       .min(1)
       .refine(
         (links) =>
-          ["GitHub", "Substack"].every((l) => links.some((x) => x.label === l)),
+          ELSEWHERE_ON_HOME.every((l) => links.some((x) => x.label === l)),
         "links needs GitHub and Substack",
       ),
   })
@@ -36,10 +39,6 @@ export const linkUrl = (
   links: { label: string; url: string }[],
   label: string,
 ) => links.find((l) => l.label === label)!.url;
-
-// Links the home page shows in their own sections (Code, Writing and the
-// footer), so its CV list skips them.
-export const ELSEWHERE_ON_HOME = ["GitHub", "Substack"];
 
 // The PDFs live in public blob storage, not git (SPEC §13), each served at
 // its own path through a rewrite.

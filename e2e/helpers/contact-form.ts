@@ -1,5 +1,11 @@
 import { expect, type Locator, type Page } from "@playwright/test";
-import { ANTI_SPAM_MS, MAX_TAB_STEPS } from "./constants";
+import { MIN_ELAPSED_MS } from "../../lib/upload";
+
+/** Real wait past the server's anti-spam minimum before a real send. */
+const ANTI_SPAM_MS = MIN_ELAPSED_MS + 500;
+
+/** Max Tab presses when checking that something is keyboard-reachable. */
+const MAX_TAB_STEPS = 20;
 
 interface ContactFormData {
   name: string;
@@ -9,7 +15,7 @@ interface ContactFormData {
 }
 
 /** The contact section's controls, found by accessible name. */
-export function contactForm(page: Page) {
+function contactForm(page: Page) {
   const section = page.locator("section#contact");
   return {
     form: section.locator("form"),

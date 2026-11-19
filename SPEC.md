@@ -221,7 +221,7 @@ Remove the stale host variables from the old residency pipeline
 READING_FIXTURES=1 pnpm test:e2e`.
 - `pnpm sync` (§14), `pnpm covers` (§4), `pnpm highlight:tutorial`
   (§2).
-- CI: lint, typecheck, unit tests, format check, build, dependency audit
+- CI, on PRs: lint, typecheck, unit tests, format check, dependency audit
   (high). The end-to-end suite runs against a production build on every PR
   and push to `main`. Mail tests (`@smtp`, `@infra`) run only on manual
   dispatch, advisory.
