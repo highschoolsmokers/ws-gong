@@ -43,13 +43,16 @@ URLs from when it was static HTML).
 **Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
 the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
 rows of three 4-column tracks. Footer: copyright (columns 1–4); Colophon,
-Terms, Substack, Instagram (from column 5); theme toggle (column 11). Footer
+Terms, Substack, Instagram (from column 5); theme toggle (column 11; column
+1 on phones). Footer
 links and the toggle are at least 24 px tall to tap. Every link or form that
 opens a new tab says so to screen readers (`NEW_TAB_NOTICE`), not on screen.
 
-**Other pages.** Each is a title and labelled sections.
+**Other pages.** Each is a title and labelled sections, except the error
+page.
 
-- 404: "404" and a home link. Error: "Error", Try again, Home.
+- 404: title "Not found", a "404" section, and a home link. Error: no title;
+  an "Error" section with Try again and Home.
 - `/colophon`: Typography, Design, Content, Stack, Tools, Source. Stack and
   Tools come from `src/lib/colophon.ts`, which reads versions from the package
   manifest.
@@ -187,7 +190,8 @@ applied before first paint. Print hides chrome and forms.
 ## 7. Metadata
 
 Title template `%s — W.S. Gong`; the home title stands alone ("W.S. Gong —"
-and the tagline). Description from the statement. Every page: RSS link, Person structured data, share image;
+and the tagline). Description: the statement on home; elsewhere "W.S. Gong,
+San Francisco." before it. Every page: RSS link, Person structured data, share image;
 pages set only title and description. One sitemap timestamp per build.
 
 ## 8. Headers and monitoring
@@ -201,22 +205,22 @@ client SDK.
 
 ## 9. Environment
 
-| Name                                                                | Use                                                                       |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact mail; port 465 is TLS (default), others STARTTLS                  |
-| `CONTACT_FORM_SECRET`                                               | Optional token key; defaults to `SMTP_PASS`                               |
-| `VERCEL`                                                            | Set by the host: renders the analytics scripts only on Vercel             |
-| `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                        |
-| `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                      |
-| `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                               |
-| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync`, local only; dir defaults to `../resumes-cvs`                 |
-| `FABULOSA_BOOKS_DIR`                                                | `pnpm sync:tutorial`, local only; defaults to `../fabulosa-books`         |
-| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                         |
-| `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                      |
-| `MAIL_E2E`                                                          | Opt in to mail-sending tests                                              |
-| `READING_FIXTURES`                                                  | End-to-end build and tests: use fixture books                             |
-| `CI`                                                                | Retries, no `.only`, quiet Sentry build output; missing test secrets fail |
-| `NODE_ENV`                                                          | Development: looser script policy, full trace sampling, Goodreads button  |
+| Name                                                                | Use                                                                                      |
+| ------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `CONTACT_EMAIL` | Contact mail; port 465 is TLS (default), others STARTTLS                                 |
+| `CONTACT_FORM_SECRET`                                               | Optional token key; defaults to `SMTP_PASS`                                              |
+| `VERCEL`                                                            | Set by the host: renders the analytics scripts only on Vercel                            |
+| `SENTRY_DSN`                                                        | Optional; no monitoring when unset                                                       |
+| `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                                     |
+| `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                                              |
+| `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync`, local only; dir defaults to `../resumes-cvs`                                |
+| `FABULOSA_BOOKS_DIR`                                                | `pnpm sync:tutorial`, local only; defaults to `../fabulosa-books`                        |
+| `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                                        |
+| `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                                     |
+| `MAIL_E2E`                                                          | Opt in to mail-sending tests                                                             |
+| `READING_FIXTURES`                                                  | End-to-end build and tests: use fixture books                                            |
+| `CI`                                                                | Retries, no `.only`, quiet Sentry build output; missing test secrets fail                |
+| `NODE_ENV`                                                          | Development: looser script policy, Goodreads button; non-production: full trace sampling |
 
 Remove the stale host variables from the old residency pipeline
 (`DATABASE_URL` and the Postgres set, `ANTHROPIC_API_KEY`, `CRON_SECRET`,
@@ -251,8 +255,9 @@ src/app/(site)/        home, layout, chrome (masthead, nav, footer), contact
 src/app/(bare)/links/  /links and its icons
 src/app/components/    layout primitives, shared rows, theme toggle, subscribe
                        form
-src/app/               root layout, styles, portrait, feed/, metadata routes,
-                       404
+src/app/               root layout, styles, portrait, fonts/ (share image),
+                       feed/, metadata routes, 404
+src/                   instrumentation.ts (server-side Sentry)
 src/lib/               projects, books, colophon, form token, review,
                        substack, upload, tutorial (schema and content), site/ (content, env, schema:
                        site.json and PDFs), tests (guards.test: §6.3 static,
@@ -330,7 +335,7 @@ Claims it can't check (copy, design intent) are covered by §6.3 and `/audit`.
 ## 13. Intentional decisions
 
 Pinned by `src/lib/guards.test.ts` (removals, dropped dependencies, project shape,
-no email in `site.json`) and a lint rule (`SLUSHPILE_URL` read in one place).
+site copy read from `site.json` with no email in it, PDFs at public blob URLs) and a lint rule (`SLUSHPILE_URL` read in one place).
 
 - **One page.** Former section pages are home sections; add a section, not a
   page. Exception: `/reading`, whose reviews need their own URLs.
@@ -339,6 +344,8 @@ no email in `site.json`) and a lint rule (`SLUSHPILE_URL` read in one place).
 - **PDFs are public, in blob storage**, not git, with no gate.
 - **No client error SDK**: it cost ~65 KB and ~2 s on static pages.
 - **Code is one flat list**: no tiers, categories, or project pages.
+- **A section's number and title are one heading**: the title follows the
+  number rather than starting on its own column line (§6.1 rule 1).
 
 ## 14. Résumé sync and publishing
 
