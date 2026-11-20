@@ -1,8 +1,8 @@
-import { readdirSync } from "node:fs";
-import { join } from "node:path";
 import type { MetadataRoute } from "next";
 import { orderedBooks, reviewed } from "@/lib/books";
 import { SITE_URL } from "@/lib/site/content";
+import { TUTORIAL_PATH, partPath } from "@/lib/tutorial";
+import { tutorial } from "@/lib/tutorial-content";
 
 // One timestamp per build: per-request dates teach crawlers to ignore lastmod.
 const lastModified = new Date();
@@ -12,10 +12,8 @@ const paths = [
   "/terms",
   ...(orderedBooks.length ? ["/reading"] : []),
   ...reviewed.map((b) => `/reading/${b.slug}`),
-  "/fabulosa-books",
-  ...readdirSync(join(process.cwd(), "public", "fabulosa-books"))
-    .filter((f) => /^part\d+\.html$/.test(f))
-    .map((f) => `/fabulosa-books/${f}`),
+  TUTORIAL_PATH,
+  ...tutorial.parts.map((p) => partPath(p.slug)),
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
