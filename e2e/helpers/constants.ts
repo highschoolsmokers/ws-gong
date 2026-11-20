@@ -5,6 +5,8 @@
 
 import { orderedBooks, reviewed } from "../../src/lib/books";
 import { slushpileUrl } from "../../src/lib/site/env";
+import { TUTORIAL_PATH, partPath } from "../../src/lib/tutorial";
+import { tutorial } from "../../src/lib/tutorial-content";
 
 export { site } from "../../src/lib/site/content";
 
@@ -19,4 +21,6 @@ export const SITE_PAGES = [
   "/links",
   ...(orderedBooks.length ? ["/reading"] : []),
   ...reviewed.slice(0, 1).map((b) => `/reading/${b.slug}`),
+  TUTORIAL_PATH,
+  ...tutorial.parts.map((p) => partPath(p.slug)),
 ];

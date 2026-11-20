@@ -10,6 +10,7 @@
   --error: light-dark(#c00000, #ff6b6b);
   --gutter: 1.5rem;
   --margin: 2rem;
+  --code-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -230,6 +231,101 @@ a.row:hover .row-title {
 .review details[open] summary {
   margin-bottom: 0.5em;
 }
+/* Fabulosa Books tutorial (/fabulosa-books): synced HTML in a section body.
+   Prose follows .review; code and tables keep to the theme's colors (§6.2),
+   so highlighting is weight and gray, not hue. */
+.tutorial {
+  font-size: 0.9375rem;
+  line-height: 1.65;
+}
+.tutorial > * + * {
+  margin-top: 1em;
+}
+.tutorial a {
+  text-decoration: underline;
+}
+.tutorial ul,
+.tutorial ol {
+  list-style-position: inside;
+}
+.tutorial ul {
+  list-style-type: disc;
+}
+.tutorial ol {
+  list-style-type: decimal;
+}
+.tutorial li + li {
+  margin-top: 0.375em;
+}
+.tutorial p,
+.tutorial li {
+  max-width: 68ch;
+}
+.tutorial strong,
+.tutorial .step {
+  font-weight: 500;
+}
+.tutorial .step {
+  padding-top: 0.5em;
+}
+.tutorial code {
+  font-family: var(--code-font);
+  font-size: 0.875em;
+}
+.tutorial pre {
+  overflow-x: auto;
+  border-block: 1px solid var(--rule-soft);
+  padding-block: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  tab-size: 2;
+}
+.tutorial pre code {
+  font-size: inherit;
+}
+/* Long identifiers in running text wrap instead of widening a phone screen. */
+.tutorial :not(pre) > code {
+  overflow-wrap: anywhere;
+}
+.tutorial .hljs-comment {
+  color: var(--muted);
+}
+.tutorial .hljs-keyword,
+.tutorial .hljs-built_in,
+.tutorial .hljs-title.function_ {
+  font-weight: 500;
+}
+.tutorial .table-wrap {
+  overflow-x: auto;
+}
+.tutorial table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+.tutorial th {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 0 0.75rem 0.625rem 0;
+  white-space: nowrap;
+}
+/* A hairline above each body row: between rows, with the header as row one
+   (§6.1 rule 6). */
+.tutorial td {
+  border-top: 1px solid var(--rule-soft);
+  padding: 0.625rem 0.75rem 0.625rem 0;
+  vertical-align: top;
+}
+.tutorial img {
+  width: 100%;
+  height: auto;
+}
+
 /* The contact form's bot trap: off screen, out of the layout. */
 .honeypot {
   position: absolute;
