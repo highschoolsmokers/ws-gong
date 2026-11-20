@@ -27,7 +27,7 @@ Only this section names tools; the rest describes behavior.
 | `/reading`, `/reading/<slug>`                      | Reading log; one page per reviewed book (§4)                |
 | `/links`                                           | Instagram bio page; no chrome, not in nav or sitemap        |
 | `/feed`                                            | RSS: Substack posts and reviews; cached 1 h                 |
-| `/fabulosa-books/*`                                | Static seven-part tutorial                                  |
+| `/fabulosa-books`, `/fabulosa-books/<part>`        | Fabulosa Books tutorial, synced from its repo (§15)         |
 | `/slushpile/*`                                     | Separate app, proxied when `SLUSHPILE_URL` is set; else 404 |
 | `/wsgong_cv.pdf`, `/wsgong_tech_writer_resume.pdf` | Proxied from blob storage                                   |
 | sitemap, robots, manifest, share image             | Standard metadata                                           |
@@ -36,7 +36,9 @@ Permanent redirects: `/about` → `/#about`; `/narratives` → `/#writing`;
 `/code/*`, `/narratives-code/*` → `/#code`; `/cv`, `/resume` → `/#cv`;
 `/contact` → `/#contact`; `/residencies` → `/slushpile`, or `/` while
 `SLUSHPILE_URL` is unset; `/reading` → `/` while the log is empty (both
-decided at build).
+decided at build); `/fabulosa-books/index.html` → `/fabulosa-books`;
+`/fabulosa-books/:part.html` → `/fabulosa-books/:part` (the tutorial's
+URLs from when it was static HTML).
 
 **Chrome** (every page but `/links`): masthead, nav, footer. The masthead is
 the h1 on `/`, a home link elsewhere. Nav: columns 11–12, stacked; on phones,
@@ -73,11 +75,11 @@ and nothing else on the site links to it. Everything on it updates from the
 master and Substack. Set the bio link to `www.ws-gong.com/links?ref=ig` so
 analytics can count visits from Instagram.
 
-**Tutorial.** Plain HTML. Loads only self-hosted assets: no external fonts or
-scripts. Code highlighting is baked into the HTML by `pnpm
-highlight:tutorial`, which also makes each code block focusable so a keyboard
-can scroll it. Its navs carry labels. Canonical index: `/fabulosa-books`. Follows the site's
-stored theme. Exempt from §6.1.
+**Tutorial.** Site pages in the site layout, styled by `globals.css` and held
+to §6 like every other page: a contents page and one page per part, each
+section a labelled section, ending with a Continue section that links the
+next and previous parts and the contents. The text comes from the
+fabulosa-books repo (§15).
 
 ## 3. Home page
 
@@ -212,6 +214,7 @@ client SDK.
 | `SENTRY_AUTH_TOKEN`                                                 | Optional, build: uploads source maps                                                     |
 | `SLUSHPILE_URL`                                                     | Optional slushpile proxy; read in one place                                              |
 | `BLOB_READ_WRITE_TOKEN`, `RESUMES_CVS_DIR`                          | `pnpm sync`, local only; dir defaults to `../resumes-cvs`                                |
+| `FABULOSA_BOOKS_DIR`                                                | `pnpm sync:tutorial`, local only; defaults to `../fabulosa-books`                        |
 | `BASE_URL`, `VERCEL_AUTOMATION_BYPASS_SECRET`                       | End-to-end target; preview bypass                                                        |
 | `IMAP_USER`, `IMAP_PASS`                                            | Mail-delivery test; user defaults to `CONTACT_EMAIL`                                     |
 | `MAIL_E2E`                                                          | Opt in to mail-sending tests                                                             |
@@ -232,8 +235,7 @@ Remove the stale host variables from the old residency pipeline
 - `pnpm test:e2e`: everything in Chromium; tests tagged `@cross` also in
   Firefox and WebKit. Locally: `READING_FIXTURES=1 pnpm build &&
 READING_FIXTURES=1 pnpm test:e2e`.
-- `pnpm sync` (§14), `pnpm covers` (§4), `pnpm highlight:tutorial`
-  (§2).
+- `pnpm sync` (§14), `pnpm sync:tutorial` (§15), `pnpm covers` (§4).
 - CI, on PRs: lint, typecheck, unit tests, format check, dependency audit
   (high). The end-to-end suite runs against a production build on every PR
   and push to `main`. Mail tests (`@smtp`, `@infra`) run only on manual
@@ -249,7 +251,7 @@ READING_FIXTURES=1 pnpm test:e2e`.
 ```
 src/app/(site)/        home, layout, chrome (masthead, nav, footer), contact
                        form and action, error,
-                       colophon/, terms/, reading/
+                       colophon/, terms/, reading/, fabulosa-books/
 src/app/(bare)/links/  /links and its icons
 src/app/components/    layout primitives, shared rows, theme toggle, subscribe
                        form
@@ -257,12 +259,12 @@ src/app/               root layout, styles, portrait, fonts/ (share image),
                        feed/, metadata routes, 404
 src/                   instrumentation.ts (server-side Sentry)
 src/lib/               projects, books, colophon, form token, review,
-                       substack, upload, site/ (content, env, schema:
+                       substack, upload, tutorial (schema and content), site/ (content, env, schema:
                        site.json and PDFs), tests (guards.test: §6.3 static,
                        §12 drift, §13 pins)
-content/               site.json (§14), reading/ (§4)
-public/                fabulosa-books/, covers/, icons
-scripts/               sync, fetch-covers, highlight-tutorial
+content/               site.json (§14), reading/ (§4), fabulosa-books.json (§15)
+public/                fabulosa-books/images/, covers/, icons
+scripts/               sync, sync-tutorial, fetch-covers
 docs/                  this spec
 e2e/                   specs, helpers, fixtures/reading/
 ```
@@ -364,3 +366,25 @@ One command, `pnpm sync`, does everything:
    Merging deploys; `vercel deploy --prod` is the fallback.
 
 `--no-pdf` skips the PDFs; `--no-build` reuses the last build.
+
+## 15. Tutorial sync
+
+The fabulosa-books repo is the source for the tutorial's text and code; its
+own tests keep every code block identical to its reference app. Edit the
+tutorial there, never in `content/fabulosa-books.json`.
+
+`pnpm sync:tutorial` reads that repo's `html/` pages from `FABULOSA_BOOKS_DIR`
+(default `../fabulosa-books`) and refuses uncommitted changes there. It:
+
+1. Writes `content/fabulosa-books.json`: the source commit, the title and
+   subtitle, and per part its title, description, and sections, each a label
+   and its HTML.
+2. Bakes in syntax highlighting (the CSP allows no outside scripts), makes
+   each code block focusable so a keyboard can scroll it, and rewrites links
+   and image paths to the site's routes.
+3. Copies images the pages use that `public/fabulosa-books/images/` lacks, and
+   deletes the ones no page uses. An image already there is kept, so the site
+   can hold an optimized copy.
+
+`--check` exits 1 when the content or images are out of date. Commit the
+synced files with a PR, as with §14.

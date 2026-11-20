@@ -14,7 +14,7 @@
     "prepare": "husky",
     "sync": "node --env-file-if-exists=.env.local scripts/sync.ts",
     "covers": "node scripts/fetch-covers.ts",
-    "highlight:tutorial": "node scripts/highlight-tutorial.ts"
+    "sync:tutorial": "node scripts/sync-tutorial.ts"
   },
   "engines": {
     "node": ">=24"

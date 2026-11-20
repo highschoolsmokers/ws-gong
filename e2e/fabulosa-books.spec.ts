@@ -1,103 +1,82 @@
-import { readdirSync, readFileSync } from "node:fs";
 import { test, expect } from "@playwright/test";
+import { TUTORIAL_PATH, partPath } from "../src/lib/tutorial";
+import { tutorial } from "../src/lib/tutorial-content";
 
-// The tutorial is static HTML in public/; the list of parts comes from the
-// files themselves, so adding a part adds its tests.
-const DIR = "public/fabulosa-books";
-// Part titles use only &mdash; and &amp; among entities.
-const text = (html: string) =>
-  html
-    .replace(/<[^>]+>/g, "")
-    .replaceAll("&mdash;", "—")
-    .replaceAll("&amp;", "&")
-    .trim();
-const parts = readdirSync(DIR)
-  .filter((f) => /^part\d+\.html$/.test(f))
-  .sort((a, b) => parseInt(a.slice(4)) - parseInt(b.slice(4)))
-  .map((f) => ({
-    path: `/fabulosa-books/${f}`,
-    title: text(
-      readFileSync(`${DIR}/${f}`, "utf8").match(
-        /<h1[^>]*>([\s\S]*?)<\/h1>/,
-      )![1],
-    ),
-  }));
+// The tutorial is site pages built from content/fabulosa-books.json (SPEC §15).
+// The grid, hydration, and metadata checks cover it through SITE_PAGES; these
+// check what is particular to it.
+const parts = tutorial.parts.map((p, i) => ({
+  ...p,
+  i,
+  path: partPath(p.slug),
+}));
 
-test("index loads styled and links every part", async ({ page }) => {
-  await page.goto("/fabulosa-books");
-  await expect(page.locator("h1")).toContainText(
-    "Building a Multi-Agent Scheduling System",
-  );
-  expect(
-    await page.evaluate(() => getComputedStyle(document.body).backgroundColor),
-  ).not.toBe("rgba(0, 0, 0, 0)");
-  await expect(
-    page.locator("nav.site-nav").getByRole("link", { name: /W\.S\. Gong/i }),
-  ).toHaveAttribute("href", "/#code");
+test("contents lists every part", async ({ page }) => {
+  await page.goto(TUTORIAL_PATH);
+  await expect(page.locator("h1")).toHaveText(tutorial.title);
   for (const p of parts)
-    await expect(page.locator(`a[href="${p.path}"]`), p.path).toBeAttached();
+    await expect(
+      page.locator(`main a.row[href="${p.path}"]`),
+      p.path,
+    ).toContainText(p.title);
 });
 
-for (const [i, part] of parts.entries())
-  test(`${part.path}: heading, navs, clean load`, async ({ page }) => {
+for (const part of parts)
+  test(`${part.path}: title, sections, highlighted code, links onward`, async ({
+    page,
+  }) => {
     const problems: string[] = [];
     page.on("pageerror", (e) => problems.push(e.message));
     page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
     page.on("requestfailed", (r) => problems.push(`failed: ${r.url()}`));
     await page.goto(part.path);
 
-    await expect(page.locator("h1")).toContainText(part.title);
-    await expect(
-      page.locator("nav.site-nav").getByRole("link", { name: /W\.S\. Gong/i }),
-    ).toHaveAttribute("href", "/#code");
-    const hrefs = (nav: string) =>
-      page
-        .locator(`nav.${nav} a`)
-        .evaluateAll((as) => as.map((a) => a.getAttribute("href")));
-    expect(await hrefs("page-nav")).toEqual(await hrefs("bottom-nav"));
-    if (i === 0)
-      await expect(
-        page.locator("nav.page-nav").getByRole("link", { name: /Contents/i }),
-      ).toHaveAttribute("href", "/fabulosa-books");
-    if (i === parts.length - 1)
-      await expect(
-        page
-          .locator("nav.bottom-nav")
-          .getByRole("link", { name: /Back to Contents/i }),
-      ).toHaveAttribute("href", "/fabulosa-books");
+    await expect(page.locator("h1")).toHaveText(part.title);
+    // One section per synced section, then Continue.
+    await expect(page.locator("main section h2")).toHaveText([
+      ...part.sections.map((s) => s.title),
+      "Continue",
+    ]);
+    const onward = page.locator("main section").last();
+    const next = parts[part.i + 1];
+    const prev = parts[part.i - 1];
+    if (next)
+      await expect(onward.locator(`a[href="${next.path}"]`)).toBeVisible();
+    if (prev)
+      await expect(onward.locator(`a[href="${prev.path}"]`)).toBeVisible();
+    await expect(onward.locator(`a[href="${TUTORIAL_PATH}"]`)).toBeVisible();
+
+    for (const code of await page.locator(".tutorial pre code").all())
+      await expect(code).toHaveClass(/\bhljs\b/);
+    for (const pre of await page.locator(".tutorial pre").all())
+      await expect(pre).toHaveAttribute("tabindex", "0");
 
     // Lazy images below the fold haven't loaded, so request each one.
-    const srcs = await page.$$eval("img", (imgs) =>
+    const srcs = await page.$$eval("main img", (imgs) =>
       imgs.map((img) => (img as HTMLImageElement).src),
     );
-    const bad = (
-      await Promise.all(
-        srcs.map(async (s) => ((await page.request.get(s)).ok() ? null : s)),
-      )
-    ).filter(Boolean);
-    expect(bad, "broken images").toEqual([]);
-    // Every code block is syntax-highlighted.
-    for (const pre of await page.locator("pre code").all())
-      await expect(pre).toHaveClass(/hljs/);
+    for (const src of srcs)
+      expect((await page.request.get(src)).ok(), src).toBe(true);
     expect(problems).toEqual([]);
   });
 
-test.describe("Rendering", { tag: "@cross" }, () => {
-  test("Geist loads (self-hosted; the CSP blocks font CDNs)", async ({
-    page,
-  }) => {
-    await page.goto(parts[0].path);
-    expect(
-      await page.evaluate(async () => {
-        await document.fonts.ready;
-        return document.fonts.check("16px Geist");
-      }),
-    ).toBe(true);
-  });
+test("the old .html URLs redirect to the pages", async ({ request }) => {
+  for (const [from, to] of [
+    [`${TUTORIAL_PATH}/index.html`, TUTORIAL_PATH],
+    [`${TUTORIAL_PATH}/part3.html`, partPath("part3")],
+  ]) {
+    const res = await request.get(from, { maxRedirects: 0 });
+    expect(res.status(), from).toBe(308);
+    expect(new URL(res.headers().location, "http://x").pathname, from).toBe(to);
+  }
+});
 
-  test("every page fits a 375px phone", async ({ page }) => {
+test(
+  "every tutorial page fits a 375px phone",
+  { tag: "@cross" },
+  async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
-    for (const path of ["/fabulosa-books", ...parts.map((p) => p.path)]) {
+    for (const path of [TUTORIAL_PATH, ...parts.map((p) => p.path)]) {
       await page.goto(path);
       expect(
         await page.evaluate(
@@ -106,5 +85,5 @@ test.describe("Rendering", { tag: "@cross" }, () => {
         `${path} scrolls sideways`,
       ).toBeLessThanOrEqual(0);
     }
-  });
-});
+  },
+);

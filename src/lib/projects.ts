@@ -51,9 +51,9 @@ export const projects = [
   },
   {
     href: "/fabulosa-books",
-    title: "Fabulosa Books — Multi-Agent Scheduling Tutorial",
+    title: "Fabulosa Books — Scheduling Agent Tutorial",
     description:
-      "A seven-part tutorial on multi-agent orchestration: a bookstore scheduler on Next.js and Vercel, where AI SDK agents check availability, fairness, and coverage, backed by Neon Postgres.",
+      "An eight-part tutorial: a bookstore scheduling agent on Next.js 16 and AI SDK 7, with the store's rules in code, a fairness subagent, human approval before every save, and tests that drive the agent with a scripted model.",
     stack: ["Next.js", "AI SDK", "Neon", "TypeScript"],
   },
 ];

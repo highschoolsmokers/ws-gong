@@ -36,6 +36,9 @@ const redirects = Object.entries({
   "/resume": "/#cv",
   "/contact": "/#contact",
   "/residencies": slushpileUrl ? "/slushpile" : "/",
+  // The tutorial was static HTML before it became site pages.
+  "/fabulosa-books/index.html": "/fabulosa-books",
+  "/fabulosa-books/:part.html": "/fabulosa-books/:part",
 }).map(([source, destination]) => ({ source, destination, permanent: true }));
 
 const nextConfig: NextConfig = {
@@ -53,8 +56,6 @@ const nextConfig: NextConfig = {
       source: `/${name}`,
       destination: blobUrl(name),
     })),
-    // Vercel serves the static tutorial's directory index; `next start` doesn't.
-    { source: "/fabulosa-books", destination: "/fabulosa-books/index.html" },
     // Slushpile is a separate app built with basePath "/slushpile".
     ...(slushpileUrl
       ? [

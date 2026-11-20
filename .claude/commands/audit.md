@@ -16,6 +16,7 @@ pnpm lint && pnpm typecheck && pnpm test:unit
 pnpm exec prettier --check .
 pnpm build
 pnpm audit --audit-level=moderate
+pnpm sync:tutorial --check   # tutorial vs fabulosa-books (needs that checkout)
 ```
 
 Then start the production build (`pnpm start`) and run the full Playwright suite
@@ -38,7 +39,7 @@ comments, and config with one setting. For each, give the consolidated form and
 the lines saved.
 
 **4. Design against docs/SPEC.md §6.1.** Render `/`, `/colophon`, `/terms`, `/links`,
-a 404 at 1280 px and 375 px, light and dark. Check every element against the
+`/fabulosa-books` and every tutorial part, a 404 at 1280 px and 375 px, light and dark. Check every element against the
 seven rules — grid column lines, nothing in the margin, flush left, asymmetry,
 weights 700/500/400, rules between rows only, token spacing — including what the
 automated guards can't reach (footer, `/links`, overlays, error and 404 pages).
