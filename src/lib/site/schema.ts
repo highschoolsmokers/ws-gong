@@ -4,7 +4,7 @@ import { z } from "zod";
 // them: GitHub and Fabulosa Books under Code, Substack under Writing and in
 // the footer, Instagram in the footer. The schema requires GitHub and
 // Substack; the other two show in their places when the master has them.
-export const REQUIRED_LINKS = ["GitHub", "Substack"];
+const REQUIRED_LINKS = ["GitHub", "Substack"];
 export const ELSEWHERE_ON_HOME = [
   ...REQUIRED_LINKS,
   "Fabulosa Books",
@@ -50,6 +50,9 @@ export const findLink = (links: Link[], label: string) =>
 // The URL of a link the schema guarantees (REQUIRED_LINKS).
 export const linkUrl = (links: Link[], label: string) =>
   findLink(links, label)!.url;
+// The same URL with no trailing slash, to build paths under.
+export const linkBase = (links: Link[], label: string) =>
+  linkUrl(links, label).replace(/\/$/, "");
 
 // The PDFs live in public blob storage, not git (SPEC §13), each served at
 // its own path through a rewrite.

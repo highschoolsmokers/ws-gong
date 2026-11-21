@@ -7,10 +7,8 @@
   --foreground: light-dark(#161616, #ebebeb);
   --muted: light-dark(#6b6b6b, #9b9b9b);
   --rule-soft: light-dark(#e5e5e5, #2e2e2e);
-  --error: light-dark(#c00000, #ff6b6b);
   --gutter: 1.5rem;
   --margin: 2rem;
-  --code-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -23,7 +21,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
-  --color-error: var(--error);
+  --color-error: light-dark(#c00000, #ff6b6b);
   --font-sans: var(--font-geist-sans);
   /* Page titles (text-title, md:text-title-lg). */
   --text-title: 2.5rem;
@@ -200,25 +198,24 @@ a.row:hover .row-title {
   font-weight: 400;
   color: var(--muted);
 }
-/* Review prose: paragraphs and quotes flush left on the text block's edge. */
-.review {
+/* Review and tutorial prose: flush left on the text block's edge. */
+:is(.review, .tutorial) {
   font-size: 0.9375rem;
   line-height: 1.65;
 }
-.review > * + * {
+:is(.review, .tutorial) > * + * {
   margin-top: 1em;
 }
-.review a {
+:is(.review, .tutorial) a {
   text-decoration: underline;
 }
-.review ul,
-.review ol {
+:is(.review, .tutorial) :is(ul, ol) {
   list-style-position: inside;
 }
-.review ul {
+:is(.review, .tutorial) ul {
   list-style-type: disc;
 }
-.review ol {
+:is(.review, .tutorial) ol {
   list-style-type: decimal;
 }
 .review blockquote {
@@ -232,28 +229,8 @@ a.row:hover .row-title {
   margin-bottom: 0.5em;
 }
 /* Fabulosa Books tutorial (/fabulosa-books): synced HTML in a section body.
-   Prose follows .review; code and tables keep to the theme's colors (§6.2),
-   so highlighting is weight and gray, not hue. */
-.tutorial {
-  font-size: 0.9375rem;
-  line-height: 1.65;
-}
-.tutorial > * + * {
-  margin-top: 1em;
-}
-.tutorial a {
-  text-decoration: underline;
-}
-.tutorial ul,
-.tutorial ol {
-  list-style-position: inside;
-}
-.tutorial ul {
-  list-style-type: disc;
-}
-.tutorial ol {
-  list-style-type: decimal;
-}
+   Code and tables keep to the theme's colors (§6.2), so highlighting is
+   weight and gray, not hue. */
 .tutorial li + li {
   margin-top: 0.375em;
 }
@@ -269,8 +246,7 @@ a.row:hover .row-title {
   padding-top: 0.5em;
 }
 .tutorial code {
-  font-family: var(--code-font);
-  font-size: 0.875em;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
 .tutorial pre {
   overflow-x: auto;
@@ -280,11 +256,9 @@ a.row:hover .row-title {
   line-height: 1.55;
   tab-size: 2;
 }
-.tutorial pre code {
-  font-size: inherit;
-}
 /* Long identifiers in running text wrap instead of widening a phone screen. */
 .tutorial :not(pre) > code {
+  font-size: 0.875em;
   overflow-wrap: anywhere;
 }
 .tutorial .hljs-comment {

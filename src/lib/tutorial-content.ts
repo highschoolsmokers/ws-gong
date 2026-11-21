@@ -1,8 +1,11 @@
 import raw from "../../content/fabulosa-books.json" with { type: "json" };
-import { tutorialSchema } from "./tutorial";
+import { partPath, TUTORIAL_PATH, tutorialSchema } from "./tutorial";
 
 // Parsed at build time; a malformed sync fails the build, not a page.
 export const tutorial = tutorialSchema.parse(raw);
 
-export const findPart = (slug: string) =>
-  tutorial.parts.find((p) => p.slug === slug);
+// The contents page, then each part: the sitemap and the e2e page lists.
+export const tutorialPaths = [
+  TUTORIAL_PATH,
+  ...tutorial.parts.map((p) => partPath(p.slug)),
+];

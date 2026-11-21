@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { orderedBooks, reviewed } from "@/lib/books";
 import { SITE_URL } from "@/lib/site/content";
-import { TUTORIAL_PATH, partPath } from "@/lib/tutorial";
-import { tutorial } from "@/lib/tutorial-content";
+import { tutorialPaths } from "@/lib/tutorial-content";
 
 // One timestamp per build: per-request dates teach crawlers to ignore lastmod.
 const lastModified = new Date();
@@ -12,8 +11,7 @@ const paths = [
   "/terms",
   ...(orderedBooks.length ? ["/reading"] : []),
   ...reviewed.map((b) => `/reading/${b.slug}`),
-  TUTORIAL_PATH,
-  ...tutorial.parts.map((p) => partPath(p.slug)),
+  ...tutorialPaths,
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {

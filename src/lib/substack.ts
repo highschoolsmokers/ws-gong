@@ -1,14 +1,11 @@
 import { z } from "zod";
 
 import raw from "../../content/site.json" with { type: "json" };
-import { linkUrl } from "./site/schema";
+import { linkBase } from "./site/schema";
 
 // The publication is the master's Substack link (site.json); next.config.ts
 // imports this too, so no path aliases.
-export const SUBSTACK_BASE_URL = linkUrl(raw.links, "Substack").replace(
-  /\/$/,
-  "",
-);
+export const SUBSTACK_BASE_URL = linkBase(raw.links, "Substack");
 export const SUBSCRIBE_URL = `${SUBSTACK_BASE_URL}/subscribe`;
 
 const postSchema = z.object({

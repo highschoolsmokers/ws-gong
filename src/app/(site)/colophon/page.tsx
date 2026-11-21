@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { NewTab, PageTitle, Section, ext } from "@/app/components/ui";
 import { stack, tools } from "@/lib/colophon";
 import { site } from "@/lib/site/content";
-import { linkUrl } from "@/lib/site/schema";
+import { linkBase } from "@/lib/site/schema";
 
 // This repo, under the master's GitHub link.
-const source = `${linkUrl(site.links, "GitHub").replace(/\/$/, "")}/ws-gong`;
+const source = `${linkBase(site.links, "GitHub")}/ws-gong`;
 
 export const metadata: Metadata = {
   title: "Colophon",

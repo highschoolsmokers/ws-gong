@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { PageTitle, Row, Rows, Section } from "@/app/components/ui";
 import { TUTORIAL_PATH, partPath } from "@/lib/tutorial";
-import { findPart, tutorial } from "@/lib/tutorial-content";
+import { tutorial } from "@/lib/tutorial-content";
 
 export const dynamicParams = false;
+// dynamicParams is off, so the slug always names a part.
+const at = (slug: string) => tutorial.parts.findIndex((p) => p.slug === slug);
 export const generateStaticParams = () =>
   tutorial.parts.map((p) => ({ part: p.slug }));
 
 export async function generateMetadata({
   params,
 }: PageProps<"/fabulosa-books/[part]">): Promise<Metadata> {
-  // dynamicParams is off, so the slug always names a part.
-  const p = findPart((await params).part)!;
+  const p = tutorial.parts[at((await params).part)];
   return {
     title: `${p.title} — Fabulosa Books tutorial`,
     description: p.description,
@@ -21,8 +22,7 @@ export async function generateMetadata({
 export default async function TutorialPart({
   params,
 }: PageProps<"/fabulosa-books/[part]">) {
-  const slug = (await params).part;
-  const i = tutorial.parts.findIndex((p) => p.slug === slug);
+  const i = at((await params).part);
   const part = tutorial.parts[i];
   const prev = tutorial.parts[i - 1];
   const next = tutorial.parts[i + 1];
