@@ -61,7 +61,7 @@ export default async function Home() {
             fetchPriority="high"
           />
           {site.bio.map((p) => (
-            <p key={p} className="col-span-12 max-w-prose md:col-span-8">
+            <p key={p} className="col-span-12 max-w-measure md:col-span-8">
               {p}
             </p>
           ))}

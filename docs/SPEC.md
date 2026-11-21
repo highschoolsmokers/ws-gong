@@ -277,7 +277,7 @@ src/lib/               projects, books, colophon, form token, review,
 content/               site.json (§14), reading/ (§4), fabulosa-books.json (§15)
 public/                fabulosa-books/images/, covers/, icons
 scripts/               sync, sync-tutorial, fetch-covers
-docs/                  this spec
+docs/                  this spec, TODO.md (work outside the repo)
 e2e/                   specs, helpers, fixtures/reading/
 ```
 
