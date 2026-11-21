@@ -28,8 +28,5 @@ export const tutorialSchema = z.object({
     .min(1),
 });
 
-export type Tutorial = z.infer<typeof tutorialSchema>;
-export type TutorialPart = Tutorial["parts"][number];
-
 export const TUTORIAL_PATH = "/fabulosa-books";
 export const partPath = (slug: string) => `${TUTORIAL_PATH}/${slug}`;

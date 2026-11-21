@@ -16,14 +16,14 @@ const csp = [
   "font-src 'self'",
   "connect-src 'self' https://va.vercel-scripts.com",
   "frame-ancestors 'none'",
-  // These three don't fall back to default-src. Forms post to this site (the
-  // contact form) or to Substack (the subscribe form).
+  // frame-ancestors, base-uri, and form-action don't fall back to default-src.
+  // Forms post to this site (the contact form) or to Substack (the subscribe form).
   "base-uri 'none'",
   "object-src 'none'",
   `form-action 'self' ${SUBSTACK_BASE_URL}`,
 ].join("; ");
 
-// The site is one page: old section pages land on their anchors, permanently.
+// Old section pages land on their home anchors, permanently.
 // /reading lands on home while the log is empty (its page and section hide).
 // /residencies became the slushpile app; home while that app isn't proxied.
 const redirects = Object.entries({

@@ -32,7 +32,6 @@ import {
   TUTORIAL_PATH,
   partPath,
   tutorialSchema,
-  type Tutorial,
 } from "../src/lib/tutorial.ts";
 
 const root = resolve(import.meta.dirname, "..");
@@ -80,10 +79,7 @@ const decode = (s: string) =>
       String.fromCodePoint(parseInt(h, 16)),
     )
     .replace(/&#(\d+);/g, (_, d: string) => String.fromCodePoint(Number(d)))
-    .replace(
-      /&(?:lt|gt|quot|amp|rarr|larr|ndash|mdash|nbsp);/g,
-      (e) => ENTITIES[e],
-    );
+    .replace(/&[a-z]+;/g, (e) => ENTITIES[e] ?? e);
 const text = (s: string) =>
   decode(s.replace(/<[^>]+>/g, ""))
     .replace(/\s+/g, " ")
@@ -168,7 +164,7 @@ const slugs = readdirSync(html)
   .map((f) => f.replace(".html", ""))
   .sort((a, b) => parseInt(a.slice(4)) - parseInt(b.slice(4)));
 
-const tutorial: Tutorial = tutorialSchema.parse({
+const tutorial = tutorialSchema.parse({
   source,
   title: text(one(index, /<h1>([\s\S]*?)<\/h1>/, "index <h1>")),
   subtitle: text(
