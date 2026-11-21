@@ -65,6 +65,10 @@ page.
 - `/links`: square portrait beside the name; Latest (newest Substack post,
   newest fiction credit, subscribe form); Links (main site, then every master
   link except Instagram, in master order).
+- `/fabulosa-books`: the tutorial's title; About (what it is, a link to its
+  repo under the master's GitHub link); Contents (a row per part).
+  `/fabulosa-books/<part>`: a "Part N" label above the title, then the part's
+  sections and Continue.
 
 **`/links` and Instagram.** Instagram allows one link, in the profile bio;
 `/links` is where it points. It is built for a follower on a phone, arriving
@@ -134,6 +138,9 @@ share image carry the tagline, "Stories & Systems".
 - Errors and the refused-attachment note are announced to screen readers; on
   success, focus moves to the confirmation.
 - A failed send keeps the visitor's text.
+- Dragging files over the page shows a full-window "Drop to attach" overlay.
+  Its text starts on the grid's first column line and is centered vertically,
+  the one exception to §6.1 rule 3.
 - Spam guards: a hidden honeypot field; a server-signed timestamp, valid 3 s
   to 24 h after first focus.
 - Limits: name and subject 200 characters, message 10,000; up to 5
@@ -160,7 +167,7 @@ Graphic Design_; Ruder, _Typographie_). Binding; §6.3 enforces it.
    no pushing to an edge. Position comes from columns.
 4. **Asymmetry.** Labels columns 1–4, content 5–12; masthead 1–7; nav 11–12.
 5. **No ornament.** No shadows, gradients, or rounded corners. Weights: 700
-   display, 500 titles and labels, 400 text.
+   display, 500 titles, labels, and emphasis, 400 text.
 6. **Structural rules.** A full rule tops each section. Lists rule between
    rows only.
 7. **Structural space.** Gutter and margin tokens, the 0.25 rem scale, and
@@ -172,14 +179,16 @@ Graphic Design_; Ruder, _Typographie_). Binding; §6.3 enforces it.
 White, near-black, one gray, a soft hairline color for row rules (section
 rules are near-black), red for errors only. One exception: the tutorial's code
 blocks (§15) use VS Code's Dark+ colors in both themes, so code reads like an
-editor. Light or
+editor. Each is a filled block, with no rules, whose box starts on a column
+line and whose code sits 1 rem inside it. Light or
 dark follows the system until the visitor picks one; the choice is stored and
 applied before first paint. Print hides chrome and forms.
 
 ### 6.3 Guards
 
 - **Static** (unit): no off-grid alignment or ornament classes or CSS in
-  `src/app/` (share image excepted). It matches words in `.tsx` files, comments
+  `src/app/` (share image excepted, and `.swiss-container`, which centers the
+  grid itself). It matches words in `.tsx` files, comments
   included, so they must avoid the banned words too; CSS comments are skipped.
   A bracketed value in markup must be built from a token (rule 7).
 - **Rendered** (end to end): every page, a review page, the 404, and
@@ -192,8 +201,9 @@ applied before first paint. Print hides chrome and forms.
 ## 7. Metadata
 
 Title template `%s — W.S. Gong`; the home title stands alone ("W.S. Gong —"
-and the tagline). Description: the statement on home; elsewhere "W.S. Gong,
-San Francisco." before it. Every page: RSS link, Person structured data, share image;
+and the tagline). Description: each page sets its own; home uses the
+statement, and the default (404, error) is "W.S. Gong, San Francisco." before
+it. Every page: RSS link, Person structured data, share image;
 pages set only title and description. One sitemap timestamp per build.
 
 ## 8. Headers and monitoring
@@ -340,7 +350,8 @@ Pinned by `src/lib/guards.test.ts` (removals, dropped dependencies, project shap
 site copy read from `site.json` with no email in it, PDFs at public blob URLs) and a lint rule (`SLUSHPILE_URL` read in one place).
 
 - **One page.** Former section pages are home sections; add a section, not a
-  page. Exception: `/reading`, whose reviews need their own URLs.
+  page. Exceptions: `/reading`, whose reviews need their own URLs, and
+  `/fabulosa-books`, a tutorial synced from its own repo (§15).
 - **Slushpile is a separate repo**, proxied, its nav entry gated on
   `SLUSHPILE_URL`.
 - **PDFs are public, in blob storage**, not git, with no gate.
@@ -376,11 +387,12 @@ own tests keep every code block identical to its reference app. Edit the
 tutorial there, never in `content/fabulosa-books.json`.
 
 `pnpm sync:tutorial` reads that repo's `html/` pages from `FABULOSA_BOOKS_DIR`
-(default `../fabulosa-books`) and refuses uncommitted changes there. It:
+(default `../fabulosa-books`) and refuses uncommitted changes in `html/`.
+It:
 
 1. Writes `content/fabulosa-books.json`: the source commit, the title and
-   subtitle, and per part its title, description, and sections, each a label
-   and its HTML.
+   subtitle, and per part its slug, title, description, and sections (title
+   and HTML).
 2. Bakes in syntax highlighting (the CSP allows no outside scripts), makes
    each code block and table wrapper focusable so a keyboard can scroll it,
    and rewrites links
