@@ -170,7 +170,9 @@ Graphic Design_; Ruder, _Typographie_). Binding; §6.3 enforces it.
 ### 6.2 Theme
 
 White, near-black, one gray, a soft hairline color for row rules (section
-rules are near-black), red for errors only. Light or
+rules are near-black), red for errors only. One exception: the tutorial's code
+blocks (§15) use VS Code's Dark+ colors in both themes, so code reads like an
+editor. Light or
 dark follows the system until the visitor picks one; the choice is stored and
 applied before first paint. Print hides chrome and forms.
 

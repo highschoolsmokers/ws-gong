@@ -7,6 +7,18 @@
   --foreground: light-dark(#161616, #ebebeb);
   --muted: light-dark(#6b6b6b, #9b9b9b);
   --rule-soft: light-dark(#e5e5e5, #2e2e2e);
+  /* Tutorial code blocks: VS Code Dark+ in both themes (§6.2). */
+  --code-bg: #1e1e1e;
+  --code-fg: #d4d4d4;
+  --code-comment: #6a9955;
+  --code-keyword: #569cd6;
+  --code-string: #ce9178;
+  --code-number: #b5cea8;
+  --code-function: #dcdcaa;
+  --code-type: #4ec9b0;
+  --code-variable: #9cdcfe;
+  --code-regexp: #d16969;
+  --code-constant: #4fc1ff;
   --error: light-dark(#c00000, #ff6b6b);
   --gutter: 1.5rem;
   --margin: 2rem;
@@ -232,8 +244,9 @@ a.row:hover .row-title {
   margin-bottom: 0.5em;
 }
 /* Fabulosa Books tutorial (/fabulosa-books): synced HTML in a section body.
-   Prose follows .review; code and tables keep to the theme's colors (§6.2),
-   so highlighting is weight and gray, not hue. */
+   Prose follows .review. Code blocks look like VS Code's Dark+ theme in both
+   site themes, the one exception to the palette (§6.2); inline code and
+   tables keep to it. */
 .tutorial {
   font-size: 0.9375rem;
   line-height: 1.65;
@@ -274,11 +287,17 @@ a.row:hover .row-title {
 }
 .tutorial pre {
   overflow-x: auto;
-  border-block: 1px solid var(--rule-soft);
-  padding-block: 0.75rem;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  padding: 0.75rem 1rem;
   font-size: 0.8125rem;
   line-height: 1.55;
   tab-size: 2;
+  scrollbar-color: var(--code-comment) transparent;
+}
+/* The block's text is light, so the focus ring takes the page's color. */
+.tutorial pre:focus-visible {
+  outline-color: var(--foreground);
 }
 .tutorial pre code {
   font-size: inherit;
@@ -287,13 +306,43 @@ a.row:hover .row-title {
 .tutorial :not(pre) > code {
   overflow-wrap: anywhere;
 }
+/* Dark+ token colors, mapped onto highlight.js classes. */
 .tutorial .hljs-comment {
-  color: var(--muted);
+  color: var(--code-comment);
 }
-.tutorial .hljs-keyword,
-.tutorial .hljs-built_in,
-.tutorial .hljs-title.function_ {
-  font-weight: 500;
+.tutorial :is(.hljs-keyword, .hljs-literal, .hljs-meta, .hljs-name) {
+  color: var(--code-keyword);
+}
+.tutorial .hljs-string {
+  color: var(--code-string);
+}
+.tutorial .hljs-number {
+  color: var(--code-number);
+}
+.tutorial :is(.hljs-title.function_, .hljs-built_in) {
+  color: var(--code-function);
+}
+.tutorial :is(.hljs-title.class_, .hljs-type) {
+  color: var(--code-type);
+}
+.tutorial
+  :is(
+    .hljs-attr,
+    .hljs-attribute,
+    .hljs-variable,
+    .hljs-params,
+    .hljs-property
+  ) {
+  color: var(--code-variable);
+}
+.tutorial .hljs-regexp {
+  color: var(--code-regexp);
+}
+.tutorial .hljs-variable.constant_ {
+  color: var(--code-constant);
+}
+.tutorial .hljs-variable.language_ {
+  color: var(--code-keyword);
 }
 .tutorial .table-wrap {
   overflow-x: auto;
@@ -352,6 +401,14 @@ a.row:hover .row-title {
 }
 
 @media print {
+  .tutorial pre,
+  .tutorial pre * {
+    background: none;
+    color: black;
+  }
+  .tutorial pre {
+    border-block: 1px solid var(--rule-soft);
+  }
   :root,
   :root[data-theme] {
     color-scheme: light;
