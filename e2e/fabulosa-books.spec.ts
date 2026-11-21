@@ -44,8 +44,11 @@ for (const part of parts)
 
     for (const code of await page.locator(".tutorial pre code").all())
       await expect(code).toHaveClass(/\bhljs\b/);
-    for (const pre of await page.locator(".tutorial pre").all())
-      await expect(pre).toHaveAttribute("tabindex", "0");
+    // Code blocks and table wrappers scroll sideways, so a keyboard must reach them.
+    for (const el of await page
+      .locator(".tutorial :is(pre, .table-wrap)")
+      .all())
+      await expect(el).toHaveAttribute("tabindex", "0");
 
     // Lazy images below the fold haven't loaded, so request each one.
     const srcs = await page.$$eval("main img", (imgs) =>
