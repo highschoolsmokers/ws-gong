@@ -1,10 +1,10 @@
 import { test, expect } from "@playwright/test";
 import { TUTORIAL_PATH, partPath } from "../src/lib/tutorial";
-import { tutorial } from "../src/lib/tutorial-content";
+import { tutorial, tutorialPaths } from "../src/lib/tutorial-content";
 
 // The tutorial is site pages built from content/fabulosa-books.json (SPEC §15).
-// The grid, hydration, and metadata checks cover it through SITE_PAGES; these
-// check what is particular to it.
+// The grid, hydration, console, metadata, and redirect checks cover it through
+// SITE_PAGES and REDIRECTS; these check what is particular to it.
 const parts = tutorial.parts.map((p, i) => ({
   ...p,
   i,
@@ -25,10 +25,6 @@ for (const part of parts)
   test(`${part.path}: title, sections, highlighted code, links onward`, async ({
     page,
   }) => {
-    const problems: string[] = [];
-    page.on("pageerror", (e) => problems.push(e.message));
-    page.on("console", (m) => m.type() === "error" && problems.push(m.text()));
-    page.on("requestfailed", (r) => problems.push(`failed: ${r.url()}`));
     await page.goto(part.path);
 
     await expect(page.locator("h1")).toHaveText(part.title);
@@ -57,26 +53,14 @@ for (const part of parts)
     );
     for (const src of srcs)
       expect((await page.request.get(src)).ok(), src).toBe(true);
-    expect(problems).toEqual([]);
   });
-
-test("the old .html URLs redirect to the pages", async ({ request }) => {
-  for (const [from, to] of [
-    [`${TUTORIAL_PATH}/index.html`, TUTORIAL_PATH],
-    [`${TUTORIAL_PATH}/part3.html`, partPath("part3")],
-  ]) {
-    const res = await request.get(from, { maxRedirects: 0 });
-    expect(res.status(), from).toBe(308);
-    expect(new URL(res.headers().location, "http://x").pathname, from).toBe(to);
-  }
-});
 
 test(
   "every tutorial page fits a 375px phone",
   { tag: "@cross" },
   async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 800 });
-    for (const path of [TUTORIAL_PATH, ...parts.map((p) => p.path)]) {
+    for (const path of tutorialPaths) {
       await page.goto(path);
       expect(
         await page.evaluate(

@@ -8,12 +8,12 @@ import {
   ext,
 } from "@/app/components/ui";
 import { site } from "@/lib/site/content";
-import { linkUrl } from "@/lib/site/schema";
+import { linkBase } from "@/lib/site/schema";
 import { partPath } from "@/lib/tutorial";
 import { tutorial } from "@/lib/tutorial-content";
 
 // The tutorial and its reference app live in this repo on GitHub.
-const repo = `${linkUrl(site.links, "GitHub").replace(/\/$/, "")}/fabulosa-books`;
+const repo = `${linkBase(site.links, "GitHub")}/fabulosa-books`;
 
 export const metadata: Metadata = {
   title: tutorial.title,

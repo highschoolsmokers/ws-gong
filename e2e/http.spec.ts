@@ -41,7 +41,8 @@ test.describe("Pages", () => {
     });
 });
 
-// SPEC §2: old section pages fold into home anchors; all permanent.
+// SPEC §2: old section pages fold into home anchors, the tutorial's old .html
+// URLs into its pages; all permanent.
 const REDIRECTS = [
   ["/about", "/#about"],
   ["/code", "/#code"],
@@ -55,6 +56,8 @@ const REDIRECTS = [
   ["/contact", "/#contact"],
   // /residencies goes home while the slushpile app isn't proxied.
   ["/residencies", slushpileConfigured ? "/slushpile" : "/"],
+  ["/fabulosa-books/index.html", "/fabulosa-books"],
+  ["/fabulosa-books/part3.html", "/fabulosa-books/part3"],
 ] as const;
 
 test("redirects are permanent and land where SPEC §2 says", async ({
