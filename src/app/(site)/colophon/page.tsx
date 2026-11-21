@@ -52,6 +52,7 @@ export default function Colophon() {
           "Biography and fiction credits — synced from the master résumé",
           "Substack — latest posts from the Substack API, also in the RSS feed",
           "Reading — one Markdown file per book; covers from Open Library",
+          "Fabulosa Books tutorial — synced from its own repo, highlighted at sync",
           "Résumé and CV — PDFs in Vercel Blob storage",
         ])}
       </Section>

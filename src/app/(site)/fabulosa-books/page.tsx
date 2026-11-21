@@ -25,8 +25,8 @@ export default function TutorialContents() {
     <>
       <PageTitle>{tutorial.title}</PageTitle>
       <Section title="About">
-        <p className="max-w-prose">{tutorial.subtitle}</p>
-        <p className="max-w-prose">
+        <p className="max-w-measure">{tutorial.subtitle}</p>
+        <p className="max-w-measure">
           Every code block comes from the finished app in the{" "}
           <a href={repo} className="underline" {...ext}>
             fabulosa-books repository

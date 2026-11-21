@@ -1,3 +1,5 @@
+import { tutorial } from "./tutorial-content.ts";
+
 // Shown in this order on the home page.
 export const projects = [
   {
@@ -52,8 +54,8 @@ export const projects = [
   {
     href: "/fabulosa-books",
     title: "Fabulosa Books — Scheduling Agent Tutorial",
-    description:
-      "An eight-part tutorial: a bookstore scheduling agent on Next.js 16 and AI SDK 7, with the store's rules in code, a fairness subagent, human approval before every save, and tests that drive the agent with a scripted model.",
+    // The tutorial's own subtitle, so the part count can't go stale.
+    description: tutorial.subtitle,
     stack: ["Next.js", "AI SDK", "Neon", "TypeScript"],
   },
 ];

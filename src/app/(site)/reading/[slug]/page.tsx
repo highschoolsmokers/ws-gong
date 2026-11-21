@@ -59,7 +59,7 @@ export default async function Review({ params }: PageProps<"/reading/[slug]">) {
       <JsonLd data={ld} />
       <PageTitle>{b.title}</PageTitle>
       <Section title={b.author}>
-        <div className="max-w-prose space-y-6">
+        <div className="max-w-measure space-y-6">
           {cover && (
             <Image
               src={cover}
