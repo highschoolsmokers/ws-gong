@@ -65,7 +65,9 @@ async function audit(page: Page) {
 }
 
 // A fresh load at each width: resizing an open page in place raced in
-// Firefox (page.evaluate hung until the test timed out).
+// Firefox (page.evaluate hung until the test timed out). Later loads add a
+// query so the URL differs: loading the same URL again makes Firefox start
+// its own revalidating reload, which Playwright waits on until timeout.
 for (const path of PAGES)
   test(
     `${path} hydrates cleanly, has one h1, follows the grid (SPEC §6.1)`,
@@ -83,7 +85,9 @@ for (const path of PAGES)
       for (const [i, width] of WIDTHS.entries()) {
         await page.setViewportSize({ width, height: 900 });
         // The first load waits for hydration to finish.
-        await page.goto(path, { waitUntil: i ? "load" : "networkidle" });
+        await page.goto(i ? `${path}?w=${width}` : path, {
+          waitUntil: i ? "load" : "networkidle",
+        });
         expect(await audit(page), `at ${width}px`).toEqual([]);
       }
       expect(errors).toEqual([]);
