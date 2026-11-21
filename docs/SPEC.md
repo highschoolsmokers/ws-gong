@@ -382,7 +382,8 @@ tutorial there, never in `content/fabulosa-books.json`.
    subtitle, and per part its title, description, and sections, each a label
    and its HTML.
 2. Bakes in syntax highlighting (the CSP allows no outside scripts), makes
-   each code block focusable so a keyboard can scroll it, and rewrites links
+   each code block and table wrapper focusable so a keyboard can scroll it,
+   and rewrites links
    and image paths to the site's routes.
 3. Copies images the pages use that `public/fabulosa-books/images/` lacks, and
    deletes the ones no page uses. An image already there is kept, so the site

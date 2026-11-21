@@ -113,6 +113,11 @@ function adapt(block: string): string {
   return (
     highlight(block)
       .replace(/ data-source="[^"]*"/g, "")
+      // Wide tables scroll inside their wrapper; a keyboard has to reach it.
+      .replace(
+        /<div class="table-wrap">/g,
+        '<div class="table-wrap" tabindex="0">',
+      )
       .replace(
         /(<img[^>]*?) src="images\/([^"]+)"/g,
         (_, pre: string, file: string) => {
